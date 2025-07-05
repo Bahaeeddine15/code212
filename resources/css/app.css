@@ -148,6 +148,99 @@
     --sidebar-ring: oklch(0.439 0 0);
 }
 
+/* Couleurs personnalisées basées sur la palette CODE212 */
+:root {
+    /* Couleurs principales */
+    --code212-magenta: #c5027f;
+    --code212-rose: #ff005b;
+    --code212-turquoise: #00adbc;
+    --code212-jaune: #ffc000;
+    --code212-vert-electrique: #00e87e;
+    --code212-violet-fonce: #300069;
+    --code212-marron: #b17f49;
+    --code212-vert-lime: #7bc600;
+    --code212-cyan: #00dfff;
+    --code212-violet-bleu: #6701e6;
+    --code212-rose-pale: #c5027f;
+    --code212-noir: #121214;
+    --code212-bleu-techno: #0a1f44;
+    --code212-vert-electrique-clair: #2cd3a3;
+    --code212-gris-clair: #f4f4f4;
+    --code212-rouge-marocain: #b82929;
+}
+
+.dark {
+    /* Couleurs pour le mode sombre */
+    --code212-magenta: #e027af;
+    --code212-rose: #ff2f7b;
+    --code212-turquoise: #2fcdd2;
+    --code212-jaune: #ffd020;
+    --code212-vert-electrique: #20f89e;
+    --code212-violet-fonce: #5020a9;
+    --code212-marron: #d19f69;
+    --code212-vert-lime: #9be620;
+    --code212-cyan: #20ffff;
+    --code212-violet-bleu: #8721f6;
+    --code212-rose-pale: #e027af;
+    --code212-noir: #2f2f31;
+    --code212-bleu-techno: #1a3f64;
+    --code212-vert-electrique-clair: #4cf3b3;
+    --code212-gris-clair: #e4e4e4;
+    --code212-rouge-marocain: #d84949;
+}
+
+/* Classes utilitaires pour les couleurs */
+.text-code212-magenta { color: var(--code212-magenta); }
+.text-code212-rose { color: var(--code212-rose); }
+.text-code212-turquoise { color: var(--code212-turquoise); }
+.text-code212-jaune { color: var(--code212-jaune); }
+.text-code212-vert-electrique { color: var(--code212-vert-electrique); }
+.text-code212-violet-fonce { color: var(--code212-violet-fonce); }
+.text-code212-marron { color: var(--code212-marron); }
+.text-code212-vert-lime { color: var(--code212-vert-lime); }
+.text-code212-cyan { color: var(--code212-cyan); }
+.text-code212-violet-bleu { color: var(--code212-violet-bleu); }
+.text-code212-rose-pale { color: var(--code212-rose-pale); }
+.text-code212-noir { color: var(--code212-noir); }
+.text-code212-bleu-techno { color: var(--code212-bleu-techno); }
+.text-code212-vert-electrique-clair { color: var(--code212-vert-electrique-clair); }
+.text-code212-gris-clair { color: var(--code212-gris-clair); }
+.text-code212-rouge-marocain { color: var(--code212-rouge-marocain); }
+
+.bg-code212-magenta { background-color: var(--code212-magenta); }
+.bg-code212-rose { background-color: var(--code212-rose); }
+.bg-code212-turquoise { background-color: var(--code212-turquoise); }
+.bg-code212-jaune { background-color: var(--code212-jaune); }
+.bg-code212-vert-electrique { background-color: var(--code212-vert-electrique); }
+.bg-code212-violet-fonce { background-color: var(--code212-violet-fonce); }
+.bg-code212-marron { background-color: var(--code212-marron); }
+.bg-code212-vert-lime { background-color: var(--code212-vert-lime); }
+.bg-code212-cyan { background-color: var(--code212-cyan); }
+.bg-code212-violet-bleu { background-color: var(--code212-violet-bleu); }
+.bg-code212-rose-pale { background-color: var(--code212-rose-pale); }
+.bg-code212-noir { background-color: var(--code212-noir); }
+.bg-code212-bleu-techno { background-color: var(--code212-bleu-techno); }
+.bg-code212-vert-electrique-clair { background-color: var(--code212-vert-electrique-clair); }
+.bg-code212-gris-clair { background-color: var(--code212-gris-clair); }
+.bg-code212-rouge-marocain { background-color: var(--code212-rouge-marocain); }
+
+.border-code212-magenta { border-color: var(--code212-magenta); }
+.border-code212-rose { border-color: var(--code212-rose); }
+.border-code212-turquoise { border-color: var(--code212-turquoise); }
+.border-code212-jaune { border-color: var(--code212-jaune); }
+.border-code212-vert-electrique { border-color: var(--code212-vert-electrique); }
+.border-code212-violet-fonce { border-color: var(--code212-violet-fonce); }
+.border-code212-marron { border-color: var(--code212-marron); }
+.border-code212-vert-lime { border-color: var(--code212-vert-lime); }
+.border-code212-cyan { border-color: var(--code212-cyan); }
+.border-code212-violet-bleu { border-color: var(--code212-violet-bleu); }
+.border-code212-rose-pale { border-color: var(--code212-rose-pale); }
+.border-code212-noir { border-color: var(--code212-noir); }
+.border-code212-bleu-techno { border-color: var(--code212-bleu-techno); }
+.border-code212-vert-electrique-clair { border-color: var(--code212-vert-electrique-clair); }
+.border-code212-gris-clair { border-color: var(--code212-gris-clair); }
+.border-code212-rouge-marocain { border-color: var(--code212-rouge-marocain); }
+
 @layer base {
     * {
         @apply border-border;
