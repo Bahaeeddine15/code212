@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CompetitionController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -29,9 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard_admin/formations');
     })->name('formations');
 
-    Route::get('competitions', function () {
-        return Inertia::render('dashboard_admin/competitions');
-    })->name('competitions');
+    Route::resource('competitions', CompetitionController::class);
+    Route::patch('/competitions/{competition}/close', [CompetitionController::class, 'close'])
+        ->name('competitions.close');
 });
 
 require __DIR__ . '/settings.php';
