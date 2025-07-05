@@ -30,7 +30,7 @@ class ArticleController extends Controller
                 ];
             });
 
-        return Inertia::render('dashboard_admin/article/articles', [
+        return Inertia::render('dashboard_admin/article/article_index', [
             'articles' => $articles
         ]);
     }
