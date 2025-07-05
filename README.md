@@ -67,6 +67,7 @@ Le projet devrait maintenant être accessible dans votre navigateur.
 ## 1-Basculer vers la branche dashboard-etudiant:
 ```bash
 git checkout dashboard-etudiant
+```
 
 ## 2-Vérifie que tu es sur la bonne branche :
 ```bash
