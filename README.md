@@ -62,18 +62,19 @@ npm run dev
 Le projet devrait maintenant être accessible dans votre navigateur.
 
 
+
 # Push ton projet dans la branche :
-## Basculer vers la branche dashboard-etudiant:
+## 1-Basculer vers la branche dashboard-etudiant:
 git checkout dashboard-etudiant
 
-## Vérifie que tu es sur la bonne branche :
+## 2-Vérifie que tu es sur la bonne branche :
 git branch
 
-## Ajoute les fichiers :
+## 3-Ajoute les fichiers :
 add .
 
-## Fais un commit avec un message :
+## 4-Fais un commit avec un message :
 git commit -m "Ajout du projet dans la branche dashboard-etudiant"
 
-## Push vers GitHub :
+## 5-Push vers GitHub :
 git push origin dashboard-etudiant
