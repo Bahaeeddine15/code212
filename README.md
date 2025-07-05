@@ -65,16 +65,25 @@ Le projet devrait maintenant être accessible dans votre navigateur.
 
 # Push ton projet dans la branche :
 ## 1-Basculer vers la branche dashboard-etudiant:
+```bash
 git checkout dashboard-etudiant
 
 ## 2-Vérifie que tu es sur la bonne branche :
+```bash
 git branch
+```
 
 ## 3-Ajoute les fichiers :
+```bash
 add .
+```
 
 ## 4-Fais un commit avec un message :
+```bash
 git commit -m "Ajout du projet dans la branche dashboard-etudiant"
+```
 
 ## 5-Push vers GitHub :
+```bash
 git push origin dashboard-etudiant
+```
