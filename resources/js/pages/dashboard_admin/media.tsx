@@ -2,6 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useState, useRef } from 'react';
+import { router } from '@inertiajs/react';
 import { 
     Images, 
     Upload, 
@@ -313,24 +314,43 @@ export default function Media() {
         }
     };
 
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video' | 'document') => {
+    const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: 'image' | 'video' | 'document'
+    ) => {
         const files = event.target.files;
         if (files && files.length > 0) {
-            Array.from(files).forEach(file => {
-                const newMedia: MediaFile = {
-                    id: Date.now() + Math.random(),
-                    type: type,
-                    title: file.name,
-                    size: formatFileSize(file.size),
-                    date: new Date().toLocaleDateString('fr-FR'),
-                    views: 0,
-                    url: URL.createObjectURL(file),
-                    sizeBytes: file.size
-                };
-                setMediaFiles(prev => [newMedia, ...prev]);
-            });
+            for (const file of Array.from(files)) {
+                const formData = new FormData();
+                formData.append('media', file);
+
+                try {
+                    // Using Inertia's router.post instead of fetch
+                    router.post('/media', formData, {
+                        forceFormData: true,
+                        preserveScroll: true,
+                        onSuccess: (response) => {
+                            console.log('Upload successful:', response);
+                            // The media will be available in the response props
+                            // You might want to refresh the media list here
+                            window.location.reload(); // Simple refresh for now
+                        },
+                        onError: (errors) => {
+                            console.error('Upload failed:', errors);
+                            alert('Erreur lors de l\'upload: ' + (errors.media || 'Erreur inconnue'));
+                        }
+                    });
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert('Erreur lors de l\'upload');
+                }
+            }
         }
+        
+        // Reset the input
+        event.target.value = '';
     };
+
 
     const formatFileSize = (bytes: number) => {
         if (bytes === 0) return '0 Bytes';
@@ -438,6 +458,8 @@ export default function Media() {
                     multiple
                     onChange={(e) => handleFileSelect(e, 'image')}
                     className="hidden"
+                    name="media"
+                    id="image-upload"
                 />
                 <input
                     ref={videoInputRef}
@@ -446,6 +468,8 @@ export default function Media() {
                     multiple
                     onChange={(e) => handleFileSelect(e, 'video')}
                     className="hidden"
+                    name="media"
+                    id="video-upload"
                 />
                 <input
                     ref={documentInputRef}
@@ -454,6 +478,8 @@ export default function Media() {
                     multiple
                     onChange={(e) => handleFileSelect(e, 'document')}
                     className="hidden"
+                    name="media"
+                    id="document-upload"
                 />
 
                 {/* En-tête avec actions */}
