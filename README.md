@@ -77,7 +77,7 @@ Vérifie que tu es sur la bonne branche :
 git branch
 ```
 
-Récupérer les modifications (pull
+Récupérer les modifications (pull)
 ```bash
 git pull origin dashboard-etudiant
 ```
