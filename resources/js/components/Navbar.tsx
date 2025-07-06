@@ -12,7 +12,6 @@ const alwaysShownNavigation = [
     { name: 'Acceueil', href: '#', current: true },
     { name: 'À propos de Code 212', href: '#', current: false },
     { name: 'Formations & Certifications', href: '#', current: false },
-    { name: 'Compétitions & Événements ', href: '#', current: false },
     { name: 'Contact & Localisation ', href: '#', current: false },
 ];
 
@@ -20,6 +19,15 @@ const dropDownNavigation = [
     { name: 'Galerie Multimédia', href: '#', current: false },
     { name: 'Actualités & Blog', href: '#', current: false },
     { name: 'Clubs & Partenaires', href: '#', current: false },
+];
+
+const competitionsDropdown = [
+    { name: 'Workshops', href: '#'},
+    { name: 'Compétitions', href: '#' },
+    { name: 'Hackathons', href: '#'  },
+    { name: 'Conférences', href: '#' },
+    { name: 'Réserver un local', href: '#' },
+    { name: 'Organiser un évenement', href: '#'},
 ];
 
 const userNavigation = [
@@ -34,6 +42,7 @@ function classNames(...classes: string[]) {
 
 export default function Example() {
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showCompetitionsDropdown, setShowCompetitionsDropdown] = useState(false);
     return (
         <>
             {/*
@@ -45,7 +54,7 @@ export default function Example() {
         ```
       */}
             <div className="min-h-full">
-                <Disclosure as="nav" className="bg-gray-800">
+                <Disclosure as="nav" className="bg-purple-900">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 items-center justify-between">
                             <div className="flex items-center">
@@ -64,7 +73,7 @@ export default function Example() {
                                                 href={item.href}
                                                 aria-current={item.current ? 'page' : undefined}
                                                 className={classNames(
-                                                    item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                    item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:text-gray-900 hover:text-white',
                                                     'rounded-md px-3 py-2 text-sm font-medium',
                                                 )}
                                             >
@@ -73,20 +82,40 @@ export default function Example() {
                                         ))}
                                         <div
                                             className="relative"
+                                            onMouseEnter={() => setShowCompetitionsDropdown(true)}
+                                            onMouseLeave={() => setShowCompetitionsDropdown(false)}
+                                        >
+                                            <span className="cursor-pointer text-gray-300 hover:text-white font-medium text-sm ">
+                                                Compétitions & Événements
+                                            </span>     
+                                            {showCompetitionsDropdown && (
+                                                <ul className="absolute top-full left-0 z-10 w-40 rounded border bg-white shadow-lg font-medium">
+                                                    {competitionsDropdown.map((item) => (
+                                                        <a
+                                                            key={item.name}
+                                                            href={item.href}
+                                                            className="block px-4 py-2 hover:bg-gray-300 text-gray-800"
+                                                        >
+                                                            {item.name}
+                                                        </a>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                        <div
+                                            className="relative"
                                             onMouseEnter={() => setShowDropdown(true)}
                                             onMouseLeave={() => setShowDropdown(false)}
                                         >
-                                            <span className="cursor-pointer text-white hover:text-blue-600">
-                                                Resources <span className="ml-1">▼</span>
+                                            <span className="cursor-pointer text-gray-300 hover:text-white font-medium text-sm">
+                                                Ressources 
                                             </span>
-
                                             {showDropdown && (
-                                                <ul className="absolute top-full left-0 z-10 mt-2 w-40 rounded border bg-white shadow-lg">
+                                                <ul className="absolute top-full left-0 z-10 w-40 rounded border bg-white shadow-lg">
                                                     {dropDownNavigation.map((item) => (
                                                         <a
                                                             key={item.name}
                                                             href={item.href}
-                                                            
                                                             className="block px-4 py-2 hover:bg-gray-100 text-gray-800"
                                                         >
                                                             {item.name}
