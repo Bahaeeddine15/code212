@@ -5,8 +5,6 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { 
-    BookOpen, 
-    Folder, 
     LayoutGrid, 
     FileText, 
     Calendar, 
@@ -50,41 +48,34 @@ const mainNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
+    // Repository et Documentation supprimés
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard" prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
+        <Sidebar collapsible="icon" variant="inset" className="border-none">
+            <div className="bg-slate-800 dark:bg-slate-900 h-full rounded-lg p-4 flex flex-col">
+                <SidebarHeader className="bg-transparent p-0 mb-6 flex-shrink-0">
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton size="lg" asChild className="hover:bg-slate-700 text-white">
+                                <Link href="/dashboard" prefetch>
+                                    <AppLogo />
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarHeader>
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
-            </SidebarContent>
+                <SidebarContent className="bg-transparent px-0 flex-1 overflow-hidden">
+                    <NavMain items={mainNavItems} />
+                </SidebarContent>
 
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
-            </SidebarFooter>
+                <SidebarFooter className="bg-transparent p-0 flex-shrink-0 space-y-2">
+                    <NavFooter items={footerNavItems} />
+                    <NavUser />
+                </SidebarFooter>
+            </div>
         </Sidebar>
     );
 }
