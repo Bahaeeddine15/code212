@@ -8,11 +8,25 @@ import {
     Award,
     TrendingUp,
     Calendar,
+import { Head, Link } from '@inertiajs/react';
+import {
+    Users,
+    BookOpen,
+    Award,
+    TrendingUp,
+    Calendar,
     BarChart3,
     GraduationCap,
     Star,
     Clock,
-    CheckCircle
+    CheckCircle,
+    FileText,
+    CalendarCheck,
+    Images,
+    Trophy,
+    ArrowRight,
+    Eye,
+    Plus
 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -63,19 +77,51 @@ const CertificationCard = ({
     bgColor
 }: {
     title: string;
-    count: number;
+    description: string;
     icon: any;
     color: string;
     bgColor: string;
+    data: { label: string; value: string | number }[];
+    href: string;
+    showReadMore?: boolean;
 }) => (
-    <div className={`relative overflow-hidden rounded-xl ${bgColor} p-8 shadow-lg border-2 border-opacity-20 ${color.replace('text-', 'border-')}`}>
-        <div className="text-center">
-            <div className={`mx-auto w-16 h-16 ${color} bg-opacity-10 rounded-full flex items-center justify-center mb-4`}>
-                <Icon className={`w-8 h-8 ${color}`} />
+    <div className={`relative overflow-hidden rounded-xl ${bgColor} p-6 shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl`}>
+        <div className="flex items-center mb-4">
+            <div className={`p-3 rounded-full ${color} bg-opacity-10 mr-3`}>
+                <Icon className={`w-6 h-6 ${color}`} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">{title}</h3>
-            <p className={`text-4xl font-bold ${color}`}>{count}</p>
+            <div>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">{title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+            </div>
         </div>
+
+        <div className="space-y-3 mb-6">
+            {data.map((item, index) => (
+                <div key={index} className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">{item.label}</span>
+                    <span className={`text-sm font-semibold ${color}`}>{item.value}</span>
+                </div>
+            ))}
+        </div>
+
+        {showReadMore && (
+            <Link
+                href={href}
+                className={`inline-flex items-center justify-center w-full py-2 px-4 rounded-lg hover:opacity-90 text-white font-medium text-sm transition-all duration-200 hover:scale-105 ${
+                    color === 'text-cyan-600' ? 'bg-cyan-600' :
+                    color === 'text-emerald-600' ? 'bg-emerald-600' :
+                    color === 'text-amber-600' ? 'bg-amber-600' :
+                    color === 'text-purple-600' ? 'bg-purple-600' :
+                    color === 'text-pink-600' ? 'bg-pink-600' :
+                    color === 'text-indigo-600' ? 'bg-indigo-600' :
+                    'bg-gray-600'
+                }`}
+            >
+                Lire plus
+                <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+        )}
     </div>
 );
 
@@ -98,44 +144,51 @@ export default function Dashboard({name}: DashboardProps) {
                             </span>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold">Bienvenue, {name || 'Administrateur'}</h2>
+                            <h2 className="text-2xl font-bold">MALIKA</h2>
                             <p className="text-pink-100">UNIVERSITÉ CADI AYYAD DE MARRAKECH</p>
-                            <p className="text-pink-100">ENSAMR / Génie Informatique</p>
                             <p className="text-pink-100">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Statistiques principales avec couleurs prioritaires */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                     <StatCard
-                        title="Étudiants actifs"
-                        value="2,847"
-                        icon={Users}
+                        title="Articles"
+                        value="24"
+                        icon={FileText}
                         color="text-cyan-600"
                         bgColor="bg-cyan-50 dark:bg-cyan-900/20"
                         borderColor="border-cyan-200 dark:border-cyan-800"
                     />
                     <StatCard
-                        title="Cours disponibles"
-                        value="156"
-                        icon={BookOpen}
+                        title="Événements terminés"
+                        value="8"
+                        icon={CalendarCheck}
                         color="text-emerald-600"
                         bgColor="bg-emerald-50 dark:bg-emerald-900/20"
                         borderColor="border-emerald-200 dark:border-emerald-800"
                     />
                     <StatCard
-                        title="Certifications"
-                        value="89"
-                        icon={Award}
+                        title="Images"
+                        value="156"
+                        icon={Images}
                         color="text-amber-600"
                         bgColor="bg-amber-50 dark:bg-amber-900/20"
                         borderColor="border-amber-200 dark:border-amber-800"
                     />
                     <StatCard
-                        title="Taux de réussite"
-                        value="94%"
-                        icon={TrendingUp}
+                        title="Formations"
+                        value="12"
+                        icon={GraduationCap}
+                        color="text-purple-600"
+                        bgColor="bg-purple-50 dark:bg-purple-900/20"
+                        borderColor="border-purple-200 dark:border-purple-800"
+                    />
+                    <StatCard
+                        title="Compétitions"
+                        value="6"
+                        icon={Trophy}
                         color="text-pink-600"
                         bgColor="bg-pink-50 dark:bg-pink-900/20"
                         borderColor="border-pink-200 dark:border-pink-800"

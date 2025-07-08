@@ -18,7 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('dashboard');
 
-    Route::resource('articles', ArticleController::class);
+    Route::get('articles', function () {
+        return Inertia::render('dashboard_admin/articles');
+    })->name('articles');
 
     Route::get('events', function () {
         return Inertia::render('dashboard_admin/events');
@@ -41,7 +43,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/competitions/{competition}/close', [CompetitionController::class, 'close'])
         ->name('competitions.close');
 });
-
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
