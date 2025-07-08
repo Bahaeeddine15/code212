@@ -1,13 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CompetitionController;
->>>>>>> 8f33c2dc8583bdb21ed8bcbb938b9fce3118fa8b
 use Inertia\Inertia;
 use App\Http\Controllers\MediaController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -15,38 +13,35 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard_admin/dashboard');
+        return Inertia::render('dashboard_admin/dashboard', [
+            'name' => Auth::user()->name,
+        ]);
     })->name('dashboard');
-    
-    Route::get('articles', function () {
-        return Inertia::render('dashboard_admin/articles');
-    })->name('articles');
-    
+
+    Route::resource('articles', ArticleController::class);
+
     Route::get('events', function () {
         return Inertia::render('dashboard_admin/events');
     })->name('events');
-    
-    Route::get('media', [MediaController::class, 'index'])->name('media');
-    Route::post('media', [MediaController::class, 'store']);
-    Route::get('media/{id}', [MediaController::class, 'show']);
-    Route::delete('media/{id}', [MediaController::class, 'destroy']);
-    
+
+    Route::get('media', function () {
+        return Inertia::render('dashboard_admin/galerie/media_index');
+    })->name('media');
+
+    // Route::resource('media', MediaController::class);
+    // Route::get('media/upload', [MediaController::class, 'upload'])->name('media.upload');
+    // Route::post('media/bulk-store', [MediaController::class, 'bulkStore'])->name('media.bulkStore');
+    // Route::get('media/{media}/download', [MediaController::class, 'download'])->name('media.download');
+
     Route::get('formations', function () {
         return Inertia::render('dashboard_admin/formations');
     })->name('formations');
-<<<<<<< HEAD
-    
-    Route::get('competitions', function () {
-        return Inertia::render('dashboard_admin/competitions');
-    })->name('competitions');
-=======
 
     Route::resource('competitions', CompetitionController::class);
     Route::patch('/competitions/{competition}/close', [CompetitionController::class, 'close'])
         ->name('competitions.close');
->>>>>>> 8f33c2dc8583bdb21ed8bcbb938b9fce3118fa8b
 });
 
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

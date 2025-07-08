@@ -2,12 +2,12 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { 
-    Users, 
-    BookOpen, 
-    Award, 
-    TrendingUp, 
-    Calendar, 
+import {
+    Users,
+    BookOpen,
+    Award,
+    TrendingUp,
+    Calendar,
     BarChart3,
     GraduationCap,
     Star,
@@ -23,13 +23,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Composant pour les cartes de statistiques
-const StatCard = ({ 
-    title, 
-    value, 
-    icon: Icon, 
-    color, 
-    bgColor, 
-    borderColor 
+const StatCard = ({
+    title,
+    value,
+    icon: Icon,
+    color,
+    bgColor,
+    borderColor
 }: {
     title: string;
     value: string | number;
@@ -55,12 +55,12 @@ const StatCard = ({
 );
 
 // Composant pour les certifications
-const CertificationCard = ({ 
-    title, 
-    count, 
-    icon: Icon, 
-    color, 
-    bgColor 
+const CertificationCard = ({
+    title,
+    count,
+    icon: Icon,
+    color,
+    bgColor
 }: {
     title: string;
     count: number;
@@ -79,20 +79,26 @@ const CertificationCard = ({
     </div>
 );
 
-export default function Dashboard() {
+interface DashboardProps{
+    name : string;
+}
+
+export default function Dashboard({name}: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
-                
+
                 {/* Section du profil utilisateur avec dégradé inspiré de votre palette */}
                 <div className="bg-gradient-to-r from-pink-600 via-purple-700 to-indigo-800 rounded-xl p-6 text-white shadow-lg">
                     <div className="flex items-center space-x-4">
                         <div className="w-20 h-20 rounded-full bg-white bg-opacity-20 flex items-center justify-center backdrop-blur-sm">
-                            <span className="text-2xl font-bold">IM</span>
+                            <span className="text-2xl font-bold">
+                                {name ? name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'AD'}
+                            </span>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold">IZELGUE MALIKA</h2>
+                            <h2 className="text-2xl font-bold">Bienvenue, {name || 'Administrateur'}</h2>
                             <p className="text-pink-100">UNIVERSITÉ CADI AYYAD DE MARRAKECH</p>
                             <p className="text-pink-100">ENSAMR / Génie Informatique</p>
                             <p className="text-pink-100">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE</p>
@@ -142,7 +148,7 @@ export default function Dashboard() {
                         <GraduationCap className="w-8 h-8 mr-3 text-purple-700" />
                         Certifications
                     </h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <CertificationCard
                             title="En cours"
@@ -212,7 +218,7 @@ export default function Dashboard() {
                             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                                 <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-3 rounded-full shadow-sm" style={{ width: '75%' }}></div>
                             </div>
-                            
+
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-gray-600 dark:text-gray-300">Cours complétés</span>
                                 <span className="text-sm font-bold text-cyan-600">+8%</span>
@@ -220,7 +226,7 @@ export default function Dashboard() {
                             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                                 <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 h-3 rounded-full shadow-sm" style={{ width: '65%' }}></div>
                             </div>
-                            
+
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-gray-600 dark:text-gray-300">Satisfaction</span>
                                 <span className="text-sm font-bold text-pink-600">+15%</span>
