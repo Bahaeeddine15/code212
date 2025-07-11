@@ -1,45 +1,22 @@
+import React from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { Head, Link, router } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
-import {
-    ArrowLeft,
-    Edit3,
-    Image as ImageIcon,
-    Video,
-    File,
-    Download,
-    Trash2,
-    Calendar,
-    HardDrive,
-    Eye,
-    Users,
-    Tag,
-    Folder,
-    Info
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Edit3, Trash2, Download, Eye, Calendar, User, FileText, Image } from 'lucide-react';
 
-// Types
 interface MediaFile {
     id: number;
-    type: 'image' | 'video' | 'document';
-    name: string;
-    title?: string;
-    description?: string;
-    alt_text?: string;
-    size: string;
-    date: string;
-    views: number;
-    url: string;
-    sizeBytes: number;
-    tags?: string[];
-    category?: string;
-    status: 'active' | 'archived' | 'private';
-    fileName: string;
-    fullPath: string;
-    filepath: string;
-    mime_type: string;
-    formatted_size: string;
+    title: string;
+    slug: string;
+    detail: string;
+    file_path: string;
+    original_name: string;
+    created_at: string;
+    updated_at: string;
+    user_id: number;
 }
 
 interface MediaShowProps {
@@ -47,386 +24,236 @@ interface MediaShowProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-    {
-        title: 'Galerie médias',
-        href: '/media',
-    },
-    {
-        title: 'Voir le média',
-        href: '#',
-    },
+    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Galerie médias', href: '/media' },
+    { title: 'Aperçu média', href: '#' },
 ];
 
 export default function MediaShow({ media }: MediaShowProps) {
-    const [imageError, setImageError] = useState(false);
+    const getImageUrl = (filePath: string) => `/storage/${filePath.replace(/^\/+/, '')}`;
+    const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 
-    // Add debugging for the URL
-    console.log('Media URL:', media.url);
-    console.log('Media filepath:', media.filepath);
+    const getFileType = (filePath: string): 'image' | 'video' | 'other' => {
+        const extension = filePath.split('.').pop()?.toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) return 'image';
+        if (['mp4', 'avi', 'mov', 'wmv'].includes(extension || '')) return 'video';
+        return 'other';
+    };
 
-    // Function to get status color
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'active':
-                return 'bg-green-100 text-green-800 border-green-200';
-            case 'private':
-                return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            case 'archived':
-                return 'bg-gray-100 text-gray-800 border-gray-200';
-            default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
+    const getFileSize = async (url: string) => {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            const contentLength = response.headers.get('content-length');
+            if (contentLength) {
+                const bytes = parseInt(contentLength);
+                return formatFileSize(bytes);
+            }
+        } catch (error) {
+            console.error('Error getting file size:', error);
         }
+        return 'Taille inconnue';
     };
 
-    // Function to get type icon
-    const getTypeIcon = () => {
-        switch (media.type) {
-            case 'image':
-                return <ImageIcon className="w-6 h-6 text-blue-600" />;
-            case 'video':
-                return <Video className="w-6 h-6 text-red-600" />;
-            default:
-                return <File className="w-6 h-6 text-gray-600" />;
-        }
+    const formatFileSize = (bytes: number) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    // Function to handle download
-    const handleDownload = () => {
-        const link = document.createElement('a');
-        link.href = media.url;
-        link.download = media.name || media.title || 'download';
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    // Function to handle delete
+    const handleEdit = () => router.visit(`/media/${media.id}/edit`);
     const handleDelete = () => {
-        if (confirm('Êtes-vous sûr de vouloir supprimer ce fichier ? Cette action est irréversible.')) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')) {
             router.delete(`/media/${media.id}`, {
-                onSuccess: () => {
-                    router.visit('/media');
-                },
-                onError: (errors) => {
-                    alert('Erreur lors de la suppression: ' + JSON.stringify(errors));
-                }
+                onSuccess: () => router.visit('/media')
             });
         }
     };
+    const handleDownload = () => window.location.href = `/media/${media.id}/download`;
+    const handleViewFull = () => window.open(getImageUrl(media.file_path), '_blank');
+
+    const fileType = getFileType(media.file_path);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Voir ${media.name || media.title}`} />
-
+            <Head title={`Aperçu: ${media.title}`} />
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
+
                 {/* Header */}
-                <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-xl p-6 text-white shadow-lg">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <button
-                                onClick={() => router.visit('/media')}
-                                className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
-                                title="Retour à la galerie"
-                            >
-                                <ArrowLeft className="w-5 h-5" />
-                            </button>
+                <Card className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white border-0">
+                    <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
                             <div>
-                                <h1 className="text-3xl font-bold mb-2">
-                                    {media.title || media.name}
-                                </h1>
-                                <p className="text-emerald-100">
-                                    Détails du fichier multimédia
-                                </p>
+                                <CardTitle className="text-3xl font-bold mb-2 text-white">{media.title}</CardTitle>
+                                <p className="text-blue-100">Aperçu détaillé du média</p>
+                            </div>
+                            <div className="flex space-x-3">
+                                <Button variant="secondary" onClick={handleViewFull}>
+                                    <Eye className="w-4 h-4 mr-2" />
+                                    Voir en grand
+                                </Button>
+                                <Button variant="secondary" onClick={handleDownload}>
+                                    <Download className="w-4 h-4 mr-2" />
+                                    Télécharger
+                                </Button>
+                                <Button asChild variant="secondary">
+                                    <Link href="/media">
+                                        <ArrowLeft className="w-4 h-4 mr-2" />
+                                        Retour
+                                    </Link>
+                                </Button>
                             </div>
                         </div>
-                        <div className="flex space-x-3">
-                            <button
-                                onClick={() => router.visit(`/media/${media.id}/edit`)}
-                                className="bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors flex items-center space-x-2"
-                                title="Modifier"
-                            >
-                                <Edit3 className="w-4 h-4" />
-                                <span>Modifier</span>
-                            </button>
-                            <button
-                                onClick={handleDownload}
-                                className="bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors flex items-center space-x-2"
-                                title="Télécharger"
-                            >
-                                <Download className="w-4 h-4" />
-                                <span>Télécharger</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Main content - Media preview */}
+                    {/* Media Preview */}
                     <div className="lg:col-span-2">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center">
-                                <Eye className="w-6 h-6 mr-2 text-emerald-600" />
-                                Aperçu du fichier
-                            </h2>
-
-                            <div className="flex items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-lg p-8 min-h-[400px]">
-                                {media.type === 'image' && !imageError ? (
-                                    <img
-                                        src={media.url}
-                                        alt={media.alt_text || media.title || media.name}
-                                        className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                                        onError={(e) => {
-                                            console.error('Image failed to load:', media.url);
-                                            setImageError(true);
-                                        }}
-                                        onLoad={() => {
-                                            console.log('Image loaded successfully:', media.url);
-                                        }}
-                                    />
-                                ) : media.type === 'video' ? (
-                                    <video
-                                        controls
-                                        className="max-w-full max-h-full rounded-lg shadow-lg"
-                                        onError={(e) => {
-                                            console.error('Video failed to load:', media.url);
-                                        }}
-                                    >
-                                        <source src={media.url} type={media.mime_type} />
-                                        Votre navigateur ne supporte pas la lecture de vidéos.
-                                    </video>
-                                ) : (
-                                    <div className="text-center">
-                                        <div className="mb-4">
-                                            {getTypeIcon()}
-                                        </div>
-                                        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100 mb-2">
-                                            {media.name || media.title}
-                                        </h3>
-                                        <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                            {media.type === 'document' ? 'Document' : 'Fichier'} - {media.size || media.formatted_size}
-                                        </p>
-                                        <button
-                                            onClick={handleDownload}
-                                            className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors flex items-center space-x-2 mx-auto"
-                                        >
-                                            <Download className="w-4 h-4" />
-                                            <span>Télécharger pour voir</span>
-                                        </button>
-                                    </div>
-                                )}
-
-                                {/* Show error message if image failed to load */}
-                                {media.type === 'image' && imageError && (
-                                    <div className="text-center">
-                                        <div className="mb-4">
-                                            <ImageIcon className="w-16 h-16 text-gray-400 mx-auto" />
-                                        </div>
-                                        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100 mb-2">
-                                            Image non disponible
-                                        </h3>
-                                        <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                            {media.name || media.title}
-                                        </p>
-                                        <p className="text-sm text-red-600 mb-4">
-                                            URL: {media.url}
-                                        </p>
-                                        <button
-                                            onClick={handleDownload}
-                                            className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors flex items-center space-x-2 mx-auto"
-                                        >
-                                            <Download className="w-4 h-4" />
-                                            <span>Télécharger</span>
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Description */}
-                            {media.description && (
-                                <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100 mb-2">
-                                        Description
-                                    </h3>
-                                    <p className="text-gray-600 dark:text-gray-400">
-                                        {media.description}
-                                    </p>
+                        <Card>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="flex items-center">
+                                        <Image className="w-5 h-5 mr-2 text-blue-600" />
+                                        Aperçu du média
+                                    </CardTitle>
+                                    <Badge variant="secondary" className="flex items-center">
+                                        {fileType === 'image' && <Image className="w-3 h-3 mr-1" />}
+                                        {fileType === 'video' && <FileText className="w-3 h-3 mr-1" />}
+                                        {fileType === 'other' && <FileText className="w-3 h-3 mr-1" />}
+                                        {fileType.charAt(0).toUpperCase() + fileType.slice(1)}
+                                    </Badge>
                                 </div>
-                            )}
-                        </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center min-h-[400px]">
+                                    {fileType === 'image' ? (
+                                        <img
+                                            src={getImageUrl(media.file_path)}
+                                            alt={media.title}
+                                            className="max-w-full max-h-[500px] object-contain rounded-lg shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+                                            onClick={handleViewFull}
+                                        />
+                                    ) : fileType === 'video' ? (
+                                        <video
+                                            src={getImageUrl(media.file_path)}
+                                            controls
+                                            className="max-w-full max-h-[500px] rounded-lg shadow-lg"
+                                        />
+                                    ) : (
+                                        <div className="text-center p-8">
+                                            <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                                            <p className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+                                                Aperçu non disponible
+                                            </p>
+                                            <p className="text-sm text-gray-500 mb-4">
+                                                Ce type de fichier ne peut pas être prévisualisé
+                                            </p>
+                                            <Button onClick={handleDownload} variant="outline">
+                                                <Download className="w-4 h-4 mr-2" />
+                                                Télécharger le fichier
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
 
-                    {/* Sidebar - Information and actions */}
+                    {/* Media Information */}
                     <div className="space-y-6">
+                        {/* Actions */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Actions</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <Button onClick={handleEdit} className="w-full bg-blue-600 hover:bg-blue-700">
+                                    <Edit3 className="w-4 h-4 mr-2" />
+                                    Modifier
+                                </Button>
+                                <Button onClick={handleDelete} variant="destructive" className="w-full">
+                                    <Trash2 className="w-4 h-4 mr-2" />
+                                    Supprimer
+                                </Button>
+                                <Button onClick={handleDownload} variant="outline" className="w-full">
+                                    <Download className="w-4 h-4 mr-2" />
+                                    Télécharger
+                                </Button>
+                            </CardContent>
+                        </Card>
+
                         {/* File Information */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-                                <Info className="w-5 h-5 mr-2 text-emerald-600" />
-                                Informations
-                            </h3>
-
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">Type:</span>
-                                    <div className="flex items-center space-x-2">
-                                        {getTypeIcon()}
-                                        <span className="text-sm font-medium text-gray-800 dark:text-gray-100 capitalize">
-                                            {media.type}
-                                        </span>
-                                    </div>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Informations du fichier</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Nom original</label>
+                                    <p className="text-sm font-medium bg-gray-50 dark:bg-gray-800 p-2 rounded mt-1">
+                                        {media.original_name}
+                                    </p>
                                 </div>
-
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">Statut:</span>
-                                    <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(media.status)}`}>
-                                        {media.status === 'active' ? 'Actif' :
-                                         media.status === 'private' ? 'Privé' : 'Archivé'}
-                                    </span>
+                                <div>
+                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Slug</label>
+                                    <p className="text-sm font-medium bg-gray-50 dark:bg-gray-800 p-2 rounded mt-1">
+                                        {media.slug}
+                                    </p>
                                 </div>
-
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">Taille:</span>
-                                    <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                                        {media.size || media.formatted_size}
-                                    </span>
+                                <div>
+                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Chemin</label>
+                                    <p className="text-sm font-mono bg-gray-50 dark:bg-gray-800 p-2 rounded mt-1 break-all">
+                                        {media.file_path}
+                                    </p>
                                 </div>
+                            </CardContent>
+                        </Card>
 
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">Date d'ajout:</span>
-                                    <div className="flex items-center space-x-1">
-                                        <Calendar className="w-4 h-4 text-gray-500" />
-                                        <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                                            {media.date}
-                                        </span>
-                                    </div>
+                        {/* Details */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Détails</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Description</label>
+                                    <p className="text-sm bg-gray-50 dark:bg-gray-800 p-3 rounded mt-1 leading-relaxed">
+                                        {media.detail}
+                                    </p>
                                 </div>
-
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">Vues:</span>
-                                    <div className="flex items-center space-x-1">
-                                        <Users className="w-4 h-4 text-gray-500" />
-                                        <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                                            {media.views || 0}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {media.category && (
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">Catégorie:</span>
-                                        <div className="flex items-center space-x-1">
-                                            <Folder className="w-4 h-4 text-gray-500" />
-                                            <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                                                {media.category}
-                                            </span>
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div className="flex items-center">
+                                        <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                                        <div>
+                                            <p className="text-xs text-gray-500">Créé le</p>
+                                            <p className="text-sm font-medium">{formatDate(media.created_at)}</p>
                                         </div>
                                     </div>
-                                )}
-
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">Type MIME:</span>
-                                    <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                                        {media.mime_type}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Tags */}
-                        {media.tags && media.tags.length > 0 && (
-                            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-                                    <Tag className="w-5 h-5 mr-2 text-emerald-600" />
-                                    Tags
-                                </h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {media.tags.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full border border-emerald-200"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Technical Details */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-                                <HardDrive className="w-5 h-5 mr-2 text-emerald-600" />
-                                Détails techniques
-                            </h3>
-
-                            <div className="space-y-3 text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600 dark:text-gray-400">Nom du fichier:</span>
-                                    <span className="font-medium text-gray-800 dark:text-gray-100 break-all">
-                                        {media.name}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600 dark:text-gray-400">Chemin:</span>
-                                    <span className="font-medium text-gray-800 dark:text-gray-100 break-all text-xs">
-                                        {media.filepath}
-                                    </span>
-                                </div>
-                                {media.alt_text && (
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600 dark:text-gray-400">Texte alternatif:</span>
-                                        <span className="font-medium text-gray-800 dark:text-gray-100">
-                                            {media.alt_text}
-                                        </span>
+                                    <div className="flex items-center">
+                                        <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                                        <div>
+                                            <p className="text-xs text-gray-500">Modifié le</p>
+                                            <p className="text-sm font-medium">{formatDate(media.updated_at)}</p>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
-                                Actions
-                            </h3>
-
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => router.visit(`/media/${media.id}/edit`)}
-                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-                                >
-                                    <Edit3 className="w-4 h-4" />
-                                    <span>Modifier</span>
-                                </button>
-
-                                <button
-                                    onClick={handleDownload}
-                                    className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
-                                >
-                                    <Download className="w-4 h-4" />
-                                    <span>Télécharger</span>
-                                </button>
-
-                                <button
-                                    onClick={() => router.visit('/media')}
-                                    className="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center space-x-2"
-                                >
-                                    <ArrowLeft className="w-4 h-4" />
-                                    <span>Retour à la galerie</span>
-                                </button>
-
-                                <button
-                                    onClick={handleDelete}
-                                    className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                    <span>Supprimer</span>
-                                </button>
-                            </div>
-                        </div>
+                                    <div className="flex items-center">
+                                        <User className="w-4 h-4 mr-2 text-gray-400" />
+                                        <div>
+                                            <p className="text-xs text-gray-500">ID utilisateur</p>
+                                            <p className="text-sm font-medium">{media.user_id}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>

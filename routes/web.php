@@ -18,22 +18,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('dashboard');
 
-    Route::get('articles', function () {
-        return Inertia::render('dashboard_admin/articles');
-    })->name('articles');
+    Route::resource('articles', ArticleController::class);
 
     Route::get('events', function () {
         return Inertia::render('dashboard_admin/events');
     })->name('events');
 
-    Route::get('media', function () {
-        return Inertia::render('dashboard_admin/galerie/media_index');
-    })->name('media');
 
-    // Route::resource('media', MediaController::class);
-    // Route::get('media/upload', [MediaController::class, 'upload'])->name('media.upload');
-    // Route::post('media/bulk-store', [MediaController::class, 'bulkStore'])->name('media.bulkStore');
-    // Route::get('media/{media}/download', [MediaController::class, 'download'])->name('media.download');
+    Route::resource('media', MediaController::class)->parameters(['media' => 'media']);
+    Route::get('/media/{media}/download', [MediaController::class, 'download'])->name('media.download');
 
     Route::get('formations', function () {
         return Inertia::render('dashboard_admin/formations');
