@@ -1,9 +1,12 @@
-import Navbar from '@/components/Navbar';
+import { ReactNode } from 'react';
 
-export default function LayoutEtudiant({ children }) {
+interface LayoutEtudiantProps {
+  children: ReactNode;
+}
+
+export default function LayoutEtudiant({ children }: LayoutEtudiantProps) {
   return (
     <div>
-      <Navbar />
       <main className="p-6">{children}</main>
     </div>
   );
