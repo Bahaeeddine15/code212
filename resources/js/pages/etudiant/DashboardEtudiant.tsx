@@ -44,7 +44,7 @@ export default function StudentDashboard() {
       value: "8",
       description: "Formations en cours",
       icon: BookOpen,
-      bgColor: "bg-gradient-to-r from-[#00abdc] to-[#0066cc]", // Vert électrique
+      bgColor: "bg-gradient-to-r from-[#726bb3] to-[#515dde]", // Vert électrique
       textColor: "text-white",
       iconColor: "text-white/80",
     },
@@ -53,7 +53,7 @@ export default function StudentDashboard() {
       value: "1",
       description: "Réservation en attente",
       icon: MapPin,
-      bgColor: "bg-gradient-to-r from-[#c5027f] to-[#ff005b]", // Jaune/Or
+      bgColor: "bg-gradient-to-r from-[#ff005b] to-[#c5027f]", // Jaune/Or
       textColor: "text-white",
       iconColor: "text-white/80",
     },
@@ -109,10 +109,10 @@ export default function StudentDashboard() {
 
             {/* Recent Activities */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-white border-y-transparent border-r-transparent border-l-4 border-l-[#ffc000]">
+              <Card className="bg-white border-y-transparent border-r-transparent border-l-4 border-l-[#3a2b6c]">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <FileText className="h-5 w-5 text-[#ffc000]" />
+                    <FileText className="h-5 w-5 text-[#3a2b6c]" />
                     <span className="text-black">Certificats Récents</span>
                   </CardTitle>
                   <CardDescription>Vos derniers certificats obtenus</CardDescription>
@@ -130,7 +130,7 @@ export default function StudentDashboard() {
                       </div>
                       <Badge
                         variant={cert.status === "Complété" ? "default" : "secondary"}
-                        className={cert.status === "Complété" ? "bg-[#ffc000] hover:bg-[#c5027f]/90" : ""}
+                        className={cert.status === "Complété" ? "bg-[#3a2b6c] hover:bg-[#ffc000]/90 text-white" : "bg-transparent text-[#3a2b6c] border border-[#3a2b6c]"}
                       >
                         {cert.status}
                       </Badge>
@@ -138,17 +138,17 @@ export default function StudentDashboard() {
                   ))}
                   <Button
                     variant="outline"
-                    className="w-full mt-4 border-[#ffc000] text-[#ffc000] hover:bg-[#ffc000] hover:text-white bg-transparent"
+                    className="w-full mt-4 border-[#3a2b6c] text-[#3a2b6c] hover:bg-[#3a2b6c] hover:text-white bg-transparent"
                   >
                     Voir plus →
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-[#ffc000] border-y-transparent border-r-transparent bg-white">
+              <Card className="border-l-4 border-l-[#3a2b6c] border-y-transparent border-r-transparent bg-white">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <Calendar className="h-5 w-5 text-[#ffc000]" />
+                    <Calendar className="h-5 w-5 text-[#3a2b6c]" />
                     <span className="text-black">Prochaines Formations</span>
                   </CardTitle>
                   <CardDescription>Vos formations à venir</CardDescription>
@@ -175,7 +175,7 @@ export default function StudentDashboard() {
                   ))}
                   <Button
                     variant="outline"
-                    className="w-full mt-4 border-[#ffc000] text-[#ffc000] hover:bg-[#ffc000] hover:text-white bg-transparent"
+                    className="w-full mt-4 border-[#3a2b6c] text-[#3a2b6c] hover:bg-[#3a2b6c] hover:text-white bg-transparent"
                   >
                     Voir plus →
                   </Button>
@@ -329,7 +329,7 @@ export default function StudentDashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto ml-72">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <header className="bg-white rounded-xl shadow-sm mx-6 mt-3 px-6 py-4">
           <div className="flex items-center space-x-2 text-sm text-[#300069]">
             <GraduationCap className="h-4 w-4" />
             <span>Dashboard</span>
