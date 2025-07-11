@@ -35,27 +35,27 @@ export default function StudentDashboard() {
       value: "12",
       description: "Certificats obtenus",
       icon: Award,
-      color: "bg-[#3a2b6c]", // Magenta
-      bgColor: "bg-[#3a2b6c]/10",
-      textColor: "text-[#3a2b6c]",
+      bgColor: "bg-gradient-to-r from-[#ffc000] to-[#ff8c00]", 
+      textColor: "text-white",
+      iconColor: "text-white/80",
     },
     {
       title: "Formations",
       value: "8",
       description: "Formations en cours",
       icon: BookOpen,
-      color: "bg-[#3a2b6c]", // Vert électrique
-      bgColor: "bg-[#3a2b6c]/10",
-      textColor: "text-[#3a2b6c]",
+      bgColor: "bg-gradient-to-r from-[#00abdc] to-[#0066cc]", // Vert électrique
+      textColor: "text-white",
+      iconColor: "text-white/80",
     },
     {
       title: "Réservations",
       value: "1",
       description: "Réservation en attente",
       icon: MapPin,
-      color: "bg-[#3a2b6c]", // Jaune/Or
-      bgColor: "bg-[#3a2b6c]/10",
-      textColor: "text-[#3a2b6c]",
+      bgColor: "bg-gradient-to-r from-[#c5027f] to-[#ff005b]", // Jaune/Or
+      textColor: "text-white",
+      iconColor: "text-white/80",
     },
   ]
 
@@ -65,7 +65,7 @@ export default function StudentDashboard() {
         return (
           <div className="space-y-6">
             {/* User Profile Header */}
-            <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg ">
+            <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg transition-all duration-300 hover:scale-105 ">
               <div className="flex items-center space-x-4">
                 <Avatar className="h-16 w-16 border-2 border-white">
                   <AvatarImage src="/placeholder.svg?height=64&width=64" />
@@ -89,15 +89,17 @@ export default function StudentDashboard() {
             {/* Stats Cards */}
             <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
               {stats.map((stat, index) => (
-                <Card key={index} className={`${stat.bgColor} border-transparent hover:shadow-lg transition-shadow`}>
+                <Card key={index} 
+                      className={`${stat.bgColor} border-0 hover:shadow-lg transition-all duration-300 hover:scale-105`}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <p className={`text-2xl font-bold ${stat.textColor}`}>{stat.value}</p>
-                        <p className="text-sm text-gray-600 mt-1">{stat.description}</p>
+                      <div className="flex-1">
+                        <p className={`text-2xl font-bold ${stat.textColor} mb-1`}>{stat.value}</p>
+                        <p className={`text-xs ${stat.iconColor} font-medium`}>{stat.description}</p>
                       </div>
-                      <div className={`${stat.color} p-3 rounded-lg`}>
-                        <stat.icon className="h-6 w-6 text-white" />
+                      <div className="ml-2">
+                        <stat.icon className="h-10 w-10 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -107,10 +109,10 @@ export default function StudentDashboard() {
 
             {/* Recent Activities */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-white border-y-transparent border-r-transparent border-l-4 border-l-[#2cd3a3]">
+              <Card className="bg-white border-y-transparent border-r-transparent border-l-4 border-l-[#ffc000]">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <FileText className="h-5 w-5 text-[#2cd3a3]" />
+                    <FileText className="h-5 w-5 text-[#ffc000]" />
                     <span className="text-black">Certificats Récents</span>
                   </CardTitle>
                   <CardDescription>Vos derniers certificats obtenus</CardDescription>
@@ -121,14 +123,14 @@ export default function StudentDashboard() {
                     { name: "React Development", date: "10 Nov 2024", status: "Complété" },
                     { name: "Node.js Fundamentals", date: "5 Nov 2024", status: "En cours" },
                   ].map((cert, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-[#f4f4f4] rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 bg-[#f4f4f4] rounded-lg hover:bg-[#e0e0e0] transition-all duration-300 hover:scale-105">
                       <div>
                         <p className="font-medium">{cert.name}</p>
                         <p className="text-sm text-gray-500">{cert.date}</p>
                       </div>
                       <Badge
                         variant={cert.status === "Complété" ? "default" : "secondary"}
-                        className={cert.status === "Complété" ? "bg-[#2cd3a3] hover:bg-[#c5027f]/90" : ""}
+                        className={cert.status === "Complété" ? "bg-[#ffc000] hover:bg-[#c5027f]/90" : ""}
                       >
                         {cert.status}
                       </Badge>
@@ -136,17 +138,17 @@ export default function StudentDashboard() {
                   ))}
                   <Button
                     variant="outline"
-                    className="w-full mt-4 border-[#2cd3a3] text-[#2cd3a3] hover:bg-[#2cd3a3] hover:text-white bg-transparent"
+                    className="w-full mt-4 border-[#ffc000] text-[#ffc000] hover:bg-[#ffc000] hover:text-white bg-transparent"
                   >
                     Voir plus →
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-[#2cd3a3] border-y-transparent border-r-transparent bg-white">
+              <Card className="border-l-4 border-l-[#ffc000] border-y-transparent border-r-transparent bg-white">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <Calendar className="h-5 w-5 text-[#2cd3a3]" />
+                    <Calendar className="h-5 w-5 text-[#ffc000]" />
                     <span className="text-black">Prochaines Formations</span>
                   </CardTitle>
                   <CardDescription>Vos formations à venir</CardDescription>
@@ -157,7 +159,7 @@ export default function StudentDashboard() {
                     { name: "Machine Learning Basics", date: "25 Nov 2024", participants: "32" },
                     { name: "Web Development", date: "30 Nov 2024", participants: "28" },
                   ].map((formation, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-[#f4f4f4] rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 bg-[#f4f4f4] rounded-lg hover:bg-[#e0e0e0] transition-all duration-300 hover:scale-105">
                       <div>
                         <p className="font-medium">{formation.name}</p>
                         <p className="text-sm text-gray-500 flex items-center space-x-1">
@@ -173,7 +175,7 @@ export default function StudentDashboard() {
                   ))}
                   <Button
                     variant="outline"
-                    className="w-full mt-4 border-[#2cd3a3] text-[#2cd3a3] hover:bg-[#2cd3a3] hover:text-white bg-transparent"
+                    className="w-full mt-4 border-[#ffc000] text-[#ffc000] hover:bg-[#ffc000] hover:text-white bg-transparent"
                   >
                     Voir plus →
                   </Button>
@@ -270,7 +272,7 @@ export default function StudentDashboard() {
             </div>
             <div>
               <h2 className="font-bold text-lg">Student Portal</h2>
-              <p className="text-[#2cd3a3] text-sm">Dashboard</p>
+              <p className="text-[#ffc000] text-sm">Dashboard</p>
             </div>
           </div>
         </div>
@@ -285,7 +287,7 @@ export default function StudentDashboard() {
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   activeSection === item.id
                     ? "bg-[#f4f4f4] text-[#525252] shadow-lg"
-                    : "text-gray-300 hover:bg-[#ae3181] hover:text-white"
+                    : "text-gray-300 hover:bg-[#ae3181] hover:text-white transition-all duration-300 hover:scale-105"
                 }`}
               >
                 <item.icon className="h-5 w-5" />
@@ -309,13 +311,13 @@ export default function StudentDashboard() {
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="font-medium text-white truncate">{user.name}</p>
-              <p className="text-[#2cd3a3] text-sm truncate">Étudiant</p>
+              <p className="text-[#ffc000] text-sm truncate">Étudiant</p>
             </div>
           </div>
           <Button
             variant="destructive"
             size="sm"
-            className="w-full bg-[#452ff5] hover:bg-[#c5027f]/90"
+            className="w-full bg-[#c5027f] hover:bg-red-600 text-white"
             onClick={() => console.log("Logout")}
           >
             <LogOut className="h-4 w-4 mr-2" />
