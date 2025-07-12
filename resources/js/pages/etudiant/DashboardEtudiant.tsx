@@ -130,7 +130,7 @@ export default function StudentDashboard() {
                       </div>
                       <Badge
                         variant={cert.status === "Complété" ? "default" : "secondary"}
-                        className={cert.status === "Complété" ? "bg-[#3a2b6c] hover:bg-[#ffc000]/90 text-white" : "bg-transparent text-[#3a2b6c] border border-[#3a2b6c]"}
+                        className={cert.status === "Complété" ? "bg-[#3a2b6c] text-white" : "bg-transparent text-[#3a2b6c] border border-[#3a2b6c]"}
                       >
                         {cert.status}
                       </Badge>
