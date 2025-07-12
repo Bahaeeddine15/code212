@@ -53,27 +53,45 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
       value: "12",
       description: "Certificats obtenus",
       icon: Award,
+<<<<<<< HEAD
       color: "bg-[#3a2b6c]",
       bgColor: "bg-[#3a2b6c]/10",
       textColor: "text-[#3a2b6c]",
+=======
+      bgColor: "bg-gradient-to-r from-[#ffc000] to-[#ff8c00]", 
+      textColor: "text-white",
+      iconColor: "text-white/80",
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     },
     {
       title: "Formations",
       value: formations.length.toString(),
       description: "Formations disponibles",
       icon: BookOpen,
+<<<<<<< HEAD
       color: "bg-[#3a2b6c]",
       bgColor: "bg-[#3a2b6c]/10",
       textColor: "text-[#3a2b6c]",
+=======
+      bgColor: "bg-gradient-to-r from-[#726bb3] to-[#515dde]", // Vert électrique
+      textColor: "text-white",
+      iconColor: "text-white/80",
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     },
     {
       title: "Réservations",
       value: "1",
       description: "Réservation en attente",
       icon: MapPin,
+<<<<<<< HEAD
       color: "bg-[#3a2b6c]",
       bgColor: "bg-[#3a2b6c]/10",
       textColor: "text-[#3a2b6c]",
+=======
+      bgColor: "bg-gradient-to-r from-[#ff005b] to-[#c5027f]", // Jaune/Or
+      textColor: "text-white",
+      iconColor: "text-white/80",
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     },
   ]
 
@@ -83,7 +101,11 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
         return (
           <div className="space-y-6">
             {/* User Profile Header */}
+<<<<<<< HEAD
             <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg">
+=======
+            <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg transition-all duration-300 hover:scale-105 ">
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
               <div className="flex items-center space-x-4">
                 <Avatar className="h-16 w-16 border-2 border-white">
                   <AvatarImage src="/placeholder.svg?height=64&width=64" />
@@ -107,15 +129,23 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {stats.map((stat, index) => (
-                <Card key={index} className={`${stat.bgColor} border-transparent hover:shadow-lg transition-shadow`}>
+                <Card key={index} 
+                      className={`${stat.bgColor} border-0 hover:shadow-lg transition-all duration-300 hover:scale-105`}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
+<<<<<<< HEAD
                       <div>
                         <p className={`text-2xl font-bold ${stat.textColor}`}>{stat.value}</p>
                         <p className="text-sm text-gray-600">{stat.description}</p>
+=======
+                      <div className="flex-1">
+                        <p className={`text-2xl font-bold ${stat.textColor} mb-1`}>{stat.value}</p>
+                        <p className={`text-xs ${stat.iconColor} font-medium`}>{stat.description}</p>
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
                       </div>
-                      <div className={`${stat.color} p-3 rounded-lg`}>
-                        <stat.icon className="h-6 w-6 text-white" />
+                      <div className="ml-2">
+                        <stat.icon className="h-10 w-10 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -125,6 +155,7 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
           </div>
         )
 
+<<<<<<< HEAD
       case "formations":
         return (
           <div className="space-y-6">
@@ -137,6 +168,83 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
                 <Dashboard formations={formations} embedded={true} />
               </CardContent>
             </Card>
+=======
+            {/* Recent Activities */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="bg-white border-y-transparent border-r-transparent border-l-4 border-l-[#3a2b6c]">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <FileText className="h-5 w-5 text-[#3a2b6c]" />
+                    <span className="text-black">Certificats Récents</span>
+                  </CardTitle>
+                  <CardDescription>Vos derniers certificats obtenus</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 text-[#081f44]">
+                  {[
+                    { name: "JavaScript Avancé", date: "15 Nov 2024", status: "Complété" },
+                    { name: "React Development", date: "10 Nov 2024", status: "Complété" },
+                    { name: "Node.js Fundamentals", date: "5 Nov 2024", status: "En cours" },
+                  ].map((cert, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-[#f4f4f4] rounded-lg hover:bg-[#e0e0e0] transition-all duration-300 hover:scale-105">
+                      <div>
+                        <p className="font-medium">{cert.name}</p>
+                        <p className="text-sm text-gray-500">{cert.date}</p>
+                      </div>
+                      <Badge
+                        variant={cert.status === "Complété" ? "default" : "secondary"}
+                        className={cert.status === "Complété" ? "bg-[#3a2b6c] hover:bg-[#ffc000]/90 text-white" : "bg-transparent text-[#3a2b6c] border border-[#3a2b6c]"}
+                      >
+                        {cert.status}
+                      </Badge>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    className="w-full mt-4 border-[#3a2b6c] text-[#3a2b6c] hover:bg-[#3a2b6c] hover:text-white bg-transparent"
+                  >
+                    Voir plus →
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-[#3a2b6c] border-y-transparent border-r-transparent bg-white">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Calendar className="h-5 w-5 text-[#3a2b6c]" />
+                    <span className="text-black">Prochaines Formations</span>
+                  </CardTitle>
+                  <CardDescription>Vos formations à venir</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 text-[#081f44]">
+                  {[
+                    { name: "Python pour Data Science", date: "20 Nov 2024", participants: "45" },
+                    { name: "Machine Learning Basics", date: "25 Nov 2024", participants: "32" },
+                    { name: "Web Development", date: "30 Nov 2024", participants: "28" },
+                  ].map((formation, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-[#f4f4f4] rounded-lg hover:bg-[#e0e0e0] transition-all duration-300 hover:scale-105">
+                      <div>
+                        <p className="font-medium">{formation.name}</p>
+                        <p className="text-sm text-gray-500 flex items-center space-x-1">
+                          <Clock className="h-4 w-4" />
+                          <span>{formation.date}</span>
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-1 text-sm text-gray-500">
+                        <Users className="h-4 w-4" />
+                        <span>{formation.participants}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    className="w-full mt-4 border-[#3a2b6c] text-[#3a2b6c] hover:bg-[#3a2b6c] hover:text-white bg-transparent"
+                  >
+                    Voir plus →
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
           </div>
         )
 
@@ -211,6 +319,7 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
                 <p className="text-sm text-purple-200">Dashboard</p>
               </div>
             </div>
+<<<<<<< HEAD
 
             <nav className="space-y-2">
               {navigationItems.map((item) => (
@@ -243,6 +352,11 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
                 <p className="font-medium">{user.name}</p>
                 <p className="text-sm text-purple-200">Étudiant</p>
               </div>
+=======
+            <div>
+              <h2 className="font-bold text-lg">Student Portal</h2>
+              <p className="text-[#ffc000] text-sm">Dashboard</p>
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
             </div>
             <Button
               variant="ghost"
@@ -255,11 +369,76 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* Main content */}
         <div className="flex-1 p-8">
           {renderDashboardContent()}
         </div>
       </div>
+=======
+        {/* Navigation */}
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <div className="space-y-2">
+            {navigationItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                  activeSection === item.id
+                    ? "bg-[#f4f4f4] text-[#525252] shadow-lg"
+                    : "text-gray-300 hover:bg-[#ae3181] hover:text-white transition-all duration-300 hover:scale-105"
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* User Info */}
+        <div className="p-4 border-t border-[#452ff5]/20 mt-auto sticky bottom-0 rounded-b-2xl">
+          <div className="flex items-center space-x-3 mb-4">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src="/placeholder.svg?height=40&width=40" />
+              <AvatarFallback className="bg-[#f4f4f4] text-[#3a2b6c] font-bold">
+                {user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-white truncate">{user.name}</p>
+              <p className="text-[#ffc000] text-sm truncate">Étudiant</p>
+            </div>
+          </div>
+          <Button
+            variant="destructive"
+            size="sm"
+            className="w-full bg-[#c5027f] hover:bg-red-600 text-white"
+            onClick={() => console.log("Logout")}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Quitter
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto ml-72">
+        {/* Header */}
+        <header className="bg-white rounded-xl shadow-sm mx-6 mt-3 px-6 py-4">
+          <div className="flex items-center space-x-2 text-sm text-[#300069]">
+            <GraduationCap className="h-4 w-4" />
+            <span>Dashboard</span>
+          </div>
+        </header>
+
+        {/* Content */}
+        <div className="p-6">{renderDashboardContent()}</div>
+      </main>
+>>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     </div>
   )
 }
