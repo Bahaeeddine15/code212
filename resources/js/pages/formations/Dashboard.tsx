@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import LayoutEtudiant from '@/layouts/layoutEtudiant';
-import FormationCard from '@/components/formation';
+import FormationCard from '@/components/common/formation';
 
 interface Formation {
   id: number;

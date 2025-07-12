@@ -1,8 +1,8 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\formation;
-use Database\Factories\formationFactory;
+
+use App\Models\Formation; // Majuscule pour Formation
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

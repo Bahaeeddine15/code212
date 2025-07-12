@@ -1,7 +1,7 @@
 import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type ReactNode } from 'react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navigation/Navbar';
 
 interface AppLayoutProps {
     children: ReactNode;

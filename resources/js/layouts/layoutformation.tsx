@@ -1,5 +1,5 @@
-import Navbar from '../components/Navbar';
-import FormationCard from '../components/formation';
+import Navbar from '@/components/navigation/Navbar';
+import FormationCard from '@/components/common/formation';
 import { ReactNode } from 'react';
 
 interface Formation {

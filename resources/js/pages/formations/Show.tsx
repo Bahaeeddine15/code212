@@ -1,5 +1,5 @@
-import { Head } from '@inertiajs/react';
-import Navbar from '@/components/Navbar';
+import { Head, Link } from '@inertiajs/react';
+import Navbar from '@/components/navigation/Navbar';
 
 interface Formation {
     id: number;
@@ -28,6 +28,16 @@ export default function Show({ formation }: ShowProps) {
             
             <div className="min-h-screen bg-gray-50 py-8">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Bouton retour */}
+                    <div className="mb-6">
+                        <Link 
+                            href="/etudiant/dashboard"
+                            className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                        >
+                            ← Retour au Dashboard
+                        </Link>
+                    </div>
+                    
                     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                         {/* Image de la formation */}
                         <div className="w-full h-64 md:h-80">

@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class formation extends Model
+class Formation extends Model // Majuscule pour Formation
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'titre',
-        'description', 
-        'niveau',
+        'description',
         'category',
+        'niveau',
         'photo'
     ];
 }

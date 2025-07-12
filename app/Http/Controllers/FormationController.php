@@ -13,9 +13,9 @@ class FormationController extends Controller
      */
     public function index()
     {
-        $formations = Formation::orderBy('created_at', 'desc')->get();
+        $formations = Formation::all();
         
-        return Inertia::render('formations/Index', [
+        return Inertia::render('formations/Dashboard', [
             'formations' => $formations
         ]);
     }
@@ -50,10 +50,8 @@ class FormationController extends Controller
     /**
      * Display the specified formation.
      */
-    public function show($id)
+    public function show(Formation $formation)
     {
-        $formation = Formation::findOrFail($id);
-        
         return Inertia::render('formations/Show', [
             'formation' => $formation
         ]);
