@@ -4,8 +4,10 @@ import { NavUser } from '@/components/navigation/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { Folder, LayoutGrid, BookOpen, Award, CalendarSync} from 'lucide-react';
 import AppLogo from './app-logo';
+
+
 
 const mainNavItems: NavItem[] = [
     {
@@ -13,7 +15,26 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
+    {
+        title: 'Formations',
+        href: '/formations',
+        icon: BookOpen,
+    },
+    {
+        title: 'Certificats',
+        href: '/certificats',
+        icon: Award,
+    },
+    {
+        title: 'Reservations',
+        href: '/reservations',
+        icon: CalendarSync,
+    }
+
+
+
 ];
+
 
 const footerNavItems: NavItem[] = [
     {
