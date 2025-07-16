@@ -26,7 +26,10 @@ export default function ModuleEdit({ module, formationId }: Props) {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const handleChange = (field: string, value: string) => {
-        setForm(prev => ({ ...prev, [field]: value }));
+        setForm(prev => ({
+            ...prev,
+            [field]: field === 'order' ? Number(value) : String(value)
+        }));
         setErrors(prev => ({ ...prev, [field]: '' }));
     };
 
@@ -74,7 +77,7 @@ export default function ModuleEdit({ module, formationId }: Props) {
                     <div>
                         <label className="block mb-1 font-medium">Durée</label>
                         <input
-                            type="text"
+                            type="number"
                             value={form.duration}
                             onChange={e => handleChange('duration', e.target.value)}
                             className="w-full border rounded px-3 py-2"
