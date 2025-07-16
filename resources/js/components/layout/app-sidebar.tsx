@@ -37,21 +37,12 @@ const mainNavItems: NavItem[] = [
 
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
+   
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="inset" className="dark:bg-[#0A1F44]">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -64,13 +55,15 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent  className="bg-[#3a2b6c] pt-2 text-white rounded-2xl shadow-2xl">
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
+            <SidebarFooter className="bg-[#3a2b6c] mt-3 rounded-2xl shadow-2xl">
+               
+                    <NavUser />
+               
+                
             </SidebarFooter>
         </Sidebar>
     );
