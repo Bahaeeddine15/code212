@@ -53,45 +53,27 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
       value: "12",
       description: "Certificats obtenus",
       icon: Award,
-<<<<<<< HEAD
-      color: "bg-[#3a2b6c]",
-      bgColor: "bg-[#3a2b6c]/10",
-      textColor: "text-[#3a2b6c]",
-=======
       bgColor: "bg-gradient-to-r from-[#ffc000] to-[#ff8c00]", 
       textColor: "text-white",
       iconColor: "text-white/80",
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     },
     {
       title: "Formations",
       value: formations.length.toString(),
       description: "Formations disponibles",
       icon: BookOpen,
-<<<<<<< HEAD
-      color: "bg-[#3a2b6c]",
-      bgColor: "bg-[#3a2b6c]/10",
-      textColor: "text-[#3a2b6c]",
-=======
       bgColor: "bg-gradient-to-r from-[#726bb3] to-[#515dde]", // Vert électrique
       textColor: "text-white",
       iconColor: "text-white/80",
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     },
     {
       title: "Réservations",
       value: "1",
       description: "Réservation en attente",
       icon: MapPin,
-<<<<<<< HEAD
-      color: "bg-[#3a2b6c]",
-      bgColor: "bg-[#3a2b6c]/10",
-      textColor: "text-[#3a2b6c]",
-=======
       bgColor: "bg-gradient-to-r from-[#ff005b] to-[#c5027f]", // Jaune/Or
       textColor: "text-white",
       iconColor: "text-white/80",
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     },
   ]
 
@@ -101,11 +83,7 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
         return (
           <div className="space-y-6">
             {/* User Profile Header */}
-<<<<<<< HEAD
-            <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg">
-=======
             <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg transition-all duration-300 hover:scale-105 ">
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
               <div className="flex items-center space-x-4">
                 <Avatar className="h-16 w-16 border-2 border-white">
                   <AvatarImage src="/placeholder.svg?height=64&width=64" />
@@ -134,15 +112,9 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
-<<<<<<< HEAD
-                      <div>
-                        <p className={`text-2xl font-bold ${stat.textColor}`}>{stat.value}</p>
-                        <p className="text-sm text-gray-600">{stat.description}</p>
-=======
                       <div className="flex-1">
                         <p className={`text-2xl font-bold ${stat.textColor} mb-1`}>{stat.value}</p>
                         <p className={`text-xs ${stat.iconColor} font-medium`}>{stat.description}</p>
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
                       </div>
                       <div className="ml-2">
                         <stat.icon className="h-10 w-10 text-white" />
@@ -155,20 +127,6 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
           </div>
         )
 
-<<<<<<< HEAD
-      case "formations":
-        return (
-          <div className="space-y-6">
-            <Card className="border-l-4 border-l-[#3a2b6c] bg-white">
-              <CardHeader>
-                <CardTitle className="text-[#081f44]">Mes Formations</CardTitle>
-                <CardDescription>Suivez vos formations en cours et à venir</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Dashboard formations={formations} embedded={true} />
-              </CardContent>
-            </Card>
-=======
             {/* Recent Activities */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="bg-white border-y-transparent border-r-transparent border-l-4 border-l-[#3a2b6c]">
@@ -244,9 +202,7 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
                 </CardContent>
               </Card>
             </div>
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
-          </div>
-        )
+          
 
       case "profile":
         return (
@@ -319,44 +275,9 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
                 <p className="text-sm text-purple-200">Dashboard</p>
               </div>
             </div>
-<<<<<<< HEAD
-
-            <nav className="space-y-2">
-              {navigationItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                    activeSection === item.id
-                      ? "bg-white/20 text-white"
-                      : "text-purple-200 hover:bg-white/10 hover:text-white"
-                  }`}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          {/* User profile at bottom */}
-          <div className="absolute bottom-0 w-64 p-6 border-t border-purple-600">
-            <div className="flex items-center space-x-3 mb-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src="/placeholder.svg?height=40&width=40" />
-                <AvatarFallback className="bg-purple-600 text-white">
-                  {user.name.split(" ").map(n => n[0]).join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{user.name}</p>
-                <p className="text-sm text-purple-200">Étudiant</p>
-              </div>
-=======
             <div>
               <h2 className="font-bold text-lg">Student Portal</h2>
               <p className="text-[#ffc000] text-sm">Dashboard</p>
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
             </div>
             <Button
               variant="ghost"
@@ -369,13 +290,6 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
           </div>
         </div>
 
-<<<<<<< HEAD
-        {/* Main content */}
-        <div className="flex-1 p-8">
-          {renderDashboardContent()}
-        </div>
-      </div>
-=======
         {/* Navigation */}
         <nav className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-2">
@@ -423,7 +337,7 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
             Quitter
           </Button>
         </div>
-      </aside>
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto ml-72">
@@ -438,7 +352,6 @@ export default function StudentDashboard({ formations = [] }: StudentDashboardPr
         {/* Content */}
         <div className="p-6">{renderDashboardContent()}</div>
       </main>
->>>>>>> 38206dff4862c5b854b56b8492e476eb2cb2cc36
     </div>
   )
 }
