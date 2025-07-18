@@ -11,6 +11,8 @@ use App\Http\Controllers\ModuleController;
 use App\Models\Module;
 use App\Models\Formation;
 use Illuminate\Http\Request;
+use App\Http\Controllers\EventController;
+use App\Models\Event;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -25,9 +27,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('articles', ArticleController::class);
 
+    // List events
     Route::get('events', function () {
-        return Inertia::render('dashboard_admin/events');
-    })->name('events');
+        $events = \App\Models\Event::orderBy('start_date', 'desc')->get();
+        return Inertia::render('dashboard_admin/events', [
+            'events' => $events,
+        ]);
+    })->name('events.index');
+
+    // Create event page
+    Route::get('events/create', function () {
+        return Inertia::render('dashboard_admin/event_create');
+    })->name('events.create');
+
+    // Store event
+    Route::post('events', [EventController::class, 'store'])->name('events.store');
+
+    // Edit event page
+    
+    Route::get('dashboard_admin/event_edit/{id}', function ($id) {
+        $event = Event::findOrFail($id);
+        return Inertia::render('dashboard_admin/event_edit', [
+            'event' => $event,
+        ]);
+    })->name('event.edit');
+
+    // Update event
+
+    Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
+
+    Route::patch('/events/{event}/status', [EventController::class, 'updateStatus']);
+
+
+    // Delete event
+    Route::delete('events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 
     Route::resource('media', MediaController::class)->parameters(['media' => 'media']);
     Route::get('/media/{media}/download', [MediaController::class, 'download'])->name('media.download');
