@@ -334,36 +334,38 @@ const mockData = {
             onClick={() => console.log("Logout")}
 =======
   evenements: [
-  {
-    id: 1,
-    titre: "Hackathon Étudiant",
-    dateDebut: "2025-07-20",
-    lieu: "Campus Casablanca",
-    description: "Un défi en équipe pour créer une application innovante en 24h.",
-  },
-  {
-    id: 2,
-    titre: "Webinar Photoshop",
-    dateDebut: "2025-07-22",
-    lieu: "En ligne",
-    description: "Atelier interactif pour apprendre les bases du design graphique.",
-  },
-  {
-    id: 3,
-    titre: "Atelier Robotique",
-    dateDebut: "2025-07-25",
-    lieu: "Bibliothèque Cadi Ayyad",
-    description: "Construisez et programmez votre propre robot avec Arduino.",
-  },
-  {
-    id: 4,
-    titre: "Découverte de l'IA",
-    dateDebut: "2025-08-01",
-    lieu: "Bibliothèque Cadi Ayyad",
-    description: "Initiez-vous aux bases de l’intelligence artificielle et ses applications.",
-  },
-],
-
+    {
+      id: 1,
+      titre: "Hackathon Étudiant",
+      dateDebut: "2025-07-20",
+      lieu: "Campus Casablanca",
+      description:
+        "Un défi en équipe pour créer une application innovante en 24h.",
+    },
+    {
+      id: 2,
+      titre: "Webinar Photoshop",
+      dateDebut: "2025-07-22",
+      lieu: "En ligne",
+      description:
+        "Atelier interactif pour apprendre les bases du design graphique.",
+    },
+    {
+      id: 3,
+      titre: "Atelier Robotique",
+      dateDebut: "2025-07-25",
+      lieu: "Bibliothèque Cadi Ayyad",
+      description: "Construisez et programmez votre propre robot avec Arduino.",
+    },
+    {
+      id: 4,
+      titre: "Découverte de l'IA",
+      dateDebut: "2025-08-01",
+      lieu: "Bibliothèque Cadi Ayyad",
+      description:
+        "Initiez-vous aux bases de l’intelligence artificielle et ses applications.",
+    },
+  ],
 };
 
 export default function Dashboard() {
@@ -378,39 +380,71 @@ export default function Dashboard() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard Étudiant" />
 
-      <div className="flex flex-col gap-8 p-6 bg-white dark:bg-[#0A1F44] text-gray-900 dark:text-white font-raleway">
-        {/* 👤 User Profile Info */}
-        <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-100 dark:bg-[#121c3a] shadow-sm">
-          <img
-            src={mockUser.avatarUrl}
-            alt="Avatar"
-            className="w-14 h-14 rounded-full border-2 border-yellow-400 dark:border-[#ffc000]"
-          />
-          <div>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
-              Salut ,{" "}
-              <span className="text-blue-600 dark:text-[#61dafb]">
-                {mockUser.name}
-              </span>
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              École : {mockUser.ecole}
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              {mockUser.email}
-            </p>
+      <div className="flex flex-col gap-8 p-8 bg-white dark:bg-[#0A1F44] text-gray-900 dark:text-white font-raleway">
+        <div className="space-y-6">
+          {/* Header Profile Section */}
+          <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="flex items-center space-x-4">
+              <img
+                src={mockUser.avatarUrl}
+                alt={mockUser.name}
+                className="h-16 w-16 rounded-full border-2 border-white"
+              />
+              <div>
+                <h1 className="text-2xl font-bold">{mockUser.name}</h1>
+                <p className="text-white/90">{mockUser.ecole}</p>
+                <p className="text-white/70 text-sm">{mockUser.email}</p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* 🧠 Première ligne : infos essentielles */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Stat Cards */}
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+            <Card className="bg-gradient-to-r from-[#ffc000] to-[#ff8c00] border-0 text-white">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">12</p>
+                    <p className="text-sm text-white/80">Certificats obtenus</p>
+                  </div>
+                  <Medal className="h-10 w-10 text-white/80" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-r from-[#726bb3] to-[#515dde] border-0 text-white">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">8</p>
+                    <p className="text-sm text-white/80">Formations en cours</p>
+                  </div>
+                  <ScrollText className="h-10 w-10 text-white/80" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-r from-[#ff005b] to-[#c5027f] border-0 text-white">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">1</p>
+                    <p className="text-sm text-white/80">
+                      Réservation en attente
+                    </p>
+                  </div>
+                  <ClipboardCheck className="h-10 w-10 text-white/80" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Formations en cours */}
           <DashboardCard
             title="Cours en cours"
             icon={
               <ScrollText className="w-5 h-5 text-green-500 dark:text-[#00e87e]" />
             }
->>>>>>> edbb3d0b2f55106622f63a3843d7d94ab4b96e0d
           >
             {formations
               .filter((f) => f.enCours)
@@ -420,10 +454,11 @@ export default function Dashboard() {
                     <span>{f.nom}</span>
                     <Badge variant="outline">Niveau {f.niveau}</Badge>
                   </div>
-                  <Progress value={f.progression} className="h-2" />
+                  <Progress value={formation.progression} />
                 </div>
               ))}
-          </DashboardCard>
+            </CardContent>
+          </Card>
 
           {/* Certificats */}
           <DashboardCard
@@ -463,10 +498,6 @@ export default function Dashboard() {
             </Link>
           </DashboardCard>
         </div>
-<<<<<<< HEAD
-      </div>
-=======
->>>>>>> edbb3d0b2f55106622f63a3843d7d94ab4b96e0d
 
         {/* 📅 Événements à venir */}
         <section>
@@ -474,13 +505,6 @@ export default function Dashboard() {
     <CalendarDays className="w-5 h-5" /> Formations à la Bibliothèque Cadi Ayyad 📚
   </h2>
 
-<<<<<<< HEAD
-        {/* Content */}
-        <div className="p-6">{renderDashboardContent()}</div>
-      </main>
-    </div>
-  )
-=======
   <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
     {evenements
       .filter((e) =>
@@ -536,5 +560,4 @@ function DashboardCard({
       </CardContent>
     </Card>
   );
->>>>>>> edbb3d0b2f55106622f63a3843d7d94ab4b96e0d
 }

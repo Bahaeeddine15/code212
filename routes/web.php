@@ -11,13 +11,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('dashboard', function () {
         return Inertia::render('etudiant/DashboardEtudiant');
-    })->name('etudiant.dashboard');
+    })->name('dashboard');
 
 
 
     Route::get('formations', function () {
         return Inertia::render('etudiant/Formations');
-    })->name('etudiant.dashboard');
+    })->name('etudiant.formations');
 
     Route::get('certificats', function () {
         return Inertia::render('etudiant/Certificats');

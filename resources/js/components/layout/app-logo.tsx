@@ -1,14 +1,13 @@
-import AppLogoIcon from './app-logo-icon';
+import AppLogoIcon from "./app-logo-icon";
 
 export default function AppLogo() {
-    return (
-        <>
-            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-                <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
-            </div>
-            <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-tight font-semibold">Code212</span>
-            </div>
-        </>
-    );
+  return (
+    <div className="shrink-0 flex items-center justify-center ">
+      <img
+        alt="logo code212"
+        src="/code-212-with-bg.jpeg"
+        className="w-full h-15 rounded-2xl shadow-2xlobject-cover"
+      />
+    </div>
+  );
 }
