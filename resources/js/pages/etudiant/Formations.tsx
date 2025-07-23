@@ -1,79 +1,38 @@
 import { Head } from "@inertiajs/react";
+import AppLayout from "@/layouts/app-layout"; // Même layout que la page certificats
 import { useState } from "react";
-import AppLayout from "@/layouts/app-layout";
 import FormationCard from "@/components/common/formation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { type BreadcrumbItem } from "@/types";
+import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard Étudiant", href: "/dashboard" },
   { title: "Formations", href: "/formations" },
 ];
-const mockFormations = [
-  {
-    id: 1,
-    titre: "Fullstack Web avec Laravel & Vue",
-    description: "Créer des applications web modernes avec Laravel et Vue.js",
-    category: "Développement Web",
-    niveau: "Intermediaire",
-    photo: "https://humadev-international.com/wp-content/uploads/2021/01/humadev-cabinet-de-formation-au-maroc.jpg",
-  },
-  {
-    id: 2,
-    titre: "Cybersécurité pour les débutants",
-    description: "Comprendre les bases de la sécurité informatique",
-    category: "Cybersécurité",
-    niveau: "Débutant",
-    photo: "https://fimme.ma/wp-content/uploads/2023/02/Formation-e1706544507836.jpg",
-  },
-  {
-    id: 3,
-    titre: "Analyse de données avec Python",
-    description: "Utiliser Python et Pandas pour explorer les données",
-    category: "Data Science",
-    niveau: "Intermediaire",
-    photo: "https://fimme.ma/wp-content/uploads/2023/02/Formation-e1706544507836.jpg",
-  },
-  {
-    id: 4,
-    titre: "Introduction à l'Intelligence Artificielle",
-    description: "Découvrir les concepts fondamentaux de l'IA",
-    category: "Intelligence Artificielle",
-    niveau: "Débutant",
-    photo: "https://fimme.ma/wp-content/uploads/2023/02/Formation-e1706544507836.jpg",
-  },
-  {
-    id: 5,
-    titre: "Développement Mobile avec React Native",
-    description: "Créer des applications mobiles multiplateformes",
-    category: "Développement Mobile",
-    niveau: "Intermediaire",
-    photo: "https://fimme.ma/wp-content/uploads/2023/02/Formation-e1706544507836.jpg",
-  },
-  {
-    id: 6,
-    titre: "Architecture des Microservices",
-    description: "Concevoir des systèmes distribués avec des microservices",
-    category: "Architecture Logicielle",
-    niveau: "Avancé",
-    photo: "https://fimme.ma/wp-content/uploads/2023/02/Formation-e1706544507836.jpg",
-  },
-  {
-    id: 7,
-    titre: "Machine Learning avec TensorFlow",
-    description: "Construire des modèles de machine learning avancés",
-    category: "Machine Learning",
-    niveau: "Avancé",
-    photo: "https://fimme.ma/wp-content/uploads/2023/02/Formation-e1706544507836.jpg",
-  },
-];
 
-export default function Formations() {
-  const [search, setSearch] = useState("");
+interface Formation {
+  id: number;
+  titre: string;
+  description: string;
+  category: string;
+  niveau: string;
+  photo: string;
+}
 
-  const filteredFormations = mockFormations.filter((f) =>
+interface Props {
+  formations: Formation[];
+  search?: string;
+}
+
+export default function Formations({
+  formations,
+  search: initialSearch = "",
+}: Props) {
+  const [search, setSearch] = useState(initialSearch);
+
+  const filteredFormations = formations.filter((f) =>
     `${f.titre} ${f.description} ${f.category}`
       .toLowerCase()
       .includes(search.toLowerCase())
@@ -86,11 +45,10 @@ export default function Formations() {
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Formations Code212 - Université Cadi Ayyad
+            Formations Disponibles
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Découvrez les formations spécialement conçues pour les étudiants des
-            établissements de l’Université Cadi Ayyad au sein du lab Code212.
+            Découvrez nos formations et développez vos compétences
           </p>
         </div>
 
@@ -111,6 +69,7 @@ export default function Formations() {
           {filteredFormations.length > 0 ? (
             filteredFormations.map((formation) => (
               <FormationCard
+                key={formation.id}
                 id={formation.id}
                 titre={formation.titre}
                 description={formation.description}
