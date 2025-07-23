@@ -7,17 +7,45 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
+interface Stats {
+  total_formations: number;
+  total_reservations: number;
+  reservations_en_attente: number;
+  reservations_approuvees: number;
+}
+
+interface Formation {
+  id: number;
+  titre: string;
+  description: string;
+  category: string;
+  niveau: string;
+  photo: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  ecole?: string;
+  telephone?: string;
+  ville?: string;
+  student_id?: string;
+  departement?: string;
+  bio?: string;
+  avatar_url?: string;
+  created_at: string;
+}
+
+interface Props {
+  stats: Stats;
+  formations: Formation[];
+  user: User;
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard Étudiant", href: "/dashboard" },
 ];
-
-const mockUser = {
-  name: "David Ben",
-  email: "test@example.com",
-  ecole: "ENSA Marrakech",
-  avatarUrl:
-    "https://ui-avatars.com/api/?name=David+B&background=0D8ABC&color=fff",
-};
 
 const mockData = {
   formations: [
@@ -83,11 +111,18 @@ const mockData = {
   ],
 };
 
-export default function Dashboard() {
-  const {
-    formations,
-    certificats,
+export default function Dashboard({ stats, formations, user }: Props) {
+  // Générer l'URL de l'avatar avec les initiales de l'utilisateur
+  const getAvatarUrl = (user: User) => {
+    if (user.avatar_url) {
+      return user.avatar_url;
+    }
+    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0D8ABC&color=fff&size=64&bold=true`;
+  };
 
+  const {
+    certificats,
     evenements,
   } = mockData;
 
@@ -101,14 +136,17 @@ export default function Dashboard() {
           <div className="bg-gradient-to-r from-[#b13283] via-[#9f2d76] to-[#8e2869] rounded-xl p-5 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
             <div className="flex items-center space-x-4">
               <img
-                src={mockUser.avatarUrl}
-                alt={mockUser.name}
+                src={getAvatarUrl(user)}
+                alt={user.name}
                 className="h-16 w-16 rounded-full border-2 border-white"
               />
               <div>
-                <h1 className="text-2xl font-bold">{mockUser.name}</h1>
-                <p className="text-white/90">{mockUser.ecole}</p>
-                <p className="text-white/70 text-sm">{mockUser.email}</p>
+                <h1 className="text-2xl font-bold">{user.name}</h1>
+                <p className="text-white/90">{user.ecole || 'École non renseignée'}</p>
+                <p className="text-white/70 text-sm">{user.email}</p>
+                {user.student_id && (
+                  <p className="text-white/70 text-xs">ID: {user.student_id}</p>
+                )}
               </div>
             </div>
           </div>
@@ -131,8 +169,8 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-bold">8</p>
-                    <p className="text-sm text-white/80">Formations en cours</p>
+                    <p className="text-2xl font-bold">{stats.total_formations}</p>
+                    <p className="text-sm text-white/80">Formations disponibles</p>
                   </div>
                   <ScrollText className="h-10 w-10 text-white/80" />
                 </div>
@@ -143,7 +181,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-bold">1</p>
+                    <p className="text-2xl font-bold">{stats.reservations_en_attente}</p>
                     <p className="text-sm text-white/80">
                       Réservation en attente
                     </p>
@@ -162,14 +200,14 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {formations.map((formation) => (
+              {formations.length > 0 ? formations.slice(0, 5).map((formation) => (
                 <div
                   key={formation.id}
                   className="p-4 bg-[#f4f4f4] dark:bg-[#1e1e1e] rounded-lg hover:bg-[#e0e0e0] dark:hover:bg-[#2a2a2a] transition-all duration-300 hover:scale-105"
                 >
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="font-medium text-[#081f44] dark:text-white">
-                      {formation.nom}
+                      {formation.titre}
                     </h3>
                     <Badge
                       variant="secondary"
@@ -178,9 +216,20 @@ export default function Dashboard() {
                       {formation.niveau}
                     </Badge>
                   </div>
-                  <Progress value={formation.progression} />
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {formation.description}
+                  </p>
+                  <div className="mt-2">
+                    <span className="text-xs text-[#3a2b6c] bg-[#3a2b6c]/10 px-2 py-1 rounded">
+                      {formation.category}
+                    </span>
+                  </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-gray-500 text-center py-4">
+                  Aucune formation disponible
+                </p>
+              )}
             </CardContent>
           </Card>
 
