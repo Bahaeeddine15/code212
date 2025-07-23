@@ -11,12 +11,19 @@ class FormationController extends Controller
     /**
      * Display a listing of the formations.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $formations = Formation::all();
+        $search = $request->get('search', '');
         
-        return Inertia::render('formations/Dashboard', [
-            'formations' => $formations
+        $formations = Formation::when($search, function ($query, $search) {
+            $query->where('titre', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%");
+        })->get();
+
+        return Inertia::render('etudiant/Formations', [
+            'formations' => $formations,
+            'search' => $search,
         ]);
     }
 
