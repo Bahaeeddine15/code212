@@ -5,6 +5,8 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { 
+    BookOpen, 
+    Folder, 
     LayoutGrid, 
     FileText, 
     Calendar, 
@@ -48,34 +50,27 @@ const mainNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [
-    // Repository et Documentation supprimés
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset" className="border-none">
-            <div className="bg-slate-800 dark:bg-slate-900 h-full rounded-lg p-4 flex flex-col">
-                <SidebarHeader className="bg-transparent p-0 mb-6 flex-shrink-0">
-                    <SidebarMenu>
-                        <SidebarMenuItem>
-                            <SidebarMenuButton size="lg" asChild className="hover:bg-slate-700 text-white">
-                                <Link href="/dashboard" prefetch>
-                                    <AppLogo />
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    </SidebarMenu>
-                </SidebarHeader>
+        <div className="bg-card rounded-xl shadow-lg border border-border overflow-hidden h-full flex flex-col">
+            <div className="p-6 flex-1 flex flex-col">
+                <div className="text-center mb-8">
+                    <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
+                </div>
 
-                <SidebarContent className="bg-transparent px-0 flex-1 overflow-hidden">
+                <div className="space-y-4 flex-1">
                     <NavMain items={mainNavItems} />
-                </SidebarContent>
+                </div>
 
-                <SidebarFooter className="bg-transparent p-0 flex-shrink-0 space-y-2">
+                <div className="mt-8 pt-6 border-t border-border flex-shrink-0">
                     <NavFooter items={footerNavItems} />
-                    <NavUser />
-                </SidebarFooter>
+                    <div className="mt-4">
+                        <NavUser />
+                    </div>
+                </div>
             </div>
-        </Sidebar>
+        </div>
     );
 }

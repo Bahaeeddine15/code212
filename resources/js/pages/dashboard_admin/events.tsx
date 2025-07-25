@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { 
     Calendar, 
@@ -14,9 +14,10 @@ import {
     AlertCircle,
     Search,
     Filter,
-    X,
-    Save
+    CalendarDays,
+    MapPin as LocationIcon
 } from 'lucide-react';
+import { ModernCard, PageHeader, ModernButton, ModernInput } from '@/components/ui/modern-components';
 
 // Types
 interface Event {
@@ -48,545 +49,359 @@ const EventCard = ({
     event,
     onEdit,
     onDelete,
-    onMarkCompleted
 }: {
     event: Event;
     onEdit: (event: Event) => void;
-    onDelete: (id: number) => void;
-    onMarkCompleted: (id: number) => void;
+    onDelete: (event: Event) => void;
 }) => {
-    const getStatusBadge = () => {
-        switch (event.status) {
+    const { title, description, date, time, location, attendees, maxAttendees, status, category } = event;
+    
+    const getStatusColor = () => {
+        switch (status) {
             case 'upcoming':
-                return <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">À venir</span>;
+                return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200';
             case 'ongoing':
-                return <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">En cours</span>;
+                return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
             case 'completed':
-                return <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Terminé</span>;
+                return 'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200';
+            case 'cancelled':
+                return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200';
             default:
-                return <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">Annulé</span>;
+                return 'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200';
         }
     };
 
     const getStatusIcon = () => {
-        switch (event.status) {
+        switch (status) {
+            case 'upcoming':
+                return <Clock className="w-4 h-4" />;
+            case 'ongoing':
+                return <CheckCircle className="w-4 h-4" />;
             case 'completed':
-                return <CheckCircle className="w-5 h-5 text-green-600" />;
+                return <CheckCircle className="w-4 h-4" />;
             case 'cancelled':
-                return <AlertCircle className="w-5 h-5 text-red-600" />;
+                return <AlertCircle className="w-4 h-4" />;
             default:
-                return <Calendar className="w-5 h-5 text-blue-600" />;
+                return <Clock className="w-4 h-4" />;
+        }
+    };
+
+    const getThemeByStatus = () => {
+        switch (status) {
+            case 'upcoming': return 'primary';
+            case 'ongoing': return 'success';
+            case 'completed': return 'secondary';
+            case 'cancelled': return 'danger';
+            default: return 'primary';
         }
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
-            <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                    {getStatusIcon()}
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{event.title}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
+        <ModernCard theme={getThemeByStatus() as any} className="overflow-hidden">
+            <div className="h-48 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center -m-6 mb-6">
+                <Calendar className="w-16 h-16 text-white opacity-90 drop-shadow-lg" />
+            </div>
+            
+            <div className="space-y-4">
+                <div>
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-xl font-bold text-foreground">{title}</h3>
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center space-x-1 ${getStatusColor()}`}>
+                            {getStatusIcon()}
+                            <span className="ml-1 capitalize">{status}</span>
+                        </span>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed line-clamp-2">{description}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2 text-sm">
+                        <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">{date}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">{time}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm col-span-2">
+                        <LocationIcon className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground truncate">{location}</span>
                     </div>
                 </div>
-                {getStatusBadge()}
-            </div>
-            
-            <div className="space-y-3 mb-4">
-                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-                    <Calendar className="w-4 h-4" />
-                    <span>{event.date}</span>
-                    <Clock className="w-4 h-4 ml-3" />
-                    <span>{event.time}</span>
+
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground font-medium">Participants</span>
+                        <span className="font-bold text-green-600 dark:text-green-400">{attendees}/{maxAttendees}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                        <div 
+                            className="bg-gradient-to-r from-green-500 to-emerald-600 h-3 rounded-full transition-all duration-500 shadow-sm" 
+                            style={{ width: `${(attendees / maxAttendees) * 100}%` }}
+                        ></div>
+                    </div>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-                    <MapPin className="w-4 h-4" />
-                    <span>{event.location}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-                    <Users className="w-4 h-4" />
-                    <span>{event.attendees}/{event.maxAttendees} participants</span>
-                </div>
-            </div>
-            
-            <div className="mb-4">
-                <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-600 dark:text-gray-400">Inscription</span>
-                    <span className="font-medium text-gray-800 dark:text-gray-100">{Math.round((event.attendees / event.maxAttendees) * 100)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" 
-                        style={{ width: `${(event.attendees / event.maxAttendees) * 100}%` }}
-                    ></div>
-                </div>
-            </div>
-            
-            <div className="flex items-center justify-between">
-                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">{event.category}</span>
-                <div className="flex space-x-2">
-                    <button 
-                        onClick={() => onEdit(event)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                    >
-                        <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button 
-                        onClick={() => onDelete(event.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                    >
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                    {event.status === 'upcoming' && (
+
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <span className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs font-semibold rounded-full">{category}</span>
+                    <div className="flex space-x-2">
                         <button 
-                            onClick={() => onMarkCompleted(event.id)}
-                            className="px-3 py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors"
+                            onClick={() => onEdit(event)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
                         >
-                            Marquer terminé
+                            <Edit3 className="w-4 h-4" />
                         </button>
-                    )}
+                        <button 
+                            onClick={() => onDelete(event)}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </ModernCard>
     );
 };
 
+// Mock data pour les événements
+const mockEvents: Event[] = [
+    {
+        id: 1,
+        title: "Conférence Intelligence Artificielle",
+        description: "Découvrez les dernières innovations en IA et leurs applications pratiques dans le monde professionnel.",
+        date: "2024-02-15",
+        time: "14:00",
+        location: "Amphithéâtre CODE212",
+        attendees: 45,
+        maxAttendees: 60,
+        status: "upcoming",
+        category: "IA"
+    },
+    {
+        id: 2,
+        title: "Workshop Développement React",
+        description: "Atelier pratique sur React.js avec création d'applications modernes et responsives.",
+        date: "2024-02-10",
+        time: "09:00",
+        location: "Salle de formation A",
+        attendees: 28,
+        maxAttendees: 30,
+        status: "ongoing",
+        category: "Développement"
+    },
+    {
+        id: 3,
+        title: "Hackathon Code212",
+        description: "Compétition de programmation de 24h pour résoudre des défis technologiques innovants.",
+        date: "2024-01-20",
+        time: "10:00",
+        location: "Campus principal",
+        attendees: 120,
+        maxAttendees: 120,
+        status: "completed",
+        category: "Compétition"
+    },
+    {
+        id: 4,
+        title: "Séminaire Cybersécurité",
+        description: "Formation sur les meilleures pratiques de sécurité informatique et protection des données.",
+        date: "2024-02-25",
+        time: "13:30",
+        location: "Salle de conférence B",
+        attendees: 0,
+        maxAttendees: 40,
+        status: "cancelled",
+        category: "Sécurité"
+    }
+];
+
 export default function Events() {
-    // État pour la gestion des événements
-    const [events, setEvents] = useState<Event[]>([
-        {
-            id: 1,
-            title: 'Conférence IA & Innovation',
-            description: 'Découvrez les dernières avancées en intelligence artificielle',
-            date: '2025-01-15',
-            time: '14:00 - 17:00',
-            location: 'Amphi Central - Université',
-            attendees: 85,
-            maxAttendees: 100,
-            status: 'upcoming',
-            category: 'Conférence'
-        },
-        {
-            id: 2,
-            title: 'Workshop Développement Web',
-            description: 'Atelier pratique sur React et Laravel',
-            date: '2025-01-12',
-            time: '09:00 - 16:00',
-            location: 'Salle TP Informatique',
-            attendees: 24,
-            maxAttendees: 30,
-            status: 'ongoing',
-            category: 'Workshop'
-        },
-        {
-            id: 3,
-            title: 'Hackathon 2025',
-            description: '48h de développement intensif',
-            date: '2025-01-08',
-            time: '48h non-stop',
-            location: 'Campus Innovation',
-            attendees: 120,
-            maxAttendees: 120,
-            status: 'completed',
-            category: 'Compétition'
-        },
-        {
-            id: 4,
-            title: 'Séminaire Cybersécurité',
-            description: 'Sécurisation des systèmes d\'information',
-            date: '2025-01-20',
-            time: '10:00 - 12:00',
-            location: 'Salle de Conférence B',
-            attendees: 0,
-            maxAttendees: 50,
-            status: 'cancelled',
-            category: 'Séminaire'
-        }
-    ]);
-
-    // États pour les formulaires et filtres
-    const [showModal, setShowModal] = useState(false);
-    const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+    const [events, setEvents] = useState<Event[]>(mockEvents);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('all');
-    const [filterCategory, setFilterCategory] = useState('all');
-
-    // Formulaire d'événement
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        date: '',
-        time: '',
-        location: '',
-        maxAttendees: '',
-        category: 'Conférence'
-    });
+    const [filterStatus, setFilterStatus] = useState<string>('all');
 
     // Fonctions de gestion
-    const handleAddEvent = () => {
-        setEditingEvent(null);
-        setFormData({
-            title: '',
-            description: '',
-            date: '',
-            time: '',
-            location: '',
-            maxAttendees: '',
-            category: 'Conférence'
-        });
-        setShowModal(true);
+    const handleEventEdit = (event: Event) => {
+        console.log('Éditer événement:', event);
+        // Ici vous pourriez rediriger vers une page d'édition
+        router.visit(`/dashboard_admin/event_edit/${event.id}`);
     };
 
-    const handleEditEvent = (event: Event) => {
-        setEditingEvent(event);
-        setFormData({
-            title: event.title,
-            description: event.description,
-            date: event.date,
-            time: event.time,
-            location: event.location,
-            maxAttendees: event.maxAttendees.toString(),
-            category: event.category
-        });
-        setShowModal(true);
-    };
-
-    const handleSaveEvent = () => {
-        if (!formData.title || !formData.description || !formData.date || !formData.time || !formData.location || !formData.maxAttendees) {
-            alert('Veuillez remplir tous les champs');
-            return;
-        }
-
-        const newEvent: Event = {
-            id: editingEvent ? editingEvent.id : Date.now(),
-            title: formData.title,
-            description: formData.description,
-            date: formData.date,
-            time: formData.time,
-            location: formData.location,
-            attendees: editingEvent ? editingEvent.attendees : 0,
-            maxAttendees: parseInt(formData.maxAttendees),
-            status: editingEvent ? editingEvent.status : 'upcoming',
-            category: formData.category
-        };
-
-        if (editingEvent) {
-            setEvents(events.map(event => event.id === editingEvent.id ? newEvent : event));
-        } else {
-            setEvents([...events, newEvent]);
-        }
-
-        setShowModal(false);
-        setEditingEvent(null);
-    };
-
-    const handleDeleteEvent = (id: number) => {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
-            setEvents(events.filter(event => event.id !== id));
-        }
-    };
-
-    const handleMarkCompleted = (id: number) => {
-        if (confirm('Marquer cet événement comme terminé ?')) {
-            setEvents(events.map(event => 
-                event.id === id ? { ...event, status: 'completed' as const } : event
-            ));
+    const handleEventDelete = (event: Event) => {
+        if (window.confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
+            setEvents(prev => prev.filter(e => e.id !== event.id));
         }
     };
 
     // Filtrage des événements
     const filteredEvents = events.filter(event => {
         const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             event.location.toLowerCase().includes(searchTerm.toLowerCase());
+                             event.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'all' || event.status === filterStatus;
-        const matchesCategory = filterCategory === 'all' || event.category === filterCategory;
-        
-        return matchesSearch && matchesStatus && matchesCategory;
+        return matchesSearch && matchesStatus;
     });
 
-    // Calcul des statistiques
+    // Statistiques
     const stats = {
         total: events.length,
         upcoming: events.filter(e => e.status === 'upcoming').length,
-        participants: events.reduce((sum, e) => sum + e.attendees, 0),
-        completed: events.filter(e => e.status === 'completed').length
+        ongoing: events.filter(e => e.status === 'ongoing').length,
+        completed: events.filter(e => e.status === 'completed').length,
+        totalAttendees: events.reduce((sum, e) => sum + e.attendees, 0)
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestion des événements" />
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 overflow-x-auto bg-background">
                 
-                {/* En-tête avec actions */}
-                <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl p-6 text-white shadow-lg">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold mb-2">Gestion des Événements</h1>
-                            <p className="text-purple-100">Organisez et gérez vos événements</p>
-                        </div>
-                        <button 
-                            onClick={handleAddEvent}
-                            className="bg-white text-purple-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition-all duration-300 flex items-center space-x-2 font-medium"
+                {/* Header moderne */}
+                <PageHeader
+                    title="Gestion des événements"
+                    description="Organisez et suivez vos événements et activités"
+                    icon={Calendar}
+                    theme="primary"
+                    actions={
+                        <ModernButton
+                            theme="primary"
+                            icon={Plus}
+                            onClick={() => router.visit('/dashboard_admin/event_create')}
                         >
-                            <Plus className="w-5 h-5" />
-                            <span>Nouvel événement</span>
-                        </button>
-                    </div>
+                            Nouvel événement
+                        </ModernButton>
+                    }
+                />
+
+                {/* Statistiques */}
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                    <ModernCard theme="primary">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-muted-foreground">Total événements</p>
+                                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{stats.total}</p>
+                            </div>
+                            <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-2xl">
+                                <Calendar className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                            </div>
+                        </div>
+                    </ModernCard>
+                    
+                    <ModernCard theme="info">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-muted-foreground">À venir</p>
+                                <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mt-2">{stats.upcoming}</p>
+                            </div>
+                            <div className="p-4 bg-cyan-100 dark:bg-cyan-900 rounded-2xl">
+                                <Clock className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
+                            </div>
+                        </div>
+                    </ModernCard>
+                    
+                    <ModernCard theme="success">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-muted-foreground">En cours</p>
+                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{stats.ongoing}</p>
+                            </div>
+                            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
+                                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                            </div>
+                        </div>
+                    </ModernCard>
+                    
+                    <ModernCard theme="secondary">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-muted-foreground">Terminés</p>
+                                <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">{stats.completed}</p>
+                            </div>
+                            <div className="p-4 bg-purple-100 dark:bg-purple-900 rounded-2xl">
+                                <CheckCircle className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                            </div>
+                        </div>
+                    </ModernCard>
+                    
+                    <ModernCard theme="warning">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-muted-foreground">Participants</p>
+                                <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mt-2">{stats.totalAttendees}</p>
+                            </div>
+                            <div className="p-4 bg-yellow-100 dark:bg-yellow-900 rounded-2xl">
+                                <Users className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
+                            </div>
+                        </div>
+                    </ModernCard>
                 </div>
 
-                {/* Statistiques rapides */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total événements</p>
-                                <p className="text-2xl font-bold text-purple-600 mt-1">{stats.total}</p>
-                            </div>
-                            <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-full">
-                                <Calendar className="w-6 h-6 text-purple-600" />
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">À venir</p>
-                                <p className="text-2xl font-bold text-blue-600 mt-1">{stats.upcoming}</p>
-                            </div>
-                            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-full">
-                                <Clock className="w-6 h-6 text-blue-600" />
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Participants</p>
-                                <p className="text-2xl font-bold text-green-600 mt-1">{stats.participants}</p>
-                            </div>
-                            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-full">
-                                <Users className="w-6 h-6 text-green-600" />
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Terminés</p>
-                                <p className="text-2xl font-bold text-emerald-600 mt-1">{stats.completed}</p>
-                            </div>
-                            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-full">
-                                <CheckCircle className="w-6 h-6 text-emerald-600" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Barre de recherche et filtres */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                {/* Filtres et recherche */}
+                <ModernCard theme="primary">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Rechercher un événement..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <div className="flex gap-3">
-                            <select 
+                            <select
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                className="px-4 py-3 border-2 border-border rounded-xl bg-background text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200"
                             >
                                 <option value="all">Tous les statuts</option>
                                 <option value="upcoming">À venir</option>
                                 <option value="ongoing">En cours</option>
-                                <option value="completed">Terminé</option>
-                                <option value="cancelled">Annulé</option>
-                            </select>
-                            <select 
-                                value={filterCategory}
-                                onChange={(e) => setFilterCategory(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                            >
-                                <option value="all">Toutes les catégories</option>
-                                <option value="Conférence">Conférence</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Séminaire">Séminaire</option>
-                                <option value="Compétition">Compétition</option>
+                                <option value="completed">Terminés</option>
+                                <option value="cancelled">Annulés</option>
                             </select>
                         </div>
                     </div>
-                </div>
+                </ModernCard>
 
                 {/* Liste des événements */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
-                            <Calendar className="w-6 h-6 mr-2 text-purple-600" />
+                <ModernCard theme="primary">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-foreground flex items-center">
+                            <Calendar className="w-7 h-7 mr-3 text-blue-600 dark:text-blue-400" />
                             Événements ({filteredEvents.length})
                         </h2>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredEvents.map((event) => (
                             <EventCard 
                                 key={event.id} 
                                 event={event}
-                                onEdit={handleEditEvent}
-                                onDelete={handleDeleteEvent}
-                                onMarkCompleted={handleMarkCompleted}
+                                onEdit={handleEventEdit}
+                                onDelete={handleEventDelete}
                             />
                         ))}
                     </div>
-                    
+
                     {filteredEvents.length === 0 && (
-                        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                            Aucun événement trouvé
+                        <div className="text-center py-12">
+                            <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-foreground mb-2">Aucun événement trouvé</h3>
+                            <p className="text-muted-foreground mb-6">
+                                {searchTerm ? 'Modifiez vos critères de recherche' : 'Commencez par créer votre premier événement'}
+                            </p>
+                            <ModernButton
+                                theme="primary"
+                                icon={Plus}
+                                onClick={() => router.visit('/dashboard_admin/event_create')}
+                            >
+                                Créer un événement
+                            </ModernButton>
                         </div>
                     )}
-                </div>
-
-                {/* Modal pour ajouter/modifier un événement */}
-                {showModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                                    {editingEvent ? 'Modifier l\'événement' : 'Nouvel événement'}
-                                </h3>
-                                <button
-                                    onClick={() => setShowModal(false)}
-                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
-                            </div>
-                            
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Titre
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({...formData, title: e.target.value})}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                        placeholder="Titre de l'événement"
-                                    />
-                                </div>
-                                
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        value={formData.description}
-                                        onChange={(e) => setFormData({...formData, description: e.target.value})}
-                                        rows={3}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                        placeholder="Description de l'événement"
-                                    />
-                                </div>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Date
-                                        </label>
-                                        <input
-                                            type="date"
-                                            value={formData.date}
-                                            onChange={(e) => setFormData({...formData, date: e.target.value})}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                        />
-                                    </div>
-                                    
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Heure
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.time}
-                                            onChange={(e) => setFormData({...formData, time: e.target.value})}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                            placeholder="Ex: 14:00 - 17:00"
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Lieu
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.location}
-                                        onChange={(e) => setFormData({...formData, location: e.target.value})}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                        placeholder="Lieu de l'événement"
-                                    />
-                                </div>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Nombre max de participants
-                                        </label>
-                                        <input
-                                            type="number"
-                                            value={formData.maxAttendees}
-                                            onChange={(e) => setFormData({...formData, maxAttendees: e.target.value})}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                            min="1"
-                                        />
-                                    </div>
-                                    
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Catégorie
-                                        </label>
-                                        <select
-                                            value={formData.category}
-                                            onChange={(e) => setFormData({...formData, category: e.target.value})}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                        >
-                                            <option value="Conférence">Conférence</option>
-                                            <option value="Workshop">Workshop</option>
-                                            <option value="Séminaire">Séminaire</option>
-                                            <option value="Compétition">Compétition</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex justify-end space-x-3 pt-4">
-                                    <button
-                                        onClick={() => setShowModal(false)}
-                                        className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                                    >
-                                        Annuler
-                                    </button>
-                                    <button
-                                        onClick={handleSaveEvent}
-                                        className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                        <span>{editingEvent ? 'Modifier' : 'Ajouter'}</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                </ModernCard>
             </div>
         </AppLayout>
     );
