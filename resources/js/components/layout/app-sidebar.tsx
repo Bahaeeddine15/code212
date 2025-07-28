@@ -29,6 +29,14 @@ const mainNavItems: NavItem[] = [
         title: 'Reservations',
         href: '/reservations',
         icon: CalendarSync,
+    },
+    {
+        title: 'Events',
+        href:'/events',
+    },
+    {
+        title: 'Compétition',
+        href:'/competition'
     }
 
 

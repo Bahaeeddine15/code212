@@ -37,7 +37,7 @@ export default function Dashboard({ formations }: DashboardProps) {
                   titre={formation.titre}
                   description={formation.description}
                   category={formation.category}
-                  niveau={String(formation.niveau)}
+                  niveau={formation.niveau}
                   photo={formation.photo}
                 />
               </div>

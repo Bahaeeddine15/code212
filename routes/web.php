@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -17,6 +18,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('certificats', function () {
         return Inertia::render('etudiant/Certificats');
     })->name('etudiant.certificats');
+
+   
+    Route::get('events', [App\Http\Controllers\EventController::class, 'index'])->name('etudiant.events');
+    Route::get('competition', [App\Http\Controllers\CompetitionController::class, 'index'])->name('etudiant.competition');
+    Route::get('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'showRegistration'])->name('competition.register');
+    Route::post('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'storeRegistration'])->name('competition.store');
 
     // Routes pour les réservations
     Route::get('reservations', [App\Http\Controllers\ReservationController::class, 'index'])->name('etudiant.reservations');
@@ -49,7 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $emailStatus = "Email envoyé avec succès à {$reservation->email}";
         } catch (\Exception $e) {
             $emailStatus = "Erreur email: " . $e->getMessage();
-            \Log::error('Erreur envoi email notification: ' . $e->getMessage());
+            Log::error('Erreur envoi email notification: ' . $e->getMessage());
         }
         
         return response()->json([
@@ -80,7 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $emailStatus = "Email envoyé avec succès à {$reservation->email}";
         } catch (\Exception $e) {
             $emailStatus = "Erreur email: " . $e->getMessage();
-            \Log::error('Erreur envoi email notification: ' . $e->getMessage());
+            Log::error('Erreur envoi email notification: ' . $e->getMessage());
         }
         
         return response()->json([
@@ -99,7 +106,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
         return response()->json(['success' => true]);
     })->name('reservations.dismissNotification');
-    
 });
 
 require __DIR__.'/settings.php';
