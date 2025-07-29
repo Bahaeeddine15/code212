@@ -70,26 +70,26 @@ const FormationCard = ({
     const getLevelColor = () => {
         switch (level) {
             case 'Débutant':
-                return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
+                return 'bg-green-100 text-green-800';
             case 'Intermédiaire':
-                return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200';
+                return 'bg-yellow-100 text-yellow-800';
             case 'Avancé':
-                return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200';
+                return 'bg-red-100 text-red-800';
             default:
-                return 'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200';
+                return 'bg-gray-100 text-gray-800';
         }
     };
 
     return (
-        <ModernCard theme="primary" className="overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 overflow-hidden hover:shadow-xl transition-all duration-300">
             <div className="h-48 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center -m-6 mb-6">
                 <GraduationCap className="w-16 h-16 text-white opacity-90 drop-shadow-lg" />
             </div>
             
             <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                    <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
-                    <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-2">{description}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed line-clamp-2">{description}</p>
                 </div>
             </div>
             
@@ -98,7 +98,7 @@ const FormationCard = ({
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getLevelColor()}`}>
                         {level}
                     </span>
-                    <div className="flex items-center space-x-2 text-muted-foreground">
+                    <div className="flex items-center space-x-2 text-gray-500">
                         <Clock className="w-4 h-4" />
                         <span>{duration}</span>
                     </div>
@@ -107,12 +107,12 @@ const FormationCard = ({
             
             <div className="space-y-3 mb-6">
                 <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-medium">Modules</span>
-                    <span className="font-bold text-blue-600 dark:text-blue-400">{modules.length}</span>
+                    <span className="text-gray-600 font-medium">Modules</span>
+                    <span className="font-bold text-blue-600">{modules.length}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-medium">Inscrits</span>
-                    <span className="font-bold text-green-600 dark:text-green-400">{enrolledStudents}/{maxStudents}</span>
+                    <span className="text-gray-600 font-medium">Inscrits</span>
+                    <span className="font-bold text-green-600">{enrolledStudents}/{maxStudents}</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                     <div 
@@ -146,7 +146,7 @@ const FormationCard = ({
                     </ModernButton>
                 </div>
             </div>
-        </ModernCard>
+        </div>
     );
 };
 
@@ -167,12 +167,14 @@ const ModuleCard = ({
     const { title, description, duration, order, isCompleted, id } = module;
 
     return (
-        <ModernCard theme={isCompleted ? "success" : "info"} className="transition-all duration-300 hover:scale-[1.02]">
+        <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
+            isCompleted ? 'border-green-200' : 'border-blue-200'
+        }`}>
             <div className="flex items-start space-x-4">
                 <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${
                     isCompleted 
-                        ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400' 
-                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                        ? 'bg-green-100 text-green-600' 
+                        : 'bg-blue-100 text-blue-600'
                 }`}>
                     {isCompleted ? (
                         <CheckCircle className="w-6 h-6" />
@@ -181,10 +183,10 @@ const ModuleCard = ({
                     )}
                 </div>
                 <div className="flex-1">
-                    <h4 className="text-lg font-bold text-foreground mb-2">{title}</h4>
-                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed">{description}</p>
+                    <h4 className="text-lg font-bold text-gray-900 mb-2">{title}</h4>
+                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">{description}</p>
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <div className="flex items-center space-x-2 text-sm text-gray-500">
                             <Clock className="w-4 h-4" />
                             <span className="font-medium">{duration}</span>
                         </div>
@@ -211,7 +213,7 @@ const ModuleCard = ({
                     </div>
                 </div>
             </div>
-        </ModernCard>
+        </div>
     );
 };
 
@@ -285,74 +287,74 @@ export default function Formations({ formations }: Props) {
 
                 {/* Statistiques principales */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <ModernCard theme="primary">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-muted-foreground">Total formations</p>
-                                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">18</p>
+                                <p className="text-sm font-semibold text-gray-600">Total formations</p>
+                                <p className="text-3xl font-bold text-blue-600 mt-2">18</p>
                             </div>
-                            <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-2xl">
-                                <GraduationCap className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                            <div className="p-4 bg-blue-100 rounded-2xl">
+                                <GraduationCap className="w-8 h-8 text-blue-600" />
                             </div>
                         </div>
-                    </ModernCard>
+                    </div>
                     
-                    <ModernCard theme="success">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-muted-foreground">Étudiants inscrits</p>
-                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">247</p>
+                                <p className="text-sm font-semibold text-gray-600">Étudiants inscrits</p>
+                                <p className="text-3xl font-bold text-green-600 mt-2">247</p>
                             </div>
-                            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
-                                <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
+                            <div className="p-4 bg-green-100 rounded-2xl">
+                                <Users className="w-8 h-8 text-green-600" />
                             </div>
                         </div>
-                    </ModernCard>
+                    </div>
                     
-                    <ModernCard theme="secondary">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-muted-foreground">Certifications</p>
-                                <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">89</p>
+                                <p className="text-sm font-semibold text-gray-600">Certifications</p>
+                                <p className="text-3xl font-bold text-purple-600 mt-2">89</p>
                             </div>
-                            <div className="p-4 bg-purple-100 dark:bg-purple-900 rounded-2xl">
-                                <Award className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                            <div className="p-4 bg-purple-100 rounded-2xl">
+                                <Award className="w-8 h-8 text-purple-600" />
                             </div>
                         </div>
-                    </ModernCard>
+                    </div>
                     
-                    <ModernCard theme="info">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-muted-foreground">Modules actifs</p>
-                                <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mt-2">156</p>
+                                <p className="text-sm font-semibold text-gray-600">Modules actifs</p>
+                                <p className="text-3xl font-bold text-cyan-600 mt-2">156</p>
                             </div>
-                            <div className="p-4 bg-cyan-100 dark:bg-cyan-900 rounded-2xl">
-                                <BookOpen className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
+                            <div className="p-4 bg-cyan-100 rounded-2xl">
+                                <BookOpen className="w-8 h-8 text-cyan-600" />
                             </div>
                         </div>
-                    </ModernCard>
+                    </div>
                 </div>
 
                 {/* Barre de recherche et filtres */}
-                <ModernCard theme="primary">
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Rechercher une formation..."
-                                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <div className="flex gap-3">
-                            <select className="px-4 py-3 border-2 border-border rounded-xl bg-background text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200">
+                            <select className="px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200">
                                 <option>Tous les niveaux</option>
                                 <option>Débutant</option>
                                 <option>Intermédiaire</option>
                                 <option>Avancé</option>
                             </select>
-                            <select className="px-4 py-3 border-2 border-border rounded-xl bg-background text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200">
+                            <select className="px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200">
                                 <option>Toutes les catégories</option>
                                 <option>Développement</option>
                                 <option>IA</option>
@@ -361,13 +363,13 @@ export default function Formations({ formations }: Props) {
                             </select>
                         </div>
                     </div>
-                </ModernCard>
+                </div>
 
                 {/* Liste des formations */}
-                <ModernCard theme="primary">
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-foreground flex items-center">
-                            <GraduationCap className="w-7 h-7 mr-3 text-blue-600 dark:text-blue-400" />
+                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                            <GraduationCap className="w-7 h-7 mr-3 text-blue-600" />
                             Formations disponibles
                         </h2>
                     </div>
@@ -382,14 +384,14 @@ export default function Formations({ formations }: Props) {
                             />
                         ))}
                     </div>
-                </ModernCard>
+                </div>
 
                 {/* Aperçu des modules sélectionnés */}
                 {showModules && selectedFormation && (
-                    <ModernCard theme="secondary">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-bold text-foreground flex items-center">
-                                <BookOpen className="w-7 h-7 mr-3 text-purple-600 dark:text-purple-400" />
+                            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                                <BookOpen className="w-7 h-7 mr-3 text-purple-600" />
                                 Modules - {selectedFormation.title}
                             </h2>
                             <ModernButton
@@ -412,7 +414,7 @@ export default function Formations({ formations }: Props) {
                                 />
                             ))}
                         </div>
-                    </ModernCard>
+                    </div>
                 )}
             </div>
         </AppLayout>

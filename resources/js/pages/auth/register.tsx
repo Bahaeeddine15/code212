@@ -32,12 +32,12 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
-            <Head title="Register" />
-            <form className="flex flex-col gap-6" onSubmit={submit}>
-                <div className="grid gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+        <AuthLayout title="Créer un compte" description="Rejoignez la communauté Code212">
+            <Head title="Inscription" />
+            <form className="space-y-6" onSubmit={submit}>
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="name" className="text-white">Nom complet</Label>
                         <Input
                             id="name"
                             type="text"
@@ -48,13 +48,14 @@ export default function Register() {
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             disabled={processing}
-                            placeholder="Full name"
+                            placeholder="Votre nom complet"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
                         />
                         <InputError message={errors.name} className="mt-2" />
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="text-white">Adresse email</Label>
                         <Input
                             id="email"
                             type="email"
@@ -65,12 +66,13 @@ export default function Register() {
                             onChange={(e) => setData('email', e.target.value)}
                             disabled={processing}
                             placeholder="email@example.com"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
                         />
                         <InputError message={errors.email} />
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
+                    <div className="space-y-2">
+                        <Label htmlFor="password" className="text-white">Mot de passe</Label>
                         <Input
                             id="password"
                             type="password"
@@ -80,13 +82,14 @@ export default function Register() {
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
                             disabled={processing}
-                            placeholder="Password"
+                            placeholder="Créer un mot de passe"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
                         />
                         <InputError message={errors.password} />
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation">Confirm password</Label>
+                    <div className="space-y-2">
+                        <Label htmlFor="password_confirmation" className="text-white">Confirmer le mot de passe</Label>
                         <Input
                             id="password_confirmation"
                             type="password"
@@ -96,21 +99,28 @@ export default function Register() {
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
                             disabled={processing}
-                            placeholder="Confirm password"
+                            placeholder="Confirmer votre mot de passe"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
                         />
                         <InputError message={errors.password_confirmation} />
                     </div>
 
-                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Create account
+                    <Button 
+                        type="submit" 
+                        className="w-full mt-6 text-white font-semibold py-3 rounded-lg transition-all duration-300"
+                        style={{ backgroundColor: '#A927B7' }}
+                        tabIndex={5} 
+                        disabled={processing}
+                    >
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                        Créer un compte
                     </Button>
                 </div>
 
-                <div className="text-center text-sm text-muted-foreground">
-                    Already have an account?{' '}
-                    <TextLink href={route('login')} tabIndex={6}>
-                        Log in
+                <div className="text-center text-sm text-gray-400">
+                    Déjà un compte ?{' '}
+                    <TextLink href={route('login')} className="text-blue-400 hover:text-blue-300" tabIndex={6}>
+                        Se connecter
                     </TextLink>
                 </div>
             </form>
