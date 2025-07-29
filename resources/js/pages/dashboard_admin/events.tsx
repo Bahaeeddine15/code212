@@ -17,7 +17,6 @@ import {
     X,
     Save
 } from 'lucide-react';
-import { ModernCard, PageHeader, ModernButton, ModernInput } from '@/components/ui/modern-components';
 
 // Types
 interface Event {
@@ -47,6 +46,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 // Composant pour les cartes d'événements
 const EventCard = ({ 
     event,
+    onEdit,
     onDelete,
     onMarkCompleted
 }: {
@@ -69,46 +69,35 @@ const EventCard = ({
     };
 
     const getStatusIcon = () => {
-        switch (status) {
-            case 'upcoming':
-                return <Clock className="w-4 h-4" />;
-            case 'ongoing':
-                return <CheckCircle className="w-4 h-4" />;
+        switch (event.status) {
             case 'completed':
-                return <CheckCircle className="w-4 h-4" />;
+                return <CheckCircle className="w-5 h-5 text-green-600" />;
             case 'cancelled':
-                return <AlertCircle className="w-4 h-4" />;
+                return <AlertCircle className="w-5 h-5 text-red-600" />;
             default:
-                return <Clock className="w-4 h-4" />;
-        }
-    };
-
-    const getThemeByStatus = () => {
-        switch (status) {
-            case 'upcoming': return 'primary';
-            case 'ongoing': return 'success';
-            case 'completed': return 'secondary';
-            case 'cancelled': return 'danger';
-            default: return 'primary';
+                return <Calendar className="w-5 h-5 text-blue-600" />;
         }
     };
 
     return (
-        <ModernCard theme={getThemeByStatus() as any} className="overflow-hidden">
-            <div className="h-48 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center -m-6 mb-6">
-                <Calendar className="w-16 h-16 text-white opacity-90 drop-shadow-lg" />
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                    {getStatusIcon()}
+                    <div>
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{event.title}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
+                    </div>
+                </div>
+                {getStatusBadge()}
             </div>
             
-            <div className="space-y-4">
-                <div>
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-xl font-bold text-foreground">{title}</h3>
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center space-x-1 ${getStatusColor()}`}>
-                            {getStatusIcon()}
-                            <span className="ml-1 capitalize">{status}</span>
-                        </span>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed line-clamp-2">{description}</p>
+            <div className="space-y-3 mb-4">
+                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                    <Calendar className="w-4 h-4" />
+                    <span>{event.date}</span>
+                    <Clock className="w-4 h-4 ml-3" />
+                    <span>{event.time}</span>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                     <MapPin className="w-4 h-4" />
@@ -150,15 +139,15 @@ const EventCard = ({
                     </button>
                     {event.status === 'upcoming' && (
                         <button 
-                            onClick={() => onDelete(event)}
-                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
+                            onClick={() => onMarkCompleted(event.id)}
+                            className="px-3 py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors"
                         >
-                            <Trash2 className="w-4 h-4" />
+                            Marquer terminé
                         </button>
-                    </div>
+                    )}
                 </div>
             </div>
-        </ModernCard>
+        </div>
     );
 };
 
@@ -306,16 +295,17 @@ export default function Events() {
     };
 
     // Filtrage des événements
-    const filteredEvents = events.filter((event: Event) => {
+    const filteredEvents = events.filter(event => {
         const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             event.description.toLowerCase().includes(searchTerm.toLowerCase());
+                             event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             event.location.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'all' || event.status === filterStatus;
         const matchesCategory = filterCategory === 'all' || event.category === filterCategory;
         
         return matchesSearch && matchesStatus && matchesCategory;
     });
 
-    // Statistiques
+    // Calcul des statistiques
     const stats = {
         total: events.length,
         upcoming: events.filter(e => e.status === 'upcoming').length,
@@ -335,91 +325,112 @@ export default function Events() {
                             <h1 className="text-3xl font-bold mb-2">Gestion des Événements</h1>
                             <p className="text-purple-100">Organisez et gérez vos événements</p>
                         </div>
-                    </ModernCard>
-                    
-                    <ModernCard theme="info">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-semibold text-muted-foreground">À venir</p>
-                                <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mt-2">{stats.upcoming}</p>
-                            </div>
-                            <div className="p-4 bg-cyan-100 dark:bg-cyan-900 rounded-2xl">
-                                <Clock className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
-                            </div>
-                        </div>
-                    </ModernCard>
-                    
-                    <ModernCard theme="success">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-semibold text-muted-foreground">En cours</p>
-                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{stats.ongoing}</p>
-                            </div>
-                            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
-                                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
-                            </div>
-                        </div>
-                    </ModernCard>
-                    
-                    <ModernCard theme="secondary">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-semibold text-muted-foreground">Terminés</p>
-                                <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">{stats.completed}</p>
-                            </div>
-                            <div className="p-4 bg-purple-100 dark:bg-purple-900 rounded-2xl">
-                                <CheckCircle className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                            </div>
-                        </div>
-                    </ModernCard>
-                    
-                    <ModernCard theme="warning">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-semibold text-muted-foreground">Participants</p>
-                                <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mt-2">{stats.totalAttendees}</p>
-                            </div>
-                            <div className="p-4 bg-yellow-100 dark:bg-yellow-900 rounded-2xl">
-                                <Users className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
-                            </div>
-                        </div>
-                    </ModernCard>
+                        <button 
+                            onClick={handleAddEvent}
+                            className="bg-white text-purple-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition-all duration-300 flex items-center space-x-2 font-medium"
+                        >
+                            <Plus className="w-5 h-5" />
+                            <span>Nouvel événement</span>
+                        </button>
+                    </div>
                 </div>
 
-                {/* Filtres et recherche */}
-                <ModernCard theme="primary">
+                {/* Statistiques rapides */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total événements</p>
+                                <p className="text-2xl font-bold text-purple-600 mt-1">{stats.total}</p>
+                            </div>
+                            <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-full">
+                                <Calendar className="w-6 h-6 text-purple-600" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">À venir</p>
+                                <p className="text-2xl font-bold text-blue-600 mt-1">{stats.upcoming}</p>
+                            </div>
+                            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-full">
+                                <Clock className="w-6 h-6 text-blue-600" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Participants</p>
+                                <p className="text-2xl font-bold text-green-600 mt-1">{stats.participants}</p>
+                            </div>
+                            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-full">
+                                <Users className="w-6 h-6 text-green-600" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Terminés</p>
+                                <p className="text-2xl font-bold text-emerald-600 mt-1">{stats.completed}</p>
+                            </div>
+                            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-full">
+                                <CheckCircle className="w-6 h-6 text-emerald-600" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Barre de recherche et filtres */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Rechercher un événement..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                             />
                         </div>
                         <div className="flex gap-3">
-                            <select
+                            <select 
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className="px-4 py-3 border-2 border-border rounded-xl bg-background text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                             >
                                 <option value="all">Tous les statuts</option>
                                 <option value="upcoming">À venir</option>
                                 <option value="ongoing">En cours</option>
-                                <option value="completed">Terminés</option>
-                                <option value="cancelled">Annulés</option>
+                                <option value="completed">Terminé</option>
+                                <option value="cancelled">Annulé</option>
+                            </select>
+                            <select 
+                                value={filterCategory}
+                                onChange={(e) => setFilterCategory(e.target.value)}
+                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                            >
+                                <option value="all">Toutes les catégories</option>
+                                <option value="Conférence">Conférence</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Séminaire">Séminaire</option>
+                                <option value="Compétition">Compétition</option>
                             </select>
                         </div>
                     </div>
-                </ModernCard>
+                </div>
 
                 {/* Liste des événements */}
-                <ModernCard theme="primary">
-                    <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-foreground flex items-center">
-                            <Calendar className="w-7 h-7 mr-3 text-blue-600 dark:text-blue-400" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
+                            <Calendar className="w-6 h-6 mr-2 text-purple-600" />
                             Événements ({filteredEvents.length})
                         </h2>
                     </div>
@@ -435,21 +446,10 @@ export default function Events() {
                             />
                         ))}
                     </div>
-
+                    
                     {filteredEvents.length === 0 && (
-                        <div className="text-center py-12">
-                            <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-foreground mb-2">Aucun événement trouvé</h3>
-                            <p className="text-muted-foreground mb-6">
-                                {searchTerm ? 'Modifiez vos critères de recherche' : 'Commencez par créer votre premier événement'}
-                            </p>
-                            <ModernButton
-                                theme="primary"
-                                icon={Plus}
-                                onClick={() => router.visit('/dashboard_admin/event_create')}
-                            >
-                                Créer un événement
-                            </ModernButton>
+                        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                            Aucun événement trouvé
                         </div>
                     )}
                 </div>
@@ -590,6 +590,4 @@ export default function Events() {
             </div>
         </AppLayout>
     );
-};
-
-export default Events;
+}

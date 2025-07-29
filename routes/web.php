@@ -87,6 +87,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard_admin/competitions');
     })->name('competitions');
 
+    Route::get('reservations', function () {
+        return Inertia::render('dashboard_admin/reservations');
+    })->name('reservations');
+
     Route::resource('competitions', CompetitionController::class);
     Route::patch('/competitions/{competition}/close', [CompetitionController::class, 'close'])
         ->name('competitions.close');

@@ -12,7 +12,8 @@ import {
     Calendar, 
     Images, 
     GraduationCap, 
-    Trophy
+    Trophy,
+    Building2
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -31,6 +32,11 @@ const mainNavItems: NavItem[] = [
         title: 'Gestion des événements',
         href: '/events',
         icon: Calendar,
+    },
+    {
+        title: 'Gestion des réservations',
+        href: '/reservations',
+        icon: Building2,
     },
     {
         title: 'Galerie médias',
