@@ -43,6 +43,11 @@ class EventController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return Inertia::render('dashboard_admin/Evenements/evenement_create');
+    }
+
     public function update(Request $request, Event $event)
     {
         $validated = $request->validate([
