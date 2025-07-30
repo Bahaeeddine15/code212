@@ -4,7 +4,7 @@ import { NavUser } from '@/components/navigation/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Folder, LayoutGrid, BookOpen, Award, CalendarSync} from 'lucide-react';
+import { Folder, LayoutGrid, BookOpen, Award, CalendarSync, FileText } from 'lucide-react';
 import AppLogo from './app-logo';
 
 
@@ -37,10 +37,12 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Compétition',
         href:'/competition'
+    },
+    {
+         title: 'Article',
+        href:'/articles',
+        icon: FileText
     }
-
-
-
 ];
 
 
