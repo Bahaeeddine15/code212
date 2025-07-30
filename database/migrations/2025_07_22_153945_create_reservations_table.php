@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('num_apogee');
             $table->string('email');
             $table->text('description');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->date('date_reservation')->nullable();
             $table->timestamps();
         });
     }
