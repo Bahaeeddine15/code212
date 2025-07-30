@@ -27,7 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('articles', ArticleController::class);
 
-    // List events
+     // List events
     Route::get('events', function () {
         $events = \App\Models\Event::orderBy('start_date', 'desc')->get();
         return Inertia::render('dashboard_admin/events', [
@@ -86,6 +86,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('competitions', function () {
         return Inertia::render('dashboard_admin/competitions');
     })->name('competitions');
+
+    Route::get('reservations', function () {
+        return Inertia::render('dashboard_admin/reservations');
+    })->name('reservations');
 
     Route::resource('competitions', CompetitionController::class);
     Route::patch('/competitions/{competition}/close', [CompetitionController::class, 'close'])

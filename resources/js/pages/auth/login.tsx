@@ -36,13 +36,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <AuthLayout title="Log in to your account" description="Enter your email and password below to log in">
-            <Head title="Log in" />
+        <AuthLayout title="Connexion" description="Connectez-vous à votre espace Code212">
+            <Head title="Connexion" />
 
-            <form className="flex flex-col gap-6" onSubmit={submit}>
-                <div className="grid gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+            <form className="space-y-6" onSubmit={submit}>
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="text-white">Adresse email</Label>
                         <Input
                             id="email"
                             type="email"
@@ -53,16 +53,21 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
                             placeholder="email@example.com"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
                         />
                         <InputError message={errors.email} />
                     </div>
 
-                    <div className="grid gap-2">
-                        <div className="flex items-center">
-                            <Label htmlFor="password">Password</Label>
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="password" className="text-white">Mot de passe</Label>
                             {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
-                                    Forgot password?
+                                <TextLink 
+                                    href={route('password.request')} 
+                                    className="text-sm text-pink-400 hover:text-pink-300" 
+                                    tabIndex={5}
+                                >
+                                    Mot de passe oublié ?
                                 </TextLink>
                             )}
                         </div>
@@ -74,7 +79,8 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             autoComplete="current-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
+                            placeholder="Mot de passe"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
                         />
                         <InputError message={errors.password} />
                     </div>
@@ -86,25 +92,32 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             checked={data.remember}
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
+                            className="border-gray-600 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
                         />
-                        <Label htmlFor="remember">Remember me</Label>
+                        <Label htmlFor="remember" className="text-gray-300 text-sm">Se souvenir de moi</Label>
                     </div>
 
-                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Log in
+                    <Button 
+                        type="submit" 
+                        className="w-full mt-6 text-white font-semibold py-3 rounded-lg transition-all duration-300"
+                        style={{ backgroundColor: '#A927B7' }}
+                        tabIndex={4} 
+                        disabled={processing}
+                    >
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                        Se connecter
                     </Button>
                 </div>
 
-                <div className="text-center text-sm text-muted-foreground">
-                    Don't have an account?{' '}
-                    <TextLink href={route('register')} tabIndex={5}>
-                        Sign up
+                <div className="text-center text-sm text-gray-400">
+                    Pas encore de compte ?{' '}
+                    <TextLink href={route('register')} className="text-blue-400 hover:text-blue-300" tabIndex={5}>
+                        Créer un compte
                     </TextLink>
                 </div>
             </form>
 
-            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+            {status && <div className="mb-4 text-center text-sm font-medium text-green-400">{status}</div>}
         </AuthLayout>
     );
 }
