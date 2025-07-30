@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('events', [EventController::class, 'store'])->name('events.store');
 
     // Edit event page
-    
+
     Route::get('dashboard_admin/event_edit/{id}', function ($id) {
         $event = Event::findOrFail($id);
         return Inertia::render('dashboard_admin/event_edit', [

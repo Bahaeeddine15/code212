@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('slug')->unique(); // SEO-friendly URL
             $table->string('category'); // Category field from your form
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft'); // Status from your form
-            $table->string('featured_image')->nullable(); // For article images
+            $table->text('featured_image')->nullable(); // For article images
             $table->integer('views')->default(0); // View count
             $table->timestamp('published_at')->nullable(); // When article was published
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Author (user who created it)

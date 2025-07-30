@@ -18,7 +18,7 @@ interface Article {
     status: 'published' | 'draft' | 'archived';
     category: string;
     views: number;
-    image?: string;
+    images?: string[]; // <-- Add this line
     created_at: string;
     updated_at: string;
 }
@@ -158,11 +158,11 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                             </div>
                         </header>
 
-                        {/* Featured Image */}
-                        {article.image && (
+                        {/* Featured Image (show first image if exists) */}
+                        {article.images && article.images.length > 0 && (
                             <div className="relative h-96 md:h-[500px] overflow-hidden">
                                 <img
-                                    src={article.image}
+                                    src={`/storage/${article.images[0]}`}
                                     alt={article.title}
                                     className="w-full h-full object-cover"
                                 />
@@ -244,6 +244,31 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* Show all images as a gallery */}
+                    {article.images && article.images.length > 1 && (
+                        <>
+                            <div className="flex gap-4 overflow-x-auto py-4">
+                                {article.images.map((img: string, idx: number) => (
+                                    <img
+                                        key={idx}
+                                        src={`/storage/${img}`}
+                                        alt={`${article.title} - image ${idx + 1}`}
+                                        className="h-48 rounded shadow"
+                                    />
+                                ))}
+                            </div>
+                            <div className="mt-2 text-center">
+                                <span className="text-gray-600 dark:text-gray-300 text-sm">
+                                    Pour voir plus d'images, rendez-vous dans la{' '}
+                                    <Link href="/media" className="text-purple-600 hover:underline font-medium">
+                                        galerie d’images
+                                    </Link>
+                                    .
+                                </span>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </AppLayout>

@@ -22,7 +22,7 @@ interface Article {
     status: 'published' | 'draft' | 'archived';
     category: string;
     views: number;
-    image?: string;
+    images?: string[]; // <-- Add this line
 }
 
 interface ArticlesProps {
@@ -97,6 +97,13 @@ const ArticleCard = ({
                 </div>
             </CardHeader>
             <CardContent>
+                {article.images && article.images.length > 0 && (
+                    <img
+                        src={`/storage/${article.images[0]}`}
+                        alt={article.title}
+                        className="w-full h-40 object-cover rounded-t"
+                    />
+                )}
                 <p className="text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
                 <div className="flex justify-between items-center">
                     <Badge variant="outline">{article.category}</Badge>

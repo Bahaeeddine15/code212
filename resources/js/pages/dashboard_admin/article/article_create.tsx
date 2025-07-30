@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BreadcrumbItem } from '@/types';
-import { ArrowLeft, Save, Plus } from 'lucide-react';
+import { ArrowLeft, Save, Plus, X } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,18 +31,58 @@ export default function ArticleCreate() {
         excerpt: '',
         content: '',
         category: '',
-        status: 'draft' as const
+        status: 'draft' as const,
+        images: [] as File[]
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<{[key: string]: string}>({});
+    const [imageError, setImageError] = useState('');
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+        const files = Array.from(e.target.files);
+
+        // Combine current and new files, but only keep the first 5
+        const combined = [...formData.images, ...files].slice(0, 5);
+
+        // If user tried to add more than 5, show error
+        if (formData.images.length + files.length > 5) {
+            setImageError('Vous pouvez ajouter jusqu\'à 5 images maximum. Seules les 5 premières seront conservées.');
+        } else {
+            setImageError('');
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            images: combined
+        }));
+        setErrors(prev => ({ ...prev, images: '' }));
+    };
+
+    const handleRemoveImage = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, idx) => idx !== index)
+        }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         setErrors({});
 
-        router.post('/articles', formData, {
+        // Use FormData for file uploads
+        const data = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+            if (key === 'images') {
+                (value as File[]).forEach((file, idx) => data.append(`images[${idx}]`, file));
+            } else {
+                data.append(key, value as string);
+            }
+        });
+
+        router.post('/articles', data, {
             onSuccess: () => {
                 setIsSubmitting(false);
                 // Will redirect to articles list automatically
@@ -154,6 +194,46 @@ export default function ArticleCreate() {
                                         )}
                                         <p className="text-sm text-gray-500">
                                             Vous pouvez utiliser des sauts de ligne pour séparer les paragraphes.
+                                        </p>
+                                    </div>
+
+                                    {/* Images Upload */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="images">Images (max 5)</Label>
+                                        <Input
+                                            id="images"
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={handleImageChange}
+                                            disabled={formData.images.length >= 5}
+                                        />
+                                        {formData.images.length > 0 && (
+                                            <div className="flex gap-2 mt-2 flex-wrap">
+                                                {formData.images.map((img, idx) => (
+                                                    <div key={idx} className="relative group">
+                                                        <img
+                                                            src={URL.createObjectURL(img)}
+                                                            alt={`preview-${idx}`}
+                                                            className="w-16 h-16 object-cover rounded border"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemoveImage(idx)}
+                                                            className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                                                            title="Supprimer"
+                                                        >
+                                                            <X className="w-4 h-4 text-red-600" />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {imageError && (
+                                            <p className="text-sm text-red-600">{imageError}</p>
+                                        )}
+                                        <p className="text-sm text-gray-500">
+                                            Vous pouvez ajouter jusqu'à 5 images.
                                         </p>
                                     </div>
 

@@ -66,26 +66,47 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
         </Card>
     );
 
+    // Helper to determine media type (returns 'Image' or 'Vidéo')
+    const getMediaType = (filePath: string) => {
+        const ext = filePath.split('.').pop()?.toLowerCase();
+        if (!ext) return 'Image';
+        const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+        return videoExts.includes(ext) ? 'Vidéo' : 'Image';
+    };
+
     const MediaCard = ({ media }: { media: MediaFile }) => (
         <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                        <Avatar className="w-16 h-16 rounded-lg">
-                            <AvatarImage
+                        {getMediaType(media.file_path) === 'Vidéo' ? (
+                            <video
+                                className="w-16 h-16 rounded-lg object-cover cursor-pointer"
                                 src={getImageUrl(media.file_path)}
-                                alt={media.title}
-                                className="object-cover cursor-pointer"
+                                // poster="/path/to/thumbnail.jpg" // if you have a thumbnail
+                                muted
+                                controls={false}
                                 onClick={() => handleView(media)}
                             />
-                            <AvatarFallback className="rounded-lg bg-indigo-600 text-white">IMG</AvatarFallback>
-                        </Avatar>
+                        ) : (
+                            <Avatar className="w-16 h-16 rounded-lg">
+                                <AvatarImage
+                                    src={getImageUrl(media.file_path)}
+                                    alt={media.title}
+                                    className="object-cover cursor-pointer"
+                                    onClick={() => handleView(media)}
+                                />
+                                <AvatarFallback className="rounded-lg bg-indigo-600 text-white">IMG</AvatarFallback>
+                            </Avatar>
+                        )}
                         <div>
                             <h3 className="font-medium cursor-pointer hover:text-blue-600" onClick={() => handleView(media)}>
                                 {media.title}
                             </h3>
                             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                                <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Image</span>
+                                <span className={`px-2 py-1 text-xs rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                                    {getMediaType(media.file_path)}
+                                </span>
                                 <span>{formatDate(media.created_at)}</span>
                                 <span title={media.original_name}>
                                     {media.original_name.length > 20 ? media.original_name.substring(0, 20) + '...' : media.original_name}
