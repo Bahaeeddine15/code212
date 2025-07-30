@@ -27,7 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('articles', ArticleController::class);
 
-    // List events
+     // List events
     Route::get('events', function () {
         $events = \App\Models\Event::orderBy('start_date', 'desc')->get();
         return Inertia::render('dashboard_admin/events', [
