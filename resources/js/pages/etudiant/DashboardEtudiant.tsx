@@ -130,7 +130,7 @@ export default function Dashboard({ stats, formations, user }: Props) {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard Étudiant" />
 
-      <div className="flex flex-col gap-6 p-8 bg-white text-gray-900 dark:text-white font-raleway">
+      <div className="flex flex-col gap-6 p-8 bg-transparent text-gray-900 dark:text-white font-raleway">
         <div className="space-y-4">
           {/* Header Profile Section */}
           <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
@@ -148,20 +148,36 @@ export default function Dashboard({ stats, formations, user }: Props) {
                 </div>
               </div>
               
-              <div className="flex-1 space-y-6">
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-500 mb-1">University</h4>
-                  <p className="text-gray-900 font-medium">{user.ecole || 'UNIVERSITÉ CADI AYYAD DE MARRAKECH'}</p>
-                </div>
-                
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-500 mb-1">Center</h4>
-                  <p className="text-gray-900">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE DE L'UNIVERSITÉ CADI AYYAD MARRAKECH</p>
-                </div>
-                
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-500 mb-1">Email :</h4>
-                  <p className="text-gray-900">{user.email}</p>
+              <div className="flex-1">
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="divide-y divide-gray-200">
+                    <div className="flex">
+                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">University</span>
+                      </div>
+                      <div className="flex-1 px-4 py-3">
+                        <span className="text-sm text-gray-900">{user.ecole || 'UNIVERSITÉ CADI AYYAD DE MARRAKECH'}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex">
+                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">Center</span>
+                      </div>
+                      <div className="flex-1 px-4 py-3">
+                        <span className="text-sm text-gray-900">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE DE L'UNIVERSITÉ CADI AYYAD MARRAKECH</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex">
+                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">Email :</span>
+                      </div>
+                      <div className="flex-1 px-4 py-3">
+                        <span className="text-sm text-gray-900">{user.email}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

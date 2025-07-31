@@ -14,7 +14,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             asChild 
                             isActive={page.url.startsWith(item.href)} 
                             tooltip={{ children: item.title }}
-                            className="rounded-2xl h-12 px-6 text-white font-medium transition-all duration-300 hover:scale-105 bg-[#4f39f6] hover:bg-[#41e296]/80 hover:text-[#3a2b6a] data-[active=true]:bg-[#41e296] data-[active=true]:text-[#3a2b6a] data-[active=true]:font-semibold"
+                            className="rounded-2xl h-12 px-6 text-white font-medium transition-all duration-300 bg-[#4f39f6] hover:bg-[#41e296]/80 hover:text-[#3a2b6a] data-[active=true]:bg-[#41e296] data-[active=true]:text-[#3a2b6a] data-[active=true]:font-semibold"
                         >
                             <Link href={item.href} prefetch className="flex items-center gap-3 w-full">
                                 {item.icon && <item.icon className="h-5 w-5" />}
