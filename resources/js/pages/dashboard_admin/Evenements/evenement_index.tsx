@@ -2,11 +2,11 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { 
-    Calendar, 
-    Plus, 
-    Edit3, 
-    Trash2, 
+import {
+    Calendar,
+    Plus,
+    Edit3,
+    Trash2,
     MapPin,
     Clock,
     Users,
@@ -41,7 +41,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Composant pour les cartes d'événements
-const EventCard = ({ 
+const EventCard = ({
     event,
     onDelete,
     onMarkCompleted,
@@ -58,7 +58,7 @@ const EventCard = ({
                 value={event.status}
                 onChange={(e) => onStatusChange(event.id, e.target.value as Event['status'])}
                 className={`
-                    px-2 py-1 text-xs font-medium rounded-full 
+                    px-2 py-1 text-xs font-medium rounded-full
                     ${
                         event.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
                         event.status === 'ongoing' ? 'bg-green-100 text-green-800' :
@@ -74,9 +74,9 @@ const EventCard = ({
                 <option value="cancelled">Annulé</option>
             </select>
         );
-    
+
     };
-    
+
 
     const getStatusIcon = () => {
         switch (event.status) {
@@ -90,70 +90,75 @@ const EventCard = ({
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
                     {getStatusIcon()}
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{event.title}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
+                        <h3 className="text-lg font-semibold text-gray-800">{event.title}</h3>
+                        <p className="text-sm text-gray-600">{event.description}</p>
                     </div>
                 </div>
                 {getStatusBadge()}
             </div>
-            
+
             <div className="space-y-3 mb-4">
-                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <Calendar className="w-4 h-4" />
-                    <span>{event.date}</span>
+                    <span>
+                        {event.date}
+                        {event.endDate && event.endDate !== event.date && (
+                            <> - {event.endDate}</>
+                        )}
+                    </span>
                     <Clock className="w-4 h-4 ml-3" />
                     <span>{event.time}</span>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <MapPin className="w-4 h-4" />
                     <span>{event.location}</span>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <Users className="w-4 h-4" />
-                    <span>{event.attendees}/{event.maxAttendees} participants</span>
+                    <span>{event.attendees}/{event.maxAttendees}</span>
                 </div>
             </div>
-            
+
             <div className="mb-4">
                 <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-600 dark:text-gray-400">Inscription</span>
-                    <span className="font-medium text-gray-800 dark:text-gray-100">
+                    <span className="text-gray-600">Inscription</span>
+                    <span className="font-medium text-gray-800">
                     { (typeof event.attendees === 'number' && typeof event.maxAttendees === 'number' && event.maxAttendees !== 0)
                         ? Math.round((event.attendees / event.maxAttendees) * 100) + '%'
                         : '0%' }
                     </span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" 
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${(event.attendees / event.maxAttendees) * 100}%` }}
                     ></div>
                 </div>
             </div>
-            
+
             <div className="flex items-center justify-between">
-                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">{event.category}</span>
+                <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">{event.category}</span>
                 <div className="flex space-x-2">
                     <Link
-                        href={`/dashboard_admin/event_edit/${event.id}`}
-                        className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
+                        href={`/events/${event.id}/edit`}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200">
                         <Edit3 className="w-4 h-4" />
                     </Link>
-                    <button 
+                    <button
                         onClick={() => onDelete(event.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
                     {(event.status === 'upcoming' || event.status === 'ongoing') && (
-                        <button 
+                        <button
                             onClick={() => onMarkCompleted(event.id)}
-                            className="px-3 py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors"
+                            className="px-3 py-1 bg-green-600 text-white text-xs rounded-xl hover:bg-green-700 transition-all duration-200 font-medium"
                         >
                             Marquer terminé
                         </button>
@@ -217,17 +222,22 @@ const Events = ({ events }: { events: Event[] }) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestion des événements" />
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
-                {/* En-tête avec actions */}
-                <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl p-6 text-white shadow-lg">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+                {/* Header moderne */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
                     <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold mb-2">Gestion des Événements</h1>
-                            <p className="text-purple-100">Organisez et gérez vos événements</p>
+                        <div className="flex items-center space-x-4">
+                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                                <Calendar className="w-8 h-8 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">Gestion des Événements</h1>
+                                <p className="text-gray-600 mt-2 text-lg">Organisez et gérez vos événements</p>
+                            </div>
                         </div>
-                        <button 
+                        <button
                             onClick={handleAddEvent}
-                            className="bg-white text-purple-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition-all duration-300 flex items-center space-x-2 font-medium"
+                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
                         >
                             <Plus className="w-5 h-5" />
                             <span>Nouvel événement</span>
@@ -237,73 +247,73 @@ const Events = ({ events }: { events: Event[] }) => {
 
                 {/* Statistiques rapides */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total événements</p>
-                                <p className="text-2xl font-bold text-purple-600 mt-1">{stats.total}</p>
+                                <p className="text-sm font-semibold text-gray-600">Total événements</p>
+                                <p className="text-3xl font-bold text-purple-600 mt-2">{stats.total}</p>
                             </div>
-                            <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-full">
-                                <Calendar className="w-6 h-6 text-purple-600" />
+                            <div className="p-4 bg-purple-100 rounded-2xl">
+                                <Calendar className="w-8 h-8 text-purple-600" />
                             </div>
                         </div>
                     </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">À venir</p>
-                                <p className="text-2xl font-bold text-blue-600 mt-1">{stats.upcoming}</p>
+                                <p className="text-sm font-semibold text-gray-600">À venir</p>
+                                <p className="text-3xl font-bold text-blue-600 mt-2">{stats.upcoming}</p>
                             </div>
-                            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-full">
-                                <Clock className="w-6 h-6 text-blue-600" />
+                            <div className="p-4 bg-blue-100 rounded-2xl">
+                                <Clock className="w-8 h-8 text-blue-600" />
                             </div>
                         </div>
                     </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Participants</p>
-                                <p className="text-2xl font-bold text-green-600 mt-1">{stats.participants}</p>
+                                <p className="text-sm font-semibold text-gray-600">Participants</p>
+                                <p className="text-3xl font-bold text-green-600 mt-2">{stats.participants}</p>
                             </div>
-                            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-full">
-                                <Users className="w-6 h-6 text-green-600" />
+                            <div className="p-4 bg-green-100 rounded-2xl">
+                                <Users className="w-8 h-8 text-green-600" />
                             </div>
                         </div>
                     </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Terminés</p>
-                                <p className="text-2xl font-bold text-emerald-600 mt-1">{stats.completed}</p>
+                                <p className="text-sm font-semibold text-gray-600">Terminés</p>
+                                <p className="text-3xl font-bold text-emerald-600 mt-2">{stats.completed}</p>
                             </div>
-                            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-full">
-                                <CheckCircle className="w-6 h-6 text-emerald-600" />
+                            <div className="p-4 bg-emerald-100 rounded-2xl">
+                                <CheckCircle className="w-8 h-8 text-emerald-600" />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Barre de recherche et filtres */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Rechercher un événement..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <div className="flex gap-3">
-                            <select 
+                            <select
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
                             >
                                 <option value="all">Tous les statuts</option>
                                 <option value="upcoming">À venir</option>
@@ -311,10 +321,10 @@ const Events = ({ events }: { events: Event[] }) => {
                                 <option value="completed">Terminé</option>
                                 <option value="cancelled">Annulé</option>
                             </select>
-                            <select 
+                            <select
                                 value={filterCategory}
                                 onChange={(e) => setFilterCategory(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
                             >
                                 <option value="all">Toutes les catégories</option>
                                 <option value="Conférence">Conférence</option>
@@ -327,18 +337,18 @@ const Events = ({ events }: { events: Event[] }) => {
                 </div>
 
                 {/* Liste des événements */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
-                            <Calendar className="w-6 h-6 mr-2 text-purple-600" />
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                            <Calendar className="w-7 h-7 mr-3 text-purple-600" />
                             Événements ({filteredEvents.length})
                         </h2>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {filteredEvents.map((event: Event) => (
-                            <EventCard 
-                                key={event.id} 
+                            <EventCard
+                                key={event.id}
                                 event={event}
                                 onDelete={handleDeleteEvent}
                                 onMarkCompleted={handleMarkCompleted}
@@ -346,10 +356,21 @@ const Events = ({ events }: { events: Event[] }) => {
                             />
                         ))}
                     </div>
-                    
+
                     {filteredEvents.length === 0 && (
-                        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                            Aucun événement trouvé
+                        <div className="text-center py-12">
+                            <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun événement trouvé</h3>
+                            <p className="text-gray-600 mb-6">
+                                {searchTerm ? 'Modifiez vos critères de recherche' : 'Commencez par créer votre premier événement'}
+                            </p>
+                            <button
+                                onClick={handleAddEvent}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all duration-200 mx-auto"
+                            >
+                                <Plus className="w-5 h-5" />
+                                <span>Créer un événement</span>
+                            </button>
                         </div>
                     )}
                 </div>

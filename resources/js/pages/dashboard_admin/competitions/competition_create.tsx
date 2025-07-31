@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BreadcrumbItem } from '@/types';
-import { ArrowLeft, Save, Trophy } from 'lucide-react';
+import { ArrowLeft, Save, Trophy, Plus, Users } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -71,217 +65,211 @@ export default function CompetitionCreate() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Créer une nouvelle compétition" />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6">
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-4">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+                {/* Header moderne */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                                <Trophy className="w-8 h-8 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">Nouvelle compétition</h1>
+                                <p className="text-gray-600 mt-2 text-lg">Organisez et gérez vos compétitions sportives</p>
+                            </div>
+                        </div>
                         <Link
                             href="/competitions"
-                            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                            className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
                         >
-                            <ArrowLeft className="w-4 h-4" />
-                            Retour aux compétitions
+                            <ArrowLeft className="w-5 h-5" />
+                            <span>Retour aux compétitions</span>
                         </Link>
-                    </div>
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                            Créer une nouvelle compétition
-                        </h1>
-                        <p className="text-gray-600 dark:text-gray-400 mt-1">
-                            Organisez et gérez vos compétitions sportives
-                        </p>
                     </div>
                 </div>
 
-                {/* Create Form */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Main Form */}
-                    <div className="lg:col-span-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Trophy className="w-5 h-5" />
-                                    Nouvelle compétition
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    {/* Title */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="title">Titre de la compétition *</Label>
-                                        <Input
-                                            id="title"
+                {/* Formulaire */}
+                <div className="max-w-6xl mx-auto w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Formulaire principal */}
+                        <div className="lg:col-span-2">
+                            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                                <div className="flex items-center space-x-3 mb-8">
+                                    <div className="p-3 bg-blue-100 rounded-xl">
+                                        <Plus className="w-6 h-6 text-blue-600" />
+                                    </div>
+                                    <h2 className="text-2xl font-bold text-gray-900">Détails de la compétition</h2>
+                                </div>
+
+                                <form onSubmit={handleSubmit} className="space-y-8">
+                                    {/* Titre */}
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-gray-700">Titre de la compétition *</label>
+                                        <input
                                             value={formData.title}
                                             onChange={(e) => handleInputChange('title', e.target.value)}
                                             placeholder="Championnat National 2024"
                                             required
-                                            className={errors.title ? 'border-red-500' : ''}
+                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.title ? 'border-red-500' : 'border-gray-200'}`}
                                         />
-                                        {errors.title && (
-                                            <p className="text-sm text-red-600">{errors.title}</p>
-                                        )}
+                                        {errors.title && <p className="text-sm text-red-600">{errors.title}</p>}
                                     </div>
 
-                                    {/* Date and Deadline */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="date">Date de la compétition *</Label>
-                                            <Input
-                                                id="date"
+                                    {/* Date et deadline */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-semibold text-gray-700">Date de la compétition *</label>
+                                            <input
                                                 type="date"
                                                 value={formData.date}
                                                 onChange={(e) => handleInputChange('date', e.target.value)}
                                                 required
-                                                className={errors.date ? 'border-red-500' : ''}
+                                                className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.date ? 'border-red-500' : 'border-gray-200'}`}
                                             />
-                                            {errors.date && (
-                                                <p className="text-sm text-red-600">{errors.date}</p>
-                                            )}
+                                            {errors.date && <p className="text-sm text-red-600">{errors.date}</p>}
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="deadline">Date limite d'inscription *</Label>
-                                            <Input
-                                                id="deadline"
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-semibold text-gray-700">Date limite d'inscription *</label>
+                                            <input
                                                 type="date"
                                                 value={formData.deadline}
                                                 onChange={(e) => handleInputChange('deadline', e.target.value)}
                                                 required
-                                                className={errors.deadline ? 'border-red-500' : ''}
+                                                className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.deadline ? 'border-red-500' : 'border-gray-200'}`}
                                             />
-                                            {errors.deadline && (
-                                                <p className="text-sm text-red-600">{errors.deadline}</p>
-                                            )}
+                                            {errors.deadline && <p className="text-sm text-red-600">{errors.deadline}</p>}
                                         </div>
                                     </div>
 
-                                    {/* Location */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="location">Lieu de la compétition *</Label>
-                                        <Input
-                                            id="location"
+                                    {/* Lieu */}
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-gray-700">Lieu de la compétition *</label>
+                                        <input
                                             value={formData.location}
                                             onChange={(e) => handleInputChange('location', e.target.value)}
                                             placeholder="Stade Olympique, Paris"
                                             required
-                                            className={errors.location ? 'border-red-500' : ''}
+                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.location ? 'border-red-500' : 'border-gray-200'}`}
                                         />
-                                        {errors.location && (
-                                            <p className="text-sm text-red-600">{errors.location}</p>
-                                        )}
+                                        {errors.location && <p className="text-sm text-red-600">{errors.location}</p>}
                                     </div>
 
                                     {/* Description */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="description">Description</Label>
-                                        <Textarea
-                                            id="description"
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-gray-700">Description</label>
+                                        <textarea
                                             value={formData.description}
                                             onChange={(e) => handleInputChange('description', e.target.value)}
                                             placeholder="Description détaillée de la compétition, règlement, prix..."
                                             rows={6}
-                                            className={errors.description ? 'border-red-500' : ''}
+                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 resize-none ${errors.description ? 'border-red-500' : 'border-gray-200'}`}
                                         />
-                                        {errors.description && (
-                                            <p className="text-sm text-red-600">{errors.description}</p>
-                                        )}
+                                        {errors.description && <p className="text-sm text-red-600">{errors.description}</p>}
                                         <p className="text-sm text-gray-500">
                                             Décrivez les détails de la compétition, le règlement et les prix.
                                         </p>
                                     </div>
 
-                                    {/* Form Actions */}
-                                    <div className="flex gap-4 pt-6 border-t">
-                                        <Button
+                                    {/* Boutons */}
+                                    <div className="flex gap-4 pt-8 border-t border-gray-200">
+                                        <button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2 disabled:opacity-50"
                                         >
-                                            <Save className="w-4 h-4 mr-2" />
-                                            {isSubmitting ? 'Création en cours...' : 'Créer la compétition'}
-                                        </Button>
-                                        <Link href="/competitions">
-                                            <Button type="button" variant="outline">
-                                                Annuler
-                                            </Button>
+                                            <Save className="w-5 h-5" />
+                                            <span>{isSubmitting ? 'Création en cours...' : 'Créer la compétition'}</span>
+                                        </button>
+                                        <Link 
+                                            href="/competitions"
+                                            className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center"
+                                        >
+                                            Annuler
                                         </Link>
                                     </div>
                                 </form>
-                            </CardContent>
-                        </Card>
-                    </div>
+                            </div>
+                        </div>
 
-                    {/* Sidebar with Settings */}
-                    <div className="lg:col-span-1">
-                        <div className="space-y-6">
-                            {/* Competition Settings */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-lg">Paramètres de la compétition</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    {/* Category */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="category">Catégorie *</Label>
-                                        <Select
+                        {/* Sidebar avec paramètres */}
+                        <div className="lg:col-span-1 space-y-6">
+                            {/* Paramètres */}
+                            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                                <div className="flex items-center space-x-3 mb-6">
+                                    <div className="p-3 bg-indigo-100 rounded-xl">
+                                        <Users className="w-6 h-6 text-indigo-600" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900">Paramètres</h3>
+                                </div>
+
+                                <div className="space-y-6">
+                                    {/* Catégorie */}
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-gray-700">Catégorie *</label>
+                                        <select
                                             value={formData.category}
-                                            onValueChange={(value) => handleInputChange('category', value)}
+                                            onChange={(e) => handleInputChange('category', e.target.value)}
+                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.category ? 'border-red-500' : 'border-gray-200'}`}
                                         >
-                                            <SelectTrigger className={errors.category ? 'border-red-500' : ''}>
-                                                <SelectValue placeholder="Choisir une catégorie" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Junior">Junior</SelectItem>
-                                                <SelectItem value="Senior">Senior</SelectItem>
-                                                <SelectItem value="Elite">Elite</SelectItem>
-                                                <SelectItem value="Veteran">Vétéran</SelectItem>
-                                                <SelectItem value="Open">Open</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        {errors.category && (
-                                            <p className="text-sm text-red-600">{errors.category}</p>
-                                        )}
+                                            <option value="">Choisir une catégorie</option>
+                                            <option value="Junior">Junior</option>
+                                            <option value="Senior">Senior</option>
+                                            <option value="Elite">Elite</option>
+                                            <option value="Veteran">Vétéran</option>
+                                            <option value="Open">Open</option>
+                                        </select>
+                                        {errors.category && <p className="text-sm text-red-600">{errors.category}</p>}
                                     </div>
 
-                                    {/* Max Participants */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="maxParticipants">Nombre maximum de participants *</Label>
-                                        <Input
-                                            id="maxParticipants"
+                                    {/* Nombre max de participants */}
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-gray-700">Nombre maximum de participants *</label>
+                                        <input
                                             type="number"
                                             value={formData.maxParticipants}
                                             onChange={(e) => handleInputChange('maxParticipants', e.target.value)}
                                             placeholder="50"
                                             min="1"
                                             required
-                                            className={errors.maxParticipants ? 'border-red-500' : ''}
+                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.maxParticipants ? 'border-red-500' : 'border-gray-200'}`}
                                         />
-                                        {errors.maxParticipants && (
-                                            <p className="text-sm text-red-600">{errors.maxParticipants}</p>
-                                        )}
+                                        {errors.maxParticipants && <p className="text-sm text-red-600">{errors.maxParticipants}</p>}
                                         <p className="text-sm text-gray-500">
                                             Limitez le nombre de participants pour cette compétition.
                                         </p>
                                     </div>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
 
-                            {/* Tips Card */}
-                            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-700">
-                                <CardHeader>
-                                    <CardTitle className="text-lg text-blue-800 dark:text-blue-200">
-                                        💡 Conseils d'organisation
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="text-sm text-blue-700 dark:text-blue-300 space-y-2">
-                                    <ul className="space-y-2">
-                                        <li>• Définissez une date limite d'inscription appropriée</li>
-                                        <li>• Assurez-vous que le lieu peut accueillir tous les participants</li>
-                                        <li>• Préparez un règlement clair et détaillé</li>
-                                        <li>• Communiquez les prix et récompenses</li>
-                                        <li>• Planifiez les inscriptions à l'avance</li>
-                                    </ul>
-                                </CardContent>
-                            </Card>
+                            {/* Conseils */}
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-6">
+                                <h3 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
+                                    <span className="mr-2">💡</span>
+                                    Conseils d'organisation
+                                </h3>
+                                <ul className="text-sm text-blue-700 space-y-3">
+                                    <li className="flex items-start space-x-2">
+                                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
+                                        <span>Définissez une date limite d'inscription appropriée</span>
+                                    </li>
+                                    <li className="flex items-start space-x-2">
+                                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
+                                        <span>Assurez-vous que le lieu peut accueillir tous les participants</span>
+                                    </li>
+                                    <li className="flex items-start space-x-2">
+                                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
+                                        <span>Préparez un règlement clair et détaillé</span>
+                                    </li>
+                                    <li className="flex items-start space-x-2">
+                                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
+                                        <span>Communiquez les prix et récompenses</span>
+                                    </li>
+                                    <li className="flex items-start space-x-2">
+                                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
+                                        <span>Planifiez les inscriptions à l'avance</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -10,7 +10,16 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::latest()->get();
+        $events = Event::latest()->get()->map(function ($event) {
+            return array_merge(
+                $event->toArray(),
+                [
+                    'maxAttendees' => $event->max_attendees,
+                    'date' => $event->start_date,
+                    'endDate' => $event->end_date,
+                ]
+            );
+        });
         return Inertia::render('dashboard_admin/Evenements/evenement_index', ['events' => $events]);
     }
 
@@ -36,10 +45,13 @@ class EventController extends Controller
     public function edit(Event $event)
     {
         return Inertia::render('dashboard_admin/Evenements/evenement_edit', [
-            'event' => [
-                ...$event->toArray(),
-                'maxAttendees' => $event->max_attendees,
-            ],
+            'event' => array_merge(
+                $event->toArray(),
+                [
+                    'maxAttendees' => $event->max_attendees,
+                    'date' => $event->start_date,
+                ]
+            ),
         ]);
     }
 

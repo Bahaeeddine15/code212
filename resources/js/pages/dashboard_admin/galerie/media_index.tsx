@@ -51,19 +51,17 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
         });
 
     const StatCard = ({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) => (
-        <Card>
-            <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-                        <p className={`text-2xl font-bold ${color} mt-1`}>{value}</p>
-                    </div>
-                    <div className={`p-3 ${color.replace('text-', 'bg-').replace('-600', '-50')} dark:${color.replace('text-', 'bg-').replace('-600', '-900/20')} rounded-full`}>
-                        <Icon className={`w-6 h-6 ${color}`} />
-                    </div>
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <p className="text-sm font-semibold text-gray-600">{title}</p>
+                    <p className={`text-3xl font-bold mt-2 ${color}`}>{value}</p>
                 </div>
-            </CardContent>
-        </Card>
+                <div className={`p-4 rounded-2xl ${color === 'text-emerald-600' ? 'bg-emerald-100' : 'bg-blue-100'}`}>
+                    <Icon className={`w-8 h-8 ${color}`} />
+                </div>
+            </div>
+        </div>
     );
 
     // Helper to determine media type (returns 'Image' or 'Vidéo')
@@ -142,25 +140,28 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Galerie médias" />
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
 
-                {/* Header */}
-                <Card className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white border-0">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-3xl font-bold mb-2 text-white">Galerie Médias</CardTitle>
-                                <p className="text-emerald-100">Gérez vos images et vidéos</p>
+                {/* Header moderne */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                                <Images className="w-8 h-8 text-white" />
                             </div>
-                            <Button asChild variant="secondary">
-                                <Link href="/media/create">
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    Ajouter
-                                </Link>
-                            </Button>
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">Galerie Médias</h1>
+                                <p className="text-gray-600 mt-2 text-lg">Gérez vos images et vidéos</p>
+                            </div>
                         </div>
-                    </CardContent>
-                </Card>
+                        <Button asChild className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
+                            <Link href="/media/create">
+                                <Plus className="w-5 h-5" />
+                                <span>Ajouter</span>
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -169,64 +170,61 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
                 </div>
 
                 {/* Search and Filters */}
-                <Card>
-                    <CardContent className="p-6">
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <div className="flex-1 relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                                <Input
-                                    type="text"
-                                    placeholder="Rechercher un média..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-10"
-                                />
-                            </div>
-                            <Select value={sortBy} onValueChange={setSortBy}>
-                                <SelectTrigger className="w-40">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="date">Plus récent</SelectItem>
-                                    <SelectItem value="name">Nom A-Z</SelectItem>
-                                </SelectContent>
-                            </Select>
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex-1 relative">
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                            <Input
+                                type="text"
+                                placeholder="Rechercher un média..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                            />
                         </div>
-                    </CardContent>
-                </Card>
+                        <Select value={sortBy} onValueChange={setSortBy}>
+                            <SelectTrigger className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="date">Plus récent</SelectItem>
+                                <SelectItem value="name">Nom A-Z</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
 
                 {/* Media Gallery */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center">
-                            <Images className="w-6 h-6 mr-2 text-emerald-600" />
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                            <Images className="w-7 h-7 mr-3 text-emerald-600" />
                             Médias ({filteredAndSortedMedia.length})
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            {filteredAndSortedMedia.length > 0 ? (
-                                filteredAndSortedMedia.map((media) => <MediaCard key={media.id} media={media} />)
-                            ) : (
-                                <div className="text-center py-12">
-                                    <Images className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                                    <h3 className="text-lg font-medium mb-2">Aucun média trouvé</h3>
-                                    <p className="text-muted-foreground mb-4">
-                                        {initialMedia.length === 0 ? "Commencez par ajouter des médias à votre galerie" : "Aucun média ne correspond à votre recherche"}
-                                    </p>
-                                    {initialMedia.length === 0 && (
-                                        <Button asChild>
-                                            <Link href="/media/create">
-                                                <Plus className="w-4 h-4 mr-2" />
-                                                Ajouter un média
-                                            </Link>
-                                        </Button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
+                        </h2>
+                    </div>
+                    
+                    <div className="space-y-2">
+                        {filteredAndSortedMedia.length > 0 ? (
+                            filteredAndSortedMedia.map((media) => <MediaCard key={media.id} media={media} />)
+                        ) : (
+                            <div className="text-center py-12">
+                                <Images className="w-16 h-16 mx-auto mb-4 text-gray-500" />
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun média trouvé</h3>
+                                <p className="text-gray-600 mb-6">
+                                    {initialMedia.length === 0 ? "Commencez par ajouter des médias à votre galerie" : "Aucun média ne correspond à votre recherche"}
+                                </p>
+                                {initialMedia.length === 0 && (
+                                    <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all duration-200 mx-auto">
+                                        <Link href="/media/create">
+                                            <Plus className="w-5 h-5" />
+                                            <span>Ajouter un média</span>
+                                        </Link>
+                                    </Button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </AppLayout>
     );

@@ -97,7 +97,7 @@ const ReservationCard = ({
     return (
         <Link
             href={`/reservations/${reservation.id}`}
-            className="block bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+            className="block bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
         >
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
@@ -175,8 +175,8 @@ export default function Reservations() {
         { id: 4, name: 'Salle Réunion D102', capacity: 15, type: 'Réunion', equipment: ['Écran TV', 'Visioconférence'] }
     ]);
 
-    const { reservations } = usePage().props as { reservations: Reservation[] };
-    const [localReservations, setLocalReservations] = useState(reservations);
+    const { reservations = [] } = usePage().props as any;
+    const [localReservations, setLocalReservations] = useState<Reservation[]>(reservations);
 
     // États pour les filtres
     const [searchTerm, setSearchTerm] = useState('');
@@ -224,36 +224,117 @@ export default function Reservations() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestion des réservations" />
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
 
-                {/* En-tête */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                {/* Header moderne */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
                     <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">Gestion des Réservations</h1>
-                            <p className="text-gray-600">Traitement des demandes de réservation de salles</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <Building2 className="w-8 h-8 text-blue-600" />
+                        <div className="flex items-center space-x-4">
+                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                                <Building2 className="w-8 h-8 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">Gestion des Réservations</h1>
+                                <p className="text-gray-600 mt-2 text-lg">Traitement des demandes de réservation de salles</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Statistiques rapides */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {/* ...stat cards unchanged... */}
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-600">Total réservations</p>
+                                <p className="text-3xl font-bold text-blue-600 mt-2">{stats.total}</p>
+                            </div>
+                            <div className="p-4 bg-blue-100 rounded-2xl">
+                                <Building2 className="w-8 h-8 text-blue-600" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-600">En attente</p>
+                                <p className="text-3xl font-bold text-yellow-600 mt-2">{stats.pending}</p>
+                            </div>
+                            <div className="p-4 bg-yellow-100 rounded-2xl">
+                                <AlertCircle className="w-8 h-8 text-yellow-600" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-600">Approuvées</p>
+                                <p className="text-3xl font-bold text-green-600 mt-2">{stats.approved}</p>
+                            </div>
+                            <div className="p-4 bg-green-100 rounded-2xl">
+                                <CheckCircle className="w-8 h-8 text-green-600" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-600">Rejetées</p>
+                                <p className="text-3xl font-bold text-red-600 mt-2">{stats.rejected}</p>
+                            </div>
+                            <div className="p-4 bg-red-100 rounded-2xl">
+                                <XCircle className="w-8 h-8 text-red-600" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Barre de recherche et filtres */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    {/* ...search and filters unchanged... */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex-1 relative">
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                            <input
+                                type="text"
+                                placeholder="Rechercher par nom, salle ou objet..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                            />
+                        </div>
+                        <div className="flex gap-3">
+                            <select
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
+                            >
+                                <option value="all">Tous les statuts</option>
+                                <option value="pending">En attente</option>
+                                <option value="approved">Approuvée</option>
+                                <option value="rejected">Rejetée</option>
+                            </select>
+                            <select
+                                value={filterRoom}
+                                onChange={(e) => setFilterRoom(e.target.value)}
+                                className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
+                            >
+                                <option value="all">Toutes les salles</option>
+                                {rooms.map(room => (
+                                    <option key={room.id} value={room.id.toString()}>{room.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Liste des réservations */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-gray-800 flex items-center">
-                            <Building2 className="w-6 h-6 mr-2 text-blue-600" />
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                            <Building2 className="w-7 h-7 mr-3 text-blue-600" />
                             Demandes de réservation ({filteredReservations.length})
                         </h2>
                     </div>
@@ -270,8 +351,12 @@ export default function Reservations() {
                     </div>
 
                     {filteredReservations.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                            Aucune réservation trouvée
+                        <div className="text-center py-12">
+                            <Building2 className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune réservation trouvée</h3>
+                            <p className="text-gray-600">
+                                {searchTerm ? 'Modifiez vos critères de recherche' : 'Aucune demande de réservation en attente'}
+                            </p>
                         </div>
                     )}
                 </div>

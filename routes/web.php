@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('articles', ArticleController::class);
 
     Route::resource('events', EventController::class);
+    Route::patch('/events/{id}/status', [EventController::class, 'updateStatus'])->name('events.updateStatus');
 
     Route::resource('media', MediaController::class)->parameters(['media' => 'media']);
     Route::get('/media/{media}/download', [MediaController::class, 'download'])->name('media.download');
