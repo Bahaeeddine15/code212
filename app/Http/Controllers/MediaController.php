@@ -12,9 +12,9 @@ class MediaController extends Controller
 {
     public function index()
     {
-        $media = Media::latest()->get();
+        $media = Media::all()->groupBy('folder');
         return Inertia::render('dashboard_admin/galerie/media_index', [
-            'media' => $media,
+            'mediaByFolder' => $media,
         ]);
     }
 
@@ -28,27 +28,22 @@ class MediaController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'detail' => 'required|string',
+            'folder' => 'required|string|max:255',
             'file' => 'required|file|mimes:jpg,jpeg,png,gif,mp4,avi,mov,wmv|max:51200',
         ]);
 
-        $baseSlug = str($data['title'])->slug();
-        $slug = $baseSlug;
-        $counter = 1;
-
-        // Check if slug exists and increment until unique
-        while (Media::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter;
-            $counter++;
-        }
-
-        $data['slug'] = $slug;
         $file = $request->file('file');
-        $data['original_name'] = $file->getClientOriginalName();
-        $data['file_path'] = Storage::disk('public')->put('media', $file);
-
-        Storage::disk('public')->setVisibility($data['file_path'], 'public');
-
-        $request->user()->media()->create($data);
+        $mediaData = [
+            'title' => $data['title'],
+            'detail' => $data['detail'],
+            'folder' => $data['folder'],
+            'original_name' => $file->getClientOriginalName(),
+            'file_path' => Storage::disk('public')->put("media/{$data['folder']}", $file),
+            'slug' => str($data['title'])->slug() . '-' . uniqid(),
+            'user_id' => $request->user()->id,
+        ];
+        Storage::disk('public')->setVisibility($mediaData['file_path'], 'public');
+        \App\Models\Media::create($mediaData);
 
         return redirect()->route('media.index');
     }
@@ -87,6 +82,7 @@ class MediaController extends Controller
             'title' => 'required|string|max:255',
             'detail' => 'required|string',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,avi,mov,wmv|max:51200',
+            'folder' => 'required|string|max:255',
         ]);
 
         // Generate new slug if title changed
@@ -129,6 +125,36 @@ class MediaController extends Controller
         }
 
         $media->delete();
+
+        return redirect()->route('media.index');
+    }
+
+    public function showFolder($folder)
+    {
+        $mediaFiles = \App\Models\Media::where('folder', $folder)->get();
+        return \Inertia\Inertia::render('dashboard_admin/galerie/folder_show', [
+            'folder' => $folder,
+            'files' => $mediaFiles,
+        ]);
+    }
+
+    public function destroyFolder($folder)
+    {
+        $mediaFiles = \App\Models\Media::where('folder', $folder)->get();
+
+        foreach ($mediaFiles as $media) {
+            // Delete file from storage
+            if ($media->file_path && \Storage::disk('public')->exists($media->file_path)) {
+                \Storage::disk('public')->delete($media->file_path);
+            }
+            $media->delete();
+        }
+
+        // Optionally, remove the empty folder from storage
+        $folderPath = "media/{$folder}";
+        if (\Storage::disk('public')->exists($folderPath)) {
+            \Storage::disk('public')->deleteDirectory($folderPath);
+        }
 
         return redirect()->route('media.index');
     }

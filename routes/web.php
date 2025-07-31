@@ -33,6 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('media', MediaController::class)->parameters(['media' => 'media']);
     Route::get('/media/{media}/download', [MediaController::class, 'download'])->name('media.download');
+    Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
+    Route::get('/media/{media}/edit', [MediaController::class, 'edit'])->name('media.edit');
+    Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+    // Show all media in a specific folder
+    Route::get('/media/folder/{folder}', [\App\Http\Controllers\MediaController::class, 'showFolder'])->name('media.folder');
 
     Route::get('formations', function () {
         return Inertia::render('dashboard_admin/formations');
@@ -104,6 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('reservations', ReservationController::class);
     Route::patch('/reservations/{reservation}/approve', [ReservationController::class, 'approve'])->name('reservations.approve');
     Route::patch('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
+    Route::delete('/media/folder/{folder}', [MediaController::class, 'destroyFolder'])->name('media.folder.destroy');
 });
 
 require __DIR__ . '/settings.php';

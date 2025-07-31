@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -27,9 +27,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Galerie médias', href: '/media' },
 ];
 
-export default function MediaIndex({ media: initialMedia }: { media: MediaFile[] }) {
+export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<string, MediaFile[]> }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('date');
+    const [folderSearch, setFolderSearch] = useState('');
 
     const getImageUrl = (filePath: string) => `/storage/${filePath.replace(/^\/+/, '')}`;
     const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('fr-FR');
@@ -40,29 +41,6 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
     const handleDelete = (id: number) => confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?') && router.delete(`/media/${id}`);
     const handleView = (media: MediaFile) => router.visit(`/media/${media.id}`);
     const handleDownload = (media: MediaFile) => window.location.href = `/media/${media.id}/download`;
-
-    const filteredAndSortedMedia = initialMedia
-        .filter(media => media.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        media.original_name.toLowerCase().includes(searchTerm.toLowerCase()))
-        .sort((a, b) => {
-            if (sortBy === 'date') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-            if (sortBy === 'name') return a.title.localeCompare(b.title);
-            return 0;
-        });
-
-    const StatCard = ({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) => (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <p className="text-sm font-semibold text-gray-600">{title}</p>
-                    <p className={`text-3xl font-bold mt-2 ${color}`}>{value}</p>
-                </div>
-                <div className={`p-4 rounded-2xl ${color === 'text-emerald-600' ? 'bg-emerald-100' : 'bg-blue-100'}`}>
-                    <Icon className={`w-8 h-8 ${color}`} />
-                </div>
-            </div>
-        </div>
-    );
 
     // Helper to determine media type (returns 'Image' or 'Vidéo')
     const getMediaType = (filePath: string) => {
@@ -75,67 +53,45 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
     const MediaCard = ({ media }: { media: MediaFile }) => (
         <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                        {getMediaType(media.file_path) === 'Vidéo' ? (
-                            <video
-                                className="w-16 h-16 rounded-lg object-cover cursor-pointer"
-                                src={getImageUrl(media.file_path)}
-                                // poster="/path/to/thumbnail.jpg" // if you have a thumbnail
-                                muted
-                                controls={false}
-                                onClick={() => handleView(media)}
-                            />
-                        ) : (
-                            <Avatar className="w-16 h-16 rounded-lg">
-                                <AvatarImage
-                                    src={getImageUrl(media.file_path)}
-                                    alt={media.title}
-                                    className="object-cover cursor-pointer"
-                                    onClick={() => handleView(media)}
-                                />
-                                <AvatarFallback className="rounded-lg bg-indigo-600 text-white">IMG</AvatarFallback>
-                            </Avatar>
-                        )}
-                        <div>
-                            <h3 className="font-medium cursor-pointer hover:text-blue-600" onClick={() => handleView(media)}>
-                                {media.title}
-                            </h3>
-                            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                                <span className={`px-2 py-1 text-xs rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
-                                    {getMediaType(media.file_path)}
-                                </span>
-                                <span>{formatDate(media.created_at)}</span>
-                                <span title={media.original_name}>
-                                    {media.original_name.length > 20 ? media.original_name.substring(0, 20) + '...' : media.original_name}
-                                </span>
-                            </div>
-                        </div>
+                <div className="flex flex-col items-center">
+                    {getMediaType(media.file_path) === 'Vidéo' ? (
+                        <video
+                            className="w-24 h-24 rounded-lg object-contain bg-gray-100 cursor-pointer mb-2"
+                            src={getImageUrl(media.file_path)}
+                            muted
+                            controls={false}
+                            onClick={() => handleView(media)}
+                        />
+                    ) : (
+                        <img
+                            src={getImageUrl(media.file_path)}
+                            alt={media.title}
+                            className="w-24 h-24 rounded-lg object-contain bg-gray-100 cursor-pointer mb-2"
+                            onClick={() => handleView(media)}
+                        />
+                    )}
+                    <h3 className="font-medium text-center truncate w-full" title={media.title}>
+                        {media.title}
+                    </h3>
+                    <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
+                        <span className={`px-2 py-1 rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                            {getMediaType(media.file_path)}
+                        </span>
+                        <span>{formatDate(media.created_at)}</span>
                     </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {[
-                                { icon: Eye, label: 'Voir', action: () => handleView(media) },
-                                { icon: Download, label: 'Télécharger', action: () => handleDownload(media) },
-                                { icon: Edit3, label: 'Modifier', action: () => handleEdit(media) },
-                                { icon: Trash2, label: 'Supprimer', action: () => handleDelete(media.id), className: 'text-red-600' },
-                            ].map(({ icon: Icon, label, action, className }) => (
-                                <DropdownMenuItem key={label} onClick={action} className={className}>
-                                    <Icon className="mr-2 h-4 w-4" />
-                                    {label}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
             </CardContent>
         </Card>
     );
+
+    // Compute stats from grouped data
+    const totalMedia = Object.values(mediaByFolder).reduce((sum, files) => sum + files.length, 0);
+    const totalFiltered = Object.entries(mediaByFolder).reduce((sum, [_, files]) => {
+        return sum + files.filter(file =>
+            file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            file.original_name.toLowerCase().includes(searchTerm.toLowerCase())
+        ).length;
+    }, 0);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -165,8 +121,28 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
 
                 {/* Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <StatCard title="Total médias" value={initialMedia.length} icon={Images} color="text-emerald-600" />
-                    <StatCard title="Résultats filtrés" value={filteredAndSortedMedia.length} icon={Search} color="text-blue-600" />
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-600">Total médias</p>
+                                <p className="text-3xl font-bold mt-2 text-emerald-600">{totalMedia}</p>
+                            </div>
+                            <div className="p-4 rounded-2xl bg-emerald-100">
+                                <Images className="w-8 h-8 text-emerald-600" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-600">Résultats filtrés</p>
+                                <p className="text-3xl font-bold mt-2 text-blue-600">{totalFiltered}</p>
+                            </div>
+                            <div className="p-4 rounded-2xl bg-blue-100">
+                                <Search className="w-8 h-8 text-blue-600" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Search and Filters */}
@@ -192,37 +168,65 @@ export default function MediaIndex({ media: initialMedia }: { media: MediaFile[]
                             </SelectContent>
                         </Select>
                     </div>
+                    {/* Folder filter */}
+                    <div className="mt-4 flex items-center gap-3">
+                        <Search className="w-5 h-5 text-gray-400" />
+                        <Input
+                            type="text"
+                            placeholder="Rechercher un dossier..."
+                            value={folderSearch}
+                            onChange={e => setFolderSearch(e.target.value)}
+                            className="w-full max-w-xs"
+                        />
+                    </div>
                 </div>
 
-                {/* Media Gallery */}
+                {/* Media Gallery grouped by folder */}
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 flex items-center">
                             <Images className="w-7 h-7 mr-3 text-emerald-600" />
-                            Médias ({filteredAndSortedMedia.length})
+                            Médias par dossier
                         </h2>
                     </div>
-                    
-                    <div className="space-y-2">
-                        {filteredAndSortedMedia.length > 0 ? (
-                            filteredAndSortedMedia.map((media) => <MediaCard key={media.id} media={media} />)
-                        ) : (
-                            <div className="text-center py-12">
-                                <Images className="w-16 h-16 mx-auto mb-4 text-gray-500" />
-                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun média trouvé</h3>
-                                <p className="text-gray-600 mb-6">
-                                    {initialMedia.length === 0 ? "Commencez par ajouter des médias à votre galerie" : "Aucun média ne correspond à votre recherche"}
-                                </p>
-                                {initialMedia.length === 0 && (
-                                    <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all duration-200 mx-auto">
-                                        <Link href="/media/create">
-                                            <Plus className="w-5 h-5" />
-                                            <span>Ajouter un média</span>
-                                        </Link>
-                                    </Button>
-                                )}
-                            </div>
-                        )}
+
+                    <div className="space-y-8">
+                        {Object.entries(mediaByFolder)
+                            .filter(([folder]) =>
+                                folder.toLowerCase().includes(folderSearch.toLowerCase())
+                            )
+                            .map(([folder, files]) => {
+                                // Filter and sort inside each folder
+                                const filteredFiles = files
+                                    .filter(file =>
+                                        file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                        file.original_name.toLowerCase().includes(searchTerm.toLowerCase())
+                                    )
+                                    .sort((a, b) => {
+                                        if (sortBy === 'date') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                                        if (sortBy === 'name') return a.title.localeCompare(b.title);
+                                        return 0;
+                                    });
+
+                                if (filteredFiles.length === 0) return null;
+                                return (
+                                    <div key={folder}>
+                                        <h2 className="text-xl font-bold mb-4">
+                                            <Link
+                                                href={route('media.folder', { folder })}
+                                                className="text-blue-600 hover:underline"
+                                            >
+                                                {folder}
+                                            </Link>
+                                        </h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            {filteredFiles.map(file => (
+                                                <MediaCard key={file.id} media={file} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                     </div>
                 </div>
             </div>

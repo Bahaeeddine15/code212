@@ -11,12 +11,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function MediaUpload() {
-    const [formData, setFormData] = useState({ title: '', detail: '', file: null as File | null });
+    const [formData, setFormData] = useState({ title: '', detail: '', file: null as File | null, folder: null });
     const [preview, setPreview] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [errors, setErrors] = useState<{[key: string]: string}>({});
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
@@ -66,11 +66,12 @@ export default function MediaUpload() {
         submitData.append('title', formData.title);
         submitData.append('detail', formData.detail);
         submitData.append('file', formData.file!);
+        submitData.append('folder', formData.folder);
 
         router.post('/media', submitData, {
             onSuccess: () => {
                 setIsUploading(false);
-                setFormData({ title: '', detail: '', file: null });
+                setFormData({ title: '', detail: '', file: null, folder: null });
                 setPreview(null);
                 setErrors({});
                 router.visit('/media');
@@ -131,7 +132,7 @@ export default function MediaUpload() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Upload médias" />
-            
+
             <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
                 {/* Header moderne */}
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
@@ -195,6 +196,21 @@ export default function MediaUpload() {
                                 {errors.detail && <ErrorMessage error={errors.detail} />}
                             </div>
 
+                            {/* Dossier */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold text-gray-700">Dossier *</label>
+                                <input
+                                    type="text"
+                                    name="folder"
+                                    value={formData.folder}
+                                    onChange={handleInputChange}
+                                    disabled={isUploading}
+                                    className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.folder ? 'border-red-500' : 'border-gray-200'}`}
+                                    required
+                                />
+                                {errors.folder && <ErrorMessage error={errors.folder} />}
+                            </div>
+
                             {/* Upload de fichier */}
                             <div className="space-y-3">
                                 <label className="text-sm font-semibold text-gray-700">Fichier *</label>
@@ -234,8 +250,8 @@ export default function MediaUpload() {
 
                             {/* Boutons */}
                             <div className="flex gap-4 pt-8 border-t border-gray-200">
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     disabled={isUploading}
                                     className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2 disabled:opacity-50"
                                 >
@@ -251,7 +267,7 @@ export default function MediaUpload() {
                                         </>
                                     )}
                                 </button>
-                                <Link 
+                                <Link
                                     href="/media"
                                     className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center"
                                 >
