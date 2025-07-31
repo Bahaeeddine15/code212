@@ -4,7 +4,7 @@ import { NavUser } from '@/components/navigation/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Folder, LayoutGrid, BookOpen, Award, CalendarSync} from 'lucide-react';
+import { Folder, LayoutGrid, ScrollText, Medal, ClipboardCheck, Calendar, Trophy, Megaphone} from 'lucide-react';
 import AppLogo from './app-logo';
 
 
@@ -18,25 +18,27 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Formations',
         href: '/formations',
-        icon: BookOpen,
+        icon: ScrollText,
     },
     {
         title: 'Certificats',
         href: '/certificats',
-        icon: Award,
+        icon: Medal,
     },
     {
         title: 'Reservations',
         href: '/reservations',
-        icon: CalendarSync,
+        icon: ClipboardCheck,
     },
     {
         title: 'Events',
         href:'/events',
+        icon: Calendar,
     },
     {
         title: 'Compétition',
-        href:'/competition'
+        href:'/competition',
+        icon: Trophy,
     }
 
 
@@ -63,11 +65,11 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent  className="bg-[#3a2b6c] pt-2 text-white rounded-2xl shadow-2xl">
+            <SidebarContent className="bg-white pt-4 text-gray-800 rounded-xl shadow-2xl">
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            <SidebarFooter className="bg-[#3a2b6c] mt-3 rounded-2xl shadow-2xl">
+            <SidebarFooter className="bg-white mt-3 rounded-xl shadow-2xl">
                
                     <NavUser />
                
