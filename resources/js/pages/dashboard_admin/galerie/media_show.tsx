@@ -145,7 +145,10 @@ export default function MediaShow({ media }: MediaShowProps) {
                                         <video
                                             src={getImageUrl(media.file_path)}
                                             controls
+
+                                            controlsList="nodownload"
                                             className="max-w-full max-h-[500px] rounded-lg shadow-lg"
+                                            style={{ background: "#000" }}
                                         />
                                     ) : (
                                         <div className="text-center p-8">

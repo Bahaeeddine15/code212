@@ -4,13 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use Inertia\Inertia;
 
 class EventController extends Controller
 {
-   public function index()
+    public function index()
     {
-        $events = Event::latest()->get();
-        return inertia('Events/Index', ['events' => $events]);
+        $events = Event::latest()->get()->map(function ($event) {
+            return array_merge(
+                $event->toArray(),
+                [
+                    'maxAttendees' => $event->max_attendees,
+                    'date' => $event->start_date,
+                    'endDate' => $event->end_date,
+                ]
+            );
+        });
+        return Inertia::render('dashboard_admin/Evenements/evenement_index', ['events' => $events]);
     }
 
     public function store(Request $request)
@@ -25,12 +35,29 @@ class EventController extends Controller
             'category' => 'required|string',
         ]);
 
-        // Map maxAttendees to max_attendees if needed
         $validated['max_attendees'] = $validated['maxAttendees'];
         unset($validated['maxAttendees']);
 
         Event::create($validated);
         return redirect()->route('events.index');
+    }
+
+    public function edit(Event $event)
+    {
+        return Inertia::render('dashboard_admin/Evenements/evenement_edit', [
+            'event' => array_merge(
+                $event->toArray(),
+                [
+                    'maxAttendees' => $event->max_attendees,
+                    'date' => $event->start_date,
+                ]
+            ),
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('dashboard_admin/Evenements/evenement_create');
     }
 
     public function update(Request $request, Event $event)
@@ -52,15 +79,6 @@ class EventController extends Controller
         $event->update($validated);
         return redirect()->route('events.index');
     }
-    public function edit(Event $event)
-    {
-        return inertia('Events/Edit', [
-            'event' => [
-                ...$event->toArray(),
-                'maxAttendees' => $event->max_attendees,  // Convert for frontend
-            ],
-        ]);
-    }
 
     public function destroy(Event $event)
     {
@@ -80,7 +98,6 @@ class EventController extends Controller
             'status' => $request->input('status'),
         ]);
 
-        return back(); // or return a 200 response
+        return back();
     }
-
 }

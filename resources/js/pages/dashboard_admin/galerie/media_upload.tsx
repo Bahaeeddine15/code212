@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Upload, ImageIcon, ArrowLeft, CheckCircle, AlertCircle, Video, FileText } from 'lucide-react';
+import { Upload, ImageIcon, ArrowLeft, CheckCircle, AlertCircle, Video, FileText, Plus, Camera } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -16,12 +11,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function MediaUpload() {
-    const [formData, setFormData] = useState({ title: '', detail: '', file: null as File | null });
+    const [formData, setFormData] = useState({ title: '', detail: '', file: null as File | null, folder: null });
     const [preview, setPreview] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [errors, setErrors] = useState<{[key: string]: string}>({});
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
@@ -71,11 +66,12 @@ export default function MediaUpload() {
         submitData.append('title', formData.title);
         submitData.append('detail', formData.detail);
         submitData.append('file', formData.file!);
+        submitData.append('folder', formData.folder);
 
         router.post('/media', submitData, {
             onSuccess: () => {
                 setIsUploading(false);
-                setFormData({ title: '', detail: '', file: null });
+                setFormData({ title: '', detail: '', file: null, folder: null });
                 setPreview(null);
                 setErrors({});
                 router.visit('/media');
@@ -104,14 +100,14 @@ export default function MediaUpload() {
         return (
             <div className="text-center">
                 {fileType === 'image' && (
-                    <img src={preview} alt="Preview" className="mx-auto mb-4 max-w-xs max-h-48 object-cover rounded-lg border border-gray-200" />
+                    <img src={preview} alt="Preview" className="mx-auto mb-4 max-w-xs max-h-48 object-cover rounded-xl border-2 border-gray-200" />
                 )}
                 {fileType === 'video' && (
-                    <video src={preview} controls className="mx-auto mb-4 max-w-xs max-h-48 rounded-lg border border-gray-200" />
+                    <video src={preview} controls className="mx-auto mb-4 max-w-xs max-h-48 rounded-xl border-2 border-gray-200" />
                 )}
-                <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">{formData.file?.name}</div>
+                <div className="text-sm font-medium text-gray-900 mb-2">{formData.file?.name}</div>
                 <div className="text-xs text-gray-500">{formData.file && formatFileSize(formData.file.size)}</div>
-                <p className="text-sm text-emerald-600 mt-2">Cliquez pour changer le fichier</p>
+                <p className="text-sm text-blue-600 mt-2">Cliquez pour changer le fichier</p>
             </div>
         );
     };
@@ -136,67 +132,90 @@ export default function MediaUpload() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Upload médias" />
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
 
-                {/* Header */}
-                <Card className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white border-0">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-3xl font-bold mb-2 text-white">Upload Médias</CardTitle>
-                                <p className="text-emerald-100">Ajoutez une nouvelle image ou vidéo à la galerie</p>
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+                {/* Header moderne */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                                <Camera className="w-8 h-8 text-white" />
                             </div>
-                            <Button asChild variant="secondary">
-                                <Link href="/media">
-                                    <ArrowLeft className="w-5 h-5 mr-2" />
-                                    Retour à la galerie
-                                </Link>
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Upload Form */}
-                <Card>
-                    <CardContent className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
-
-                            {/* Title Field */}
                             <div>
-                                <Label htmlFor="title">Titre du fichier *</Label>
-                                <Input
-                                    id="title"
+                                <h1 className="text-3xl font-bold text-gray-900">Upload Médias</h1>
+                                <p className="text-gray-600 mt-2 text-lg">Ajoutez une nouvelle image ou vidéo à la galerie</p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/media"
+                            className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                            <span>Retour à la galerie</span>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Formulaire */}
+                <div className="max-w-4xl mx-auto w-full">
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                        <div className="flex items-center space-x-3 mb-8">
+                            <div className="p-3 bg-blue-100 rounded-xl">
+                                <Plus className="w-6 h-6 text-blue-600" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-900">Nouveau fichier média</h2>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-8">
+                            {/* Titre */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold text-gray-700">Titre du fichier *</label>
+                                <input
                                     name="title"
                                     value={formData.title}
                                     onChange={handleInputChange}
                                     placeholder="Entrez le titre du fichier"
                                     disabled={isUploading}
-                                    className={errors.title ? 'border-red-500' : ''}
+                                    className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.title ? 'border-red-500' : 'border-gray-200'}`}
                                 />
                                 {errors.title && <ErrorMessage error={errors.title} />}
                             </div>
 
-                            {/* Detail Field */}
-                            <div>
-                                <Label htmlFor="detail">Description *</Label>
-                                <Textarea
-                                    id="detail"
+                            {/* Description */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold text-gray-700">Description *</label>
+                                <textarea
                                     name="detail"
                                     value={formData.detail}
                                     onChange={handleInputChange}
                                     placeholder="Décrivez le fichier..."
                                     disabled={isUploading}
-                                    className={errors.detail ? 'border-red-500' : ''}
+                                    className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 resize-none ${errors.detail ? 'border-red-500' : 'border-gray-200'}`}
                                     rows={4}
                                 />
                                 {errors.detail && <ErrorMessage error={errors.detail} />}
                             </div>
 
-                            {/* File Input */}
-                            <div>
-                                <Label>Fichier *</Label>
-                                <div className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
-                                    errors.file ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                            {/* Dossier */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold text-gray-700">Dossier *</label>
+                                <input
+                                    type="text"
+                                    name="folder"
+                                    value={formData.folder}
+                                    onChange={handleInputChange}
+                                    disabled={isUploading}
+                                    className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.folder ? 'border-red-500' : 'border-gray-200'}`}
+                                    required
+                                />
+                                {errors.folder && <ErrorMessage error={errors.folder} />}
+                            </div>
+
+                            {/* Upload de fichier */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold text-gray-700">Fichier *</label>
+                                <div className={`border-2 border-dashed rounded-xl p-8 transition-all duration-200 ${
+                                    errors.file ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
                                 }`}>
                                     <input
                                         type="file"
@@ -212,13 +231,13 @@ export default function MediaUpload() {
                                         ) : (
                                             <div className="text-center">
                                                 <FileIcon />
-                                                <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                <p className="text-lg font-semibold text-gray-700 mb-2">
                                                     Sélectionnez un fichier
                                                 </p>
                                                 <p className="text-sm text-gray-500 mb-4">Cliquez pour choisir un fichier</p>
-                                                <Button type="button" className="pointer-events-none">
+                                                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold pointer-events-none">
                                                     Parcourir
-                                                </Button>
+                                                </div>
                                                 <p className="text-xs text-gray-400 mt-4">
                                                     Formats: JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV (Max: 50MB)
                                                 </p>
@@ -229,9 +248,13 @@ export default function MediaUpload() {
                                 {errors.file && <ErrorMessage error={errors.file} />}
                             </div>
 
-                            {/* Submit Button */}
-                            <div className="flex justify-end pt-6">
-                                <Button type="submit" disabled={isUploading} className="flex items-center space-x-2">
+                            {/* Boutons */}
+                            <div className="flex gap-4 pt-8 border-t border-gray-200">
+                                <button
+                                    type="submit"
+                                    disabled={isUploading}
+                                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2 disabled:opacity-50"
+                                >
                                     {isUploading ? (
                                         <>
                                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -243,11 +266,17 @@ export default function MediaUpload() {
                                             <span>Uploader le fichier</span>
                                         </>
                                     )}
-                                </Button>
+                                </button>
+                                <Link
+                                    href="/media"
+                                    className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center"
+                                >
+                                    Annuler
+                                </Link>
                             </div>
                         </form>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
         </AppLayout>
     );

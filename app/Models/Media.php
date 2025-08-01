@@ -15,7 +15,8 @@ class Media extends Model
         'detail',
         'file_path',
         'original_name',
-        'user_id'
+        'user_id',
+        'folder', // <-- add this
     ];
 
     public function user()

@@ -13,6 +13,7 @@ use App\Models\Formation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EventController;
 use App\Models\Event;
+use App\Http\Controllers\ReservationController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -27,43 +28,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('articles', ArticleController::class);
 
-     // List events
-    Route::get('events', function () {
-        $events = \App\Models\Event::orderBy('start_date', 'desc')->get();
-        return Inertia::render('dashboard_admin/events', [
-            'events' => $events,
-        ]);
-    })->name('events.index');
-
-    // Create event page
-    Route::get('events/create', function () {
-        return Inertia::render('dashboard_admin/event_create');
-    })->name('events.create');
-
-    // Store event
-    Route::post('events', [EventController::class, 'store'])->name('events.store');
-
-    // Edit event page
-    
-    Route::get('dashboard_admin/event_edit/{id}', function ($id) {
-        $event = Event::findOrFail($id);
-        return Inertia::render('dashboard_admin/event_edit', [
-            'event' => $event,
-        ]);
-    })->name('event.edit');
-
-    // Update event
-
-    Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
-
-    Route::patch('/events/{event}/status', [EventController::class, 'updateStatus']);
-
-
-    // Delete event
-    Route::delete('events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+    Route::resource('events', EventController::class);
+    Route::patch('/events/{id}/status', [EventController::class, 'updateStatus'])->name('events.updateStatus');
 
     Route::resource('media', MediaController::class)->parameters(['media' => 'media']);
     Route::get('/media/{media}/download', [MediaController::class, 'download'])->name('media.download');
+    Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
+    Route::get('/media/{media}/edit', [MediaController::class, 'edit'])->name('media.edit');
+    Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+    // Show all media in a specific folder
+    Route::get('/media/folder/{folder}', [\App\Http\Controllers\MediaController::class, 'showFolder'])->name('media.folder');
 
     Route::get('formations', function () {
         return Inertia::render('dashboard_admin/formations');
@@ -82,14 +57,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'formationId' => null,
         ]);
     })->name('module.create');
-
-    Route::get('competitions', function () {
-        return Inertia::render('dashboard_admin/competitions');
-    })->name('competitions');
-
-    Route::get('reservations', function () {
-        return Inertia::render('dashboard_admin/reservations');
-    })->name('reservations');
 
     Route::resource('competitions', CompetitionController::class);
     Route::patch('/competitions/{competition}/close', [CompetitionController::class, 'close'])
@@ -139,6 +106,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $module->delete();
         return back()->with('success', 'Module supprimé avec succès.');
     });
+
+    Route::resource('reservations', ReservationController::class);
+    Route::patch('/reservations/{reservation}/approve', [ReservationController::class, 'approve'])->name('reservations.approve');
+    Route::patch('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
+    Route::delete('/media/folder/{folder}', [MediaController::class, 'destroyFolder'])->name('media.folder.destroy');
 });
 
 require __DIR__ . '/settings.php';

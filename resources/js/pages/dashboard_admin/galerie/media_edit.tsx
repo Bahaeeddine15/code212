@@ -31,7 +31,8 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
     const [formData, setFormData] = useState({
         title: media.title,
         detail: media.detail,
-        file: null as File | null
+        file: null as File | null,
+        folder: media.folder || '',
     });
     const [preview, setPreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,6 +74,7 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
         const newErrors: {[key: string]: string} = {};
         if (!formData.title.trim()) newErrors.title = 'Le titre est requis';
         if (!formData.detail.trim()) newErrors.detail = 'La description est requise';
+        if (!formData.folder.trim()) newErrors.folder = 'Le nom du dossier est requis';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -85,6 +87,7 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
         const submitData = new FormData();
         submitData.append('title', formData.title);
         submitData.append('detail', formData.detail);
+        submitData.append('folder', formData.folder);
         submitData.append('_method', 'PUT');
 
         if (formData.file) {
@@ -214,6 +217,21 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
                                         required
                                     />
                                     {errors.detail && <ErrorMessage error={errors.detail} />}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="folder">Nom du dossier *</Label>
+                                    <Input
+                                        id="folder"
+                                        name="folder"
+                                        value={formData.folder}
+                                        onChange={handleInputChange}
+                                        placeholder="Nom du dossier"
+                                        disabled={isSubmitting}
+                                        className={errors.folder ? 'border-red-500' : ''}
+                                        required
+                                    />
+                                    {errors.folder && <ErrorMessage error={errors.folder} />}
                                 </div>
                             </div>
 

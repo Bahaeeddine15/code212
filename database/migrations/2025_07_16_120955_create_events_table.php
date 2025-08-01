@@ -20,7 +20,8 @@ return new class extends Migration
         $table->string('location');
         $table->string('category');
         $table->integer('max_attendees');
-        $table->string('status')->default('upcoming'); // new column
+        $table->string('status')->default('upcoming');
+        $table->integer('attendees')->default(0);
         $table->timestamps();
     });
 }

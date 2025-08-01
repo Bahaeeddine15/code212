@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BreadcrumbItem } from '@/types';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, X } from 'lucide-react';
 
 // Types pour l'article
 interface Article {
@@ -21,7 +21,7 @@ interface Article {
     status: 'published' | 'draft' | 'archived';
     category: string;
     views: number;
-    image?: string;
+    images?: string[]; // <-- Use images array
     created_at: string;
     updated_at: string;
 }
@@ -54,19 +54,58 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
         status: article.status
     });
 
+    // Existing images from the article (paths)
+    const [existingImages, setExistingImages] = useState<string[]>(article.images || []);
+    // New images to upload
+    const [newImages, setNewImages] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [imageError, setImageError] = useState('');
+
+    // Remove an existing image (before submit)
+    const handleRemoveExistingImage = (idx: number) => {
+        setExistingImages(prev => prev.filter((_, i) => i !== idx));
+    };
+
+    // Remove a new image (before submit)
+    const handleRemoveNewImage = (idx: number) => {
+        setNewImages(prev => prev.filter((_, i) => i !== idx));
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+        const files = Array.from(e.target.files);
+
+        // Combine current and new files, but only keep the first 5
+        const combined = [...existingImages, ...newImages, ...files].slice(0, 5);
+
+        // Calculate how many new images can be added
+        const canAdd = 5 - existingImages.length - newImages.length;
+        const filesToAdd = files.slice(0, canAdd);
+
+        // If user tried to add more than 5, show error
+        if (existingImages.length + newImages.length + files.length > 5) {
+            setImageError('Vous pouvez ajouter jusqu\'à 5 images maximum. Seules les 5 premières seront conservées.');
+        } else {
+            setImageError('');
+        }
+
+        setNewImages(prev => [...prev, ...filesToAdd].slice(0, 5 - existingImages.length));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        router.put(`/articles/${article.id}`, formData, {
-            onSuccess: () => {
-                setIsSubmitting(false);
-            },
-            onError: () => {
-                setIsSubmitting(false);
-            }
+        const data = new FormData();
+        Object.entries(formData).forEach(([key, value]) => data.append(key, value));
+        // Add new images
+        newImages.forEach((file, idx) => data.append(`images[${idx}]`, file));
+        // Add existing images (as JSON)
+        data.append('existing_images', JSON.stringify(existingImages));
+
+        router.post(`/articles/${article.id}?_method=PUT`, data, {
+            onSuccess: () => setIsSubmitting(false),
+            onError: () => setIsSubmitting(false)
         });
     };
 
@@ -170,6 +209,71 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                                         <SelectItem value="archived">Archivé</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            </div>
+
+                            {/* Existing Images */}
+                            {existingImages.length > 0 && (
+                                <div className="flex gap-2 mt-2 flex-wrap">
+                                    {existingImages.map((img, idx) => (
+                                        <div key={idx} className="relative group">
+                                            <img
+                                                src={`/storage/${img}`}
+                                                alt={`existing-${idx}`}
+                                                className="w-16 h-16 object-cover rounded border"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveExistingImage(idx)}
+                                                className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                                                title="Supprimer"
+                                            >
+                                                <X className="w-4 h-4 text-red-600" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* New Images */}
+                            {newImages.length > 0 && (
+                                <div className="flex gap-2 mt-2 flex-wrap">
+                                    {newImages.map((img, idx) => (
+                                        <div key={idx} className="relative group">
+                                            <img
+                                                src={URL.createObjectURL(img)}
+                                                alt={`new-${idx}`}
+                                                className="w-16 h-16 object-cover rounded border"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveNewImage(idx)}
+                                                className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                                                title="Supprimer"
+                                            >
+                                                <X className="w-4 h-4 text-red-600" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Image Upload Input */}
+                            <div className="space-y-2">
+                                <Label htmlFor="images">Ajouter des images (max 5)</Label>
+                                <Input
+                                    id="images"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageChange}
+                                    disabled={existingImages.length + newImages.length >= 5}
+                                />
+                                <p className="text-sm text-gray-500">
+                                    Vous pouvez ajouter jusqu'à 5 images au total.
+                                </p>
+                                {imageError && (
+                                    <p className="text-sm text-red-600">{imageError}</p>
+                                )}
                             </div>
 
                             <div className="flex gap-4 pt-6">
