@@ -46,6 +46,7 @@ interface Formation {
     level: string;
     duration: string;
     category: string;
+    file_path?: string;
     modules: Module[];
     enrolledStudents?: number;
     maxStudents?: number;
@@ -54,15 +55,64 @@ interface Formation {
 type Props = {
     formations: Formation[];
 };
+function renderFormationFile(
+    filePath?: string,
+    onOpenVideo?: () => void
+) {
+    if (!filePath) return null;
+
+    const extension = filePath.split('.').pop()?.toLowerCase();
+
+    if (extension === 'pdf') {
+        return (
+            <div className="mt-4">
+                <p className="text-sm text-gray-600 font-medium mb-1">Fichier attaché :</p>
+                <a
+                    href={`/storage/${filePath}`}
+                    target="_blank"
+                    className="text-indigo-600 hover:underline text-sm flex items-center gap-1"
+                >
+                    <FileText className="w-4 h-4" />
+                    Voir le PDF
+                </a>
+            </div>
+        );
+    }
+
+    if (['mp4', 'avi', 'mov'].includes(extension || '')) {
+        return (
+            <div className="mt-4">
+                <p className="text-sm text-gray-600 font-medium mb-1">Vidéo attachée :</p>
+                <button
+                    onClick={onOpenVideo}
+                    className="text-blue-600 hover:underline text-sm"
+                >
+                    📹 Voir la vidéo
+                </button>
+            </div>
+        );
+    }
+
+    return null;
+}
+
+
+
+
+
+
 
 // Composant pour les cartes de formation
 const FormationCard = ({ 
+    
     formation,
     onDelete,
-    onViewModules
+    onViewModules,
+    onShowVideo
 }: {
     formation: Formation;
     onDelete: (formation: Formation) => void;
+    onShowVideo: (filePath: string) => void;
     onViewModules: (formation: Formation) => void;
 }) => {
     const { title, description, level, duration, modules, category, enrolledStudents = 0, maxStudents = 0 } = formation;
@@ -124,6 +174,9 @@ const FormationCard = ({
             
             <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
+                {renderFormationFile(formation.file_path, () => onShowVideo(formation.file_path || ''))}
+
+
                 <div className="flex space-x-2">
                     <Link
                         href={`/dashboard_admin/formation_edit/${formation.id}`}
@@ -220,6 +273,8 @@ const ModuleCard = ({
 export default function Formations({ formations }: Props) {
     // State for selected formation and module view
     const [showModules, setShowModules] = useState(false);
+    const [showVideo, setShowVideo] = useState(false);
+    const [videoPath, setVideoPath] = useState<string | null>(null);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
 
     // Only keep delete/view logic, remove modal form logic
@@ -228,6 +283,7 @@ export default function Formations({ formations }: Props) {
             router.delete(`/formations/${formation.id}`);
         }
     };
+    
 
     const handleModuleDelete = (module: Module) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer ce module ?') && selectedFormation) {
@@ -381,6 +437,10 @@ export default function Formations({ formations }: Props) {
                                 formation={formation}
                                 onDelete={handleFormationDelete}
                                 onViewModules={handleViewModules}
+                                onShowVideo={(filePath) => {
+                                setVideoPath(filePath);
+                                setShowVideo(true);
+                            }}
                             />
                         ))}
                     </div>
@@ -417,6 +477,25 @@ export default function Formations({ formations }: Props) {
                     </div>
                 )}
             </div>
+            {showVideo && videoPath && (
+                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-4 max-w-xl w-full relative">
+                        <button
+                            onClick={() => setShowVideo(false)}
+                            className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-xl font-bold"
+                        >
+                            ×
+                        </button>
+                        <video controls className="w-full rounded">
+                            <source src={`/storage/${videoPath}`} type="video/mp4" />
+                            Votre navigateur ne prend pas en charge cette vidéo.
+                        </video>
+                    </div>
+                </div>
+            )}
+
+
+
         </AppLayout>
     );
 }

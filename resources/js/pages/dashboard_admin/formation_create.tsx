@@ -9,7 +9,8 @@ export default function FormationCreate() {
         description: '',
         level: '',
         duration: '',
-        category: ''
+        category: '',
+        file: null as File | null,
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -18,11 +19,32 @@ export default function FormationCreate() {
         setErrors(prev => ({ ...prev, [field]: '' }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    /*const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         router.post('/formations', form, {
             onError: (err) => setErrors(err),
         });
+    };*/
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('title', form.title);
+        formData.append('description', form.description);
+        formData.append('level', form.level);
+        formData.append('duration', form.duration);
+        formData.append('category', form.category);
+        if (form.file) formData.append('file', form.file);
+
+        router.post('/formations', formData, {
+            forceFormData: true,
+            onError: err => setErrors(err),
+        });
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm(prev => ({ ...prev, file: e.target.files?.[0] || null }));
+        setErrors(prev => ({ ...prev, file: '' }));
     };
 
     return (
@@ -93,6 +115,17 @@ export default function FormationCreate() {
                         />
                         {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
                     </div>
+                    <div>
+                        <label className="block mb-1 font-medium">Fichier (PDF ou vidéo)</label>
+                        <input
+                            type="file"
+                            accept=".pdf,video/*"
+                            onChange={handleFileChange}
+                            className="w-full border rounded px-3 py-2"
+                        />
+                        {errors.file && <p className="text-red-600 text-sm">{errors.file}</p>}
+                    </div>
+
                     <button
                         type="submit"
                         className="w-full bg-indigo-600 text-white py-2 rounded flex items-center justify-center gap-2"
