@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('level');
             $table->integer('duration')->nullable(); // in hours or weeks
             $table->string('category')->nullable();
+            $table->string('link')->nullable();
             $table->timestamps();
         });
     }

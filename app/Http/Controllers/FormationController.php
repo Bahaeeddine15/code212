@@ -38,6 +38,7 @@ class FormationController extends Controller
             'level' => 'nullable|string|max:100',
             'duration' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
+            'link' => 'nullable|url|max:255', // <-- add this line
         ]);
 
         Formation::create($validated);
@@ -76,6 +77,7 @@ class FormationController extends Controller
             'level' => 'nullable|string|max:100',
             'duration' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
+            'link' => 'nullable|url|max:255', // <-- add this line
         ]);
 
         $formation->update($validated);

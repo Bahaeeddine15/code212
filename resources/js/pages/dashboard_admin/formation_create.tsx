@@ -25,7 +25,8 @@ export default function FormationCreate() {
         description: '',
         level: '',
         duration: '',
-        category: ''
+        category: '',
+        link: ''
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,7 +54,7 @@ export default function FormationCreate() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nouvelle formation" />
-            
+
             <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
                 {/* Header moderne */}
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
@@ -161,6 +162,20 @@ export default function FormationCreate() {
                                     required
                                 />
                                 {errors.description && <p className="text-sm text-red-600">{errors.description}</p>}
+                            </div>
+
+                            {/* Lien externe */}
+                            <div className="mb-4">
+                                <label htmlFor="link" className="block text-sm font-medium text-gray-700">Lien externe (optionnel)</label>
+                                <input
+                                    type="url"
+                                    id="link"
+                                    name="link"
+                                    value={form.link}
+                                    onChange={e => handleChange('link', e.target.value)}
+                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                    placeholder="https://..."
+                                />
                             </div>
 
                             {/* Boutons */}

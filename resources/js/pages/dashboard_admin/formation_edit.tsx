@@ -109,6 +109,18 @@ export default function FormationEdit({ formation }: Props) {
                         />
                         {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
                     </div>
+                    <div className="mb-4">
+                        <label htmlFor="link" className="block text-sm font-medium text-gray-700">Lien externe (optionnel)</label>
+                        <input
+                            type="url"
+                            id="link"
+                            name="link"
+                            value={form.link}
+                            onChange={e => handleChange('link', e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                            placeholder="https://..."
+                        />
+                    </div>
                     <button
                         type="submit"
                         className="w-full bg-indigo-600 text-white py-2 rounded flex items-center justify-center gap-2"

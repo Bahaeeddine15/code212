@@ -2,11 +2,11 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { 
-    GraduationCap, 
-    Plus, 
-    Edit3, 
-    Trash2, 
+import {
+    GraduationCap,
+    Plus,
+    Edit3,
+    Trash2,
     Search,
     Clock,
     Users,
@@ -49,6 +49,7 @@ interface Formation {
     modules: Module[];
     enrolledStudents?: number;
     maxStudents?: number;
+    link?: string; // Ajout de la propriété link
 }
 
 type Props = {
@@ -56,7 +57,7 @@ type Props = {
 };
 
 // Composant pour les cartes de formation
-const FormationCard = ({ 
+const FormationCard = ({
     formation,
     onDelete,
     onViewModules
@@ -66,7 +67,7 @@ const FormationCard = ({
     onViewModules: (formation: Formation) => void;
 }) => {
     const { title, description, level, duration, modules, category, enrolledStudents = 0, maxStudents = 0 } = formation;
-    
+
     const getLevelColor = () => {
         switch (level) {
             case 'Débutant':
@@ -80,19 +81,17 @@ const FormationCard = ({
         }
     };
 
-    return (
+    const CardContent = (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 overflow-hidden hover:shadow-xl transition-all duration-300">
             <div className="h-48 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center -m-6 mb-6">
                 <GraduationCap className="w-16 h-16 text-white opacity-90 drop-shadow-lg" />
             </div>
-            
             <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
                     <p className="text-gray-600 mb-4 leading-relaxed line-clamp-2">{description}</p>
                 </div>
             </div>
-            
             <div className="flex items-center justify-between text-sm mb-6">
                 <div className="flex items-center space-x-4">
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getLevelColor()}`}>
@@ -104,7 +103,6 @@ const FormationCard = ({
                     </div>
                 </div>
             </div>
-            
             <div className="space-y-3 mb-6">
                 <div className="flex items-center justify-between">
                     <span className="text-gray-600 font-medium">Modules</span>
@@ -115,36 +113,57 @@ const FormationCard = ({
                     <span className="font-bold text-green-600">{enrolledStudents}/{maxStudents}</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div 
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500 shadow-sm" 
+                    <div
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500 shadow-sm"
                         style={{ width: `${(enrolledStudents / maxStudents) * 100}%` }}
                     ></div>
                 </div>
             </div>
-            
-            <div className="flex items-center justify-between">
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
-                <div className="flex space-x-2">
-                    <Link
-                        href={`/dashboard_admin/formation_edit/${formation.id}`}
-                        className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
-                    >
-                        <Edit3 className="w-4 h-4" />
-                    </Link>
-                    <button 
-                        onClick={() => onDelete(formation)}
-                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
-                    >
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                    <ModernButton
-                        size="sm"
-                        theme="primary"
-                        onClick={() => router.visit(`/dashboard_admin/formation/${formation.id}/modules`)}
-                    >
-                        Voir modules
-                    </ModernButton>
-                </div>
+            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
+        </div>
+    );
+
+    return (
+        <div className="relative group">
+            {formation.link ? (
+                <a
+                    href={formation.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:no-underline"
+                    tabIndex={-1}
+                >
+                    {CardContent}
+                </a>
+            ) : CardContent}
+            {/* Action buttons absolutely positioned, not inside the link */}
+            <div className="absolute top-6 right-6 flex space-x-2 z-10">
+                <Link
+                    href={`/dashboard_admin/formation_edit/${formation.id}`}
+                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
+                    onClick={e => e.stopPropagation()}
+                >
+                    <Edit3 className="w-4 h-4" />
+                </Link>
+                <button
+                    onClick={e => {
+                        e.stopPropagation();
+                        onDelete(formation);
+                    }}
+                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
+                >
+                    <Trash2 className="w-4 h-4" />
+                </button>
+                <ModernButton
+                    size="sm"
+                    theme="primary"
+                    onClick={e => {
+                        e.stopPropagation();
+                        onViewModules(formation);
+                    }}
+                >
+                    Voir modules
+                </ModernButton>
             </div>
         </div>
     );
@@ -172,8 +191,8 @@ const ModuleCard = ({
         }`}>
             <div className="flex items-start space-x-4">
                 <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${
-                    isCompleted 
-                        ? 'bg-green-100 text-green-600' 
+                    isCompleted
+                        ? 'bg-green-100 text-green-600'
                         : 'bg-blue-100 text-blue-600'
                 }`}>
                     {isCompleted ? (
@@ -191,7 +210,7 @@ const ModuleCard = ({
                             <span className="font-medium">{duration}</span>
                         </div>
                         <div className="flex space-x-2">
-                            <button 
+                            <button
                                 onClick={() => onPlay(module)}
                                 className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
                             >
@@ -203,7 +222,7 @@ const ModuleCard = ({
                             >
                                 <Edit3 className="w-4 h-4" />
                             </Link>
-                            <button 
+                            <button
                                 onClick={() => onDelete(module)}
                                 className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
                             >
@@ -256,7 +275,7 @@ export default function Formations({ formations }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Formations/Certifications" />
             <div className="flex h-full flex-1 flex-col gap-8 p-6 overflow-x-auto bg-background">
-                
+
                 {/* Header moderne */}
                 <PageHeader
                     title="Formations & Certifications"
@@ -298,7 +317,7 @@ export default function Formations({ formations }: Props) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -310,7 +329,7 @@ export default function Formations({ formations }: Props) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -322,7 +341,7 @@ export default function Formations({ formations }: Props) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -372,12 +391,19 @@ export default function Formations({ formations }: Props) {
                             <GraduationCap className="w-7 h-7 mr-3 text-blue-600" />
                             Formations disponibles
                         </h2>
+                        <ModernButton
+                            theme="primary"
+                            icon={Plus}
+                            onClick={() => router.visit('/dashboard_admin/module_create')}
+                        >
+                            Nouveau module
+                        </ModernButton>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {formations.map((formation) => (
-                            <FormationCard 
-                                key={formation.id} 
+                            <FormationCard
+                                key={formation.id}
                                 formation={formation}
                                 onDelete={handleFormationDelete}
                                 onViewModules={handleViewModules}
@@ -404,8 +430,8 @@ export default function Formations({ formations }: Props) {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {selectedFormation?.modules.map((module: Module) => (
-                                <ModuleCard 
-                                    key={module.id} 
+                                <ModuleCard
+                                    key={module.id}
                                     module={module}
                                     onEdit={handleModuleEdit}
                                     onDelete={handleModuleDelete}

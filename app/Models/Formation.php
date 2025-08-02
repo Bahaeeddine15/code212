@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Formation extends Model
 {
-    protected $fillable = ['title', 'description', 'level', 'duration', 'category'];
+    protected $fillable = [
+        'title',
+        'description',
+        'level',
+        'duration',
+        'category',
+        'link'
+    ];
 
     public function modules()
     {
