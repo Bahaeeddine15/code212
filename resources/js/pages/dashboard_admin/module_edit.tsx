@@ -9,6 +9,7 @@ interface Module {
     description: string;
     duration: string;
     order: number;
+    file_path?: string;
 }
 
 interface Props {
@@ -22,8 +23,10 @@ export default function ModuleEdit({ module, formationId }: Props) {
         description: module.description,
         duration: module.duration,
         order: module.order,
+        file: module.file_path || null,
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [existingFile, setExistingFile] = useState<string | null>(module.file_path || null);
 
     const handleChange = (field: string, value: string) => {
         setForm(prev => ({
@@ -31,16 +34,31 @@ export default function ModuleEdit({ module, formationId }: Props) {
             [field]: field === 'order' ? Number(value) : String(value)
         }));
         setErrors(prev => ({ ...prev, [field]: '' }));
-    };
+        };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        router.put(`/formations/${formationId}/modules/${module.id}`, form, {
+
+        const formData = new FormData();
+        formData.append('title', form.title);
+        formData.append('description', form.description);
+        formData.append('duration', String(form.duration));
+        formData.append('order', String(form.order));
+        if (form.file) formData.append('file', form.file);
+
+        router.post(`/formations/${formationId}/modules/${module.id}?_method=PUT`, formData, {
+            forceFormData: true,
             onError: (err) => setErrors(err),
             onSuccess: () => {
                 router.visit(`/dashboard_admin/formation/${formationId}/modules`);
             },
         });
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setForm(prev => ({ ...prev, file }));
+        setErrors(prev => ({ ...prev, file: '' }));
     };
 
     return (
@@ -97,6 +115,36 @@ export default function ModuleEdit({ module, formationId }: Props) {
                         />
                         {errors.order && <p className="text-red-600 text-sm">{errors.order}</p>}
                     </div>
+                    <div>
+                        <label className="block mb-1 font-medium">Fichier (PDF ou vidéo)</label>
+                        {existingFile && (
+                            <div className="mb-2 text-sm text-gray-600">
+                                Fichier actuel :
+                                {existingFile.endsWith('.pdf') ? (
+                                    <a
+                                        href={`/storage/${existingFile}`}
+                                        target="_blank"
+                                        className="ml-2 text-indigo-600 hover:underline"
+                                    >
+                                        Voir le PDF
+                                    </a>
+                                ) : (
+                                    <video controls className="w-full max-h-48 mt-2 rounded">
+                                        <source src={`/storage/${existingFile}`} />
+                                        Votre navigateur ne prend pas en charge cette vidéo.
+                                    </video>
+                                )}
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            accept=".pdf,video/*"
+                            onChange={handleFileChange}
+                            className="w-full border rounded px-3 py-2"
+                        />
+                        {errors.file && <p className="text-red-600 text-sm">{errors.file}</p>}
+                    </div>
+
                     <button
                         type="submit"
                         className="w-full bg-indigo-600 text-white py-2 rounded flex items-center justify-center gap-2"

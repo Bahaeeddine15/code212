@@ -54,7 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $formations = \App\Models\Formation::all(['id', 'title']);
         return Inertia::render('dashboard_admin/module_create', [
             'formations' => $formations,
-            'formationId' => null,
+            'formationId' => request()->query('formationId', null), // Pass formationId if available
         ]);
     })->name('module.create');
 
@@ -91,15 +91,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::put('/formations/{formation}/modules/{module}', function (Request $request, $formation, $module) {
         $module = Module::where('id', $module)->where('formation_id', $formation)->firstOrFail();
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'duration' => 'required|string|max:50',
             'order' => 'required|integer|min:1',
+            'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:51200', // up to 50MB
         ]);
+
+        // ✅ Handle uploaded file if exists
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('modules', 'public');
+            $validated['file_path'] = $path;
+        }
+
         $module->update($validated);
+
         return redirect()->back()->with('success', 'Module mis à jour avec succès.');
     });
+
 
     Route::delete('/admin/modules/{id}', function ($id) {
         $module = Module::findOrFail($id);

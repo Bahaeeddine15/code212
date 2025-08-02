@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('formations', function (Blueprint $table) {
-            $table->string('file_path')->nullable();
+        Schema::table('modules', function (Blueprint $table) {
+            $table->string('file_path')->nullable()->after('formation_id');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('formations', function (Blueprint $table) {
-            //
+        Schema::table('modules', function (Blueprint $table) {
+            $table->dropColumn('file_path');
         });
     }
 };

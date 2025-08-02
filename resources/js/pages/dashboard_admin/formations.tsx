@@ -36,7 +36,7 @@ interface Module {
     description: string;
     duration: string;
     order: number;
-    isCompleted: boolean;
+    file_path?: string;
 }
 
 interface Formation {
@@ -46,7 +46,7 @@ interface Formation {
     level: string;
     duration: string;
     category: string;
-    file_path?: string;
+    
     modules: Module[];
     enrolledStudents?: number;
     maxStudents?: number;
@@ -55,46 +55,7 @@ interface Formation {
 type Props = {
     formations: Formation[];
 };
-function renderFormationFile(
-    filePath?: string,
-    onOpenVideo?: () => void
-) {
-    if (!filePath) return null;
 
-    const extension = filePath.split('.').pop()?.toLowerCase();
-
-    if (extension === 'pdf') {
-        return (
-            <div className="mt-4">
-                <p className="text-sm text-gray-600 font-medium mb-1">Fichier attaché :</p>
-                <a
-                    href={`/storage/${filePath}`}
-                    target="_blank"
-                    className="text-indigo-600 hover:underline text-sm flex items-center gap-1"
-                >
-                    <FileText className="w-4 h-4" />
-                    Voir le PDF
-                </a>
-            </div>
-        );
-    }
-
-    if (['mp4', 'avi', 'mov'].includes(extension || '')) {
-        return (
-            <div className="mt-4">
-                <p className="text-sm text-gray-600 font-medium mb-1">Vidéo attachée :</p>
-                <button
-                    onClick={onOpenVideo}
-                    className="text-blue-600 hover:underline text-sm"
-                >
-                    📹 Voir la vidéo
-                </button>
-            </div>
-        );
-    }
-
-    return null;
-}
 
 
 
@@ -107,12 +68,12 @@ const FormationCard = ({
     
     formation,
     onDelete,
-    onViewModules,
-    onShowVideo
+    onViewModules
+    
 }: {
     formation: Formation;
     onDelete: (formation: Formation) => void;
-    onShowVideo: (filePath: string) => void;
+    
     onViewModules: (formation: Formation) => void;
 }) => {
     const { title, description, level, duration, modules, category, enrolledStudents = 0, maxStudents = 0 } = formation;
@@ -174,7 +135,7 @@ const FormationCard = ({
             
             <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
-                {renderFormationFile(formation.file_path, () => onShowVideo(formation.file_path || ''))}
+                
 
 
                 <div className="flex space-x-2">
@@ -203,78 +164,13 @@ const FormationCard = ({
     );
 };
 
-// Composant pour les modules de formation
-const ModuleCard = ({
-    module,
-    onEdit,
-    onDelete,
-    onPlay,
-    selectedFormationId
-}: {
-    module: Module;
-    onEdit: (module: Module) => void;
-    onDelete: (module: Module) => void;
-    onPlay: (module: Module) => void;
-    selectedFormationId?: number;
-}) => {
-    const { title, description, duration, order, isCompleted, id } = module;
 
-    return (
-        <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
-            isCompleted ? 'border-green-200' : 'border-blue-200'
-        }`}>
-            <div className="flex items-start space-x-4">
-                <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${
-                    isCompleted 
-                        ? 'bg-green-100 text-green-600' 
-                        : 'bg-blue-100 text-blue-600'
-                }`}>
-                    {isCompleted ? (
-                        <CheckCircle className="w-6 h-6" />
-                    ) : (
-                        <span className="text-lg font-bold">{order}</span>
-                    )}
-                </div>
-                <div className="flex-1">
-                    <h4 className="text-lg font-bold text-gray-900 mb-2">{title}</h4>
-                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">{description}</p>
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 text-sm text-gray-500">
-                            <Clock className="w-4 h-4" />
-                            <span className="font-medium">{duration}</span>
-                        </div>
-                        <div className="flex space-x-2">
-                            <button 
-                                onClick={() => onPlay(module)}
-                                className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
-                            >
-                                <PlayCircle className="w-4 h-4" />
-                            </button>
-                            <Link
-                                href={`/dashboard_admin/module_edit/${selectedFormationId}/${module.id}`}
-                                className="p-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl transition-all duration-200"
-                            >
-                                <Edit3 className="w-4 h-4" />
-                            </Link>
-                            <button 
-                                onClick={() => onDelete(module)}
-                                className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
+
 
 export default function Formations({ formations }: Props) {
     // State for selected formation and module view
     const [showModules, setShowModules] = useState(false);
-    const [showVideo, setShowVideo] = useState(false);
-    const [videoPath, setVideoPath] = useState<string | null>(null);
+    
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
 
     // Only keep delete/view logic, remove modal form logic
@@ -437,10 +333,7 @@ export default function Formations({ formations }: Props) {
                                 formation={formation}
                                 onDelete={handleFormationDelete}
                                 onViewModules={handleViewModules}
-                                onShowVideo={(filePath) => {
-                                setVideoPath(filePath);
-                                setShowVideo(true);
-                            }}
+                                
                             />
                         ))}
                     </div>
@@ -477,22 +370,7 @@ export default function Formations({ formations }: Props) {
                     </div>
                 )}
             </div>
-            {showVideo && videoPath && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-4 max-w-xl w-full relative">
-                        <button
-                            onClick={() => setShowVideo(false)}
-                            className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-xl font-bold"
-                        >
-                            ×
-                        </button>
-                        <video controls className="w-full rounded">
-                            <source src={`/storage/${videoPath}`} type="video/mp4" />
-                            Votre navigateur ne prend pas en charge cette vidéo.
-                        </video>
-                    </div>
-                </div>
-            )}
+            
 
 
 
