@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { 
-    Plus, 
-    FileText, 
-    Trash2, 
+import {
+    Plus,
+    FileText,
+    Trash2,
     Edit3,
-    GraduationCap,  
+    GraduationCap,
      } from 'lucide-react';
 import { ModernButton, PageHeader } from '@/components/ui/modern-components';
 
@@ -69,7 +69,7 @@ const ModuleCard = ({ module, onEdit, onDelete, onShowVideo }: {
         <span className="text-xs text-gray-500">Durée : {module.duration}</span>
       </div>
       <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{module.description}</p>
-      
+
       <div className="flex justify-between mt-auto">
         {renderModuleFile(module.file_path, () => onShowVideo(`/storage/${module.file_path}`))}
         <button onClick={() => onEdit(module)} className="p-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl transition">
@@ -107,7 +107,7 @@ export default function ModulesList({ formation, modules }: Props) {
     <AppLayout>
         <Head title="Modules" />
             <div className="flex h-full flex-1 flex-col gap-8 p-6 overflow-x-auto bg-background">
-                
+
                 {/* Header moderne */}
                 <PageHeader
                     title={`Modules - ${formation.title}`}
@@ -126,10 +126,10 @@ export default function ModulesList({ formation, modules }: Props) {
                         </div>
                     }
                 />
-            
+
 
             <div className="w-full px-4">
-            
+
 
             {moduleList.length === 0 ? (
             <div className="text-center text-gray-500">Aucun module pour cette formation.</div>
@@ -174,7 +174,7 @@ export default function ModulesList({ formation, modules }: Props) {
                 </div>
             )}
             </div>
-        
+
     </AppLayout>
   );
 }

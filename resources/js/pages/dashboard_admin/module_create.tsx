@@ -34,7 +34,7 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
         setErrors(prev => ({ ...prev, [field]: '' }));
     };
 
-   
+
     const handleSubmit = (e: React.FormEvent) => {
             e.preventDefault();
             if (!id) {
@@ -48,8 +48,8 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
             formData.append('order', form.order.toString());
             formData.append('formation_id', id.toString());
             if (form.file) formData.append('file', form.file);
-    
-            
+
+
             router.post(`/formations/${id}/modules`, formData, {
                 forceFormData: true,
                 onError: err => {
@@ -75,7 +75,7 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
                 </a>
                 <h1 className="text-2xl font-bold mb-6">Ajouter un module</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    
+
                     <div>
                         <label className="block mb-1 font-medium">Titre</label>
                         <input
