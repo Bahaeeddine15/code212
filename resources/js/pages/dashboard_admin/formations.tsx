@@ -36,7 +36,7 @@ interface Module {
     description: string;
     duration: string;
     order: number;
-    isCompleted: boolean;
+    file_path?: string;
 }
 
 interface Formation {
@@ -46,6 +46,7 @@ interface Formation {
     level: string;
     duration: string;
     category: string;
+
     modules: Module[];
     enrolledStudents?: number;
     maxStudents?: number;
@@ -56,14 +57,24 @@ type Props = {
     formations: Formation[];
 };
 
+
+
+
+
+
+
+
 // Composant pour les cartes de formation
 const FormationCard = ({
+
     formation,
     onDelete,
     onViewModules
+
 }: {
     formation: Formation;
     onDelete: (formation: Formation) => void;
+
     onViewModules: (formation: Formation) => void;
 }) => {
     const { title, description, level, duration, modules, category, enrolledStudents = 0, maxStudents = 0 } = formation;
@@ -119,51 +130,33 @@ const FormationCard = ({
                     ></div>
                 </div>
             </div>
-            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
-        </div>
-    );
 
-    return (
-        <div className="relative group">
-            {formation.link ? (
-                <a
-                    href={formation.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block hover:no-underline"
-                    tabIndex={-1}
-                >
-                    {CardContent}
-                </a>
-            ) : CardContent}
-            {/* Action buttons absolutely positioned, not inside the link */}
-            <div className="absolute top-6 right-6 flex space-x-2 z-10">
-                <Link
-                    href={`/dashboard_admin/formation_edit/${formation.id}`}
-                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
-                    onClick={e => e.stopPropagation()}
-                >
-                    <Edit3 className="w-4 h-4" />
-                </Link>
-                <button
-                    onClick={e => {
-                        e.stopPropagation();
-                        onDelete(formation);
-                    }}
-                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
-                <ModernButton
-                    size="sm"
-                    theme="primary"
-                    onClick={e => {
-                        e.stopPropagation();
-                        onViewModules(formation);
-                    }}
-                >
-                    Voir modules
-                </ModernButton>
+            <div className="flex items-center justify-between">
+                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
+
+
+
+                <div className="flex space-x-2">
+                    <Link
+                        href={`/dashboard_admin/formation_edit/${formation.id}`}
+                        className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
+                    >
+                        <Edit3 className="w-4 h-4" />
+                    </Link>
+                    <button
+                        onClick={() => onDelete(formation)}
+                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
+                    <ModernButton
+                        size="sm"
+                        theme="primary"
+                        onClick={() => router.visit(`/dashboard_admin/formation/${formation.id}/modules`)}
+                    >
+                        Voir modules
+                    </ModernButton>
+                </div>
             </div>
         </div>
     );
@@ -236,9 +229,12 @@ const ModuleCard = ({
     );
 };
 
+
+
 export default function Formations({ formations }: Props) {
     // State for selected formation and module view
     const [showModules, setShowModules] = useState(false);
+
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
 
     // Only keep delete/view logic, remove modal form logic
@@ -247,6 +243,7 @@ export default function Formations({ formations }: Props) {
             router.delete(`/formations/${formation.id}`);
         }
     };
+
 
     const handleModuleDelete = (module: Module) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer ce module ?') && selectedFormation) {
@@ -407,6 +404,7 @@ export default function Formations({ formations }: Props) {
                                 formation={formation}
                                 onDelete={handleFormationDelete}
                                 onViewModules={handleViewModules}
+
                             />
                         ))}
                     </div>
@@ -443,6 +441,10 @@ export default function Formations({ formations }: Props) {
                     </div>
                 )}
             </div>
+
+
+
+
         </AppLayout>
     );
 }

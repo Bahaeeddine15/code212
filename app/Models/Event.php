@@ -15,5 +15,6 @@ class Event extends Model
         'max_attendees',
         'category',
         'status', // New column for status
+        
     ];
 }
