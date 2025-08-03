@@ -144,16 +144,16 @@ class MediaController extends Controller
 
         foreach ($mediaFiles as $media) {
             // Delete file from storage
-            if ($media->file_path && \Storage::disk('public')->exists($media->file_path)) {
-                \Storage::disk('public')->delete($media->file_path);
+            if ($media->file_path && Storage::disk('public')->exists($media->file_path)) {
+                Storage::disk('public')->delete($media->file_path);
             }
             $media->delete();
         }
 
         // Optionally, remove the empty folder from storage
         $folderPath = "media/{$folder}";
-        if (\Storage::disk('public')->exists($folderPath)) {
-            \Storage::disk('public')->deleteDirectory($folderPath);
+        if (Storage::disk('public')->exists($folderPath)) {
+            Storage::disk('public')->deleteDirectory($folderPath);
         }
 
         return redirect()->route('media.index');

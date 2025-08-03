@@ -27,6 +27,8 @@ export default function ModuleEdit({ module, formationId }: Props) {
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [existingFile, setExistingFile] = useState<string | null>(module.file_path || null);
+    const [file, setFile] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string | null>(null);
 
     const handleChange = (field: string, value: string) => {
         setForm(prev => ({
@@ -34,7 +36,23 @@ export default function ModuleEdit({ module, formationId }: Props) {
             [field]: field === 'order' ? Number(value) : String(value)
         }));
         setErrors(prev => ({ ...prev, [field]: '' }));
-        };
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0] || null;
+        setFile(selectedFile);
+        setErrors(prev => ({ ...prev, file: '' }));
+
+        if (selectedFile) {
+            if (selectedFile.type.startsWith('video/')) {
+                setPreview(URL.createObjectURL(selectedFile));
+            } else if (selectedFile.type === 'application/pdf') {
+                setPreview(null); // PDFs can't be previewed easily
+            }
+        } else {
+            setPreview(null);
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,7 +62,11 @@ export default function ModuleEdit({ module, formationId }: Props) {
         formData.append('description', form.description);
         formData.append('duration', String(form.duration));
         formData.append('order', String(form.order));
-        if (form.file) formData.append('file', form.file);
+
+        // Only append file if it's a File object (not a string)
+        if (file) {
+            formData.append('file', file);
+        }
 
         router.post(`/formations/${formationId}/modules/${module.id}?_method=PUT`, formData, {
             forceFormData: true,
@@ -53,12 +75,6 @@ export default function ModuleEdit({ module, formationId }: Props) {
                 router.visit(`/dashboard_admin/formation/${formationId}/modules`);
             },
         });
-    };
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setForm(prev => ({ ...prev, file }));
-        setErrors(prev => ({ ...prev, file: '' }));
     };
 
     return (

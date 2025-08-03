@@ -46,18 +46,20 @@ class ModuleController extends Controller
             'description' => 'required|string',
             'duration' => 'required|string',
             'order' => 'required|integer',
-            'file' => 'nullable|file|mimes:mp4,pdf', // or whatever you accept
+            'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:51200',
         ]);
 
         $validated['formation_id'] = $formationId;
 
         if ($request->hasFile('file')) {
             $validated['file_path'] = $request->file('file')->store('modules', 'public');
+            Storage::disk('public')->setVisibility($validated['file_path'], 'public');
         }
 
         Module::create($validated);
 
-        return redirect()->route('formation.modules', ['id' => $formationId]);
+        return redirect()->route('formations.modules.index', ['formation' => $formationId])
+            ->with('success', 'Module créé avec succès.');
     }
 
 
@@ -69,7 +71,7 @@ class ModuleController extends Controller
     {
         return Inertia::render('dashboard_admin/modules_edit', [
             'formation' => $formation,
-            'module' => $module
+            'module' => $module, // module.file_path will be available in your React form
         ]);
     }
 
@@ -91,25 +93,32 @@ class ModuleController extends Controller
             if ($module->file_path && Storage::disk('public')->exists($module->file_path)) {
                 Storage::disk('public')->delete($module->file_path);
             }
-
-            // Store new file
             $filePath = $request->file('file')->store('modules', 'public');
             Storage::disk('public')->setVisibility($filePath, 'public');
             $validated['file_path'] = $filePath;
+        } else {
+            // Keep the old file if no new file is uploaded
+            $validated['file_path'] = $module->file_path;
         }
 
         $module->update($validated);
 
-        return redirect()->route('formations.index')->with('success', 'Module mis à jour avec succès.');
+        return redirect()->route('formations.modules.index', ['formation' => $formation->id])
+            ->with('success', 'Module mis à jour avec succès.');
     }
-
 
     /**
      * Remove the specified module from storage.
      */
     public function destroy(Formation $formation, Module $module)
     {
+        // Delete file from storage if exists
+        if ($module->file_path && Storage::disk('public')->exists($module->file_path)) {
+            Storage::disk('public')->delete($module->file_path);
+        }
         $module->delete();
-        return redirect()->route('formations.index');
+
+        return redirect()->route('formations.modules.index', ['formation' => $formation->id])
+            ->with('success', 'Module supprimé avec succès.');
     }
 }
