@@ -54,6 +54,11 @@ class article extends Model
             return null;
         }
 
+        // Vérifier si le fichier existe
+        if (!file_exists(public_path($this->featured_image))) {
+            return asset('code212.png'); // Image par défaut
+        }
+
         return asset($this->featured_image);
     }
 
