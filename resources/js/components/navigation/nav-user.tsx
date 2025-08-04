@@ -17,13 +17,10 @@ export function NavUser() {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        
-                        <SidebarMenuButton size="lg" className="group text-white hover:text-black">
-    <UserInfo user={auth.user} />
-    <ChevronsUpDown className="ml-auto size-4 group-hover:text-black" />
-</SidebarMenuButton>
-
-
+                        <SidebarMenuButton size="lg" className="group text-gray-700">
+                            <UserInfo user={auth.user} />
+                            <ChevronsUpDown className="ml-auto size-4" />
+                        </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"

@@ -1,6 +1,6 @@
 import AppLayout from "@/layouts/app-layout";
 import { Head, Link } from "@inertiajs/react";
-import { ScrollText, Medal, CalendarDays, ClipboardCheck } from "lucide-react";
+import { ScrollText, Medal, CalendarDays, ClipboardCheck, Trophy, Calendar } from "lucide-react";
 import { type BreadcrumbItem } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -130,63 +130,127 @@ export default function Dashboard({ stats, formations, user }: Props) {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard Étudiant" />
 
-      <div className="flex flex-col gap-8 p-8 bg-white dark:bg-[#0A1F44] text-gray-900 dark:text-white font-raleway">
-        <div className="space-y-6">
+      <div className="flex flex-col gap-6 p-8 bg-transparent text-gray-900 dark:text-white font-raleway">
+        <div className="space-y-4">
           {/* Header Profile Section */}
-          <div className="bg-[#3a2b6c] rounded-xl p-5 text-white hover:shadow-lg transition-all duration-300 hover:scale-102">
-            <div className="flex items-center space-x-4">
-              <img
-                src={getAvatarUrl(user)}
-                alt={user.name}
-                className="h-16 w-16 rounded-full border-2 border-white"
-              />
-              <div>
-                <h1 className="text-2xl font-bold">{user.name}</h1>
-                <p className="text-white/90">{user.ecole || 'École non renseignée'}</p>
-                <p className="text-white/70 text-sm">{user.email}</p>
-                {user.student_id && (
-                  <p className="text-white/70 text-xs">ID: {user.student_id}</p>
-                )}
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0 relative">
+                <div className="w-40 h-40 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-200">
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-[#3a2b6c] rounded-full mx-auto mb-3 flex items-center justify-center">
+                      <span className="text-white font-bold text-2xl">
+                        {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-gray-900 text-xl">{user.name}</h3>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex-1">
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="divide-y divide-gray-200">
+                    <div className="flex">
+                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">University</span>
+                      </div>
+                      <div className="flex-1 px-4 py-3">
+                        <span className="text-sm text-gray-900">{user.ecole || 'UNIVERSITÉ CADI AYYAD DE MARRAKECH'}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex">
+                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">Center</span>
+                      </div>
+                      <div className="flex-1 px-4 py-3">
+                        <span className="text-sm text-gray-900">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE DE L'UNIVERSITÉ CADI AYYAD MARRAKECH</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex">
+                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">Email :</span>
+                      </div>
+                      <div className="flex-1 px-4 py-3">
+                        <span className="text-sm text-gray-900">{user.email}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Stat Cards */}
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
-            <Card className="bg-gradient-to-br from-[#c5027f] to-[#ff005b] border-0 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
-              <CardContent className="p-3 flex justify-center items-center">
-                <div className="flex items-center justify-between w-full">
+          <div className="grid grid-cols-5 gap-3">
+            <Card className="bg-white border-l-4 border-l-[#c5027f] shadow hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-2">
+                <div className="flex items-center justify-between pl-3">
                   <div>
-                    <p className="text-xl font-bold text-white">12</p>
-                    <p className="text-xs text-white/80">Certificats obtenus</p>
+                    <p className="text-2xl font-bold text-gray-900">12</p>
+                    <p className="text-xs text-gray-600">Certificats</p>
                   </div>
-                  <Medal className="h-8 w-8 text-white/80" />
+                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
+                    <Medal className="h-8 w-8 text-[#c5027f]" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-[#515dde] to-[#726bb3] border-0 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
-              <CardContent className="p-3 flex justify-center items-center">
-                <div className="flex items-center justify-between w-full">
+            <Card className="bg-white border-l-4 border-l-[#6366f1] shadow hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-2">
+                <div className="flex items-center justify-between pl-3">
                   <div>
-                    <p className="text-xl font-bold text-white">{stats.total_formations}</p>
-                    <p className="text-xs text-white/80">Formations disponibles</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.total_formations}</p>
+                    <p className="text-xs text-gray-600">Formations</p>
                   </div>
-                  <ScrollText className="h-8 w-8 text-white/80" />
+                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
+                    <ScrollText className="h-8 w-8 text-[#6366f1]" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-[#00a87e] to-[#2cd3a3] border-0 text-white hover:shadow-lg transition-all duration-300 hover:scale-105">
-              <CardContent className="p-3 flex justify-center items-center">
-                <div className="flex items-center justify-between w-full">
+            <Card className="bg-white border-l-4 border-l-[#ff8500] shadow hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-2">
+                <div className="flex items-center justify-between pl-3">
                   <div>
-                    <p className="text-xl font-bold text-white">{stats.reservations_en_attente}</p>
-                    <p className="text-xs text-white/80">
-                      Réservation en attente
-                    </p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.reservations_en_attente}</p>
+                    <p className="text-xs text-gray-600">En attente</p>
                   </div>
-                  <ClipboardCheck className="h-8 w-8 text-white/80" />
+                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
+                    <ClipboardCheck className="h-8 w-8 text-[#ff8500]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white border-l-4 border-l-[#e11d48] shadow hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-2">
+                <div className="flex items-center justify-between pl-3">
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">5</p>
+                    <p className="text-xs text-gray-600">Compétitions</p>
+                  </div>
+                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
+                    <Trophy className="h-8 w-8 text-[#e11d48]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white border-l-4 border-l-[#2cd3a3] shadow hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-2">
+                <div className="flex items-center justify-between pl-3">
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">8</p>
+                    <p className="text-xs text-gray-600">Événements</p>
+                  </div>
+                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
+                    <Calendar className="h-8 w-8 text-[#2cd3a3]" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
