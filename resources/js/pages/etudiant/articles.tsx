@@ -98,8 +98,8 @@ export default function Articles({ articles }: Props) {
                                                 </div>
                                             ) : (
                                                 <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-l-lg flex items-center justify-center">
-                                                    <span className="text-white text-lg font-semibold">
-                                                        {article.title.charAt(0)}
+                                                    <span className="text-white text-lg font-semibold text-center px-2">
+                                                        {article.title}
                                                     </span>
                                                 </div>
                                             )}

@@ -44,7 +44,14 @@ const mainNavItems: NavItem[] = [
         title: 'Article',
         href:'/articles',
         icon: FileText
+    },
+    {
+        title: 'Media',
+        href:'/media',
+        icon: FileText
     }
+    
+
 ];
 
 
