@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Formation;
 use App\Models\Reservation;
+use App\Models\Event;
+use App\Models\Competition;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -20,6 +22,8 @@ class DashboardEtudiantController extends Controller
             'total_reservations' => Reservation::count(),
             'reservations_en_attente' => Reservation::where('status', 'pending')->count(),
             'reservations_approuvees' => Reservation::where('status', 'approved')->count(),
+            'total_competitions' => Competition::count(),
+            'total_events' => Event::count(),
         ];
 
         // Récupérer les formations pour affichage

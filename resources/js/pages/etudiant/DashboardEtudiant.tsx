@@ -12,6 +12,8 @@ interface Stats {
   total_reservations: number;
   reservations_en_attente: number;
   reservations_approuvees: number;
+  total_competitions: number;
+  total_events: number;
 }
 
 interface Formation {
@@ -133,50 +135,52 @@ export default function Dashboard({ stats, formations, user }: Props) {
       <div className="flex flex-col gap-6 p-8 bg-transparent text-gray-900 dark:text-white font-raleway">
         <div className="space-y-4">
           {/* Header Profile Section */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <div className="flex items-start gap-6">
-              <div className="flex-shrink-0 relative">
-                <div className="w-40 h-40 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-200">
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-[#3a2b6c] rounded-full mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-white font-bold text-2xl">
-                        {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-gray-900 text-xl">{user.name}</h3>
+          <div className="flex gap-6">
+            {/* Left Card - Avatar */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex-shrink-0">
+              <div className="text-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-[#c5027f] to-[#8b5cf6] rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-xl">
+                    CODE
+                  </span>
+                </div>
+                <h3 className="font-bold text-gray-900 text-lg">{user.name}</h3>
+              </div>
+            </div>
+
+            {/* Right Card - User Information */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex-1">
+              <div className="space-y-6">
+                <div className="flex items-center">
+                  <div className="w-24 text-sm font-medium text-gray-600">
+                    University
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-sm text-gray-900 font-medium">
+                      {user.ecole || 'UNIVERSITÉ CADI AYYAD DE MARRAKECH'}
+                    </span>
                   </div>
                 </div>
-              </div>
-              
-              <div className="flex-1">
-                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="divide-y divide-gray-200">
-                    <div className="flex">
-                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
-                        <span className="text-sm font-medium text-gray-700">University</span>
-                      </div>
-                      <div className="flex-1 px-4 py-3">
-                        <span className="text-sm text-gray-900">{user.ecole || 'UNIVERSITÉ CADI AYYAD DE MARRAKECH'}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex">
-                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
-                        <span className="text-sm font-medium text-gray-700">Center</span>
-                      </div>
-                      <div className="flex-1 px-4 py-3">
-                        <span className="text-sm text-gray-900">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE DE L'UNIVERSITÉ CADI AYYAD MARRAKECH</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex">
-                      <div className="w-32 px-4 py-3 bg-gray-50 border-r border-gray-200">
-                        <span className="text-sm font-medium text-gray-700">Email :</span>
-                      </div>
-                      <div className="flex-1 px-4 py-3">
-                        <span className="text-sm text-gray-900">{user.email}</span>
-                      </div>
-                    </div>
+                
+                <div className="flex items-center">
+                  <div className="w-24 text-sm font-medium text-gray-600">
+                    Center
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-sm text-gray-900 font-medium">
+                      CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <div className="w-24 text-sm font-medium text-gray-600">
+                    Email
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-sm text-gray-900 font-medium">
+                      {user.email}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -189,7 +193,7 @@ export default function Dashboard({ stats, formations, user }: Props) {
               <CardContent className="p-2">
                 <div className="flex items-center justify-between pl-3">
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">12</p>
+                    <p className="text-2xl font-bold text-gray-900">{mockData.certificats.length}</p>
                     <p className="text-xs text-gray-600">Certificats</p>
                   </div>
                   <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
@@ -217,8 +221,8 @@ export default function Dashboard({ stats, formations, user }: Props) {
               <CardContent className="p-2">
                 <div className="flex items-center justify-between pl-3">
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{stats.reservations_en_attente}</p>
-                    <p className="text-xs text-gray-600">En attente</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.total_reservations}</p>
+                    <p className="text-xs text-gray-600">Réservations</p>
                   </div>
                   <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
                     <ClipboardCheck className="h-8 w-8 text-[#ff8500]" />
@@ -231,7 +235,7 @@ export default function Dashboard({ stats, formations, user }: Props) {
               <CardContent className="p-2">
                 <div className="flex items-center justify-between pl-3">
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">5</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.total_competitions || 0}</p>
                     <p className="text-xs text-gray-600">Compétitions</p>
                   </div>
                   <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
@@ -245,7 +249,7 @@ export default function Dashboard({ stats, formations, user }: Props) {
               <CardContent className="p-2">
                 <div className="flex items-center justify-between pl-3">
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">8</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.total_events || 0}</p>
                     <p className="text-xs text-gray-600">Événements</p>
                   </div>
                   <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
