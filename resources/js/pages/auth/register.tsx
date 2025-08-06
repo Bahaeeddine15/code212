@@ -164,7 +164,7 @@ export default function Register() {
 
         <Button
           type="submit"
-          className="mt-2 w-full"
+          className="mt-2 w-full bg-[#300069] hover:bg-[#2CD3A3] text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           tabIndex={6}
           disabled={processing}
         >
