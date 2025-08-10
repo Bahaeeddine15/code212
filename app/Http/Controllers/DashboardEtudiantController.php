@@ -29,9 +29,17 @@ class DashboardEtudiantController extends Controller
         // Récupérer les formations pour affichage
         $formations = Formation::all();
 
+        // Récupérer les événements à venir (les 4 prochains événements)
+        $events = Event::where('status', 'upcoming')
+            ->where('start_date', '>=', now())
+            ->orderBy('start_date', 'asc')
+            ->limit(4)
+            ->get();
+
         return Inertia::render('etudiant/DashboardEtudiant', [
             'stats' => $stats,
             'formations' => $formations,
+            'events' => $events,
             'user' => $user
         ]);
     }

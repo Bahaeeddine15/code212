@@ -58,14 +58,14 @@ export default function Articles({ articles }: Props) {
         <AppShell variant="sidebar">
             <Head title="Articles" />
             <AppSidebar />
-            <AppContent variant="sidebar" className="overflow-x-hidden">
+            <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
                 <AppSidebarHeader 
                     breadcrumbs={[
-                        { label: 'Dashboard', href: '/dashboard' },
-                        { label: 'Articles' }
+                        { title: 'Dashboard Étudiant', href: '/dashboard' },
+                        { title: 'Articles', href: '/articles' }
                     ]} 
                 />
-                
+                {/* No additional content needed here, you can safely remove $PLACEHOLDER$ */}                
                 <div className="p-6 space-y-6">
                     {/* Header */}
                     <div className="flex justify-between items-center">

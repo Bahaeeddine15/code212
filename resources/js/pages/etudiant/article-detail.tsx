@@ -58,10 +58,10 @@ export default function ArticleDetail({ article }: Props) {
         <AppShell variant="sidebar">
             <Head title={`${article.title} - Articles`} />
             <AppSidebar />
-            <AppContent variant="sidebar" className="overflow-x-hidden">
+            <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
                 <AppSidebarHeader 
                     breadcrumbs={[
-                        { title: 'Dashboard', href: '/dashboard' },
+                        { title: 'Dashboard Étudiant', href: '/dashboard' },
                         { title: 'Articles', href: '/articles' },
                         { title: article.title, href: '' }
                     ]} 

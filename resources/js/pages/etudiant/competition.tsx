@@ -86,8 +86,8 @@ const Notification = ({ type, message, onClose }: { type: 'success' | 'error', m
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { href: '/dashboard', label: 'Accueil' },
-    { label: 'Compétitions' },
+    { href: '/dashboard', title: 'Dashboard Étudiant' },
+    { href: '/etudiant/competition', title: 'Compétitions' },
 ];
 
 export default function CompetitionPage({ competitions, registrations, statistics }: CompetitionPageProps) {
@@ -120,7 +120,7 @@ export default function CompetitionPage({ competitions, registrations, statistic
         <AppShell variant="sidebar">
             <Head title="Compétitions" />
             <AppSidebar />
-            <AppContent variant="sidebar" className="overflow-x-hidden">
+            <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 
                 {/* Notification */}

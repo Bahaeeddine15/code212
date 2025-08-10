@@ -25,6 +25,15 @@ interface Formation {
   photo: string;
 }
 
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  start_date: string;
+  location: string;
+  category: string;
+}
+
 interface User {
   id: number;
   name: string;
@@ -42,6 +51,7 @@ interface User {
 interface Props {
   stats: Stats;
   formations: Formation[];
+  events: Event[];
   user: User;
 }
 
@@ -77,43 +87,9 @@ const mockData = {
     { id: 1, title: "Python Essentials" },
     { id: 2, title: "JavaScript Basics" },
   ],
-
-  evenements: [
-    {
-      id: 1,
-      titre: "Hackathon Étudiant",
-      dateDebut: "2025-07-20",
-      lieu: "Campus Casablanca",
-      description:
-        "Un défi en équipe pour créer une application innovante en 24h.",
-    },
-    {
-      id: 2,
-      titre: "Webinar Photoshop",
-      dateDebut: "2025-07-22",
-      lieu: "En ligne",
-      description:
-        "Atelier interactif pour apprendre les bases du design graphique.",
-    },
-    {
-      id: 3,
-      titre: "Atelier Robotique",
-      dateDebut: "2025-07-25",
-      lieu: "Bibliothèque Cadi Ayyad",
-      description: "Construisez et programmez votre propre robot avec Arduino.",
-    },
-    {
-      id: 4,
-      titre: "Découverte de l'IA",
-      dateDebut: "2025-08-01",
-      lieu: "Bibliothèque Cadi Ayyad",
-      description:
-        "Initiez-vous aux bases de l'intelligence artificielle et ses applications.",
-    },
-  ],
 };
 
-export default function Dashboard({ stats, formations, user }: Props) {
+export default function Dashboard({ stats, formations, events, user }: Props) {
   // Générer l'URL de l'avatar avec les initiales de l'utilisateur
   const getAvatarUrl = (user: User) => {
     if (user.avatar_url) {
@@ -125,7 +101,6 @@ export default function Dashboard({ stats, formations, user }: Props) {
 
   const {
     certificats,
-    evenements,
   } = mockData;
 
   return (
@@ -308,7 +283,7 @@ export default function Dashboard({ stats, formations, user }: Props) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {evenements.map((event) => (
+              {events.length > 0 ? events.map((event) => (
                 <div
                   key={event.id}
                   className="p-3 bg-[#f8f9fa] dark:bg-[#1e1e1e] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#2a2a2a] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#6366f1]"
@@ -317,18 +292,30 @@ export default function Dashboard({ stats, formations, user }: Props) {
                     <div className="w-1.5 h-1.5 bg-[#6366f1] rounded-full mt-2"></div>
                     <div className="flex-1">
                       <h3 className="font-medium text-[#081f44] dark:text-white text-sm group-hover:text-[#6366f1] transition-colors">
-                        {event.titre}
+                        {event.title}
                       </h3>
                       <p className="text-xs text-gray-500 mt-1">
-                        {event.dateDebut} • {event.lieu}
+                        {new Date(event.start_date).toLocaleDateString('fr-FR', { 
+                          year: 'numeric', 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })} • {event.location}
                       </p>
                     </div>
                   </div>
                   <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 ml-3.5">
                     {event.description}
                   </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-[#6366f1] rounded-full"></div>
+                    <span className="text-xs text-gray-500">{event.category}</span>
+                  </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 text-sm">Aucun événement à venir</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
