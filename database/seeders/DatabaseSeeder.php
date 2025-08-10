@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class,
             CompetitionSeeder::class,
             ArticleSeeder::class,
+            MediaSeeder::class,
         ]);
     }
 }

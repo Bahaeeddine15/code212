@@ -27,6 +27,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('articles', [App\Http\Controllers\ArticleController::class, 'index'])->name('etudiant.article');
     Route::get('articles/{article}', [App\Http\Controllers\ArticleController::class, 'show'])->name('etudiant.article.show');
 
+    // Routes pour les médias
+    Route::get('media', [App\Http\Controllers\MediaController::class, 'index'])->name('etudiant.media');
+    Route::get('media/filter', [App\Http\Controllers\MediaController::class, 'filter'])->name('media.filter');
+    Route::get('media/create', [App\Http\Controllers\MediaController::class, 'create'])->name('media.create');
+    Route::post('media', [App\Http\Controllers\MediaController::class, 'store'])->name('media.store');
+    Route::get('media/{media}', [App\Http\Controllers\MediaController::class, 'show'])->name('media.show');
+    Route::get('media/{media}/edit', [App\Http\Controllers\MediaController::class, 'edit'])->name('media.edit');
+    Route::put('media/{media}', [App\Http\Controllers\MediaController::class, 'update'])->name('media.update');
+    Route::delete('media/{media}', [App\Http\Controllers\MediaController::class, 'destroy'])->name('media.destroy');
+
     // Routes pour les réservations
     Route::get('reservations', [App\Http\Controllers\ReservationController::class, 'index'])->name('etudiant.reservations');
     Route::post('reservations', [App\Http\Controllers\ReservationController::class, 'store'])->name('reservations.store');
