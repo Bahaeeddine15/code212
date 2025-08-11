@@ -14,6 +14,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardEtudiantController::class, 'index'])->name('dashboard');
 
     Route::get('formations', [App\Http\Controllers\FormationController::class, 'index'])->name('etudiant.formations');
+    // Route affichage d'une formation (détails)
+    Route::get('formations/{formation}', [App\Http\Controllers\FormationController::class, 'show'])->name('formations.show');
 
     Route::get('certificats', function () {
         return Inertia::render('etudiant/Certificats');
@@ -24,18 +26,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('competition', [App\Http\Controllers\CompetitionController::class, 'index'])->name('etudiant.competition');
     Route::get('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'showRegistration'])->name('competition.register');
     Route::post('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'storeRegistration'])->name('competition.store');
+    // Détails public d'une compétition
+    Route::get('competition/{id}', [App\Http\Controllers\CompetitionController::class, 'showDetails'])->name('competition.show');
     Route::get('articles', [App\Http\Controllers\ArticleController::class, 'index'])->name('etudiant.article');
     Route::get('articles/{article}', [App\Http\Controllers\ArticleController::class, 'show'])->name('etudiant.article.show');
 
-    // Routes pour les médias
+    // Routes pour les médias (lecture seule)
     Route::get('media', [App\Http\Controllers\MediaController::class, 'index'])->name('etudiant.media');
     Route::get('media/filter', [App\Http\Controllers\MediaController::class, 'filter'])->name('media.filter');
     Route::get('media/create', [App\Http\Controllers\MediaController::class, 'create'])->name('media.create');
-    Route::post('media', [App\Http\Controllers\MediaController::class, 'store'])->name('media.store');
     Route::get('media/{media}', [App\Http\Controllers\MediaController::class, 'show'])->name('media.show');
-    Route::get('media/{media}/edit', [App\Http\Controllers\MediaController::class, 'edit'])->name('media.edit');
-    Route::put('media/{media}', [App\Http\Controllers\MediaController::class, 'update'])->name('media.update');
-    Route::delete('media/{media}', [App\Http\Controllers\MediaController::class, 'destroy'])->name('media.destroy');
+    Route::post('media', [App\Http\Controllers\MediaController::class, 'store'])->name('media.store');
 
     // Routes pour les réservations
     Route::get('reservations', [App\Http\Controllers\ReservationController::class, 'index'])->name('etudiant.reservations');

@@ -4,7 +4,7 @@ import AppSidebarLayout from '../../layouts/app/app-sidebar-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Folder, Image as ImageIcon, Video, Plus, RefreshCw } from 'lucide-react';
+import { Folder, Image as ImageIcon, Video, RefreshCw } from 'lucide-react';
 
 interface MediaItem {
   id: number;
@@ -43,38 +43,41 @@ interface PageProps {
 export default function Media() {
   const { props } = usePage<PageProps>();
   const { medias, folders } = props;
+  const videoExts = ['mp4','mov','avi','wmv','flv','webm'];
 
   const [search, setSearch] = React.useState('');
   const [folder, setFolder] = React.useState('all');
+  const [typeFilter, setTypeFilter] = React.useState<'all'|'images'|'videos'>('all');
   const [loading, setLoading] = React.useState(false);
-  const [items, setItems] = React.useState<MediaItem[]>(medias.data || []);
+  const initial = (medias.data || []); // on garde tout, filtrage plus bas
+  const [items, setItems] = React.useState<MediaItem[]>(initial);
 
   React.useEffect(() => {
-    setItems(medias.data || []);
-  }, [medias.data]);
+    applyTypeFilter(medias.data || []);
+  }, [medias.data, typeFilter]);
+
+  const applyTypeFilter = (list: MediaItem[]) => {
+    let filtered = list;
+    if (typeFilter === 'images') {
+      filtered = list.filter(m => !m.file_extension || !videoExts.includes((m.file_extension||'').toLowerCase()));
+    } else if (typeFilter === 'videos') {
+      filtered = list.filter(m => m.file_extension && videoExts.includes(m.file_extension.toLowerCase()));
+    }
+    setItems(filtered);
+  };
 
   const load = (params: Record<string, any> = {}) => {
     setLoading(true);
-    const query = new URLSearchParams({
-      folder,
-      search,
-      ...params,
-    }).toString();
-
+    const query = new URLSearchParams({ folder, search, ...params }).toString();
     fetch(`/media/filter?${query}`)
       .then(r => r.json())
       .then(data => {
-        setItems(data.medias.data);
+        applyTypeFilter(data.medias.data);
       })
       .finally(() => setLoading(false));
   };
 
-  const mediaIcon = (m: MediaItem) => {
-    if (!m.file_extension) return <ImageIcon className="w-6 h-6" />;
-    const ext = m.file_extension.toLowerCase();
-    if (['mp4','mov','avi','wmv','flv','webm'].includes(ext)) return <Video className="w-6 h-6" />;
-    return <ImageIcon className="w-6 h-6" />;
-  };
+  const mediaIcon = (m: MediaItem) => <ImageIcon className="w-6 h-6" />; // always image icon now
 
   return (
     <AppSidebarLayout breadcrumbs={[
@@ -86,12 +89,9 @@ export default function Media() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">Médiathèque</h1>
-            <p className="text-gray-600">Parcourez les images et vidéos</p>
+            <p className="text-gray-600">Images et vidéos</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => router.visit('/media/create')}>
-              <Plus className="w-4 h-4 mr-2" /> Ajouter
-            </Button>
             <Button variant="outline" onClick={() => load()} disabled={loading}>
               <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Rafraîchir
             </Button>
@@ -120,7 +120,12 @@ export default function Media() {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                 />
-                <Button onClick={() => load()} disabled={loading} className="w-full">Filtrer</Button>
+                <div className="flex gap-2">
+                  <Button type="button" variant={typeFilter==='all'?'default':'outline'} size="sm" onClick={() => setTypeFilter('all')}>Tous</Button>
+                  <Button type="button" variant={typeFilter==='images'?'default':'outline'} size="sm" onClick={() => setTypeFilter('images')}>Images</Button>
+                  <Button type="button" variant={typeFilter==='videos'?'default':'outline'} size="sm" onClick={() => setTypeFilter('videos')}>Vidéos</Button>
+                </div>
+                <Button onClick={() => load()} disabled={loading} className="w-full mt-2">Filtrer</Button>
               </CardContent>
             </Card>
           </div>
@@ -132,11 +137,11 @@ export default function Media() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {items.map(m => (
-                  <Card key={m.id} className="overflow-hidden group">
+                  <Card key={m.id} className="overflow-hidden group cursor-pointer" onClick={() => window.location.href = `/media/${m.id}` }>
                     <div className="aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
                       {m.full_url ? (
                         m.file_extension && ['mp4','mov','avi','wmv','flv','webm'].includes(m.file_extension.toLowerCase()) ? (
-                          <video src={m.full_url} className="w-full h-full object-cover" />
+                          <video src={m.full_url} controls className="w-full h-full object-cover" />
                         ) : (
                           <img src={m.full_url} alt={m.title} className="w-full h-full object-cover" />
                         )

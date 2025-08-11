@@ -40,9 +40,9 @@ export default function CompetitionRegistrationPage({ competition }: Competition
     });
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { href: '/dashboard', label: 'Accueil' },
-        { href: '/competition', label: 'Compétitions' },
-        { label: `Inscription - ${competition.title}` },
+        { href: '/dashboard', title: 'Dashboard Étudiant' },
+        { href: '/competition', title: 'Compétitions' },
+        { href: `/competition/${competition.id}/register`, title: `Inscription - ${competition.title}` },
     ];
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -60,7 +60,7 @@ export default function CompetitionRegistrationPage({ competition }: Competition
         <AppShell variant="sidebar">
             <Head title={`Inscription - ${competition.title}`} />
             <AppSidebar />
-            <AppContent variant="sidebar" className="overflow-x-hidden">
+            <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 <div className="container mx-auto p-6 max-w-4xl">
                     <div className="mb-8">

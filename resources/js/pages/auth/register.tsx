@@ -1,6 +1,6 @@
 import { Head, useForm } from "@inertiajs/react";
 
-import { FormEventHandler } from "react";
+import { FormEventHandler, useState } from "react";
 
 import InputError from "@/components/forms/input-error";
 import TextLink from "@/components/common/text-link";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AuthLayout from "@/layouts/auth-layout";
+import { Eye, EyeOff } from "lucide-react";
 
 type RegisterForm = {
   name: string;
@@ -27,6 +28,9 @@ export default function Register() {
     password: "",
     password_confirmation: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
@@ -129,35 +133,69 @@ export default function Register() {
         <div className="grid gap-6 md:grid-cols-2">
           <div>
             <Label htmlFor="password">Mot de passe</Label>
-            <Input
-              id="password"
-              type="password"
-              required
-              tabIndex={4}
-              autoComplete="new-password"
-              value={data.password}
-              onChange={(e) => setData("password", e.target.value)}
-              disabled={processing}
-              placeholder="Mot de passe"
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                tabIndex={4}
+                autoComplete="new-password"
+                value={data.password}
+                onChange={(e) => setData("password", e.target.value)}
+                disabled={processing}
+                placeholder="Mot de passe"
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 hover:text-gray-700"
+                tabIndex={-1}
+                aria-label={
+                  showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"
+                }
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
             <InputError message={errors.password} />
           </div>
 
           <div>
-            <Label htmlFor="password_confirmation">
-              Confirmer le mot de passe
-            </Label>
-            <Input
-              id="password_confirmation"
-              type="password"
-              required
-              tabIndex={5}
-              autoComplete="new-password"
-              value={data.password_confirmation}
-              onChange={(e) => setData("password_confirmation", e.target.value)}
-              disabled={processing}
-              placeholder="Confirmer le mot de passe"
-            />
+            <Label htmlFor="password_confirmation">Confirmer le mot de passe</Label>
+            <div className="relative">
+              <Input
+                id="password_confirmation"
+                type={showPasswordConfirm ? "text" : "password"}
+                required
+                tabIndex={5}
+                autoComplete="new-password"
+                value={data.password_confirmation}
+                onChange={(e) => setData("password_confirmation", e.target.value)}
+                disabled={processing}
+                placeholder="Confirmer le mot de passe"
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 hover:text-gray-700"
+                tabIndex={-1}
+                aria-label={
+                  showPasswordConfirm ? "Masquer le mot de passe" : "Afficher le mot de passe"
+                }
+              >
+                {showPasswordConfirm ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
             <InputError message={errors.password_confirmation} />
           </div>
         </div>

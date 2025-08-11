@@ -111,6 +111,32 @@ class CompetitionController extends Controller
     }
 
     /**
+     * Display public competition details for students.
+     */
+    public function showDetails($id)
+    {
+        $competition = Competition::with(['registrations'])->findOrFail($id);
+
+        $competitionData = [
+            'id' => $competition->id,
+            'title' => $competition->title,
+            'description' => $competition->description,
+            'date' => $competition->date->format('Y-m-d'),
+            'deadline' => $competition->deadline->format('Y-m-d'),
+            'location' => $competition->location,
+            'category' => $competition->category,
+            'maxParticipants' => $competition->max_participants,
+            'registrations' => $competition->registrations->count(),
+            'status' => $competition->status,
+            'views' => $competition->views,
+        ];
+
+        return Inertia::render('etudiant/competitionShow', [
+            'competition' => $competitionData,
+        ]);
+    }
+
+    /**
      * Store a new competition registration.
      */
     public function storeRegistration(Request $request, $id)

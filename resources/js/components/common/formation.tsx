@@ -58,13 +58,7 @@ export default function FormationCard({
           </div>
 
      
-          <Button
-            variant="link"
-            size="sm"
-            asChild
-          >
-            <span>Voir détails →</span>
-          </Button>
+          <span className="text-sm font-medium text-blue-600 hover:underline">Voir détails →</span>
         </div>
       </div>
     </Link>

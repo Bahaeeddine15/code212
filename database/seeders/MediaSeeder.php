@@ -98,14 +98,10 @@ class MediaSeeder extends Seeder
         $allMedias = array_merge($hackathonMedias, $competitionMedias, $formationMedias);
 
         foreach ($allMedias as $mediaData) {
-            // Créer un fichier placeholder (vous pouvez remplacer par de vrais fichiers)
             $fileName = time() . '_' . $mediaData['original_name'];
             $filePath = 'media/' . $mediaData['folder'] . '/' . $fileName;
-            
-            // Créer un fichier placeholder simple (image 1x1 pixel)
-            $placeholderContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
-            Storage::disk('public')->put($filePath, $placeholderContent);
-            
+            $this->makeFakeImage($filePath, $mediaData['title']);
+
             Media::create([
                 'title' => $mediaData['title'],
                 'slug' => Str::slug($mediaData['title']),
@@ -115,8 +111,38 @@ class MediaSeeder extends Seeder
                 'original_name' => $mediaData['original_name'],
                 'user_id' => $user->id,
             ]);
+            usleep(80000); // éviter collision
         }
 
         $this->command->info('Médias d\'exemple créés avec succès!');
+    }
+
+    private function makeFakeImage(string $relativePath, string $title): void
+    {
+        try {
+            $full = storage_path('app/public/' . $relativePath);
+            @mkdir(dirname($full), 0775, true);
+            $w=800; $h=450;
+            $im = imagecreatetruecolor($w,$h);
+            $colors=[[59,130,246],[236,72,153],[16,185,129],[245,158,11],[139,92,246],[14,165,233]];
+            $c=$colors[array_rand($colors)];
+            $bg=imagecolorallocate($im,$c[0],$c[1],$c[2]);
+            imagefilledrectangle($im,0,0,$w,$h,$bg);
+            $overlay=imagecolorallocatealpha($im,0,0,0,70);
+            imagefilledrectangle($im,0,$h-90,$w,$h,$overlay);
+            $white=imagecolorallocate($im,255,255,255);
+            $short=mb_strimwidth($title,0,42,'…','UTF-8');
+            $font=base_path('resources/fonts/Inter-Bold.ttf');
+            if (file_exists($font) && function_exists('imagettftext')) {
+                imagettftext($im,28,0,30,$h-35,$white,$font,$short);
+            } else {
+                imagestring($im,5,30,$h-60,$short,$white);
+            }
+            imagejpeg($im,$full,85);
+            imagedestroy($im);
+        } catch (\Throwable $e) {
+            $placeholder=base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
+            Storage::disk('public')->put($relativePath,$placeholder);
+        }
     }
 }

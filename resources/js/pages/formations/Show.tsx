@@ -1,4 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
 
 
 interface Formation {
@@ -6,7 +8,7 @@ interface Formation {
     titre: string;
     description: string;
     category: string;
-    niveau: number;
+    niveau: string; // align with DB + list page type
     photo?: string;
     created_at: string;
     updated_at: string;
@@ -21,19 +23,32 @@ export default function Show({ formation }: ShowProps) {
         e.currentTarget.src = "https://picsum.photos/800/400";
     };
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Formations', href: '/formations' },
+        { title: formation.titre, href: `/formations/${formation.id}` },
+    ];
+
     return (
         <>
             <Head title={`Formation - ${formation.titre}`} />
 
-            <div className="min-h-screen bg-gray-50 py-8">
+            <AppLayout breadcrumbs={breadcrumbs}>
+            <div className="min-h-screen bg-gray-50 py-8 dark:bg-[#0f0f10]">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Bouton retour */}
-                    <div className="mb-6">
-                        <Link 
-                            href="/etudiant/dashboard"
+                    <div className="mb-6 flex gap-3">
+                        <Link
+                            href="/formations"
                             className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                         >
-                            ← Retour au Dashboard
+                            ← Retour aux formations
+                        </Link>
+                        <Link
+                            href="/dashboard"
+                            className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                        >
+                            Dashboard
                         </Link>
                     </div>
                     
@@ -101,12 +116,12 @@ export default function Show({ formation }: ShowProps) {
                                 <button className="flex-1 px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
                                     🚀 S'inscrire à cette formation
                                 </button>
-                                <button 
-                                    onClick={() => window.history.back()}
-                                    className="flex-1 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                                <Link
+                                    href="/formations"
+                                    className="flex-1 px-8 py-3 bg-gray-200 text-center text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
                                 >
                                     ← Retour à la liste
-                                </button>
+                                </Link>
                             </div>
                             
                             {/* Informations de formation */}
@@ -130,6 +145,7 @@ export default function Show({ formation }: ShowProps) {
                     </div>
                 </div>
             </div>
+            </AppLayout>
         </>
     );
 }

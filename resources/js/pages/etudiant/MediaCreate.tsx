@@ -40,8 +40,8 @@ export default function MediaCreate({ events, competitions }: Props) {
     if (file) {
       setData('file', file);
       
-      // Créer une preview pour les images
-      if (file.type.startsWith('image/')) {
+      // Créer une preview pour image ou vidéo (affichage contrôlé)
+      if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
         const url = URL.createObjectURL(file);
         setPreviewUrl(url);
       } else {
@@ -215,11 +215,19 @@ export default function MediaCreate({ events, competitions }: Props) {
             <CardContent>
               {previewUrl ? (
                 <div className="space-y-4">
-                  <img
-                    src={previewUrl}
-                    alt="Prévisualisation"
-                    className="w-full max-h-64 object-contain rounded-lg border"
-                  />
+                  {data.file && data.file.type.startsWith('video/') ? (
+                    <video
+                      src={previewUrl}
+                      className="w-full max-h-64 rounded-lg border"
+                      controls
+                    />
+                  ) : (
+                    <img
+                      src={previewUrl}
+                      alt="Prévisualisation"
+                      className="w-full max-h-64 object-contain rounded-lg border"
+                    />
+                  )}
                   <div className="text-sm text-gray-600">
                     <p><strong>Nom:</strong> {data.file?.name}</p>
                     <p><strong>Taille:</strong> {data.file ? Math.round(data.file.size / 1024) : 0} KB</p>

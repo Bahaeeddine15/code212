@@ -31,12 +31,12 @@ const mainNavItems: NavItem[] = [
         icon: ClipboardCheck,
     },
     {
-        title: 'Events',
+        title: 'Evenements',
         href:'/events',
         icon: Calendar,
     },
     {
-        title: 'Compétition',
+        title: 'Compétitions',
         href:'/competition',
         icon: Trophy,
     },
@@ -46,7 +46,7 @@ const mainNavItems: NavItem[] = [
         icon: FileText
     },
     {
-        title: 'Media',
+        title: 'Galerie Multimedia',
         href:'/media',
         icon: FileText
     }
@@ -61,16 +61,13 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset" className="dark:bg-[#0A1F44] m-4 md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width)+2rem)] peer-data-[variant=inset]:rounded-xl peer-data-[variant=inset]:shadow-sm">
-            <SidebarContent className="bg-white pt-4 text-gray-800 rounded-xl shadow-2xl">
+        <Sidebar collapsible="icon" variant="inset" className="dark:bg-[#0A1F44] m-4 peer-data-[variant=inset]:rounded-xl peer-data-[variant=inset]:shadow-sm">
+            <SidebarContent className="bg-white pt-4 text-gray-800 rounded-xl shadow-2xl overflow-y-auto">
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            <SidebarFooter className="bg-white mt-3 rounded-xl shadow-2xl mx-2 mb-2">
-               
-                    <NavUser />
-               
-                
+            <SidebarFooter className="bg-white rounded-xl shadow-2xl mx-2 mb-2 mt-auto sticky bottom-2 z-10 border-t border-gray-100">
+                <NavUser />
             </SidebarFooter>
         </Sidebar>
     );
