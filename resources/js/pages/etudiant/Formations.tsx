@@ -1,5 +1,7 @@
 import { Head } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout"; // Même layout que la page certificats
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { useState } from "react";
 import FormationCard from "@/components/common/formation";
 import { Input } from "@/components/ui/input";
@@ -10,6 +12,12 @@ import { type BreadcrumbItem } from '@/types';
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard Étudiant", href: "/dashboard" },
   { title: "Formations", href: "/formations" },
+];
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Formations", isActive: true },
 ];
 
 interface Formation {
@@ -39,8 +47,17 @@ export default function Formations({
   );
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Formations" />
+    <>
+      <Head title="Formations">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      {/* Custom Dashboard Header */}
+      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+      
+      <AppLayout>
 
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
@@ -85,6 +102,10 @@ export default function Formations({
           )}
         </div>
       </div>
-    </AppLayout>
+      </AppLayout>
+      
+      {/* Footer */}
+      <Footer />
+    </>
   );
 }

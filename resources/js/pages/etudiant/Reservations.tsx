@@ -1,4 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
@@ -11,6 +13,12 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Reservations',
         href: '/reservations',
     },
+];
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Réservations", isActive: true },
 ];
 
 interface Reservation {
@@ -34,7 +42,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ existingReservation, lastProcessedReservation, userEmail, showNotification }: DashboardProps) {
-    const { flash } = usePage().props;
+    const { flash } = usePage().props as { flash?: { success?: string } };
     const [showSuccess, setShowSuccess] = useState(false);
     const [notificationDismissed, setNotificationDismissed] = useState(!showNotification);
     
@@ -92,8 +100,17 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Réservations" />
+        <>
+            <Head title="Réservations">
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+            </Head>
+            
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppLayout>
             <div className="p-6">
                 {/* Message de succès */}
                 {showSuccess && (
@@ -409,6 +426,10 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                 </div>
                 
             </div>
-        </AppLayout>
+            </AppLayout>
+            
+            {/* Footer */}
+            <Footer />
+        </>
     );
 }

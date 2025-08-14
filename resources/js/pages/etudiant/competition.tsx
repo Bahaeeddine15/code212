@@ -2,6 +2,7 @@ import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
+import DashboardHeader from "@/components/layout/dashboard-header";
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Eye, CheckCircle, XCircle, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Compétitions", isActive: true },
+];
 
 interface Competition {
     id: number;

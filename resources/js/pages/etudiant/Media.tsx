@@ -1,10 +1,17 @@
 import React from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
 import AppSidebarLayout from '../../layouts/app/app-sidebar-layout';
+import DashboardHeader from "@/components/layout/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Folder, Image as ImageIcon, Video, RefreshCw } from 'lucide-react';
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Galerie Multimédia", isActive: true },
+];
 
 interface MediaItem {
   id: number;
@@ -38,6 +45,7 @@ interface PageProps {
     links: { url: string | null; label: string; active: boolean }[];
   };
   folders: FolderOption[];
+  [key: string]: unknown; // Add index signature to satisfy Inertia PageProps constraint
 }
 
 export default function Media() {

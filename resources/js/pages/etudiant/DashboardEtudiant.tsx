@@ -6,6 +6,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 
 interface Stats {
   total_formations: number;
@@ -59,6 +61,12 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard Étudiant", href: "/dashboard" },
 ];
 
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Dashboard", isActive: true },
+];
+
 const mockData = {
   formations: [
     {
@@ -104,10 +112,18 @@ export default function Dashboard({ stats, formations, events, user }: Props) {
   } = mockData;
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Dashboard Étudiant" />
-
-      <div className="flex flex-col gap-6 p-8 bg-transparent text-gray-900 dark:text-white font-raleway">
+    <>
+      <Head title="Dashboard Étudiant">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      {/* Custom Dashboard Header */}
+      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+      
+      <AppLayout>
+        <div className="flex flex-col gap-6 p-8 bg-transparent text-gray-900 dark:text-white font-[Poppins]">
         <div className="space-y-4">
           {/* Header Profile Section */}
           <div className="flex gap-6">
@@ -320,6 +336,10 @@ export default function Dashboard({ stats, formations, events, user }: Props) {
           </Card>
         </div>
       </div>
-    </AppLayout>
+      </AppLayout>
+      
+      {/* Footer */}
+      <Footer />
+    </>
   );
 }

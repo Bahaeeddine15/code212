@@ -2,6 +2,7 @@ import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
+import DashboardHeader from "@/components/layout/dashboard-header";
 import { Head } from '@inertiajs/react';
 import { MapPin, Calendar as CalendarIcon, Users, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 import React from 'react';
@@ -17,6 +18,12 @@ interface Event {
     max_attendees: number;
     status: string;
 }
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Événements", isActive: true },
+];
 
 interface Props { events: Event[]; }
 
@@ -99,18 +106,22 @@ export default function Events({ events }: Props) {
     const monthEvents = normalized.filter(e => e.end >= monthStart && e.start <= monthEnd);
 
     return (
-        <AppShell variant="sidebar">
+        <>
             <Head>
                 <title>Événements</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
             </Head>
-            <div className="flex w-full min-h-screen">
-                <AppSidebar />
-                <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
-                    <AppSidebarHeader breadcrumbs={breadcrumbs} />
-                    <div className="p-6">
+            
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
+                        <div className="p-6">
                         <div className="flex flex-col lg:flex-row gap-6">
                             {/* LEFT PANEL */}
                             <div className="lg:w-1/3 space-y-4">
@@ -192,10 +203,11 @@ export default function Events({ events }: Props) {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </AppContent>
-            </div>
-        </AppShell>
+                        </div>
+                    </AppContent>
+                </div>
+            </AppShell>
+        </>
     );
 }
 

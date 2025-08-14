@@ -1,5 +1,7 @@
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileDown } from 'lucide-react';
@@ -9,6 +11,12 @@ import { type BreadcrumbItem } from '@/types';
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard Étudiant", href: "/dashboard" },
   { title: "Mes certificats", href: "/certificats" },
+];
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Certificats", isActive: true },
 ];
 
 const mockCertificates = [
@@ -32,8 +40,17 @@ const mockCertificates = [
 
 export default function Certificats() {
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Mes Certificats" />
+    <>
+      <Head title="Mes Certificats">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      {/* Custom Dashboard Header */}
+      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+      
+      <AppLayout>
 
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
@@ -71,6 +88,10 @@ export default function Certificats() {
           ))}
         </div>
       </div>
-    </AppLayout>
+      </AppLayout>
+      
+      {/* Footer */}
+      <Footer />
+    </>
   );
 }
