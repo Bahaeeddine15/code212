@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\article;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -13,10 +14,19 @@ class ArticleController extends Controller
     public function index()
     {
         $articles = Article::with('user')
-            ->where('status', 'published') // Only show published articles for students
+            ->where('status', 'published')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function($article) {
+            ->map(function ($article) {
+                $imagePath = null;
+                if ($article->featured_image) {
+                    $decoded = json_decode($article->featured_image, true);
+                    if (is_array($decoded)) {
+                        $imagePath = $decoded[0] ?? null;
+                    } else {
+                        $imagePath = $article->featured_image;
+                    }
+                }
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
@@ -27,14 +37,15 @@ class ArticleController extends Controller
                     'status' => $article->status,
                     'category' => $article->category,
                     'views' => $article->views,
-                    'image' => $article->featured_image_url,
+                    'image' => $imagePath ? Storage::url($imagePath) : null,
                 ];
-            });   
-            
+            });
+
         return Inertia::render('etudiant/articles', [
             'articles' => $articles
         ]);
     }
+
     public function create()
     {
         return Inertia::render('dashboard_admin/article/article_create');
@@ -42,34 +53,18 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
-        // Increment view count
         $article->increment('views');
 
-        // Format the article data for the show page
-        $articleData = [
-            'id' => $article->id,
-            'title' => $article->title,
-            'excerpt' => $article->excerpt,
-            'content' => $article->content,
-            'author' => $article->user->name,
-            'date' => $article->created_at->format('Y-m-d'),
-            'status' => $article->status,
-            'category' => $article->category,
-            'views' => $article->views, // This will now reflect the incremented count
-            'image' => $article->featured_image_url,
-            'created_at' => $article->created_at->toISOString(),
-            'updated_at' => $article->updated_at->toISOString(),
-        ];
+        $imagePath = null;
+        if ($article->featured_image) {
+            $decoded = json_decode($article->featured_image, true);
+            if (is_array($decoded)) {
+                $imagePath = $decoded[0] ?? null;
+            } else {
+                $imagePath = $article->featured_image;
+            }
+        }
 
-        // Render student view for article detail
-        return Inertia::render('etudiant/article-detail', [
-            'article' => $articleData
-        ]);
-    }
-
-    public function edit(Article $article)
-    {
-        // Format the article data for editing
         $articleData = [
             'id' => $article->id,
             'title' => $article->title,
@@ -80,7 +75,39 @@ class ArticleController extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'image' => $article->featured_image_url,
+            'image' => $imagePath ? Storage::url($imagePath) : null,
+            'created_at' => $article->created_at->toISOString(),
+            'updated_at' => $article->updated_at->toISOString(),
+        ];
+
+        return Inertia::render('etudiant/article-detail', [
+            'article' => $articleData
+        ]);
+    }
+
+    public function edit(Article $article)
+    {
+        $imagePath = null;
+        if ($article->featured_image) {
+            $decoded = json_decode($article->featured_image, true);
+            if (is_array($decoded)) {
+                $imagePath = $decoded[0] ?? null;
+            } else {
+                $imagePath = $article->featured_image;
+            }
+        }
+
+        $articleData = [
+            'id' => $article->id,
+            'title' => $article->title,
+            'excerpt' => $article->excerpt,
+            'content' => $article->content,
+            'author' => $article->user->name,
+            'date' => $article->created_at->format('Y-m-d'),
+            'status' => $article->status,
+            'category' => $article->category,
+            'views' => $article->views,
+            'image' => $imagePath ? Storage::url($imagePath) : null,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
         ];
@@ -104,12 +131,10 @@ class ArticleController extends Controller
         $validated['user_id'] = Auth::id();
         $validated['slug'] = Str::slug($validated['title']);
 
-        // Handle image upload
         if ($request->hasFile('featured_image')) {
             $image = $request->file('featured_image');
-            $imageName = time() . '_' . Str::slug($validated['title']) . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/articles'), $imageName);
-            $validated['featured_image'] = 'images/articles/' . $imageName;
+            $path = $image->store('article', 'public');
+            $validated['featured_image'] = $path;
         }
 
         if ($validated['status'] === 'published' && !isset($validated['published_at'])) {
@@ -134,17 +159,13 @@ class ArticleController extends Controller
 
         $validated['slug'] = Str::slug($validated['title']);
 
-        // Handle image upload
         if ($request->hasFile('featured_image')) {
-            // Delete old image if exists
-            if ($article->featured_image && file_exists(public_path($article->featured_image))) {
-                unlink(public_path($article->featured_image));
+            if ($article->featured_image && Storage::disk('public')->exists($article->featured_image)) {
+                Storage::disk('public')->delete($article->featured_image);
             }
-
             $image = $request->file('featured_image');
-            $imageName = time() . '_' . Str::slug($validated['title']) . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/articles'), $imageName);
-            $validated['featured_image'] = 'images/articles/' . $imageName;
+            $path = $image->store('article', 'public');
+            $validated['featured_image'] = $path;
         }
 
         if ($validated['status'] === 'published' && $article->status !== 'published') {
@@ -158,13 +179,11 @@ class ArticleController extends Controller
 
     public function destroy(Article $article)
     {
-        // Delete associated image if exists
-        if ($article->featured_image && file_exists(public_path($article->featured_image))) {
-            unlink(public_path($article->featured_image));
+        if ($article->featured_image && Storage::disk('public')->exists($article->featured_image)) {
+            Storage::disk('public')->delete($article->featured_image);
         }
 
         $article->delete();
         return redirect()->route('articles.index')->with('success', 'Article supprimé avec succès!');
     }
-
 }
