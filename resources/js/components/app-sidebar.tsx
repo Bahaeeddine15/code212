@@ -4,7 +4,17 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { 
+    BookOpen, 
+    Folder, 
+    LayoutGrid, 
+    FileText, 
+    Calendar, 
+    Images, 
+    GraduationCap, 
+    Trophy,
+    Building2
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -13,44 +23,60 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
+    {
+        title: 'Gestion des articles',
+        href: '/articles',
+        icon: FileText,
+    },
+    {
+        title: 'Gestion des événements',
+        href: '/events',
+        icon: Calendar,
+    },
+    {
+        title: 'Gestion des réservations',
+        href: '/reservations',
+        icon: Building2,
+    },
+    {
+        title: 'Galerie médias',
+        href: '/media',
+        icon: Images,
+    },
+    {
+        title: 'Formations/Certifications',
+        href: '/formations',
+        icon: GraduationCap,
+    },
+    {
+        title: 'Inscription compétitions',
+        href: '/competitions',
+        icon: Trophy,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard" prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
+        <div className="bg-card rounded-xl shadow-lg border border-border overflow-hidden h-full flex flex-col">
+            <div className="p-6 flex-1 flex flex-col">
+                <div className="text-center mb-8">
+                    <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
+                </div>
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
-            </SidebarContent>
+                <div className="space-y-4 flex-1">
+                    <NavMain items={mainNavItems} />
+                </div>
 
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
-            </SidebarFooter>
-        </Sidebar>
+                <div className="mt-8 pt-6 border-t border-border flex-shrink-0">
+                    <NavFooter items={footerNavItems} />
+                    <div className="mt-4">
+                        <NavUser />
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
