@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'title',
         'description',
@@ -14,7 +17,12 @@ class Event extends Model
         'location',
         'max_attendees',
         'category',
-        'status', // New column for status
-        
+        'status',
+        'logo',
+    ];
+    
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 }

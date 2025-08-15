@@ -19,6 +19,14 @@
             })();
         </script>
 
+        {{-- Load custom fonts from Google Fonts --}}
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Montserrat:wght@400;600&family=Raleway:wght@400;500&display=swap" rel="stylesheet">
+        <style>
+            .font-orbitron { font-family: 'Orbitron', sans-serif; }
+            .font-montserrat { font-family: 'Montserrat', sans-serif; }
+            .font-raleway { font-family: 'Raleway', sans-serif; }
+        </style>
+
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
         <style>
             html {

@@ -250,3 +250,67 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Enhanced Moon-themed gradient animations */
+@keyframes gradient-x {
+    0%, 100% {
+        transform: translateX(0%);
+        background-size: 400% 400%;
+    }
+    50% {
+        transform: translateX(-100%);
+        background-size: 600% 600%;
+    }
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    25% {
+        background-position: 100% 50%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    75% {
+        background-position: 0% 100%;
+    }
+}
+
+@keyframes gradient-pulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.05);
+    }
+}
+
+.animate-gradient-x {
+    animation: gradient-x 4s ease infinite;
+    background-size: 400% 400%;
+}
+
+.animate-gradient-shift {
+    animation: gradient-shift 12s ease-in-out infinite;
+    background-size: 400% 400%;
+}
+
+.animate-gradient-pulse {
+    animation: gradient-pulse 5s ease-in-out infinite;
+}
+
+/* Interactive Particle System */
+.particle-container {
+    pointer-events: none;
+    z-index: 1;
+}
+
+#particle-canvas {
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.8;
+}
