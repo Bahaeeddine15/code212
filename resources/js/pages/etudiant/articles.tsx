@@ -97,11 +97,13 @@ export default function Articles({ articles }: Props) {
                                             {/* Image placeholder */}
                                             <div className="flex-shrink-0 w-48">
                                                 {article.image ? (
-                                                    <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-l-lg">
+                                                    <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-l-lg overflow-hidden flex items-center justify-center">
                                                         <img 
                                                             src={article.image} 
                                                             alt={article.title}
-                                                            className="w-full h-full object-cover rounded-l-lg"
+                                                            className="h-full w-full object-cover"
+                                                            style={{ userSelect: 'none' }}
+                                                            onContextMenu={e => e.preventDefault()}
                                                         />
                                                     </div>
                                                 ) : (

@@ -80,11 +80,13 @@ export default function ArticleDetail({ article }: Props) {
                     <Card className="overflow-hidden">
                         {/* Hero Image */}
                         {article.image ? (
-                            <div className="h-64 bg-gradient-to-r from-blue-500 to-purple-600">
+                            <div className="h-64 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden flex items-center justify-center">
                                 <img 
                                     src={article.image} 
-                                    alt={article.title}
-                                    className="w-full h-full object-cover"
+                                    alt={article.title} 
+                                    style={{ userSelect: 'none' }}
+                                    onContextMenu={e => e.preventDefault()}
+                                    className="h-full w-full object-cover"
                                 />
                             </div>
                         ) : (
