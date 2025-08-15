@@ -21,7 +21,7 @@ interface Article {
     status: 'published' | 'draft' | 'archived';
     category: string;
     views: number;
-    images?: string[]; // <-- Use images array
+    images?: string[];
     created_at: string;
     updated_at: string;
 }
@@ -33,11 +33,11 @@ interface ArticleEditProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Gestion des articles',
-        href: '/articles',
+        href: '/admin/articles',
     },
     {
         title: 'Modifier l\'article',
@@ -54,19 +54,15 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
         status: article.status
     });
 
-    // Existing images from the article (paths)
     const [existingImages, setExistingImages] = useState<string[]>(article.images || []);
-    // New images to upload
     const [newImages, setNewImages] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [imageError, setImageError] = useState('');
 
-    // Remove an existing image (before submit)
     const handleRemoveExistingImage = (idx: number) => {
         setExistingImages(prev => prev.filter((_, i) => i !== idx));
     };
 
-    // Remove a new image (before submit)
     const handleRemoveNewImage = (idx: number) => {
         setNewImages(prev => prev.filter((_, i) => i !== idx));
     };
@@ -75,14 +71,9 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
         if (!e.target.files) return;
         const files = Array.from(e.target.files);
 
-        // Combine current and new files, but only keep the first 5
-        const combined = [...existingImages, ...newImages, ...files].slice(0, 5);
-
-        // Calculate how many new images can be added
         const canAdd = 5 - existingImages.length - newImages.length;
         const filesToAdd = files.slice(0, canAdd);
 
-        // If user tried to add more than 5, show error
         if (existingImages.length + newImages.length + files.length > 5) {
             setImageError('Vous pouvez ajouter jusqu\'à 5 images maximum. Seules les 5 premières seront conservées.');
         } else {
@@ -98,12 +89,10 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
 
         const data = new FormData();
         Object.entries(formData).forEach(([key, value]) => data.append(key, value));
-        // Add new images
         newImages.forEach((file, idx) => data.append(`images[${idx}]`, file));
-        // Add existing images (as JSON)
         data.append('existing_images', JSON.stringify(existingImages));
 
-        router.post(`/articles/${article.id}?_method=PUT`, data, {
+        router.post(`/admin/articles/${article.id}?_method=PUT`, data, {
             onSuccess: () => setIsSubmitting(false),
             onError: () => setIsSubmitting(false)
         });
@@ -118,7 +107,7 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <Link
-                            href={`/articles/${article.id}`}
+                            href={`/admin/articles/${article.id}`}
                             className="flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" />
@@ -281,7 +270,7 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                                     <Save className="w-4 h-4 mr-2" />
                                     {isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications'}
                                 </Button>
-                                <Link href={`/articles/${article.id}`}>
+                                <Link href={`/admin/articles/${article.id}`}>
                                     <Button type="button" variant="outline">
                                         Annuler
                                     </Button>

@@ -19,11 +19,12 @@ interface MediaFile {
     created_at: string;
     updated_at: string;
     user_id: number;
+    folder: string; // Added folder property
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Galerie médias', href: '/media' },
+    { title: 'Dashboard', href: '/admin/dashboard' },
+    { title: 'Galerie médias', href: '/admin/media' },
     { title: 'Éditer média', href: '#' },
 ];
 
@@ -94,11 +95,11 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
             submitData.append('file', formData.file);
         }
 
-        router.post(`/media/${media.id}`, submitData, {
+        router.post(`/admin/media/${media.id}`, submitData, {
             forceFormData: true,
             onSuccess: () => {
                 setIsSubmitting(false);
-                router.visit('/media');
+                router.visit('/admin/media');
             },
             onError: (errors) => {
                 setIsSubmitting(false);
@@ -109,8 +110,8 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
 
     const handleDelete = () => {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')) {
-            router.delete(`/media/${media.id}`, {
-                onSuccess: () => router.visit('/media'),
+            router.delete(`/admin/media/${media.id}`, {
+                onSuccess: () => router.visit('/admin/media'),
             });
         }
     };
@@ -168,7 +169,7 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <Link
-                            href="/media"
+                            href="/admin/media"
                             className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 transition-colors font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" />
@@ -282,7 +283,7 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     Supprimer
                                 </Button>
-                                <Link href="/media">
+                                <Link href="/admin/media">
                                     <Button type="button" variant="outline">
                                         Annuler
                                     </Button>

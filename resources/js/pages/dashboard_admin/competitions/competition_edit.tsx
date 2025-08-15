@@ -31,11 +31,11 @@ interface CompetitionEditProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Compétitions',
-        href: '/competitions',
+        href: '/admin/competitions',
     },
     {
         title: 'Modifier la compétition',
@@ -73,7 +73,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
         setIsSubmitting(true);
         setErrors({});
 
-        router.put(`/competitions/${competition.id}`, formData, {
+        router.put(`/admin/competitions/${competition.id}`, formData, {
             onSuccess: () => {
                 setIsSubmitting(false);
                 // Will redirect to competitions list automatically
@@ -94,7 +94,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-4">
                         <Link
-                            href={`/competitions/${competition.id}`}
+                            href={`/admin/competitions/${competition.id}`}
                             className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" />
@@ -217,7 +217,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                             <Save className="w-4 h-4 mr-2" />
                                             {isSubmitting ? 'Mise à jour...' : 'Enregistrer les modifications'}
                                         </Button>
-                                        <Link href={`/competitions/${competition.id}`}>
+                                        <Link href={`/admin/competitions/${competition.id}`}>
                                             <Button type="button" variant="outline">
                                                 Annuler
                                             </Button>

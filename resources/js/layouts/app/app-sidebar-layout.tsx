@@ -1,6 +1,6 @@
 import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
-import { AppSidebar } from '@/components/app-sidebar';
+import { AppSidebarAdmin } from '@/components/app-sidebar-admin';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import { MainHeader } from '@/components/main-header';
 import { MainFooter } from '@/components/main-footer';
@@ -15,10 +15,10 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
                 {/* Sidebar statique */}
                 <div className="w-72 flex-shrink-0">
                     <div className="h-full">
-                        <AppSidebar />
+                        <AppSidebarAdmin />
                     </div>
                 </div>
-                
+
                 {/* Contenu principal */}
                 <div className="flex-1 min-w-0">
                     <AppContent variant="sidebar" className="overflow-x-hidden">

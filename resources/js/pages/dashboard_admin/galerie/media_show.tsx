@@ -24,8 +24,8 @@ interface MediaShowProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Galerie médias', href: '/media' },
+    { title: 'Dashboard', href: '/admin/dashboard' },
+    { title: 'Galerie médias', href: '/admin/media' },
     { title: 'Aperçu média', href: '#' },
 ];
 
@@ -63,20 +63,20 @@ export default function MediaShow({ media }: MediaShowProps) {
     const formatFileSize = (bytes: number) => {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const sizes = ['Bytes', 'KB', 'MB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    const handleEdit = () => router.visit(`/media/${media.id}/edit`);
+    const handleEdit = () => router.visit(`/admin/media/${media.id}/edit`);
     const handleDelete = () => {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')) {
-            router.delete(`/media/${media.id}`, {
-                onSuccess: () => router.visit('/media')
+            router.delete(`/admin/media/${media.id}`, {
+                onSuccess: () => router.visit('/admin/media')
             });
         }
     };
-    const handleDownload = () => window.location.href = `/media/${media.id}/download`;
+    const handleDownload = () => window.location.href = `/admin/media/${media.id}/download`;
     const handleViewFull = () => window.open(getImageUrl(media.file_path), '_blank');
 
     const fileType = getFileType(media.file_path);
@@ -104,7 +104,7 @@ export default function MediaShow({ media }: MediaShowProps) {
                                     Télécharger
                                 </Button>
                                 <Button asChild variant="secondary">
-                                    <Link href="/media">
+                                    <Link href="/admin/media">
                                         <ArrowLeft className="w-4 h-4 mr-2" />
                                         Retour
                                     </Link>
@@ -145,7 +145,6 @@ export default function MediaShow({ media }: MediaShowProps) {
                                         <video
                                             src={getImageUrl(media.file_path)}
                                             controls
-
                                             controlsList="nodownload"
                                             className="max-w-full max-h-[500px] rounded-lg shadow-lg"
                                             style={{ background: "#000" }}

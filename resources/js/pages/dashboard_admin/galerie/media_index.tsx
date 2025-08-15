@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Images, Search, Download, Trash2, Edit3, Eye, Plus, MoreHorizontal } from 'lucide-react';
+import { Images, Search, Download, Trash2, Edit3, Eye, Plus, MoreHorizontal, Folder, ChevronRight } from 'lucide-react';
 
 interface MediaFile {
     id: number;
@@ -23,8 +23,8 @@ interface MediaFile {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Galerie médias', href: '/media' },
+    { title: 'Dashboard', href: '/admin/dashboard' },
+    { title: 'Galerie médias', href: '/admin/media' },
 ];
 
 export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<string, MediaFile[]> }) {
@@ -36,11 +36,11 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
     const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('fr-FR');
 
     const handleEdit = (media: MediaFile) => {
-        router.visit(`/media/${media.id}/edit`);
+        router.visit(`/admin/media/${media.id}/edit`);
     };
-    const handleDelete = (id: number) => confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?') && router.delete(`/media/${id}`);
-    const handleView = (media: MediaFile) => router.visit(`/media/${media.id}`);
-    const handleDownload = (media: MediaFile) => window.location.href = `/media/${media.id}/download`;
+    const handleDelete = (id: number) => confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?') && router.delete(`/admin/media/${id}`);
+    const handleView = (media: MediaFile) => router.visit(`/admin/media/${media.id}`);
+    const handleDownload = (media: MediaFile) => window.location.href = `/admin/media/${media.id}/download`;
 
     // Helper to determine media type (returns 'Image' or 'Vidéo')
     const getMediaType = (filePath: string) => {
@@ -111,7 +111,7 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                             </div>
                         </div>
                         <Button asChild className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
-                            <Link href="/media/create">
+                            <Link href="/admin/media/create">
                                 <Plus className="w-5 h-5" />
                                 <span>Ajouter</span>
                             </Link>
@@ -210,19 +210,33 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
 
                                 if (filteredFiles.length === 0) return null;
                                 return (
-                                    <div key={folder}>
-                                        <h2 className="text-xl font-bold mb-4">
-                                            <Link
-                                                href={route('media.folder', { folder })}
-                                                className="text-blue-600 hover:underline"
-                                            >
-                                                {folder}
-                                            </Link>
-                                        </h2>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            {filteredFiles.map(file => (
-                                                <MediaCard key={file.id} media={file} />
-                                            ))}
+                                    <div key={folder} className="border border-gray-200 rounded-xl overflow-hidden">
+                                        {/* Clickable folder header */}
+                                        <Link
+                                            href={`/admin/media/folder/${folder}`}
+                                            className="block bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 p-6 border-b border-gray-200"
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="p-2 bg-blue-100 rounded-lg">
+                                                        <Folder className="w-6 h-6 text-blue-600" />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-xl font-bold text-gray-900">{folder}</h3>
+                                                        <p className="text-sm text-gray-600">{filteredFiles.length} média(s)</p>
+                                                    </div>
+                                                </div>
+                                                <ChevronRight className="w-5 h-5 text-gray-400" />
+                                            </div>
+                                        </Link>
+
+                                        {/* Media grid */}
+                                        <div className="p-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                {filteredFiles.map(file => (
+                                                    <MediaCard key={file.id} media={file} />
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 );

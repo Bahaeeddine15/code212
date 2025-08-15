@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
-class ModuleController extends Controller
+class ModuleControllerAdmin extends Controller
 {
     /**
      * Display a listing of the modules for a formation.
@@ -16,7 +16,7 @@ class ModuleController extends Controller
     public function index(Formation $formation)
     {
         $modules = $formation->modules()->orderBy('order')->get();
-        return Inertia::render('dashboard_admin/modules', [
+        return Inertia::render('dashboard_admin/formations/modules_list', [
             'formation' => $formation,
             'modules' => $modules
         ]);
@@ -26,12 +26,10 @@ class ModuleController extends Controller
      * Show the form for creating a new module.
      */
 
-    public function create(Request $request)
+    public function create(Formation $formation)
     {
-        $formationId = (int) $request->query('formationId');
-
-        return Inertia::render('dashboard_admin/modules_create', [
-            'formationId' => $formationId,  // ✅ Send it to frontend
+        return Inertia::render('dashboard_admin/formations/module_create', [
+            'formationId' => $formation->id,
             'formations' => Formation::all(),
         ]);
     }
@@ -39,7 +37,7 @@ class ModuleController extends Controller
     /**
      * Store a newly created module in storage.
      */
-    public function store(Request $request, $formationId)
+    public function store(Request $request, Formation $formation)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -49,7 +47,7 @@ class ModuleController extends Controller
             'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:51200',
         ]);
 
-        $validated['formation_id'] = $formationId;
+        $validated['formation_id'] = $formation->id; // Use the model's ID
 
         if ($request->hasFile('file')) {
             $validated['file_path'] = $request->file('file')->store('modules', 'public');
@@ -58,7 +56,7 @@ class ModuleController extends Controller
 
         Module::create($validated);
 
-        return redirect()->route('formations.modules.index', ['formation' => $formationId])
+        return redirect()->route('formations.modules.index', ['formation' => $formation->id])
             ->with('success', 'Module créé avec succès.');
     }
 
@@ -67,19 +65,24 @@ class ModuleController extends Controller
     /**
      * Show the form for editing the specified module.
      */
-    public function edit(Formation $formation, Module $module)
+    public function edit(Module $module)
     {
-        return Inertia::render('dashboard_admin/modules_edit', [
+        $formation = $module->formation; // Get formation from the module
+
+        return Inertia::render('dashboard_admin/formations/module_edit', [
             'formation' => $formation,
-            'module' => $module, // module.file_path will be available in your React form
+            'module' => $module,
+            'formationId' => $formation->id, // Add this for React component
         ]);
     }
 
     /**
      * Update the specified module in storage.
      */
-    public function update(Request $request, Formation $formation, Module $module)
+    public function update(Request $request, Module $module)
     {
+        $formation = $module->formation; // Get formation from module
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -96,9 +99,6 @@ class ModuleController extends Controller
             $filePath = $request->file('file')->store('modules', 'public');
             Storage::disk('public')->setVisibility($filePath, 'public');
             $validated['file_path'] = $filePath;
-        } else {
-            // Keep the old file if no new file is uploaded
-            $validated['file_path'] = $module->file_path;
         }
 
         $module->update($validated);
@@ -110,15 +110,18 @@ class ModuleController extends Controller
     /**
      * Remove the specified module from storage.
      */
-    public function destroy(Formation $formation, Module $module)
+    public function destroy(Module $module)
     {
+        $formationId = $module->formation_id;
+
         // Delete file from storage if exists
         if ($module->file_path && Storage::disk('public')->exists($module->file_path)) {
             Storage::disk('public')->delete($module->file_path);
         }
+
         $module->delete();
 
-        return redirect()->route('formations.modules.index', ['formation' => $formation->id])
+        return redirect()->route('formations.modules.index', ['formation' => $formationId])
             ->with('success', 'Module supprimé avec succès.');
     }
 }

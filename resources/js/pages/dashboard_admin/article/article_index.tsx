@@ -21,7 +21,7 @@ interface Article {
     status: 'published' | 'draft' | 'archived';
     category: string;
     views: number;
-    images?: string[]; // <-- Add this line
+    images?: string[];
 }
 
 interface ArticlesProps {
@@ -31,11 +31,11 @@ interface ArticlesProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Gestion des articles',
-        href: '/articles',
+        href: '/admin/articles',
     },
 ];
 
@@ -69,7 +69,7 @@ const ArticleCard = ({
         if ((e.target as HTMLElement).closest('button')) {
             return;
         }
-        router.visit(`/articles/${article.id}`);
+        router.visit(`/admin/articles/${article.id}`);
     };
 
     return (
@@ -90,7 +90,7 @@ const ArticleCard = ({
                     <FileText className="w-16 h-16 text-white opacity-90 drop-shadow-lg" />
                 </div>
             )}
-            
+
             <div className="space-y-4">
                 <div>
                     <div className="flex items-center justify-between mb-3">
@@ -167,12 +167,12 @@ export default function Articles({ articles }: ArticlesProps) {
 
     const handleEdit = (article: Article) => {
         // Redirect to edit page instead of showing inline form
-        router.visit(`/articles/${article.id}/edit`);
+        router.visit(`/admin/articles/${article.id}/edit`);
     };
 
     const handleDelete = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
-            router.delete(`/articles/${id}`);
+            router.delete(`/admin/articles/${id}`);
         }
     };
 
@@ -181,7 +181,7 @@ export default function Articles({ articles }: ArticlesProps) {
             <Head title="Gestion des articles" />
 
             <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
-                
+
                 {/* Header moderne */}
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
                     <div className="flex items-center justify-between">
@@ -194,7 +194,7 @@ export default function Articles({ articles }: ArticlesProps) {
                                 <p className="text-gray-600 mt-2 text-lg">Créez et gérez vos articles et publications</p>
                             </div>
                         </div>
-                        <Link href="/articles/create">
+                        <Link href="/admin/articles/create">
                             <button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
                                 <Plus className="w-5 h-5" />
                                 <span>Nouvel article</span>
@@ -216,7 +216,7 @@ export default function Articles({ articles }: ArticlesProps) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -228,7 +228,7 @@ export default function Articles({ articles }: ArticlesProps) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -240,7 +240,7 @@ export default function Articles({ articles }: ArticlesProps) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -302,7 +302,7 @@ export default function Articles({ articles }: ArticlesProps) {
                             Articles disponibles ({filteredArticles.length})
                         </h2>
                     </div>
-                    
+
                     {filteredArticles.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filteredArticles.map((article) => (
@@ -321,7 +321,7 @@ export default function Articles({ articles }: ArticlesProps) {
                             <p className="text-gray-600 mb-6">
                                 {searchTerm ? 'Modifiez vos critères de recherche' : 'Commencez par créer votre premier article'}
                             </p>
-                            <Link href="/articles/create">
+                            <Link href="/admin/articles/create">
                                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all duration-200 mx-auto">
                                     <Plus className="w-5 h-5" />
                                     <span>Créer un article</span>

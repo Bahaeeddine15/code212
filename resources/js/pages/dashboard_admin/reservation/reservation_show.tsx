@@ -23,7 +23,7 @@ interface Reservation {
 }
 
 export default function ReservationShow() {
-    const { reservation } = usePage().props as { reservation: Reservation };
+    const { reservation } = usePage<{ reservation: Reservation }>().props;
 
     const getStatus = () => {
         switch (reservation.status) {
@@ -39,13 +39,13 @@ export default function ReservationShow() {
     // Add approve/reject handlers
     const handleApprove = () => {
         if (confirm('Êtes-vous sûr de vouloir approuver cette réservation ?')) {
-            router.patch(`/reservations/${reservation.id}/approve`);
+            router.patch(`/admin/reservations/${reservation.id}/approve`);
         }
     };
 
     const handleReject = () => {
         if (confirm('Êtes-vous sûr de vouloir rejeter cette réservation ?')) {
-            router.patch(`/reservations/${reservation.id}/reject`);
+            router.patch(`/admin/reservations/${reservation.id}/reject`);
         }
     };
 
@@ -53,7 +53,7 @@ export default function ReservationShow() {
         <AppLayout>
             <Head title={`Détails réservation #${reservation.id}`} />
             <div className="max-w-2xl mx-auto py-10 px-4">
-                <Link href="/reservations" className="flex items-center gap-2 text-gray-600 hover:text-purple-600 mb-6">
+                <Link href="/admin/reservations" className="flex items-center gap-2 text-gray-600 hover:text-purple-600 mb-6">
                     <ArrowLeft className="w-4 h-4" />
                     Retour à la liste
                 </Link>

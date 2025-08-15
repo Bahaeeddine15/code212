@@ -18,7 +18,7 @@ interface Article {
     status: 'published' | 'draft' | 'archived';
     category: string;
     views: number;
-    images?: string[]; // <-- Add this line
+    images?: string[];
     created_at: string;
     updated_at: string;
 }
@@ -30,11 +30,11 @@ interface ArticleShowProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Gestion des articles',
-        href: '/articles',
+        href: '/admin/articles',
     },
     {
         title: 'Détails de l\'article',
@@ -60,7 +60,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
 
     const handleDelete = () => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
-            router.delete(`/articles/${article.id}`);
+            router.delete(`/admin/articles/${article.id}`);
         }
     };
 
@@ -72,7 +72,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
             <div className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                 <div className="flex justify-between items-center max-w-6xl mx-auto">
                     <Link
-                        href="/articles"
+                        href="/admin/articles"
                         className="flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors font-medium"
                     >
                         <ArrowLeft className="w-4 h-4" />
@@ -80,7 +80,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                     </Link>
 
                     <div className="flex gap-3">
-                        <Link href={`/articles/${article.id}/edit`}>
+                        <Link href={`/admin/articles/${article.id}/edit`}>
                             <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                                 <Edit className="w-4 h-4 mr-2" />
                                 Modifier
@@ -202,7 +202,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <Link href={`/articles/${article.id}/edit`}>
+                                    <Link href={`/admin/articles/${article.id}/edit`}>
                                         <Button size="sm" variant="outline">
                                             <Edit className="w-4 h-4 mr-2" />
                                             Modifier
@@ -261,7 +261,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                             <div className="mt-2 text-center">
                                 <span className="text-gray-600 dark:text-gray-300 text-sm">
                                     Pour voir plus d'images, rendez-vous dans la{' '}
-                                    <Link href="/media" className="text-purple-600 hover:underline font-medium">
+                                    <Link href="/admin/media" className="text-purple-600 hover:underline font-medium">
                                         galerie d’images
                                     </Link>
                                     .

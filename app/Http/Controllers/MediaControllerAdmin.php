@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-class MediaController extends Controller
+class MediaControllerAdmin extends Controller
 {
     public function index()
     {

@@ -21,16 +21,16 @@ interface Props {
 
 export default function EventEdit({ event }: Props) {
     const [form, setForm] = useState({
-    title: event.title ?? '',
-    description: event.description ?? '',
-    start_date: event.start_date ?? '',
-    end_date: event.end_date ?? '',
-    location: event.location ?? '',
-    maxAttendees: event.maxAttendees?.toString() ?? '',
-    category: event.category ?? '',
-    status: event.status ?? 'upcoming',
-});
-    
+        title: event.title ?? '',
+        description: event.description ?? '',
+        start_date: event.start_date ?? '',
+        end_date: event.end_date ?? '',
+        location: event.location ?? '',
+        maxAttendees: event.maxAttendees?.toString() ?? '',
+        category: event.category ?? '',
+        status: event.status ?? 'upcoming',
+    });
+
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const handleChange = (field: string, value: string) => {
@@ -40,9 +40,9 @@ export default function EventEdit({ event }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        router.put(`/events/${event.id}`, { ...form, max_attendees: parseInt(form.maxAttendees) }, {
+        router.put(`/admin/events/${event.id}`, { ...form, max_attendees: parseInt(form.maxAttendees) }, {
             onError: err => setErrors(err),
-            onSuccess: () => router.visit('/events'),
+            onSuccess: () => router.visit('/admin/events'),
         });
     };
 
@@ -50,7 +50,7 @@ export default function EventEdit({ event }: Props) {
         <AppLayout>
             <Head title="Modifier l'événement" />
             <div className="max-w-xl mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow">
-                <a href="/events" className="flex items-center text-sm text-gray-500 mb-4 hover:text-indigo-600">
+                <a href="/admin/events" className="flex items-center text-sm text-gray-500 mb-4 hover:text-indigo-600">
                     <ArrowLeft className="w-4 h-4 mr-1" /> Retour aux événements
                 </a>
                 <h1 className="text-2xl font-bold mb-6">Modifier l'événement</h1>
@@ -91,7 +91,6 @@ export default function EventEdit({ event }: Props) {
                             <option value="Conférence">Conférence</option>
                             <option value="Workshop">Workshop</option>
                             <option value="Séminaire">Séminaire</option>
-                            <option value="Compétition">Compétition</option>
                         </select>
                         {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
                     </div>

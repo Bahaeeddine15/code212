@@ -1,13 +1,13 @@
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { MainFooter } from '@/components/main-footer';
-import { 
-    Code2, 
-    Users, 
-    Award, 
-    BookOpen, 
-    Cpu, 
-    Globe, 
+import {
+    Code2,
+    Users,
+    Award,
+    BookOpen,
+    Cpu,
+    Globe,
     ChevronRight,
     Play,
     Calendar,
@@ -58,14 +58,14 @@ export default function Welcome() {
                                 ) : (
                                     <div className="flex items-center space-x-3">
                                         <Link
-                                            href={route('login')}
+                                            href={route('register')}
                                             className="text-white px-6 py-3 rounded-lg hover:bg-opacity-80 transition-colors font-medium"
                                             style={{ backgroundColor: '#A927B7' }}
                                         >
                                             SIGN UP
                                         </Link>
                                         <Link
-                                            href={route('register')}
+                                            href={route('login')}
                                             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                                         >
                                             LOGIN
@@ -87,7 +87,7 @@ export default function Welcome() {
                         <div className="absolute bottom-32 right-32 w-20 h-20 bg-blue-500 rounded-full opacity-25"></div>
                         <div className="absolute bottom-20 right-60 w-16 h-16 bg-green-500 rounded-full opacity-30"></div>
                         <div className="absolute top-60 right-80 w-12 h-12 bg-yellow-500 rounded-full opacity-40"></div>
-                        
+
                         {/* Geometric lines/polygons */}
                         <div className="absolute top-32 right-0 w-96 h-96 opacity-20">
                             <svg viewBox="0 0 400 400" className="w-full h-full">
@@ -114,7 +114,7 @@ export default function Welcome() {
                                 <div className="mb-6">
                                     <span className="text-pink-400 text-lg font-mono">&gt; Hello World_</span>
                                 </div>
-                                
+
                                 <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
                                     CENTER OF
                                     <br />
@@ -126,7 +126,7 @@ export default function Welcome() {
                                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
                                     {!auth.user && (
                                         <Link
-                                            href={route('register')}
+                                            href={route('login')}
                                             className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all duration-300 inline-flex items-center justify-center"
                                         >
                                             LOGIN
@@ -160,7 +160,7 @@ export default function Welcome() {
                                             </div>
                                             <div className="text-gray-400 text-sm">CODE212</div>
                                         </div>
-                                        
+
                                         {/* Code content */}
                                         <div className="space-y-3 font-mono text-sm">
                                             <div className="text-gray-400">// Welcome to Code212</div>
@@ -222,7 +222,7 @@ export default function Welcome() {
                                 Chaque Espace Favorise L'innovation
                             </h2>
                             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                                Nos espaces sont équipés de technologies modernes pour offrir 
+                                Nos espaces sont équipés de technologies modernes pour offrir
                                 un environnement d'apprentissage optimal
                             </p>
                         </div>
@@ -235,7 +235,7 @@ export default function Welcome() {
                                 </div>
                                 <h3 className="text-2xl font-bold text-gray-900 mb-4">CODAGE</h3>
                                 <p className="text-gray-700 mb-6">
-                                    Cet espace est équipé de 100 machines modernes, permettant aux étudiants de 
+                                    Cet espace est équipé de 100 machines modernes, permettant aux étudiants de
                                     travailler sur des projets de programmation et de développement.
                                 </p>
                                 <ul className="space-y-2 text-gray-600">
@@ -253,7 +253,7 @@ export default function Welcome() {
                                 </div>
                                 <h3 className="text-2xl font-bold text-gray-900 mb-4">PRÉSENTATIONS</h3>
                                 <p className="text-gray-700 mb-6">
-                                    Espace dédié aux présentations et démonstrations avec équipements audiovisuels 
+                                    Espace dédié aux présentations et démonstrations avec équipements audiovisuels
                                     de pointe pour partager et présenter les projets.
                                 </p>
                                 <ul className="space-y-2 text-gray-600">
@@ -271,7 +271,7 @@ export default function Welcome() {
                                 </div>
                                 <h3 className="text-2xl font-bold text-gray-900 mb-4">ROBOTIQUE</h3>
                                 <p className="text-gray-700 mb-6">
-                                    Laboratoire de robotique équipé pour la conception, le prototypage 
+                                    Laboratoire de robotique équipé pour la conception, le prototypage
                                     et le développement d'objets connectés et systèmes robotiques.
                                 </p>
                                 <ul className="space-y-2 text-gray-600">

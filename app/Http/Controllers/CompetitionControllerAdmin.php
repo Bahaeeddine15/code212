@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
-class CompetitionController extends Controller
+class CompetitionControllerAdmin extends Controller
 {
     /**
      * Display a listing of the resource.

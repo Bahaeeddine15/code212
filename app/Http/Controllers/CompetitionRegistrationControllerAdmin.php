@@ -6,7 +6,7 @@ use App\Models\competitionRegistration;
 use App\Http\Requests\StorecompetitionRegistrationRequest;
 use App\Http\Requests\UpdatecompetitionRegistrationRequest;
 
-class CompetitionRegistrationController extends Controller
+class CompetitionRegistrationControllerAdmin extends Controller
 {
     /**
      * Display a listing of the resource.

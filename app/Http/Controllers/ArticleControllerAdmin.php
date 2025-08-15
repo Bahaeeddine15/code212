@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
-class ArticleController extends Controller
+class ArticleControllerAdmin extends Controller
 {
     public function index()
     {

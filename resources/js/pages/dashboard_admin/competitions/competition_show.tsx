@@ -53,11 +53,11 @@ interface CompetitionShowProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Compétitions',
-        href: '/competitions',
+        href: '/admin/competitions',
     },
     {
         title: 'Détails de la compétition',
@@ -101,9 +101,9 @@ export default function CompetitionShow({ competition, registrations }: Competit
 
     const handleDelete = () => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette compétition ? Cette action est irréversible.')) {
-            router.delete(`/competitions/${competition.id}`, {
+            router.delete(`/admin/competitions/${competition.id}`, {
                 onSuccess: () => {
-                    router.visit('/competitions');
+                    router.visit('/admin/competitions');
                 }
             });
         }
@@ -120,7 +120,7 @@ export default function CompetitionShow({ competition, registrations }: Competit
             <div className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                 <div className="flex justify-between items-center max-w-6xl mx-auto">
                     <Link
-                        href="/competitions"
+                        href="/admin/competitions"
                         className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
                     >
                         <ArrowLeft className="w-4 h-4" />
@@ -128,7 +128,7 @@ export default function CompetitionShow({ competition, registrations }: Competit
                     </Link>
 
                     <div className="flex gap-3">
-                        <Link href={`/competitions/${competition.id}/edit`}>
+                        <Link href={`/admin/competitions/${competition.id}/edit`}>
                             <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                                 <Edit className="w-4 h-4 mr-2" />
                                 Modifier
@@ -338,7 +338,7 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <Link href={`/competitions/${competition.id}/edit`}>
+                                    <Link href={`/admin/competitions/${competition.id}/edit`}>
                                         <Button size="sm" variant="outline" className="border-blue-200">
                                             <Edit className="w-4 h-4 mr-2" />
                                             Modifier

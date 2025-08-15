@@ -5,13 +5,13 @@ import { type BreadcrumbItem } from '@/types';
 import { Upload, ImageIcon, ArrowLeft, CheckCircle, AlertCircle, Video, FileText, Plus, Camera } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Galerie médias', href: '/media' },
-    { title: 'Upload médias', href: '/media/create' },
+    { title: 'Dashboard', href: '/admin/dashboard' },
+    { title: 'Galerie médias', href: '/admin/media' },
+    { title: 'Upload médias', href: '/admin/media/create' },
 ];
 
 export default function MediaUpload() {
-    const [formData, setFormData] = useState({ title: '', detail: '', file: null as File | null, folder: null });
+    const [formData, setFormData] = useState({ title: '', detail: '', file: null as File | null, folder: '' });
     const [preview, setPreview] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [errors, setErrors] = useState<{[key: string]: string}>({});
@@ -52,6 +52,7 @@ export default function MediaUpload() {
         const newErrors: {[key: string]: string} = {};
         if (!formData.title.trim()) newErrors.title = 'Le titre est requis';
         if (!formData.detail.trim()) newErrors.detail = 'La description est requise';
+        if (!formData.folder.trim()) newErrors.folder = 'Le dossier est requis';
         if (!formData.file) newErrors.file = 'Un fichier est requis';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -68,13 +69,14 @@ export default function MediaUpload() {
         submitData.append('file', formData.file!);
         submitData.append('folder', formData.folder);
 
-        router.post('/media', submitData, {
+        router.post('/admin/media', submitData, {
+            forceFormData: true,
             onSuccess: () => {
                 setIsUploading(false);
-                setFormData({ title: '', detail: '', file: null, folder: null });
+                setFormData({ title: '', detail: '', file: null, folder: '' });
                 setPreview(null);
                 setErrors({});
-                router.visit('/media');
+                router.visit('/admin/media');
             },
             onError: (errors) => {
                 setIsUploading(false);
@@ -147,7 +149,7 @@ export default function MediaUpload() {
                             </div>
                         </div>
                         <Link
-                            href="/media"
+                            href="/admin/media"
                             className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
                         >
                             <ArrowLeft className="w-5 h-5" />
@@ -204,6 +206,7 @@ export default function MediaUpload() {
                                     name="folder"
                                     value={formData.folder}
                                     onChange={handleInputChange}
+                                    placeholder="Nom du dossier"
                                     disabled={isUploading}
                                     className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.folder ? 'border-red-500' : 'border-gray-200'}`}
                                     required
@@ -268,7 +271,7 @@ export default function MediaUpload() {
                                     )}
                                 </button>
                                 <Link
-                                    href="/media"
+                                    href="/admin/media"
                                     className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center"
                                 >
                                     Annuler

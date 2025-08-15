@@ -87,26 +87,26 @@ export default function CompetitionsPage({ competitions, registrations, statisti
 
     // Navigation functions
     const navigateToCreate = () => {
-        router.get('/competitions/create');
+        router.get('/admin/competitions/create');
     };
 
     const navigateToShow = (competition: Competition) => {
-        router.get(`/competitions/${competition.id}`);
+        router.get(`/admin/competitions/${competition.id}`);
     };
 
     const navigateToEdit = (competition: Competition) => {
-        router.get(`/competitions/${competition.id}/edit`);
+        router.get(`/admin/competitions/${competition.id}/edit`);
     };
 
     const deleteCompetition = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette compétition ?')) {
-            router.delete(`/competitions/${id}`);
+            router.delete(`/admin/competitions/${id}`);
         }
     };
 
     const closeCompetition = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir fermer cette compétition ?')) {
-            router.patch(`/competitions/${id}/close`, {}, {
+            router.patch(`/admin/competitions/${id}/close`, {}, {
                 onSuccess: () => {
                     // Competition will be refreshed automatically by Inertia
                 },
@@ -306,13 +306,13 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                         </h2>
                     </div>
                     <p className="text-gray-600 mb-6">Liste des compétitions ouvertes aux inscriptions</p>
-                    
+
                     {filteredCompetitions.length === 0 ? (
                         <div className="text-center py-12">
                             <Trophy className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune compétition</h3>
                             <p className="text-gray-600 mb-6">Commencez par créer votre première compétition.</p>
-                            <Button 
+                            <Button
                                 onClick={navigateToCreate}
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all duration-200 mx-auto"
                             >
@@ -436,7 +436,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                             </Button>
                         </div>
                     </div>
-                    
+
                     {filteredRegistrations.length === 0 ? (
                         <div className="text-center py-12">
                             <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />

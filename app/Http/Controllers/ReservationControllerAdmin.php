@@ -6,7 +6,7 @@ use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ReservationController extends Controller
+class ReservationControllerAdmin extends Controller
 {
     /**
      * Display a listing of the reservations for admin review.

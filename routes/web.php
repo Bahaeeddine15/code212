@@ -1,128 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\CompetitionController;
 use Inertia\Inertia;
-use App\Http\Controllers\MediaController;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\FormationController;
-use App\Http\Controllers\ModuleController;
-use App\Models\Module;
-use App\Models\Formation;
-use Illuminate\Http\Request;
-use App\Http\Controllers\EventController;
-use App\Models\Event;
-use App\Http\Controllers\ReservationController;
+
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard_admin/dashboard', [
-            'name' => Auth::user()->name,
-        ]);
-    })->name('dashboard');
-
-    Route::resource('articles', ArticleController::class);
-
-    Route::resource('events', EventController::class);
-    Route::patch('/events/{id}/status', [EventController::class, 'updateStatus'])->name('events.updateStatus');
-
-    Route::resource('media', MediaController::class)->parameters(['media' => 'media']);
-    Route::get('/media/{media}/download', [MediaController::class, 'download'])->name('media.download');
-    Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
-    Route::get('/media/{media}/edit', [MediaController::class, 'edit'])->name('media.edit');
-    Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
-
-    // Show all media in a specific folder
-    Route::get('/media/folder/{folder}', [\App\Http\Controllers\MediaController::class, 'showFolder'])->name('media.folder');
-
-    Route::get('formations', function () {
-        return Inertia::render('dashboard_admin/formations');
-    })->name('formations');
-
-    // Dedicated page for creating a formation (Inertia React)
-    Route::get('dashboard_admin/formation_create', function () {
-        return Inertia::render('dashboard_admin/formation_create');
-    })->name('formation.create');
-
-    // Dedicated page for creating a module (Inertia React)
-    Route::get('dashboard_admin/module_create', function () {
-        $formations = \App\Models\Formation::all(['id', 'title']);
-        return Inertia::render('dashboard_admin/module_create', [
-            'formations' => $formations,
-            'formationId' => request()->query('formationId', null), // Pass formationId if available
-        ]);
-    })->name('module.create');
-
-    Route::resource('competitions', CompetitionController::class);
-    Route::patch('/competitions/{competition}/close', [CompetitionController::class, 'close'])
-        ->name('competitions.close');
-
-    Route::resource('formations', FormationController::class);
-    Route::resource('formations.modules', ModuleController::class)->shallow();
-
-    Route::get('dashboard_admin/formation_edit/{id}', function ($id) {
-        $formation = \App\Models\Formation::findOrFail($id);
-        return Inertia::render('dashboard_admin/formation_edit', [
-            'formation' => $formation,
-        ]);
-    })->name('formation.edit');
-
-    Route::get('dashboard_admin/formation/{id}/modules', function ($id) {
-        $formation = \App\Models\Formation::with('modules')->findOrFail($id);
-        return Inertia::render('dashboard_admin/modules_list', [
-            'formation' => $formation,
-            'modules' => $formation->modules,
-        ]);
-    })->name('formation.modules');
-
-    Route::get('dashboard_admin/module_edit/{id}', function ($id) {
-        $module = Module::findOrFail($id);
-        $formationId = $module->formation_id ?? null;
-        return Inertia::render('dashboard_admin/module_edit', [
-            'module' => $module,
-            'formationId' => $formationId,
-        ]);
-    });
-
-    Route::put('/formations/{formation}/modules/{module}', function (Request $request, $formation, $module) {
-        $module = Module::where('id', $module)->where('formation_id', $formation)->firstOrFail();
-
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'duration' => 'required|string|max:50',
-            'order' => 'required|integer|min:1',
-            'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:51200', // up to 50MB
-        ]);
-
-        // ✅ Handle uploaded file if exists
-        if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('modules', 'public');
-            $validated['file_path'] = $path;
-        }
-
-        $module->update($validated);
-
-        return redirect()->back()->with('success', 'Module mis à jour avec succès.');
-    });
-
-
-    Route::delete('/admin/modules/{id}', function ($id) {
-        $module = Module::findOrFail($id);
-        $module->delete();
-        return back()->with('success', 'Module supprimé avec succès.');
-    });
-
-    Route::resource('reservations', ReservationController::class);
-    Route::patch('/reservations/{reservation}/approve', [ReservationController::class, 'approve'])->name('reservations.approve');
-    Route::patch('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
-    Route::delete('/media/folder/{folder}', [MediaController::class, 'destroyFolder'])->name('media.folder.destroy');
-});
-
+require __DIR__ . '/admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

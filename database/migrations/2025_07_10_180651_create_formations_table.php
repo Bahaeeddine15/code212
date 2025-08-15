@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('duration')->nullable(); // in hours or weeks
             $table->string('category')->nullable();
             $table->string('link')->nullable();
+            $table->string('thumbnail')->nullable();
             $table->timestamps();
         });
     }

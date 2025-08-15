@@ -16,12 +16,12 @@ type LoginForm = {
     remember: boolean;
 };
 
-interface RegisterProps {
+interface AdminLoginProps {
     status?: string;
     canResetPassword: boolean;
 }
 
-export default function Register({ status, canResetPassword }: RegisterProps) {
+export default function AdminLogin({ status, canResetPassword }: AdminLoginProps) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
@@ -30,14 +30,19 @@ export default function Register({ status, canResetPassword }: RegisterProps) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('login'), {
+        post(route('admin.login.post'), {
             onFinish: () => reset('password'),
         });
     };
 
     return (
-        <AuthLayout title="Connexion" description="Connectez-vous à votre espace Code212">
-            <Head title="Connexion" />
+        <AuthLayout title="Connexion Administrateur" description="Connectez-vous à l'espace d'administration Code212">
+            <Head title="Connexion Administrateur" />
+
+            <div className="mb-6 text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">Administration</h2>
+                <p className="text-gray-400">Accès réservé aux administrateurs</p>
+            </div>
 
             <form className="space-y-6" onSubmit={submit}>
                 <div className="space-y-4">
@@ -52,25 +57,14 @@ export default function Register({ status, canResetPassword }: RegisterProps) {
                             autoComplete="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            placeholder="email@example.com"
-                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
+                            placeholder="admin@code212.com"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500"
                         />
                         <InputError message={errors.email} />
                     </div>
 
                     <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                            <Label htmlFor="password" className="text-white">Mot de passe</Label>
-                            {canResetPassword && (
-                                <TextLink
-                                    href={route('password.request')}
-                                    className="text-sm text-pink-400 hover:text-pink-300"
-                                    tabIndex={5}
-                                >
-                                    Mot de passe oublié ?
-                                </TextLink>
-                            )}
-                        </div>
+                        <Label htmlFor="password" className="text-white">Mot de passe</Label>
                         <Input
                             id="password"
                             type="password"
@@ -80,7 +74,7 @@ export default function Register({ status, canResetPassword }: RegisterProps) {
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
                             placeholder="Mot de passe"
-                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500"
                         />
                         <InputError message={errors.password} />
                     </div>
@@ -92,27 +86,26 @@ export default function Register({ status, canResetPassword }: RegisterProps) {
                             checked={data.remember}
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
-                            className="border-gray-600 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
+                            className="border-gray-600 data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
                         />
                         <Label htmlFor="remember" className="text-gray-300 text-sm">Se souvenir de moi</Label>
                     </div>
 
                     <Button
                         type="submit"
-                        className="w-full mt-6 text-white font-semibold py-3 rounded-lg transition-all duration-300"
-                        style={{ backgroundColor: '#A927B7' }}
+                        className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300"
                         tabIndex={4}
                         disabled={processing}
                     >
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
-                        Se connecter
+                        Se connecter en tant qu'admin
                     </Button>
                 </div>
 
                 <div className="text-center text-sm text-gray-400">
-                    Pas encore de compte ?{' '}
+                    Accès étudiant ?{' '}
                     <TextLink href={route('login')} className="text-blue-400 hover:text-blue-300" tabIndex={5}>
-                        Créer un compte
+                        Connexion étudiants
                     </TextLink>
                 </div>
             </form>

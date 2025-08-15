@@ -53,11 +53,11 @@ interface Room {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Gestion des réservations',
-        href: '/reservations',
+        href: '/admin/reservations',
     },
 ];
 
@@ -96,7 +96,7 @@ const ReservationCard = ({
     // Make the whole card clickable
     return (
         <Link
-            href={`/reservations/${reservation.id}`}
+            href={`/admin/reservations/${reservation.id}`}
             className="block bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
         >
             <div className="flex items-start justify-between mb-4">
@@ -189,7 +189,7 @@ export default function Reservations() {
             setLocalReservations(prev =>
                 prev.map(r => r.id === id ? { ...r, status: 'approved' } : r)
             );
-            router.patch(`/reservations/${id}/approve`);
+            router.patch(`/admin/reservations/${id}/approve`);
         }
     };
 
@@ -198,7 +198,7 @@ export default function Reservations() {
             setLocalReservations(prev =>
                 prev.map(r => r.id === id ? { ...r, status: 'rejected' } : r)
             );
-            router.patch(`/reservations/${id}/reject`);
+            router.patch(`/admin/reservations/${id}/reject`);
         }
     };
 
@@ -254,7 +254,7 @@ export default function Reservations() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -266,7 +266,7 @@ export default function Reservations() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>
@@ -278,7 +278,7 @@ export default function Reservations() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
                             <div>

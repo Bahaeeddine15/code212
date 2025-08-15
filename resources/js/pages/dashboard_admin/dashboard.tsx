@@ -137,12 +137,12 @@ export default function Dashboard({name}: DashboardProps) {
                                 <span className="text-sm font-medium text-gray-600">University</span>
                                 <span className="text-sm text-gray-900 text-right">UNIVERSITÉ CADI AYYAD DE MARRAKECH</span>
                             </div>
-                            
+
                             <div className="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span className="text-sm font-medium text-gray-600">Center</span>
                                 <span className="text-sm text-gray-900 text-right">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE</span>
                             </div>
-                            
+
                             <div className="flex justify-between items-center py-2">
                                 <span className="text-sm font-medium text-gray-600">Email</span>
                                 <span className="text-sm text-gray-900">admin@code212.ma</span>
@@ -185,7 +185,7 @@ export default function Dashboard({name}: DashboardProps) {
                     />
                 </div>
 
-                
+
                 {/* Section des compartiments de données avec style plus épuré */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <DataCompartment

@@ -35,13 +35,13 @@ export default function FolderShow(props: FolderShowProps) {
 
     const handleDeleteFolder = () => {
         if (confirm('Êtes-vous sûr de vouloir supprimer tout ce dossier et son contenu ?')) {
-            router.delete(route('media.folder.destroy', { folder }));
+            router.delete(`/admin/media/folder/${folder}`);
         }
     };
 
     const handleDeleteMedia = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce média ?')) {
-            router.delete(route('media.destroy', { media: id }));
+            router.delete(`/admin/media/${id}`);
         }
     };
 
@@ -49,7 +49,7 @@ export default function FolderShow(props: FolderShowProps) {
         <AppLayout>
             <Head title={`Dossier : ${folder}`} />
             <div className="max-w-6xl mx-auto py-10 px-4">
-                <Link href="/media" className="text-blue-600 hover:underline mb-6 inline-block">&larr; Retour à la galerie</Link>
+                <Link href="/admin/media" className="text-blue-600 hover:underline mb-6 inline-block">&larr; Retour à la galerie</Link>
                 <h1 className="text-3xl font-bold mb-8 flex items-center gap-4">
                     Dossier : {folder}
                     <button
@@ -79,7 +79,7 @@ export default function FolderShow(props: FolderShowProps) {
                             key={file.id}
                             className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 flex flex-col items-center hover:shadow-xl transition-shadow"
                         >
-                            <Link href={route('media.show', { media: file.id })} className="w-full">
+                            <Link href={`/admin/media/${file.id}`} className="w-full">
                                 {getMediaType(file.file_path) === 'Vidéo' ? (
                                     <video
                                         src={getImageUrl(file.file_path)}
@@ -103,7 +103,7 @@ export default function FolderShow(props: FolderShowProps) {
                             </div>
                             <div className="flex gap-2 mt-3">
                                 <Link
-                                    href={route('media.edit', { media: file.id })}
+                                    href={`/admin/media/${file.id}/edit`}
                                     className="p-2 rounded hover:bg-blue-100"
                                     title="Modifier"
                                 >

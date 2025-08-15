@@ -7,11 +7,11 @@ import { ArrowLeft, Save, Trophy, Plus, Users } from 'lucide-react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Compétitions',
-        href: '/competitions',
+        href: '/admin/competitions',
     },
     {
         title: 'Nouvelle compétition',
@@ -49,7 +49,7 @@ export default function CompetitionCreate() {
         setIsSubmitting(true);
         setErrors({});
 
-        router.post('/competitions', formData, {
+        router.post('/admin/competitions', formData, {
             onSuccess: () => {
                 setIsSubmitting(false);
                 // Will redirect to competitions list automatically
@@ -79,7 +79,7 @@ export default function CompetitionCreate() {
                             </div>
                         </div>
                         <Link
-                            href="/competitions"
+                            href="/admin/competitions"
                             className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
                         >
                             <ArrowLeft className="w-5 h-5" />
@@ -180,8 +180,8 @@ export default function CompetitionCreate() {
                                             <Save className="w-5 h-5" />
                                             <span>{isSubmitting ? 'Création en cours...' : 'Créer la compétition'}</span>
                                         </button>
-                                        <Link 
-                                            href="/competitions"
+                                        <Link
+                                            href="/admin/competitions"
                                             className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center"
                                         >
                                             Annuler

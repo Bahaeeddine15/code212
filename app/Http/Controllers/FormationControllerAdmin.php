@@ -6,7 +6,7 @@ use App\Models\Formation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class FormationController extends Controller
+class FormationControllerAdmin extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class FormationController extends Controller
     public function index()
     {
         $formations = Formation::with('modules')->latest()->get();
-        return Inertia::render('dashboard_admin/formations', [
+        return Inertia::render('dashboard_admin/formations/formations_index', [
             'formations' => $formations
         ]);
     }
@@ -24,7 +24,7 @@ class FormationController extends Controller
      */
     public function create()
     {
-        return Inertia::render('dashboard_admin/formations_create');
+        return Inertia::render('dashboard_admin/formations/formation_create');
     }
 
     /**
@@ -38,7 +38,14 @@ class FormationController extends Controller
             'level' => 'nullable|string|max:100',
             'duration' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
+            'link' => 'nullable|url|max:255', // <-- add this line
+            'thumbnail' => 'nullable|image|max:2048', // 2MB max
         ]);
+
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('thumbnails', 'public');
+            $validated['thumbnail'] = $path;
+        }
 
         Formation::create($validated);
 
@@ -60,7 +67,7 @@ class FormationController extends Controller
      */
     public function edit(Formation $formation)
     {
-        return Inertia::render('dashboard_admin/formations_edit', [
+        return Inertia::render('dashboard_admin/formations/formation_edit', [
             'formation' => $formation
         ]);
     }
@@ -76,7 +83,14 @@ class FormationController extends Controller
             'level' => 'nullable|string|max:100',
             'duration' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
+            'link' => 'nullable|url|max:255', // <-- add this line
+            'thumbnail' => 'nullable|image|max:2048', // 2MB max
         ]);
+
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('thumbnails', 'public');
+            $validated['thumbnail'] = $path;
+        }
 
         $formation->update($validated);
 

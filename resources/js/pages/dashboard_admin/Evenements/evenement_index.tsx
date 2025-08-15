@@ -21,6 +21,7 @@ interface Event {
     title: string;
     description: string;
     date: string;
+    endDate?: string;
     time: string;
     location: string;
     attendees: number;
@@ -32,11 +33,11 @@ interface Event {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
     {
         title: 'Gestion des événements',
-        href: '/events',
+        href: '/admin/events',
     },
 ];
 
@@ -45,12 +46,12 @@ const EventCard = ({
     event,
     onDelete,
     onMarkCompleted,
-    onStatusChange, // ✅ Add this prop
+    onStatusChange,
 }: {
     event: Event;
     onDelete: (id: number) => void;
     onMarkCompleted: (id: number) => void;
-    onStatusChange: (id: number, newStatus: Event['status']) => void; // ✅ Add this prop type
+    onStatusChange: (id: number, newStatus: Event['status']) => void;
 }) => {
     const getStatusBadge = () => {
         return (
@@ -74,9 +75,7 @@ const EventCard = ({
                 <option value="cancelled">Annulé</option>
             </select>
         );
-
     };
-
 
     const getStatusIcon = () => {
         switch (event.status) {
@@ -145,7 +144,7 @@ const EventCard = ({
                 <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">{event.category}</span>
                 <div className="flex space-x-2">
                     <Link
-                        href={`/events/${event.id}/edit`}
+                        href={`/admin/events/${event.id}/edit`}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200">
                         <Edit3 className="w-4 h-4" />
                     </Link>
@@ -179,24 +178,24 @@ const Events = ({ events }: { events: Event[] }) => {
 
     // Fonctions de gestion
     const handleAddEvent = () => {
-        router.visit('/events/create');
+        router.visit('/admin/events/create');
     };
 
     const handleDeleteEvent = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
-            router.delete(`/events/${id}`, {
+            router.delete(`/admin/events/${id}`, {
                 onSuccess: () => router.reload(),
             });
         }
     };
     const handleStatusChange = (id: number, newStatus: Event['status']) => {
-        router.patch(`/events/${id}/status`, { status: newStatus }, {
+        router.patch(`/admin/events/${id}/status`, { status: newStatus }, {
             onSuccess: () => router.reload(),
         });
     };
 
     const handleMarkCompleted = (id: number) => {
-        router.patch(`/events/${id}/status`, { status: 'completed' }, {
+        router.patch(`/admin/events/${id}/status`, { status: 'completed' }, {
             onSuccess: () => router.reload(),
         });
     };

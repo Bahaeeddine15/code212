@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Event;
 use Inertia\Inertia;
 
-class EventController extends Controller
+class EventControllerAdmin extends Controller
 {
     public function index()
     {

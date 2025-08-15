@@ -12,7 +12,8 @@ class Formation extends Model
         'level',
         'duration',
         'category',
-        'link'
+        'link',
+        'thumbnail'
     ];
 
     public function modules()
