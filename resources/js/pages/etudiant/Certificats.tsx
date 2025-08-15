@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/app-layout-admin';
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
 import { Card, CardContent } from '@/components/ui/card';

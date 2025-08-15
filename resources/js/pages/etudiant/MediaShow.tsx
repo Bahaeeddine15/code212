@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
+import AppSidebarLayout from '@/layouts/app/app-sidebar-layout-admin';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 

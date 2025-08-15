@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
-import AppSidebarLayout from '../../layouts/app/app-sidebar-layout';
+import AppSidebarLayout from '../../layouts/app/app-sidebar-layout-admin';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';

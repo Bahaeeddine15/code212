@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/app-layout-admin';
 import { Head, router, Link } from '@inertiajs/react';
 import {
     Plus,

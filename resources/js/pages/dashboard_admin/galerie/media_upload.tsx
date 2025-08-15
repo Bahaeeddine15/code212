@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/app-layout-admin';
 import { Head, Link, router } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import { Upload, ImageIcon, ArrowLeft, CheckCircle, AlertCircle, Video, FileText, Plus, Camera } from 'lucide-react';

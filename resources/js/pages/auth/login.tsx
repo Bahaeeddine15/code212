@@ -122,7 +122,7 @@ export default function Register({ status, canResetPassword }: RegisterProps) {
 
                 <div className="text-center text-sm text-gray-400">
                     Pas encore de compte ?{' '}
-                    <TextLink href={route('login')} className="text-blue-400 hover:text-blue-300" tabIndex={5}>
+                    <TextLink href={route('register')} className="text-blue-400 hover:text-blue-300" tabIndex={5}>
                         Créer un compte
                     </TextLink>
                 </div>

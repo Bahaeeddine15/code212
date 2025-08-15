@@ -22,7 +22,7 @@ Route::prefix('admin')->group(function () {
 });
 
 // Protected admin routes
-Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin')->middleware(['auth:admin', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard_admin/dashboard', [
             'name' => Auth::user()->name,

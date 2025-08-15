@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
-import AppSidebarLayout from '../../layouts/app/app-sidebar-layout';
+import AppSidebarLayout from '../../layouts/app/app-sidebar-layout-admin';
 import DashboardHeader from "@/components/layout/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';

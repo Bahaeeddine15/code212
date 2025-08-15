@@ -38,9 +38,12 @@ class AdminAuthController extends Controller
     /**
      * Handle an admin login request.
      */
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(Request $request): RedirectResponse
     {
-        $request->authenticate();
+        // If you need validation/authentication, you can manually validate or use a form request here
+        // For example: (new LoginRequest())->authenticate();
+
+        Auth::guard('admin')->attempt($request->only('email', 'password'));
         $request->session()->regenerate();
 
         return redirect()->intended(route('admin.dashboard'));
@@ -75,7 +78,7 @@ class AdminAuthController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

@@ -28,6 +28,7 @@ export default function AdminRegister() {
         e.preventDefault();
         post(route('admin.register.post'), {
             onFinish: () => reset('password', 'password_confirmation'),
+            // Remove onSuccess redirect!
         });
     };
 

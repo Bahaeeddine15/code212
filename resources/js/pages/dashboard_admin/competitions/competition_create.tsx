@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/app-layout-admin';
 import { BreadcrumbItem } from '@/types';
 import { ArrowLeft, Save, Trophy, Plus, Users } from 'lucide-react';
 

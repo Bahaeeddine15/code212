@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout"; // Même layout que la page certificats
+import AppLayout from "@/layouts/app-layout-admin"; // Même layout que la page certificats
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
 import { useState } from "react";
