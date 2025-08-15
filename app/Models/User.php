@@ -21,6 +21,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'ecole',
+        'telephone',
+        'ville',
+        'student_id',
+        'departement',
+        'bio',
+        'avatar_url',
     ];
 
     /**
@@ -44,5 +51,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relationships
+    public function competitionRegistrations()
+    {
+        return $this->hasMany(CompetitionRegistration::class);
     }
 }
