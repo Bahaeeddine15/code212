@@ -2,13 +2,16 @@
 
 namespace Database\Factories;
 
+use App\Models\Formation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Formation>
  */
-class FormationFactory extends Factory // Majuscule pour FormationFactory
+class FormationFactory extends Factory
 {
+    protected $model = Formation::class;
+
     /**
      * Define the model's default state.
      *
@@ -16,36 +19,12 @@ class FormationFactory extends Factory // Majuscule pour FormationFactory
      */
     public function definition(): array
     {
-        $levels = ['0','10' ,'20','30','40','50','60','70','80','90','100'];
-        $category = [
-            'Développement Web',
-            'Développement Mobile',
-            'Data Science',
-            'Intelligence Artificielle',
-            'Cybersécurité',
-            'Cloud Computing',
-            'DevOps',
-            'Design UI/UX',
-            'Marketing Digital',
-            'Gestion de Projet',
-            'Base de Données',
-            'Réseaux & Systèmes',
-            'Blockchain',
-            'Machine Learning',
-            'Photographie',
-            'Montage Vidéo',
-            'Comptabilité',
-            'Ressources Humaines',
-            'Communication',
-            'Langues Étrangères'
-        ];
-
         return [
-            'titre' => $this->faker->sentence(3),
-            'description' => $this->faker->paragraph(),
-            'niveau' => $this->faker->randomElement($levels),
-            'category' => $this->faker->randomElement($category),
-            'photo' => 'formations/default.jpg',
+            'title' => $this->faker->sentence(3),
+            'description' => $this->faker->paragraph,
+            'level' => $this->faker->randomElement(['Débutant', 'Intermédiaire', 'Avancé']),
+            'duration' => $this->faker->numberBetween(10, 100) . 'h',
+            'category' => $this->faker->word,
         ];
     }
 }
