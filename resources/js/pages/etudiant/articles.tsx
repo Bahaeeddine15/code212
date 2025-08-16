@@ -28,6 +28,7 @@ interface Article {
     category: string;
     views: number;
     image?: string;
+    images?: string[];
     created_at: string;
     updated_at: string;
 }
@@ -94,21 +95,21 @@ export default function Articles({ articles }: Props) {
                                 {articles.map((article) => (
                                     <Card key={article.id} className="hover:shadow-lg transition-shadow duration-200">
                                         <div className="flex">
-                                            {/* Image placeholder */}
+                                            {/* Image placeholder (show first image with natural dimensions) */}
                                             <div className="flex-shrink-0 w-48">
-                                                {article.image ? (
-                                                    <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-l-lg overflow-hidden flex items-center justify-center">
+                                                {(article.images && article.images.length > 0 ? article.images[0] : article.image) ? (
+                                                    <div className="max-h-32 bg-white rounded-l-lg overflow-hidden border flex items-center justify-center p-2">
                                                         <img 
-                                                            src={article.image} 
+                                                            src={(article.images && article.images.length > 0 ? article.images[0] : article.image) as string}
                                                             alt={article.title}
-                                                            className="h-full w-full object-cover"
+                                                            className="max-h-28 max-w-full h-auto w-auto object-contain"
                                                             style={{ userSelect: 'none' }}
                                                             onContextMenu={e => e.preventDefault()}
                                                         />
                                                     </div>
                                                 ) : (
-                                                    <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-l-lg flex items-center justify-center">
-                                                        <span className="text-white text-lg font-semibold text-center px-2">
+                                                    <div className="h-32 bg-gray-100 rounded-l-lg flex items-center justify-center border">
+                                                        <span className="text-gray-700 text-lg font-semibold text-center px-2">
                                                             {article.title}
                                                         </span>
                                                     </div>

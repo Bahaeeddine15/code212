@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -81,6 +82,26 @@ class EventController extends Controller
         ]);
 
         return back(); // or return a 200 response
+    }
+
+    public function show(Event $event)
+    {
+        $data = [
+            'id' => $event->id,
+            'title' => $event->title,
+            'description' => $event->description,
+            'start_date' => $event->start_date?->toISOString(),
+            'end_date' => $event->end_date?->toISOString(),
+            'location' => $event->location,
+            'category' => $event->category,
+            'max_attendees' => $event->max_attendees,
+            'status' => $event->status,
+            'logo' => $event->logo ? Storage::url($event->logo) : null,
+            'created_at' => $event->created_at?->toISOString(),
+            'updated_at' => $event->updated_at?->toISOString(),
+        ];
+
+        return inertia('etudiant/event-detail', [ 'event' => $data ]);
     }
 
 }

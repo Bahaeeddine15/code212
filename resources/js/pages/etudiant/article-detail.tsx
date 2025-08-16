@@ -20,6 +20,7 @@ interface Article {
     category: string;
     views: number;
     image?: string;
+    images?: string[];
     created_at: string;
     updated_at: string;
 }
@@ -78,23 +79,55 @@ export default function ArticleDetail({ article }: Props) {
 
                     {/* Article Card */}
                     <Card className="overflow-hidden">
-                        {/* Hero Image */}
-                        {article.image ? (
-                            <div className="h-64 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden flex items-center justify-center">
-                                <img 
-                                    src={article.image} 
-                                    alt={article.title} 
-                                    style={{ userSelect: 'none' }}
-                                    onContextMenu={e => e.preventDefault()}
-                                    className="h-full w-full object-cover"
-                                />
+                        {/* Image Gallery */}
+                        {article.images && article.images.length > 0 ? (
+                            <div className="w-full bg-white">
+                                {/* Primary (first) image - natural dimensions within a bounded area */}
+                                <div className="max-h-[480px] overflow-hidden flex items-center justify-center border-b p-2">
+                                    <img
+                                        src={article.images[0]}
+                                        alt={article.title}
+                                        style={{ userSelect: 'none' }}
+                                        onContextMenu={e => e.preventDefault()}
+                                        className="max-h-[460px] max-w-full h-auto w-auto object-contain"
+                                    />
+                                </div>
+                                {/* All images grid (including the first for completeness) */}
+                                {article.images.length > 0 && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3">
+                                        {article.images.map((img, idx) => (
+                                            <div key={idx} className="relative bg-white border rounded-md p-2 flex items-center justify-center">
+                                                <img
+                                                    src={img}
+                                                    alt={`${article.title} - ${idx + 1}`}
+                                                    className="max-h-60 max-w-full h-auto w-auto object-contain"
+                                                    style={{ userSelect: 'none' }}
+                                                    onContextMenu={e => e.preventDefault()}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         ) : (
-                            <div className="h-64 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                                <span className="text-white text-6xl font-bold">
-                                    {article.title.charAt(0)}
-                                </span>
-                            </div>
+                            // Fallback when no images provided
+                            (article.image ? (
+                                <div className="max-h-64 bg-white overflow-hidden flex items-center justify-center border">
+                                    <img 
+                                        src={article.image} 
+                                        alt={article.title} 
+                                        style={{ userSelect: 'none' }}
+                                        onContextMenu={e => e.preventDefault()}
+                                        className="max-h-60 max-w-full h-auto w-auto object-contain"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="h-64 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                                    <span className="text-white text-6xl font-bold">
+                                        {article.title.charAt(0)}
+                                    </span>
+                                </div>
+                            ))
                         )}
 
                         <CardHeader className="pb-4">

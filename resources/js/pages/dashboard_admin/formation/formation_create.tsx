@@ -75,7 +75,7 @@ export default function FormationCreate() {
                             </div>
                         </div>
                         <Link
-                            href="/formations"
+                            href="/admin/formations"
                             className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
                         >
                             <ArrowLeft className="w-5 h-5" />
@@ -86,7 +86,7 @@ export default function FormationCreate() {
 
 
                 <div className="max-w-xl mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow">
-                    <a href="/formations" className="flex items-center text-sm text-gray-500 mb-4 hover:text-indigo-600">
+                    <a href="/admin/formations" className="flex items-center text-sm text-gray-500 mb-4 hover:text-indigo-600">
                         <ArrowLeft className="w-4 h-4 mr-1" /> Retour aux formations
                     </a>
                     <h1 className="text-2xl font-bold mb-6">Créer une nouvelle formation</h1>

@@ -1,4 +1,3 @@
-import Navbar from '@/components/navigation/Navbar';
 import FormationCard from '@/components/common/formation';
 import { ReactNode } from 'react';
 
@@ -6,7 +5,7 @@ interface Formation {
   id: number;
   titre: string;
   description: string;
-  niveau: number;
+  niveau: string;
   photo: string;
 }
 
@@ -18,7 +17,6 @@ interface Props {
 export default function Layoutformation({ children, formations = [] }: Props) {
   return (
     <div>
-      <Navbar />
       <main className="p-6">{children}</main>
       
       {/* Grille de formations */}
@@ -44,9 +42,7 @@ export default function Layoutformation({ children, formations = [] }: Props) {
               description={formation.description}
               category="Formation"
               niveau={formation.niveau}
-              imageUrl={formation.photo ? 
-                (formation.photo.startsWith('/') ? formation.photo : `/images/formations/${formation.photo}`) : 
-                "https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image"}
+              imageUrl={formation.photo}
             />
           </div>
         ))}

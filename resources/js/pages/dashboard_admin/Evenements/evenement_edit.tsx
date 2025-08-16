@@ -66,13 +66,13 @@ export default function EventEdit({ event }: Props) {
                         {errors.description && <p className="text-red-600 text-sm">{errors.description}</p>}
                     </div>
                     <div>
-                        <label className="block mb-1 font-medium">Date de début</label>
-                        <input type="date" value={form.start_date} onChange={e => handleChange('start_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
+                        <label className="block mb-1 font-medium">Date et heure de début</label>
+                        <input type="datetime-local" value={form.start_date} onChange={e => handleChange('start_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
                         {errors.start_date && <p className="text-red-600 text-sm">{errors.start_date}</p>}
                     </div>
                     <div>
-                        <label className="block mb-1 font-medium">Date de fin</label>
-                        <input type="date" value={form.end_date} onChange={e => handleChange('end_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
+                        <label className="block mb-1 font-medium">Date et heure de fin</label>
+                        <input type="datetime-local" value={form.end_date} onChange={e => handleChange('end_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
                         {errors.end_date && <p className="text-red-600 text-sm">{errors.end_date}</p>}
                     </div>
                     <div>

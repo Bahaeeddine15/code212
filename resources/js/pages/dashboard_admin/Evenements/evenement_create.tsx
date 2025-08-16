@@ -120,11 +120,11 @@ export default function EventCreate() {
                                     {errors.category && <p className="text-sm text-red-600">{errors.category}</p>}
                                 </div>
 
-                                {/* Date de début */}
+                                {/* Date et heure de début */}
                                 <div className="space-y-3">
-                                    <label className="text-sm font-semibold text-gray-700">Date de début *</label>
+                                    <label className="text-sm font-semibold text-gray-700">Date et heure de début *</label>
                                     <input
-                                        type="date"
+                                        type="datetime-local"
                                         value={form.start_date}
                                         onChange={e => handleChange('start_date', e.target.value)}
                                         className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.start_date ? 'border-red-500' : 'border-gray-200'}`}
@@ -133,11 +133,11 @@ export default function EventCreate() {
                                     {errors.start_date && <p className="text-sm text-red-600">{errors.start_date}</p>}
                                 </div>
 
-                                {/* Date de fin */}
+                                {/* Date et heure de fin */}
                                 <div className="space-y-3">
-                                    <label className="text-sm font-semibold text-gray-700">Date de fin *</label>
+                                    <label className="text-sm font-semibold text-gray-700">Date et heure de fin *</label>
                                     <input
-                                        type="date"
+                                        type="datetime-local"
                                         value={form.end_date}
                                         onChange={e => handleChange('end_date', e.target.value)}
                                         className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.end_date ? 'border-red-500' : 'border-gray-200'}`}

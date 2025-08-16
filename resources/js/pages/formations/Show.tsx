@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout-admin';
+import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
 
@@ -25,8 +25,8 @@ export default function Show({ formation }: ShowProps) {
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Formations', href: '/formations' },
-        { title: formation.titre, href: `/formations/${formation.id}` },
+    { title: 'Formations', href: '/formations' },
+    { title: formation.titre, href: `/formations/${formation.id}` },
     ];
 
     return (
@@ -56,7 +56,7 @@ export default function Show({ formation }: ShowProps) {
                         {/* Image de la formation */}
                         <div className="w-full h-64 md:h-80">
                             <img 
-                                src={formation.photo || "https://picsum.photos/800/400"}
+                                src={formation.photo || '/images/default-formation.jpg'}
                                 alt={formation.titre}
                                 className="w-full h-full object-cover"
                                 onError={handleImageError}

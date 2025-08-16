@@ -227,7 +227,7 @@ export default function Dashboard({name}: DashboardProps) {
                             { label: "Documents", value: "89" },
                             { label: "Taille totale", value: "2.3 GB" }
                         ]}
-                        href="/media"
+                        href="/admin/media"
                     />
 
                     <DataCompartment
@@ -241,7 +241,7 @@ export default function Dashboard({name}: DashboardProps) {
                             { label: "Certifications délivrées", value: "89" },
                             { label: "Taux de réussite", value: "92%" }
                         ]}
-                        href="/formations"
+                        href="/admin/formations"
                     />
 
                     <DataCompartment
@@ -255,7 +255,7 @@ export default function Dashboard({name}: DashboardProps) {
                             { label: "Compétitions terminées", value: "15" },
                             { label: "Prix distribués", value: "45" }
                         ]}
-                        href="/competitions"
+                        href="/admin/competitions"
                     />
 
                     <DataCompartment

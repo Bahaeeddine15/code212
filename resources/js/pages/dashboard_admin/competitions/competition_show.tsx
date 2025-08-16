@@ -312,6 +312,25 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {getRegistrationStatusBadge(registration.status)}
+                                                {registration.status === 'En attente' && (
+                                                    <>
+                                                        <Button
+                                                            size="sm"
+                                                            className="bg-green-600 hover:bg-green-700"
+                                                            onClick={() => router.patch(`/admin/competition-registrations/${registration.id}/approve`)}
+                                                        >
+                                                            <CheckCircle className="w-4 h-4 mr-1" /> Valider
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="text-red-600 border-red-200 hover:text-red-700"
+                                                            onClick={() => router.patch(`/admin/competition-registrations/${registration.id}/reject`)}
+                                                        >
+                                                            <XCircle className="w-4 h-4 mr-1" /> Refuser
+                                                        </Button>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     ))}

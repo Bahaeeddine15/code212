@@ -22,7 +22,7 @@ interface Event {
     description: string;
     date: string;
     endDate?: string;
-    time: string;
+    time?: string; // optional; we compute display from date/endDate
     location: string;
     attendees: number;
     maxAttendees: number;
@@ -88,6 +88,15 @@ const EventCard = ({
         }
     };
 
+    // Helpers to format date/time from ISO strings
+    const fmtDate = (iso?: string) => iso ? new Date(iso).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '';
+    const fmtTime = (iso?: string) => iso ? new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+    const sameDay = (a?: string, b?: string) => {
+        if(!a || !b) return false;
+        const d1 = new Date(a), d2 = new Date(b);
+        return d1.getFullYear()===d2.getFullYear() && d1.getMonth()===d2.getMonth() && d1.getDate()===d2.getDate();
+    };
+
     return (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
             <div className="flex items-start justify-between mb-4">
@@ -105,13 +114,18 @@ const EventCard = ({
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <Calendar className="w-4 h-4" />
                     <span>
-                        {event.date}
-                        {event.endDate && event.endDate !== event.date && (
-                            <> - {event.endDate}</>
+                        {fmtDate(event.date)}
+                        {event.endDate && !sameDay(event.date, event.endDate) && (
+                            <> - {fmtDate(event.endDate)}</>
                         )}
                     </span>
                     <Clock className="w-4 h-4 ml-3" />
-                    <span>{event.time}</span>
+                    <span>
+                        {fmtTime(event.date)}
+                        {event.endDate && (
+                            <> - {fmtTime(event.endDate)}</>
+                        )}
+                    </span>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <MapPin className="w-4 h-4" />

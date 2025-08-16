@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\competitionRegistration;
-use App\Http\Requests\StorecompetitionRegistrationRequest;
-use App\Http\Requests\UpdatecompetitionRegistrationRequest;
+use App\Models\CompetitionRegistration;
+use Illuminate\Http\Request;
 
 class CompetitionRegistrationControllerAdmin extends Controller
 {
@@ -27,7 +26,7 @@ class CompetitionRegistrationControllerAdmin extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorecompetitionRegistrationRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -35,7 +34,7 @@ class CompetitionRegistrationControllerAdmin extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(competitionRegistration $competitionRegistration)
+    public function show(CompetitionRegistration $competitionRegistration)
     {
         //
     }
@@ -43,7 +42,7 @@ class CompetitionRegistrationControllerAdmin extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(competitionRegistration $competitionRegistration)
+    public function edit(CompetitionRegistration $competitionRegistration)
     {
         //
     }
@@ -51,7 +50,7 @@ class CompetitionRegistrationControllerAdmin extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatecompetitionRegistrationRequest $request, competitionRegistration $competitionRegistration)
+    public function update(Request $request, CompetitionRegistration $competitionRegistration)
     {
         //
     }
@@ -59,8 +58,46 @@ class CompetitionRegistrationControllerAdmin extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(competitionRegistration $competitionRegistration)
+    public function destroy(CompetitionRegistration $competitionRegistration)
     {
         //
+    }
+
+    /**
+     * Approve a pending registration.
+     */
+    public function approve(CompetitionRegistration $registration)
+    {
+        if ($registration->status === 'Confirmé') {
+            return back()->with('info', "L'inscription est déjà confirmée.");
+        }
+        if ($registration->status === 'Refusé') {
+            return back()->with('error', "Cette inscription a déjà été refusée.");
+        }
+
+        $registration->update([
+            'status' => 'Confirmé',
+        ]);
+
+        return back()->with('success', "Inscription confirmée avec succès.");
+    }
+
+    /**
+     * Reject a pending registration.
+     */
+    public function reject(CompetitionRegistration $registration)
+    {
+        if ($registration->status === 'Refusé') {
+            return back()->with('info', "L'inscription est déjà refusée.");
+        }
+        if ($registration->status === 'Confirmé') {
+            return back()->with('error', "Cette inscription a déjà été confirmée.");
+        }
+
+        $registration->update([
+            'status' => 'Refusé',
+        ]);
+
+        return back()->with('success', "Inscription refusée avec succès.");
     }
 }

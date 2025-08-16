@@ -36,6 +36,7 @@ class Competition extends Model
     // Relationships
     public function user()
     {
+        // Creator of the competition is an admin user
         return $this->belongsTo(User::class);
     }
 
@@ -46,6 +47,7 @@ class Competition extends Model
 
     public function closedBy()
     {
+        // Closed by admin user
         return $this->belongsTo(User::class, 'closed_by');
     }
 

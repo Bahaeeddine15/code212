@@ -38,6 +38,7 @@ class CompetitionRegistration extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        // The registrant is a student, stored in 'etudiant' table/model
+        return $this->belongsTo(Etudiant::class, 'user_id');
     }
 }

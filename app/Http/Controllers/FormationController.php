@@ -16,10 +16,21 @@ class FormationController extends Controller
         $search = $request->get('search', '');
         
         $formations = Formation::when($search, function ($query, $search) {
-            $query->where('titre', 'like', "%{$search}%")
+            $query->where('title', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%")
                   ->orWhere('category', 'like', "%{$search}%");
-        })->get();
+        })->latest()->get()
+        ->map(function ($f) {
+            return [
+                'id' => $f->id,
+                'titre' => $f->title,
+                'description' => $f->description,
+                'category' => (string) ($f->category ?? ''),
+                'niveau' => (string) ($f->level ?? ''),
+                // If thumbnail is stored on public disk, expose as /storage/<path>
+                'photo' => $f->thumbnail ? url('/storage/'.$f->thumbnail) : '/images/default-formation.jpg',
+            ];
+        });
 
         return Inertia::render('etudiant/Formations', [
             'formations' => $formations,
@@ -59,8 +70,17 @@ class FormationController extends Controller
      */
     public function show(Formation $formation)
     {
+        $data = [
+            'id' => $formation->id,
+            'titre' => $formation->title,
+            'description' => $formation->description,
+            'category' => (string) ($formation->category ?? ''),
+            'niveau' => (string) ($formation->level ?? ''),
+            'photo' => $formation->thumbnail ? url('/storage/'.$formation->thumbnail) : '/images/default-formation.jpg',
+        ];
+
         return Inertia::render('formations/Show', [
-            'formation' => $formation
+            'formation' => $data
         ]);
     }
 

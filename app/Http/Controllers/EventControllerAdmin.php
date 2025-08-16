@@ -11,14 +11,18 @@ class EventControllerAdmin extends Controller
     public function index()
     {
         $events = Event::latest()->get()->map(function ($event) {
-            return array_merge(
-                $event->toArray(),
-                [
-                    'maxAttendees' => $event->max_attendees,
-                    'date' => $event->start_date,
-                    'endDate' => $event->end_date,
-                ]
-            );
+            return [
+                'id' => $event->id,
+                'title' => $event->title,
+                'description' => $event->description,
+                'date' => optional($event->start_date)->toISOString(),
+                'endDate' => optional($event->end_date)->toISOString(),
+                'location' => $event->location,
+                'attendees' => 0, // placeholder, replace with real count if available
+                'maxAttendees' => $event->max_attendees,
+                'status' => $event->status ?? 'upcoming',
+                'category' => $event->category ?? 'Conférence',
+            ];
         });
         return Inertia::render('dashboard_admin/Evenements/evenement_index', ['events' => $events]);
     }

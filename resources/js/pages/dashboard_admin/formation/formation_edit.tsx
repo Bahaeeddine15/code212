@@ -45,7 +45,7 @@ export default function FormationEdit({ formation }: Props) {
         <AppLayout>
             <Head title="Modifier la formation" />
             <div className="max-w-xl mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow">
-                <a href="/formations" className="flex items-center text-sm text-gray-500 mb-4 hover:text-indigo-600">
+                <a href="/admin/formations" className="flex items-center text-sm text-gray-500 mb-4 hover:text-indigo-600">
                     <ArrowLeft className="w-4 h-4 mr-1" /> Retour aux formations
                 </a>
                 <h1 className="text-2xl font-bold mb-6">Modifier la formation</h1>

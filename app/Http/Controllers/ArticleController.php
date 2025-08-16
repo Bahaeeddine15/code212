@@ -18,15 +18,17 @@ class ArticleController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($article) {
-                $imagePath = null;
+                // Support multiple images: featured_image can be a JSON array or a single path
+                $images = [];
                 if ($article->featured_image) {
                     $decoded = json_decode($article->featured_image, true);
                     if (is_array($decoded)) {
-                        $imagePath = $decoded[0] ?? null;
+                        $images = array_map(fn ($p) => \Illuminate\Support\Facades\Storage::url($p), array_filter($decoded));
                     } else {
-                        $imagePath = $article->featured_image;
+                        $images = [\Illuminate\Support\Facades\Storage::url($article->featured_image)];
                     }
                 }
+                $firstImage = $images[0] ?? null;
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
@@ -37,7 +39,10 @@ class ArticleController extends Controller
                     'status' => $article->status,
                     'category' => $article->category,
                     'views' => $article->views,
-                    'image' => $imagePath ? Storage::url($imagePath) : null,
+                    // For backward compatibility keep 'image' with the first image
+                    'image' => $firstImage,
+                    // Provide all images for the student UI
+                    'images' => $images,
                 ];
             });
 
@@ -54,16 +59,17 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         $article->increment('views');
-
-        $imagePath = null;
+        // Prepare images array (supports JSON array or single path)
+        $images = [];
         if ($article->featured_image) {
             $decoded = json_decode($article->featured_image, true);
             if (is_array($decoded)) {
-                $imagePath = $decoded[0] ?? null;
+                $images = array_map(fn ($p) => Storage::url($p), array_filter($decoded));
             } else {
-                $imagePath = $article->featured_image;
+                $images = [Storage::url($article->featured_image)];
             }
         }
+        $firstImage = $images[0] ?? null;
 
         $articleData = [
             'id' => $article->id,
@@ -75,7 +81,8 @@ class ArticleController extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'image' => $imagePath ? Storage::url($imagePath) : null,
+            'image' => $firstImage,
+            'images' => $images,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
         ];
@@ -87,15 +94,17 @@ class ArticleController extends Controller
 
     public function edit(Article $article)
     {
-        $imagePath = null;
+        // Prepare images array for potential use in admin edit view
+        $images = [];
         if ($article->featured_image) {
             $decoded = json_decode($article->featured_image, true);
             if (is_array($decoded)) {
-                $imagePath = $decoded[0] ?? null;
+                $images = array_map(fn ($p) => Storage::url($p), array_filter($decoded));
             } else {
-                $imagePath = $article->featured_image;
+                $images = [Storage::url($article->featured_image)];
             }
         }
+        $firstImage = $images[0] ?? null;
 
         $articleData = [
             'id' => $article->id,
@@ -107,7 +116,8 @@ class ArticleController extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'image' => $imagePath ? Storage::url($imagePath) : null,
+            'image' => $firstImage,
+            'images' => $images,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
         ];

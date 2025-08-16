@@ -20,7 +20,11 @@ export default function FormationCard({
   photo,
   imageUrl,
 }: FormationCardProps) {
-  const finalImageUrl = photo || imageUrl || "https://via.placeholder.com/300x200";
+  // Build a robust image URL when only a filename is provided
+  const raw = (photo || imageUrl || '').trim();
+  const isAbsolute = raw.startsWith('http') || raw.startsWith('/') || raw.startsWith('data:');
+  const preferred = raw ? (isAbsolute ? raw : `/images/formations/${raw}`) : '/images/formations/placeholder-300x200.png';
+  const placeholder = '/images/formations/placeholder-300x200.png';
 
   return (
     <Link
@@ -29,11 +33,18 @@ export default function FormationCard({
     >
       <div className="w-full h-48">
         <img
-          src={finalImageUrl}
+          src={preferred}
           alt={titre}
           className="w-full h-full object-cover"
+          loading="lazy"
           onError={(e) => {
-            e.currentTarget.src = "https://via.placeholder.com/300x200";
+            const current = e.currentTarget.getAttribute('src') || '';
+            // If first attempt was /images/formations/<file> and failed, try /images/formation/<file>
+            if (raw && !isAbsolute && current.includes('/images/formations/') && !current.includes('/images/formation/')) {
+              e.currentTarget.src = `/images/formation/${raw}`;
+              return;
+            }
+            e.currentTarget.src = placeholder;
           }}
         />
       </div>

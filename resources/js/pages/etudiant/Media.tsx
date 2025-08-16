@@ -1,7 +1,9 @@
 import React from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
-import AppSidebarLayout from '../../layouts/app/app-sidebar-layout-admin';
-import DashboardHeader from "@/components/layout/dashboard-header";
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
+import { AppContent } from '@/components/layout/app-content';
+import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -88,12 +90,13 @@ export default function Media() {
   const mediaIcon = (m: MediaItem) => <ImageIcon className="w-6 h-6" />; // always image icon now
 
   return (
-    <AppSidebarLayout breadcrumbs={[
-      { title: 'Dashboard', href: '/dashboard' },
-      { title: 'Médiathèque', href: '/media' }
-    ]}>
+    <AppShell variant="sidebar">
       <Head title="Médiathèque" />
-      <div className="container mx-auto px-4 py-6 space-y-6">
+      <div className="flex w-full min-h-screen">
+        <AppSidebar />
+        <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white">
+          <AppSidebarHeader breadcrumbs={[{ title: 'Dashboard Étudiant', href: '/dashboard' }, { title: 'Médiathèque', href: '/media' }]} />
+          <div className="px-6 py-6 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">Médiathèque</h1>
@@ -170,8 +173,10 @@ export default function Media() {
               </div>
             )}
           </div>
-        </div>
+          </div>
+          </div>
+        </AppContent>
       </div>
-    </AppSidebarLayout>
+    </AppShell>
   );
 }

@@ -19,13 +19,13 @@ class CompetitionControllerAdmin extends Controller
         $competitions = Competition::with(['user', 'registrations', 'closedBy'])
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($competition) {
+        ->map(function ($competition) {
                 return [
                     'id' => $competition->id,
                     'title' => $competition->title,
                     'description' => $competition->description,
-                    'date' => $competition->date->format('Y-m-d'),
-                    'deadline' => $competition->deadline->format('Y-m-d'),
+            'date' => optional($competition->date)->toDateString(),
+            'deadline' => optional($competition->deadline)->toDateString(),
                     'location' => $competition->location,
                     'category' => $competition->category,
                     'maxParticipants' => $competition->max_participants,
@@ -45,6 +45,7 @@ class CompetitionControllerAdmin extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($registration) {
+                $regDate = $registration->registered_at ? $registration->registered_at->toDateString() : $registration->created_at->toDateString();
                 return [
                     'id' => $registration->id,
                     'competitionId' => $registration->competition_id,
@@ -53,7 +54,7 @@ class CompetitionControllerAdmin extends Controller
                     'phone' => $registration->phone,
                     'category' => $registration->category,
                     'club' => $registration->club,
-                    'registrationDate' => $registration->registered_at->format('Y-m-d'),
+                    'registrationDate' => $regDate,
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
@@ -144,8 +145,8 @@ class CompetitionControllerAdmin extends Controller
             'id' => $competition->id,
             'title' => $competition->title,
             'description' => $competition->description,
-            'date' => $competition->date->format('d-m-Y'),
-            'deadline' => $competition->deadline->format('d-m-Y'),
+            'date' => optional($competition->date)->toDateString(),
+            'deadline' => optional($competition->deadline)->toDateString(),
             'location' => $competition->location,
             'category' => $competition->category,
             'maxParticipants' => $competition->max_participants,
@@ -157,18 +158,24 @@ class CompetitionControllerAdmin extends Controller
             'updated_at' => $competition->updated_at->toISOString(),
         ];
 
-        $registrations = $competition->registrations->map(function ($registration) {
-            return [
-                'id' => $registration->id,
-                'participant_name' => $registration->participant_name,
-                'email' => $registration->email,
-                'phone' => $registration->phone,
-                'category' => $registration->category,
-                'club' => $registration->club,
-                'status' => $registration->status,
-                'registered_at' => $registration->registered_at->format('d-m-Y'),
-            ];
-        });
+        $registrations = $competition->registrations()
+            ->orderByDesc('registered_at')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($registration) {
+                $dateIso = $registration->registered_at ? $registration->registered_at->toISOString() : $registration->created_at->toISOString();
+                return [
+                    'id' => $registration->id,
+                    'participant_name' => $registration->participant_name,
+                    'email' => $registration->email,
+                    'phone' => $registration->phone,
+                    'category' => $registration->category,
+                    'club' => $registration->club,
+                    'status' => $registration->status,
+                    // Send ISO string for reliable client-side Date parsing
+                    'registered_at' => $dateIso,
+                ];
+            });
 
         return Inertia::render('dashboard_admin/competitions/competition_show', [
             'competition' => $competitionData,
@@ -185,8 +192,8 @@ class CompetitionControllerAdmin extends Controller
             'id' => $competition->id,
             'title' => $competition->title,
             'description' => $competition->description,
-            'date' => $competition->date->format('Y-m-d'),
-            'deadline' => $competition->deadline->format('Y-m-d'),
+            'date' => optional($competition->date)->toDateString(),
+            'deadline' => optional($competition->deadline)->toDateString(),
             'location' => $competition->location,
             'category' => $competition->category,
             'maxParticipants' => $competition->max_participants,

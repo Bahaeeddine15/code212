@@ -3,8 +3,8 @@ import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
 import DashboardHeader from "@/components/layout/dashboard-header";
-import { Head } from '@inertiajs/react';
-import { MapPin, Calendar as CalendarIcon, Users, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Head, Link } from '@inertiajs/react';
+import { MapPin, Calendar as CalendarIcon, Users, Tag, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import React from 'react';
 
 interface Event {
@@ -30,6 +30,21 @@ interface Props { events: Event[]; }
 // Utility to parse date safely
 const parseDate = (d: string) => new Date(d);
 function todayISOOffset(offsetDays:number){ const d=new Date(); d.setDate(d.getDate()+offsetDays); return d.toISOString().split('T')[0]; }
+
+function formatTimeRange(startISO: string, endISO: string){
+    try{
+        const s = new Date(startISO);
+        const e = new Date(endISO);
+        const opts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+        const sameDay = s.toDateString() === e.toDateString();
+        if(sameDay){
+            return `${s.toLocaleDateString('fr-FR')} ${s.toLocaleTimeString('fr-FR', opts)} – ${e.toLocaleTimeString('fr-FR', opts)}`;
+        }
+        return `${s.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} – ${e.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`;
+    }catch{
+        return '';
+    }
+}
 
 // Normalized events with date objects and colors
 interface NormalizedEvent extends Event {
@@ -131,7 +146,8 @@ export default function Events({ events }: Props) {
                                 </div>
                                 <div className="space-y-3">
                                     {normalized.sort((a,b)=>a.start.getTime()-b.start.getTime()).map(ev => (
-                                        <div key={ev.id} className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                                        <Link href={`/events/${ev.id}`} key={ev.id} className="block">
+                                        <div className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-100 cursor-pointer">
                                             <div className={`flex flex-col items-center justify-center w-14 rounded-md bg-gradient-to-br ${getCategoryStyle(ev.category).badge} text-white py-2`}>
                                                 <span className="text-lg font-semibold leading-none">{ev.start.getDate()}</span>
                                                 <span className="text-[11px] font-medium mt-1 uppercase tracking-wide">{ev.start.toLocaleDateString('en-US',{month:'short'})}</span>
@@ -140,12 +156,17 @@ export default function Events({ events }: Props) {
                                                 <h3 className="font-semibold text-gray-900 leading-tight line-clamp-1">{ev.title}</h3>
                                                 <p className="text-sm text-gray-600 line-clamp-2 mt-1">{ev.description}</p>
                                                 <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500">
+                                                    <span className="flex items-center gap-1">
+                                                        <Clock className="w-3.5 h-3.5" />
+                                                        {formatTimeRange(ev.start_date, ev.end_date)}
+                                                    </span>
                                                     <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {ev.location}</span>
                                                     <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> Max {ev.max_attendees}</span>
                                                     <span className="flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> {ev.category}</span>
                                                 </div>
                                             </div>
                                         </div>
+                                        </Link>
                                     ))}
                                 </div>
                             </div>
@@ -177,14 +198,14 @@ export default function Events({ events }: Props) {
                                                         );
                                                     })}
                                                 </div>
-                                                {/* Event bars overlay */}
-                                                <div className="absolute left-0 right-0 top-6 bottom-1 pointer-events-none space-y-1">
+                                                {/* Event bars overlay (clickable) */}
+                                                <div className="absolute left-0 right-0 top-6 bottom-1 pointer-events-auto space-y-1">
                                                     {monthEvents.filter(e => intersectsWeek(e, week)).map(ev => {
                                                         const { left, span } = barPosition(ev, week);
                                                         return (
-                                                            <div key={ev.id+wi} style={{ left: `${(left/7)*100}%`, width: `${(span/7)*100}%`, backgroundColor: ev.color }} className="absolute h-5 rounded-md text-[10px] font-medium text-white flex items-center px-2 overflow-hidden">
+                                                            <a href={`/events/${ev.id}`} key={ev.id+wi} style={{ left: `${(left/7)*100}%`, width: `${(span/7)*100}%`, backgroundColor: ev.color }} className="absolute h-5 rounded-md text-[10px] font-medium text-white flex items-center px-2 overflow-hidden hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500">
                                                                 <span className="truncate">{ev.title}</span>
-                                                            </div>
+                                                            </a>
                                                         );
                                                     })}
                                                 </div>

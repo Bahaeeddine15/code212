@@ -452,19 +452,19 @@ export default function DashboardOverview() {
                     </div>
                     
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                        <ModernButton theme="primary" size="sm" icon={BookOpen} onClick={() => router.visit('/dashboard_admin/formations')}>
+                        <ModernButton theme="primary" size="sm" icon={BookOpen} onClick={() => router.visit('/admin/formations')}>
                             Formations
                         </ModernButton>
-                        <ModernButton theme="success" size="sm" icon={Calendar} onClick={() => router.visit('/dashboard_admin/events')}>
+                        <ModernButton theme="success" size="sm" icon={Calendar} onClick={() => router.visit('/admin/events')}>
                             Événements
                         </ModernButton>
-                        <ModernButton theme="warning" size="sm" icon={Trophy} onClick={() => router.visit('/dashboard_admin/competitions')}>
+                        <ModernButton theme="warning" size="sm" icon={Trophy} onClick={() => router.visit('/admin/competitions')}>
                             Compétitions
                         </ModernButton>
-                        <ModernButton theme="secondary" size="sm" icon={FileImage} onClick={() => router.visit('/dashboard_admin/articles')}>
+                        <ModernButton theme="secondary" size="sm" icon={FileImage} onClick={() => router.visit('/admin/articles')}>
                             Articles
                         </ModernButton>
-                        <ModernButton theme="info" size="sm" icon={FileImage} onClick={() => router.visit('/dashboard_admin/media')}>
+                        <ModernButton theme="info" size="sm" icon={FileImage} onClick={() => router.visit('/admin/media')}>
                             Médias
                         </ModernButton>
                         <ModernButton theme="danger" size="sm" icon={Users} onClick={() => router.visit('/dashboard_admin/users')}>

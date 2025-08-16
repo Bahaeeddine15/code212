@@ -10,6 +10,7 @@ use App\Http\Controllers\FormationControllerAdmin;
 use App\Http\Controllers\ModuleControllerAdmin;
 use App\Http\Controllers\EventControllerAdmin;
 use App\Http\Controllers\ReservationControllerAdmin;
+use App\Http\Controllers\CompetitionRegistrationControllerAdmin;
 use App\Http\Controllers\Auth\AdminAuthController;
 
 // Admin authentication routes (accessible without authentication) - ADD ADMIN PREFIX
@@ -45,6 +46,10 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->group(function (
 
     Route::resource('competitions', CompetitionControllerAdmin::class);
     Route::patch('/competitions/{competition}/close', [CompetitionControllerAdmin::class, 'close'])->name('competitions.close');
+
+    // Approve/Reject competition registrations
+    Route::patch('/competition-registrations/{registration}/approve', [CompetitionRegistrationControllerAdmin::class, 'approve'])->name('competitionRegistrations.approve');
+    Route::patch('/competition-registrations/{registration}/reject', [CompetitionRegistrationControllerAdmin::class, 'reject'])->name('competitionRegistrations.reject');
 
     Route::resource('reservations', ReservationControllerAdmin::class);
     Route::patch('/reservations/{reservation}/approve', [ReservationControllerAdmin::class, 'approve'])->name('reservations.approve');
