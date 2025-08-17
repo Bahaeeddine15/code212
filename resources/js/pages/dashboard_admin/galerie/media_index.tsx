@@ -233,10 +233,20 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                                         {/* Media grid */}
                                         <div className="p-6">
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                                {filteredFiles.map(file => (
+                                                {filteredFiles.slice(0, 4).map(file => (
                                                     <MediaCard key={file.id} media={file} />
                                                 ))}
                                             </div>
+                                            {filteredFiles.length > 4 && (
+                                                <div className="flex justify-center mt-4">
+                                                    <Link
+                                                        href={`/admin/media/folder/${folder}`}
+                                                        className="text-blue-600 hover:underline font-semibold"
+                                                    >
+                                                        Voir plus de médias dans ce dossier &rarr;
+                                                    </Link>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 );

@@ -9,13 +9,14 @@ interface BreadcrumbItem {
 
 interface DashboardHeaderProps {
   breadcrumbs?: BreadcrumbItem[];
+  subtitle?: string;
 }
 
-export default function DashboardHeader({ breadcrumbs = [] }: DashboardHeaderProps) {
+export default function DashboardHeader({ breadcrumbs = [], subtitle }: DashboardHeaderProps) {
   return (
-    <header className="w-full bg-[#0c152e] px-10 py-6 shadow-lg relative overflow-hidden">
+    <header className="w-full bg-[#0c152e] px-6 sm:px-12 py-10 sm:py-14 shadow-2xl relative overflow-hidden">
       {/* Grid Background Effect */}
-      <div className="absolute inset-0 opacity-20">
+      <div className="absolute inset-0 opacity-25 pointer-events-none select-none">
         <div 
           className="w-full h-full"
           style={{
@@ -23,79 +24,82 @@ export default function DashboardHeader({ breadcrumbs = [] }: DashboardHeaderPro
               linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
               linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
             `,
-            backgroundSize: '30px 30px'
+            backgroundSize: '36px 36px'
           }}
         />
       </div>
       
       {/* Content overlay */}
       <div className="relative z-10">
-        <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        {/* Left Section - Breadcrumbs */}
-        <div className="flex items-center space-x-3 text-base order-1 lg:order-1 lg:flex-1">
-          {breadcrumbs.map((item, index) => (
-            <React.Fragment key={index}>
-              {index > 0 && (
-                <ChevronRight className="w-5 h-5 text-gray-400" />
-              )}
-              {item.href && !item.isActive ? (
-                <a
-                  href={item.href}
-                  className="text-gray-300 hover:text-white transition-colors duration-200 text-base"
-                >
-                  {item.title}
-                </a>
-              ) : (
-                <span
-                  className={`${
-                    item.isActive || index === breadcrumbs.length - 1
-                      ? 'text-white font-bold text-lg'
-                      : 'text-gray-300 text-base'
-                  }`}
-                >
-                  {item.title}
-                </span>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+        <div className="flex flex-wrap items-center justify-between gap-6 md:gap-10">
+          {/* Left Section - Breadcrumbs */}
+          <div className="flex items-center flex-wrap space-x-3 text-xl sm:text-2xl min-w-0 font-semibold">
+            {breadcrumbs.map((item, index) => (
+              <React.Fragment key={index}>
+                {index > 0 && (
+                  <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7 text-blue-300 flex-shrink-0" />
+                )}
+                {item.href && !item.isActive ? (
+                  <a
+                    href={item.href}
+                    className="text-blue-200 hover:text-white transition-colors duration-200 truncate max-w-[180px] sm:max-w-xs"
+                  >
+                    {item.title}
+                  </a>
+                ) : (
+                  <span
+                    className={`truncate max-w-[180px] sm:max-w-xs ${
+                      item.isActive || index === breadcrumbs.length - 1
+                        ? 'text-white font-extrabold text-3xl sm:text-4xl'
+                        : 'text-blue-200'
+                    }`}
+                  >
+                    {item.title}
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
 
-        {/* Center Section - Logo - Absolutely centered */}
-        <div className="flex justify-center order-2 lg:order-2 lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
-          <div className="flex items-center justify-center">
+          {/* Center Section - Logo */}
+          <div className="flex justify-center flex-shrink-0 order-2 md:order-none mx-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
             <img 
               src="/cd212.png"
               alt="CODE'212 Logo"
-              className="h-20 w-auto object-contain"
-              style={{ maxWidth: '400px' }}
+              className="h-20 sm:h-28 md:h-32 w-auto object-contain"
+              style={{ maxWidth: '300px' }}
             />
           </div>
-        </div>
 
-        {/* Right Section - Robot Mascot */}
-        <div className="hidden lg:flex justify-end order-3 lg:order-3 lg:flex-1">
-          <div className="flex items-center justify-center">
+          {/* Right Section - Robot Mascot */}
+          <div className="hidden md:flex justify-end flex-1">
             <img 
               src="/all-robots.png"
               alt="CODE'212 Robot Mascots"
-              className="h-24 w-auto object-contain hover:scale-105 transition-transform duration-200"
+              className="h-24 md:h-32 w-auto object-contain hover:scale-105 transition-transform duration-200"
               style={{ maxWidth: '180px' }}
             />
           </div>
-        </div>
 
-        {/* Mobile Robot Mascot - Smaller version */}
-        <div className="lg:hidden flex justify-end order-3">
-          <div className="flex items-center justify-center ">
+          {/* Mobile Robot Mascot - Smaller version */}
+          <div className="md:hidden flex justify-end flex-1">
             <img 
               src="/code212-robots.png"
               alt="CODE'212 Robot Mascots"
-              className="h-12 w-auto object-contain"
+              className="h-12 sm:h-16 w-auto object-contain"
               style={{ maxWidth: '100px' }}
             />
           </div>
         </div>
-        </div>
+
+        {/* Subtitle Section */}
+        {subtitle && (
+          <div className="mt-6 text-center">
+            <p className="text-blue-200 text-lg sm:text-xl font-medium">
+              {subtitle}
+            </p>
+          </div>
+        )}
       </div>
     </header>
   );

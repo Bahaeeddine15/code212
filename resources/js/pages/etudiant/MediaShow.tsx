@@ -66,16 +66,6 @@ export default function MediaShow() {
                   <p><strong>Extension:</strong> {media.file_extension?.toUpperCase()}</p>
                   <p><strong>Taille:</strong> {media.file_size}</p>
                   <p><strong>Dossier:</strong> {media.folder}</p>
-                  {media.full_url && !isVideo && (
-                    <div>
-                      <a href={media.full_url} target="_blank" rel="noopener" className="text-blue-600 hover:underline">Ouvrir dans un nouvel onglet</a>
-                    </div>
-                  )}
-                  {media.full_url && isVideo && (
-                    <div>
-                      <a href={media.full_url} target="_blank" rel="noopener" className="text-blue-600 hover:underline">Télécharger / Ouvrir</a>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             </div>

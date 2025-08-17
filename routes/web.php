@@ -14,7 +14,7 @@ require __DIR__ . '/admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 Route::middleware(['auth', 'verified'])->group(function () {
-    
+
     Route::get('dashboard', [App\Http\Controllers\DashboardEtudiantController::class, 'index'])->name('dashboard');
 
     Route::get('formations', [App\Http\Controllers\FormationController::class, 'index'])->name('etudiant.formations');
@@ -25,7 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('etudiant/Certificats');
     })->name('etudiant.certificats');
 
-   
+
     Route::get('events', [App\Http\Controllers\EventController::class, 'index'])->name('etudiant.events');
     Route::get('events/{event}', [App\Http\Controllers\EventController::class, 'show'])->name('etudiant.events.show');
     Route::get('competition', [App\Http\Controllers\CompetitionController::class, 'index'])->name('etudiant.competition');
@@ -36,12 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('articles', [App\Http\Controllers\ArticleController::class, 'index'])->name('etudiant.article');
     Route::get('articles/{article}', [App\Http\Controllers\ArticleController::class, 'show'])->name('etudiant.article.show');
 
-    // Routes pour les médias (lecture seule)
-    Route::get('media', [App\Http\Controllers\MediaController::class, 'index'])->name('etudiant.media');
-    Route::get('media/filter', [App\Http\Controllers\MediaController::class, 'filter'])->name('media.filter');
-    Route::get('media/create', [App\Http\Controllers\MediaController::class, 'create'])->name('media.create');
-    Route::get('media/{media}', [App\Http\Controllers\MediaController::class, 'show'])->name('media.show');
-    Route::post('media', [App\Http\Controllers\MediaController::class, 'store'])->name('media.store');
+    // Grouped media routes with custom parameter binding
+    Route::resource('media', App\Http\Controllers\MediaController::class)->parameters(['media' => 'media']);
+    Route::get('/media/folder/{folder}', [\App\Http\Controllers\MediaController::class, 'showFolder'])->name('media.folder');
 
     // Routes pour les réservations
     Route::get('reservations', [App\Http\Controllers\ReservationController::class, 'index'])->name('etudiant.reservations');
@@ -49,24 +46,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('reservations/{reservation}/edit', [App\Http\Controllers\ReservationController::class, 'edit'])->name('reservations.edit');
     Route::put('reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'update'])->name('reservations.update');
     Route::delete('reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'destroy'])->name('reservations.destroy');
-    
+
     // Route pour l'administration des réservations (optionnel)
     Route::patch('reservations/{reservation}/status', [App\Http\Controllers\ReservationController::class, 'updateStatus'])->name('reservations.updateStatus');
-    
+
     // Routes simples pour approuver/rejeter par URL (sans interface admin)
-    Route::get('approve-reservation/{id}', function($id) {
+    Route::get('approve-reservation/{id}', function ($id) {
         $reservation = \App\Models\Reservation::find($id);
-        
+
         if (!$reservation) {
             return response()->json(['error' => 'Réservation non trouvée'], 404);
         }
-        
+
         if ($reservation->status !== 'pending') {
             return response()->json(['error' => 'Cette réservation a déjà été traitée'], 400);
         }
-        
+
         $reservation->update(['status' => 'approved']);
-        
+
         // Envoyer la notification avec gestion d'erreur
         try {
             $notifiableUser = new \App\Models\NotifiableUser($reservation->email, $reservation->prenom . ' ' . $reservation->nom);
@@ -76,7 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $emailStatus = "Erreur email: " . $e->getMessage();
             Log::error('Erreur envoi email notification: ' . $e->getMessage());
         }
-        
+
         return response()->json([
             'success' => true,
             'message' => "Réservation de {$reservation->prenom} {$reservation->nom} approuvée avec succès!",
@@ -84,20 +81,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'reservation_updated' => true
         ]);
     })->name('approve.reservation');
-    
-    Route::get('reject-reservation/{id}', function($id) {
+
+    Route::get('reject-reservation/{id}', function ($id) {
         $reservation = \App\Models\Reservation::find($id);
-        
+
         if (!$reservation) {
             return response()->json(['error' => 'Réservation non trouvée'], 404);
         }
-        
+
         if ($reservation->status !== 'pending') {
             return response()->json(['error' => 'Cette réservation a déjà été traitée'], 400);
         }
-        
+
         $reservation->update(['status' => 'rejected']);
-        
+
         // Envoyer la notification avec gestion d'erreur
         try {
             $notifiableUser = new \App\Models\NotifiableUser($reservation->email, $reservation->prenom . ' ' . $reservation->nom);
@@ -107,7 +104,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $emailStatus = "Erreur email: " . $e->getMessage();
             Log::error('Erreur envoi email notification: ' . $e->getMessage());
         }
-        
+
         return response()->json([
             'success' => true,
             'message' => "Réservation de {$reservation->prenom} {$reservation->nom} rejetée avec succès!",
@@ -115,9 +112,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'reservation_updated' => true
         ]);
     })->name('reject.reservation');
-    
+
     // Route pour marquer la notification comme lue
-    Route::post('reservations/dismiss-notification', function(Request $request) {
+    Route::post('reservations/dismiss-notification', function (Request $request) {
         $email = session('user_email');
         if ($email && $request->reservation_id) {
             session(["notification_dismissed_{$request->reservation_id}" => true]);
@@ -126,8 +123,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('reservations.dismissNotification');
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
 
 // ⚠️ ROUTES DE TEST - À SUPPRIMER EN PRODUCTION
 // Décommentez la ligne suivante pour activer les routes de test :
