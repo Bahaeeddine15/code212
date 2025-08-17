@@ -125,6 +125,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/settings_admin.php';
 
 // ⚠️ ROUTES DE TEST - À SUPPRIMER EN PRODUCTION
 // Décommentez la ligne suivante pour activer les routes de test :
