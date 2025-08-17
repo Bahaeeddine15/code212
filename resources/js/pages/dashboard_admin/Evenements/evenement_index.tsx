@@ -343,7 +343,6 @@ const Events = ({ events }: { events: Event[] }) => {
                                 <option value="Conférence">Conférence</option>
                                 <option value="Workshop">Workshop</option>
                                 <option value="Séminaire">Séminaire</option>
-                                <option value="Compétition">Compétition</option>
                             </select>
                         </div>
                     </div>
