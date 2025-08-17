@@ -26,7 +26,9 @@ import {
     Edit,
     Trash2,
     Lock,
-    Plus
+    Plus,
+    CheckCircle2,
+    XCircle
 } from 'lucide-react';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
@@ -486,12 +488,33 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                         <TableCell>{formatDate(registration.registrationDate)}</TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2">
-                                                <Button variant="ghost" size="sm">
-                                                    <Edit className="h-4 w-4" />
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        router.patch(
+                                                            `/admin/competition-registrations/${registration.id}/approve`
+                                                        );
+                                                    }}
+                                                    disabled={registration.status === 'Confirmé'}
+                                                    title="Accepter"
+                                                >
+                                                    <CheckCircle2 className="h-5 w-5 text-green-600" />
                                                 </Button>
-                                                <Button variant="ghost" size="sm">
-                                                    <Trash2 className="h-4 w-4" />
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        router.patch(
+                                                            `/admin/competition-registrations/${registration.id}/reject`
+                                                        );
+                                                    }}
+                                                    disabled={registration.status === 'Refusé'}
+                                                    title="Refuser"
+                                                >
+                                                    <XCircle className="h-5 w-5 text-red-600" />
                                                 </Button>
+                                                {/* Removed Edit and Delete buttons */}
                                             </div>
                                         </TableCell>
                                     </TableRow>
