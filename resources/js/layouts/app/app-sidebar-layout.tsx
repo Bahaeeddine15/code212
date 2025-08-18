@@ -11,15 +11,17 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
         <AppShell variant="sidebar">
             <div className="flex w-full min-h-screen">
                 <AppSidebar />
-                <AppContent
-                    variant="sidebar"
-                    className="overflow-x-hidden overflow-y-auto h-screen flex-1"
-                >
-                    <AppSidebarHeader breadcrumbs={breadcrumbs} />
-                    <div className="flex-1">
-                        {children}
-                    </div>
-                </AppContent>
+                <div className="sidebar-content-offset">
+                    <AppContent
+                        variant="sidebar"
+                        className="overflow-x-hidden overflow-y-auto min-h-screen w-full"
+                    >
+                        <AppSidebarHeader breadcrumbs={breadcrumbs} />
+                        <div className="flex-1">
+                            {children}
+                        </div>
+                    </AppContent>
+                </div>
             </div>
         </AppShell>
     );

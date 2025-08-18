@@ -51,6 +51,7 @@ interface Competition {
     updated_at: string;
     closed_at?: string | null;
     closed_by?: string | null;
+    type: 'individual' | 'group'; // Added property
 }
 
 interface Registration {
@@ -65,6 +66,7 @@ interface Registration {
     status: 'Confirmé' | 'En attente' | 'Refusé';
     paymentStatus: 'Payé' | 'En attente' | 'Refusé';
     notes?: string;
+    groupMembers?: string; // Added property
 }
 
 interface Statistics {
@@ -327,55 +329,56 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                             {filteredCompetitions.map((competition) => (
                                 <div
                                     key={competition.id}
-                                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                                    className={`p-8 border rounded-2xl cursor-pointer transition-colors ${
                                         selectedCompetition === competition.id
                                             ? 'border-blue-500 bg-blue-50'
                                             : 'border-gray-200 hover:border-gray-300'
                                     }`}
+                                    style={{ minHeight: 160 }} // Optional: set a minimum height
                                     onClick={() => navigateToShow(competition)}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-3">
-                                                <h3 className="font-semibold">{competition.title}</h3>
+                                            <div className="flex items-center gap-4">
+                                                <h3 className="font-semibold text-xl">{competition.title}</h3>
                                                 <Badge className={getStatusColor(competition.status)}>
                                                     {competition.status}
                                                 </Badge>
                                             </div>
-                                            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                                                <div className="flex items-center gap-1">
-                                                    <Calendar className="h-4 w-4" />
+                                            <div className="flex items-center gap-6 mt-4 text-base text-gray-600">
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar className="h-5 w-5" />
                                                     {formatDate(competition.date)}
                                                 </div>
-                                                <div className="flex items-center gap-1">
-                                                    <MapPin className="h-4 w-4" />
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin className="h-5 w-5" />
                                                     {competition.location}
                                                 </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Users className="h-4 w-4" />
+                                                <div className="flex items-center gap-2">
+                                                    <Users className="h-5 w-5" />
                                                     {competition.registrations}/{competition.maxParticipants}
                                                 </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Eye className="h-4 w-4" />
+                                                <div className="flex items-center gap-2">
+                                                    <Eye className="h-5 w-5" />
                                                     {competition.views} vues
                                                 </div>
                                             </div>
                                             {competition.description && (
-                                                <p className="mt-2 text-sm text-gray-600">
+                                                <p className="mt-4 text-base text-gray-600">
                                                     {competition.description}
                                                 </p>
                                             )}
-                                            <p className="mt-1 text-xs text-gray-500">
+                                            <p className="mt-2 text-sm text-gray-500">
                                                 Date limite: {formatDate(competition.deadline)}
                                             </p>
                                             {competition.status === 'Fermé' && competition.closed_at && (
-                                                <p className="mt-1 text-xs text-red-600">
+                                                <p className="mt-2 text-sm text-red-600">
                                                     Fermée le {formatDate(competition.closed_at)}
                                                     {competition.closed_by && ` par ${competition.closed_by}`}
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-col items-end gap-3">
                                             {competition.status === 'Ouvert' && (
                                                 <Button
                                                     variant="outline"
@@ -386,7 +389,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                     }}
                                                     className="border-orange-600 text-orange-600 hover:bg-orange-50"
                                                 >
-                                                    <Lock className="h-4 w-4 mr-1" />
+                                                    <Lock className="h-5 w-5 mr-1" />
                                                     Fermer
                                                 </Button>
                                             )}
@@ -398,7 +401,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                     navigateToEdit(competition);
                                                 }}
                                             >
-                                                <Edit className="h-4 w-4 mr-1" />
+                                                <Edit className="h-5 w-5 mr-1" />
                                                 Modifier
                                             </Button>
                                             <Button
@@ -410,11 +413,17 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                 }}
                                                 className="border-red-600 text-red-600 hover:bg-red-50"
                                             >
-                                                <Trash2 className="h-4 w-4 mr-1" />
+                                                <Trash2 className="h-5 w-5 mr-1" />
                                                 Supprimer
                                             </Button>
                                         </div>
                                     </div>
+                                    <Badge
+                                        variant="outline"
+                                        className="bg-indigo-50 text-indigo-700 border-indigo-200 text-base px-4 py-2 mt-4"
+                                    >
+                                        {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
+                                    </Badge>
                                 </div>
                             ))}
                         </div>
@@ -464,6 +473,20 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                     <TableRow key={registration.id}>
                                         <TableCell className="font-medium">
                                             {registration.participantName}
+                                            {/* Show group members if present */}
+                                            {registration.groupMembers && (
+                                                <div className="mt-1 text-xs text-gray-500">
+                                                    <span className="font-semibold">Membres:</span>
+                                                    <ul className="list-disc ml-4">
+                                                        {registration.groupMembers
+                                                            .split('\n')
+                                                            .filter(Boolean)
+                                                            .map((member, idx) => (
+                                                                <li key={idx}>{member}</li>
+                                                            ))}
+                                                    </ul>
+                                                </div>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <div className="space-y-1">

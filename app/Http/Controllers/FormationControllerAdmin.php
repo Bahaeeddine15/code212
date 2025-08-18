@@ -57,7 +57,7 @@ class FormationControllerAdmin extends Controller
      */
     public function show(Formation $formation)
     {
-        return Inertia::render('dashboard_admin/formation_show', [
+        return Inertia::render('dashboard_admin/formations/formation_show', [
             'formation' => $formation->load('modules')
         ]);
     }

@@ -24,7 +24,8 @@ class Competition extends Model
         'user_id',
         'views',
         'closed_at',  // Add this
-        'closed_by'   // Add this
+        'closed_by',  // Add this
+        'type',
     ];
 
     protected $casts = [

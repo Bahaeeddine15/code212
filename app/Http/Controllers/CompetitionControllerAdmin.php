@@ -19,13 +19,13 @@ class CompetitionControllerAdmin extends Controller
         $competitions = Competition::with(['user', 'registrations', 'closedBy'])
             ->orderBy('created_at', 'desc')
             ->get()
-        ->map(function ($competition) {
+            ->map(function ($competition) {
                 return [
                     'id' => $competition->id,
                     'title' => $competition->title,
                     'description' => $competition->description,
-            'date' => optional($competition->date)->toDateString(),
-            'deadline' => optional($competition->deadline)->toDateString(),
+                    'date' => optional($competition->date)->toDateString(),
+                    'deadline' => optional($competition->deadline)->toDateString(),
                     'location' => $competition->location,
                     'category' => $competition->category,
                     'maxParticipants' => $competition->max_participants,
@@ -37,27 +37,30 @@ class CompetitionControllerAdmin extends Controller
                     'updated_at' => $competition->updated_at->toISOString(),
                     'closed_at' => $competition->closed_at ? $competition->closed_at->toISOString() : null,
                     'closed_by' => $competition->closedBy ? $competition->closedBy->name : null,
+                    'type' => $competition->type, // <-- Add this line
                 ];
             });
 
         // Get all registrations for statistics
-        $registrations = CompetitionRegistration::with('competition')
+        $registrations = CompetitionRegistration::with(['competition', 'user'])
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($registration) {
-                $regDate = $registration->registered_at ? $registration->registered_at->toDateString() : $registration->created_at->toDateString();
                 return [
                     'id' => $registration->id,
                     'competitionId' => $registration->competition_id,
+                    'userId' => $registration->user_id,
+                    'userName' => $registration->user->name ?? null,
                     'participantName' => $registration->participant_name,
                     'email' => $registration->email,
                     'phone' => $registration->phone,
                     'category' => $registration->category,
                     'club' => $registration->club,
-                    'registrationDate' => $regDate,
+                    'registrationDate' => $registration->registered_at->format('Y-m-d'),
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
+                    'groupMembers' => $registration->group_members, // <-- ADD THIS LINE
                 ];
             });
 
@@ -122,6 +125,7 @@ class CompetitionControllerAdmin extends Controller
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'maxParticipants' => 'required|integer|min:1',
+            'type' => 'required|in:individual,group', // <-- add this
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -156,26 +160,22 @@ class CompetitionControllerAdmin extends Controller
             'views' => $competition->views,
             'created_at' => $competition->created_at->toISOString(),
             'updated_at' => $competition->updated_at->toISOString(),
+            'type' => $competition->type, // <-- Add this line
         ];
 
-        $registrations = $competition->registrations()
-            ->orderByDesc('registered_at')
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(function ($registration) {
-                $dateIso = $registration->registered_at ? $registration->registered_at->toISOString() : $registration->created_at->toISOString();
-                return [
-                    'id' => $registration->id,
-                    'participant_name' => $registration->participant_name,
-                    'email' => $registration->email,
-                    'phone' => $registration->phone,
-                    'category' => $registration->category,
-                    'club' => $registration->club,
-                    'status' => $registration->status,
-                    // Send ISO string for reliable client-side Date parsing
-                    'registered_at' => $dateIso,
-                ];
-            });
+        $registrations = $competition->registrations->map(function ($registration) {
+            return [
+                'id' => $registration->id,
+                'participant_name' => $registration->participant_name,
+                'email' => $registration->email,
+                'phone' => $registration->phone,
+                'category' => $registration->category,
+                'club' => $registration->club,
+                'status' => $registration->status,
+                'registered_at' => $registration->registered_at->format('d-m-Y'),
+                'groupMembers' => $registration->group_members, // <-- ADD THIS LINE
+            ];
+        });
 
         return Inertia::render('dashboard_admin/competitions/competition_show', [
             'competition' => $competitionData,
@@ -199,6 +199,7 @@ class CompetitionControllerAdmin extends Controller
             'maxParticipants' => $competition->max_participants,
             'registrations' => $competition->registrations->count(),
             'status' => $competition->status,
+            'type' => $competition->type, // <-- Add this line
         ];
 
         return Inertia::render('dashboard_admin/competitions/competition_edit', [
@@ -219,6 +220,7 @@ class CompetitionControllerAdmin extends Controller
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'maxParticipants' => 'required|integer|min:1',
+            'type' => 'required|in:individual,group',
         ]);
 
         $validated['slug'] = $this->generateUniqueSlug($validated['title'], $competition->id);

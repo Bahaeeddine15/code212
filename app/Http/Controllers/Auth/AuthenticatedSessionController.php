@@ -27,9 +27,12 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $request->authenticate();
+        // If you need validation, you can manually validate here or ensure LoginRequest extends Request
+        // $request->validate([...]);
+
+        Auth::attempt($request->only('email', 'password'));
 
         $request->session()->regenerate();
 

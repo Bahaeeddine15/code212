@@ -21,6 +21,10 @@ interface Competition {
   registrations: number;
   status: string;
   views: number;
+  type: string;
+  my_registration?: {
+    status: 'En attente' | 'Confirmé' | 'Refusé';
+  };
 }
 
 interface Props { competition: Competition }
@@ -47,6 +51,9 @@ export default function CompetitionShow({ competition }: Props) {
               <div className="flex items-center gap-3">
                 <Badge className={`${statusColors[competition.status] || 'bg-gray-500'} text-white`}>{competition.status}</Badge>
                 <Badge variant="outline">{competition.category}</Badge>
+                <Badge variant="outline" className="ml-2">
+                  {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
+                </Badge>
               </div>
               <div className="text-sm text-gray-500 flex items-center gap-1"><Eye className="w-4 h-4" /> {competition.views} vues</div>
             </div>
@@ -75,13 +82,35 @@ export default function CompetitionShow({ competition }: Props) {
               </CardContent>
             </Card>
 
+            {competition.my_registration && (
+              <Badge
+                className={
+                  competition.my_registration.status === 'En attente'
+                    ? 'bg-yellow-500 text-white'
+                    : competition.my_registration.status === 'Confirmé'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-red-600 text-white'
+                }
+              >
+                {competition.my_registration.status === 'En attente'
+                  ? 'En attente de validation'
+                  : competition.my_registration.status === 'Confirmé'
+                  ? 'Inscription acceptée'
+                  : 'Inscription refusée'}
+              </Badge>
+            )}
+
             <div className="flex gap-4 flex-col sm:flex-row">
-              {competition.status === 'Ouvert' ? (
+              {competition.status === 'Ouvert' && !competition.my_registration ? (
                 <Button asChild className="flex-1">
                   <Link href={`/competition/${competition.id}/register`}>S'inscrire</Link>
                 </Button>
               ) : (
-                <Button disabled className="flex-1">Inscriptions fermées</Button>
+                <Button disabled className="flex-1">
+                  {competition.status === 'Ouvert'
+                    ? "Vous avez déjà fait une demande"
+                    : "Inscriptions fermées"}
+                </Button>
               )}
               <Button variant="outline" asChild className="flex-1">
                 <Link href="/competition">← Retour</Link>
