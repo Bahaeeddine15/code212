@@ -14,7 +14,7 @@ interface DashboardHeaderProps {
 
 export default function DashboardHeader({ breadcrumbs = [], subtitle }: DashboardHeaderProps) {
   return (
-    <header className="w-full bg-[#0c152e] px-6 sm:px-12 py-10 sm:py-14 shadow-2xl relative overflow-hidden">
+    <header className="w-full bg-[#0c152e] px-6 sm:px-12 py-4 sm:py-6 shadow-2xl relative overflow-hidden">
       {/* Grid Background Effect */}
       <div className="absolute inset-0 opacity-25 pointer-events-none select-none">
         <div 
@@ -33,11 +33,11 @@ export default function DashboardHeader({ breadcrumbs = [], subtitle }: Dashboar
       <div className="relative z-10">
         <div className="flex flex-wrap items-center justify-between gap-6 md:gap-10">
           {/* Left Section - Breadcrumbs */}
-          <div className="flex items-center flex-wrap space-x-3 text-xl sm:text-2xl min-w-0 font-semibold">
+          <div className="flex items-center flex-wrap space-x-2 text-base sm:text-lg min-w-0 font-semibold">
             {breadcrumbs.map((item, index) => (
               <React.Fragment key={index}>
                 {index > 0 && (
-                  <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7 text-blue-300 flex-shrink-0" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-blue-300 flex-shrink-0" />
                 )}
                 {item.href && !item.isActive ? (
                   <a
@@ -50,7 +50,7 @@ export default function DashboardHeader({ breadcrumbs = [], subtitle }: Dashboar
                   <span
                     className={`truncate max-w-[180px] sm:max-w-xs ${
                       item.isActive || index === breadcrumbs.length - 1
-                        ? 'text-white font-extrabold text-3xl sm:text-4xl'
+                        ? 'text-white font-extrabold text-xl sm:text-2xl'
                         : 'text-blue-200'
                     }`}
                   >
@@ -66,8 +66,8 @@ export default function DashboardHeader({ breadcrumbs = [], subtitle }: Dashboar
             <img 
               src="/cd212.png"
               alt="CODE'212 Logo"
-              className="h-20 sm:h-28 md:h-32 w-auto object-contain"
-              style={{ maxWidth: '300px' }}
+              className="h-16 sm:h-20 md:h-24 w-auto object-contain"
+              style={{ maxWidth: '240px' }}
             />
           </div>
 
@@ -76,8 +76,8 @@ export default function DashboardHeader({ breadcrumbs = [], subtitle }: Dashboar
             <img 
               src="/all-robots.png"
               alt="CODE'212 Robot Mascots"
-              className="h-24 md:h-32 w-auto object-contain hover:scale-105 transition-transform duration-200"
-              style={{ maxWidth: '180px' }}
+              className="h-18 md:h-24 w-auto object-contain hover:scale-105 transition-transform duration-200"
+              style={{ maxWidth: '140px' }}
             />
           </div>
 
@@ -86,15 +86,15 @@ export default function DashboardHeader({ breadcrumbs = [], subtitle }: Dashboar
             <img 
               src="/code212-robots.png"
               alt="CODE'212 Robot Mascots"
-              className="h-12 sm:h-16 w-auto object-contain"
-              style={{ maxWidth: '100px' }}
+              className="h-10 sm:h-12 w-auto object-contain"
+              style={{ maxWidth: '80px' }}
             />
           </div>
         </div>
 
         {/* Subtitle Section */}
         {subtitle && (
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <p className="text-blue-200 text-lg sm:text-xl font-medium">
               {subtitle}
             </p>

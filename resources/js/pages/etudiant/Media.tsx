@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppContent } from '@/components/layout/app-content';
-import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
@@ -27,12 +26,13 @@ interface PageProps {
 }
 
 const headerBreadcrumbs = [
-  { title: "Dashboard Étudiant", href: "/dashboard" },
-  { title: "Galerie Media", href: "/media", isActive: true },
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Media", isActive: true },
 ];
 
 export default function Media({ mediaByFolder }: PageProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [folderSearch, setFolderSearch] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
   const [loading, setLoading] = useState(false);
 
@@ -45,6 +45,59 @@ export default function Media({ mediaByFolder }: PageProps) {
     return videoExts.includes(ext) ? 'Vidéo' : 'Image';
   };
 
+  const MediaCard = ({ media }: { media: MediaFile }) => (
+    <Card className="hover:shadow-md transition-shadow">
+      <CardContent className="p-4">
+        <div className="flex flex-col items-center">
+          {getMediaType(media.file_path) === 'Vidéo' ? (
+            <video
+              className="w-24 h-24 rounded-lg object-contain bg-gray-100 mb-2"
+              src={media.full_url || getImageUrl(media.file_path)}
+              muted
+              controls={false}
+            />
+          ) : (
+            <img
+              src={media.full_url || getImageUrl(media.file_path)}
+              alt={media.title}
+              className="w-24 h-24 rounded-lg object-contain bg-gray-100 mb-2"
+              style={{ userSelect: 'none' }}
+              onContextMenu={e => e.preventDefault()}
+            />
+          )}
+          <h3 className="font-medium text-center truncate w-full" title={media.title}>
+            {media.title}
+          </h3>
+          <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
+            <span className={`px-2 py-1 rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+              {getMediaType(media.file_path)}
+            </span>
+            <span>{formatDate(media.created_at)}</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const filteredAndSortedFolders = Object.entries(mediaByFolder)
+    .filter(([folderName]) => 
+      folderName.toLowerCase().includes(folderSearch.toLowerCase())
+    )
+    .sort(([a], [b]) => a.localeCompare(b));
+
+  const getFilteredMediaInFolder = (media: MediaFile[]) => {
+    const filtered = media.filter(item =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.original_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return filtered.sort((a, b) => {
+      if (sortBy === 'date') {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+      return a.title.localeCompare(b.title);
+    });
+  };
   // Filter and sort media
   const filteredMediaByFolder: typeof mediaByFolder = {};
   Object.entries(mediaByFolder).forEach(([folder, files]) => {
@@ -65,13 +118,20 @@ export default function Media({ mediaByFolder }: PageProps) {
 
   return (
     <>
+      <Head>
+        <title>Médiathèque</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      {/* Custom Dashboard Header */}
       <Head title="Médiathèque" />
       <DashboardHeader breadcrumbs={headerBreadcrumbs} />
       <AppShell variant="sidebar">
         <div className="flex w-full min-h-screen">
           <AppSidebar />
-          <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white">
-            <AppSidebarHeader breadcrumbs={headerBreadcrumbs} />
+          <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
             <div className="px-6 py-6 space-y-6">
               {/* Header */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
@@ -118,12 +178,93 @@ export default function Media({ mediaByFolder }: PageProps) {
                 </div>
               </div>
 
+              {/* Search and Filter Controls */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Rechercher dans les fichiers</label>
+                  <Input
+                    type="text"
+                    placeholder="Rechercher un fichier..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Rechercher un dossier</label>
+                  <Input
+                    type="text"
+                    placeholder="Rechercher un dossier..."
+                    value={folderSearch}
+                    onChange={(e) => setFolderSearch(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Trier par</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as 'date' | 'name')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="date">Date (plus récent d'abord)</option>
+                    <option value="name">Nom (A-Z)</option>
+                  </select>
+                </div>
+              </div>
               {/* Stats */}
               <div className="text-sm text-gray-500">
                 {totalFiltered} médias affichés sur {totalMedia}
               </div>
 
-              {/* Media by folder */}
+              {/* Media Grid by Folders */}
+              {filteredAndSortedFolders.length === 0 ? (
+                <div className="text-center py-12">
+                  <Folder className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun dossier trouvé</h3>
+                  <p className="text-gray-500">Aucun dossier ne correspond à votre recherche.</p>
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {filteredAndSortedFolders.map(([folderName, media]) => {
+                    const filteredMedia = getFilteredMediaInFolder(media);
+
+                    if (filteredMedia.length === 0 && searchTerm) return null;
+
+                    return (
+                      <Card key={folderName}>
+                        <CardHeader>
+                          <div className="flex items-center gap-3">
+                            <Folder className="w-5 h-5 text-blue-600" />
+                            <div>
+                              <CardTitle className="text-lg">{folderName}</CardTitle>
+                              <p className="text-sm text-gray-500">
+                                {filteredMedia.length} fichier{filteredMedia.length > 1 ? 's' : ''}
+                              </p>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          {filteredMedia.length === 0 ? (
+                            <div className="text-center py-8">
+                              <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                              <p className="text-gray-500">Aucun fichier dans ce dossier</p>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                              {filteredMedia.map((mediaFile) => (
+                                <MediaCard key={mediaFile.id} media={mediaFile} />
+                              ))}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Media by folder (legacy or alternative view) */}
               {Object.keys(filteredMediaByFolder).length === 0 ? (
                 <div className="text-gray-500 text-center py-12">Aucun média trouvé.</div>
               ) : (
@@ -169,6 +310,8 @@ export default function Media({ mediaByFolder }: PageProps) {
           </AppContent>
         </div>
       </AppShell>
+      
+      {/* Footer */}
       <Footer />
     </>
   );
