@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Etudiant;
 
 class PasswordController extends Controller
 {
@@ -30,7 +31,10 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
+        /** @var Etudiant $etudiant */
+        $etudiant = $request->user();
+
+        $etudiant->update([
             'password' => Hash::make($validated['password']),
         ]);
 
