@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
-class article extends Model
+class Article extends Model
 {
     /** @use HasFactory<\Database\Factories\ArticleFactory> */
     use HasFactory;
@@ -46,27 +46,38 @@ class article extends Model
     }
 
     /**
-     * Get the full URL for the featured image
+     * Get the image URLs as an array
      */
-    public function getFeaturedImageUrlAttribute(): ?string
+    public function getImageUrlsAttribute(): array
     {
         if (!$this->featured_image) {
-            return null;
+            return [];
         }
 
-        // Vérifier si le fichier existe
-        if (!file_exists(public_path($this->featured_image))) {
-            return asset('code212.png'); // Image par défaut
+        $decoded = json_decode($this->featured_image, true);
+        if (is_array($decoded)) {
+            // It's a JSON array of paths
+            return array_map(fn($p) => \Illuminate\Support\Facades\Storage::url($p), array_filter($decoded));
+        } else {
+            // It's a single path string
+            return [\Illuminate\Support\Facades\Storage::url($this->featured_image)];
         }
-
-        return asset($this->featured_image);
     }
 
     /**
-     * Check if article has a featured image
+     * Get the first image URL
      */
-    public function hasFeaturedImage(): bool
+    public function getFirstImageUrlAttribute(): ?string
     {
-        return !empty($this->featured_image) && file_exists(public_path($this->featured_image));
+        $urls = $this->getImageUrlsAttribute();
+        return $urls[0] ?? null;
+    }
+
+    /**
+     * Check if article has images
+     */
+    public function hasImages(): bool
+    {
+        return !empty($this->featured_image);
     }
 }

@@ -49,6 +49,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Détails public d'une compétition
     Route::get('competition/{id}', [App\Http\Controllers\CompetitionController::class, 'showDetails'])->name('competition.show');
     Route::get('articles', [App\Http\Controllers\ArticleController::class, 'index'])->name('etudiant.article');
+    Route::get('articles/featured', [App\Http\Controllers\ArticleController::class, 'featured'])->name('etudiant.article.featured');
+    Route::get('articles/latest', [App\Http\Controllers\ArticleController::class, 'latest'])->name('etudiant.article.latest');
     Route::get('articles/{article}', [App\Http\Controllers\ArticleController::class, 'show'])->name('etudiant.article.show');
 
     // Grouped media routes with custom parameter binding
