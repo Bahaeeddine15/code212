@@ -9,7 +9,7 @@ import Footer from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Folder, Image as ImageIcon, Video, RefreshCw } from 'lucide-react';
+import { Folder, Image as ImageIcon, Video, RefreshCw, Images } from 'lucide-react';
 
 interface MediaFile {
   id: number;
@@ -33,8 +33,8 @@ const headerBreadcrumbs = [
 
 export default function Media({ mediaByFolder }: PageProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [folderSearch, setFolderSearch] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
+  const [loading, setLoading] = useState(false);
 
   const getImageUrl = (filePath: string) => `/storage/${filePath.replace(/^\/+/, '')}`;
   const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('fr-FR');
@@ -45,94 +45,29 @@ export default function Media({ mediaByFolder }: PageProps) {
     return videoExts.includes(ext) ? 'Vidéo' : 'Image';
   };
 
-<<<<<<< Updated upstream
-  const MediaCard = ({ media }: { media: MediaFile }) => (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex flex-col items-center">
-          {getMediaType(media.file_path) === 'Vidéo' ? (
-            <video
-              className="w-24 h-24 rounded-lg object-contain bg-gray-100 mb-2"
-              src={media.full_url || getImageUrl(media.file_path)}
-              muted
-              controls={false}
-            />
-          ) : (
-            <img
-              src={media.full_url || getImageUrl(media.file_path)}
-              alt={media.title}
-              className="w-24 h-24 rounded-lg object-contain bg-gray-100 mb-2"
-              style={{ userSelect: 'none' }}
-              onContextMenu={e => e.preventDefault()}
-            />
-          )}
-          <h3 className="font-medium text-center truncate w-full" title={media.title}>
-            {media.title}
-          </h3>
-          <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
-            <span className={`px-2 py-1 rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
-              {getMediaType(media.file_path)}
-            </span>
-            <span>{formatDate(media.created_at)}</span>
-=======
-  const load = (params: Record<string, any> = {}) => {
-    setLoading(true);
-    const query = new URLSearchParams({ folder, search, ...params }).toString();
-    fetch(`/media/filter?${query}`)
-      .then(r => r.json())
-      .then(data => {
-        applyTypeFilter(data.medias.data);
-      })
-      .finally(() => setLoading(false));
-  };
+  // Filter and sort media
+  const filteredMediaByFolder: typeof mediaByFolder = {};
+  Object.entries(mediaByFolder).forEach(([folder, files]) => {
+    let filtered = files.filter(file =>
+      file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      file.original_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    if (sortBy === 'name') {
+      filtered = filtered.sort((a, b) => a.title.localeCompare(b.title));
+    } else {
+      filtered = filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+    if (filtered.length > 0) filteredMediaByFolder[folder] = filtered;
+  });
 
-  const mediaIcon = (m: MediaItem) => <ImageIcon className="w-6 h-6" />; // always image icon now
+  const totalMedia = Object.values(mediaByFolder).reduce((sum, files) => sum + files.length, 0);
+  const totalFiltered = Object.values(filteredMediaByFolder).reduce((sum, files) => sum + files.length, 0);
 
   return (
     <>
       <Head title="Médiathèque" />
-      
-      {/* Custom Dashboard Header */}
-      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
-      
-      <AppShell variant="sidebar">
-        <div className="flex w-full min-h-screen">
-          <AppSidebar />
-          <div className="sidebar-content-offset">
-            <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto min-h-screen w-full">
-              <AppSidebarHeader breadcrumbs={[{ title: 'Dashboard Étudiant', href: '/dashboard' }, { title: 'Médiathèque', href: '/media' }]} />
-              <div className="px-6 py-6 space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">Médiathèque</h1>
-            <p className="text-gray-600">Images et vidéos</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => load()} disabled={loading}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Rafraîchir
-            </Button>
->>>>>>> Stashed changes
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  // Compute stats from grouped data
-  const totalMedia = Object.values(mediaByFolder).reduce((sum, files) => sum + files.length, 0);
-  const totalFiltered = Object.entries(mediaByFolder).reduce((sum, [_, files]) => {
-    return sum + files.filter(file =>
-      file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.original_name.toLowerCase().includes(searchTerm.toLowerCase())
-    ).length;
-  }, 0);
-
-  return (
-    <div>
-      {/* 3. Render the header at the top */}
       <DashboardHeader breadcrumbs={headerBreadcrumbs} />
       <AppShell variant="sidebar">
-        <Head title="Galerie Media" />
         <div className="flex w-full min-h-screen">
           <AppSidebar />
           <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white">
@@ -150,136 +85,91 @@ export default function Media({ mediaByFolder }: PageProps) {
                   </div>
                 </div>
               </div>
-<<<<<<< Updated upstream
+
+              {/* Controls */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Rechercher un média..."
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className="w-64"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => setSearchTerm('')}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" /> Réinitialiser
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={sortBy === 'date' ? 'default' : 'outline'}
+                    onClick={() => setSortBy('date')}
+                  >
+                    Trier par date
+                  </Button>
+                  <Button
+                    variant={sortBy === 'name' ? 'default' : 'outline'}
+                    onClick={() => setSortBy('name')}
+                  >
+                    Trier par nom
+                  </Button>
+                </div>
+              </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-600">Total médias</p>
-                      <p className="text-3xl font-bold mt-2 text-emerald-600">{totalMedia}</p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-emerald-100">
-                      <Images className="w-8 h-8 text-emerald-600" />
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-600">Résultats filtrés</p>
-                      <p className="text-3xl font-bold mt-2 text-blue-600">{totalFiltered}</p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-blue-100">
-                      <Search className="w-8 h-8 text-blue-600" />
-                    </div>
-                  </div>
-                </div>
+              <div className="text-sm text-gray-500">
+                {totalFiltered} médias affichés sur {totalMedia}
               </div>
 
-              {/* Search and Filters */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                    <Input
-                      type="text"
-                      placeholder="Rechercher un média..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
-                    />
-                  </div>
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                    <Input
-                      type="text"
-                      placeholder="Rechercher un dossier..."
-                      value={folderSearch}
-                      onChange={e => setFolderSearch(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Media Gallery grouped by folder */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                    <Images className="w-7 h-7 mr-3 text-emerald-600" />
-                    Médias par dossier
-                  </h2>
-                </div>
-
-                <div className="space-y-8">
-                  {Object.entries(mediaByFolder)
-                    .filter(([folder]) =>
-                      folder.toLowerCase().includes(folderSearch.toLowerCase())
-                    )
-                    .map(([folder, files]) => {
-                      // Filter and sort inside each folder
-                      const filteredFiles = files
-                        .filter(file =>
-                          file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          file.original_name.toLowerCase().includes(searchTerm.toLowerCase())
-                        )
-                        .sort((a, b) => {
-                          if (sortBy === 'date') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                          if (sortBy === 'name') return a.title.localeCompare(b.title);
-                          return 0;
-                        });
-
-                      if (filteredFiles.length === 0) return null;
-                      return (
-                        <div key={folder} className="border border-gray-200 rounded-xl overflow-hidden mb-8">
-                          {/* Folder header is now clickable */}
-                          <Link
-                            href={route('media.folder', { folder })}
-                            className="block bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200 hover:bg-blue-100 transition"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="p-2 bg-blue-100 rounded-lg">
-                                <Folder className="w-6 h-6 text-blue-600" />
-                              </div>
-                              <div>
-                                <h3 className="text-xl font-bold text-gray-900">{folder}</h3>
-                                <p className="text-sm text-gray-600">{filteredFiles.length} média(s)</p>
-                              </div>
+              {/* Media by folder */}
+              {Object.keys(filteredMediaByFolder).length === 0 ? (
+                <div className="text-gray-500 text-center py-12">Aucun média trouvé.</div>
+              ) : (
+                Object.entries(filteredMediaByFolder).map(([folder, files]) => (
+                  <Card key={folder} className="mb-8">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Folder className="w-5 h-5" />
+                        {folder}
+                        <span className="text-xs text-gray-400 ml-2">({files.length})</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {files.map(file => (
+                          <div key={file.id} className="border rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                            <div className="mb-2">
+                              {getMediaType(file.file_path) === 'Vidéo' ? (
+                                <Video className="w-10 h-10 text-blue-400" />
+                              ) : (
+                                <ImageIcon className="w-10 h-10 text-blue-400" />
+                              )}
                             </div>
-                          </Link>
-                          {/* Media grid */}
-                          <div className="p-6">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                              {filteredFiles.map(file => (
-                                <MediaCard key={file.id} media={file} />
-                              ))}
-                            </div>
+                            <div className="font-semibold text-gray-800 text-center">{file.title}</div>
+                            <div className="text-xs text-gray-500 mb-1">{file.original_name}</div>
+                            <div className="text-xs text-gray-400 mb-2">{formatDate(file.created_at)}</div>
+                            <a
+                              href={getImageUrl(file.file_path)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline text-xs"
+                            >
+                              Voir le fichier
+                            </a>
                           </div>
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
           </AppContent>
         </div>
       </AppShell>
-    </div>
-=======
-            )}
-          </div>
-          </div>
-              </div>
-            </AppContent>
-          </div>
-        </div>
-      </AppShell>
-      
-      {/* Footer */}
       <Footer />
     </>
->>>>>>> Stashed changes
   );
 }
