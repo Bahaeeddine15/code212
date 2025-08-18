@@ -26,7 +26,7 @@ interface Article {
   status: "published" | "draft" | "archived";
   category: string;
   views: number;
-  images?: string[];
+  image?: string;
   created_at: string;
   updated_at: string;
 }
@@ -156,10 +156,10 @@ export default function ArticleShow({ article }: ArticleShowProps) {
               </div>
             </header>
 
-            {article.images && article.images.length > 0 && (
+            {article.image && (
               <div className="relative w-full h-96 md:h-[500px] overflow-hidden">
                 <img
-                  src={article.images[0]}
+                  src={article.image}
                   alt={article.title}
                   className="w-full h-full object-cover"
                 />

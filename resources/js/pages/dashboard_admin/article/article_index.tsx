@@ -33,7 +33,7 @@ interface Article {
   status: "published" | "draft" | "archived";
   category: string;
   views: number;
-  images?: string[];
+  image?: string;
 }
 
 interface ArticlesProps {
@@ -50,7 +50,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: "/admin/articles",
   },
 ];
-
 
 const ArticleCard = ({
   article,
@@ -100,16 +99,16 @@ const ArticleCard = ({
       className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
       onClick={handleCardClick}
     >
-      {article.images && article.images.length > 0 && (
+      {article.image && (
         <div className="h-48 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-500 flex items-center justify-center -m-6 mb-6 rounded-t-2xl">
           <img
-            src={article.images[0]}
+            src={article.image}
             alt={article.title}
             className="w-full h-full object-cover rounded-t-2xl"
           />
         </div>
       )}
-      {(!article.images || article.images.length === 0) && (
+      {!article.image && (
         <div className="h-48 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-500 flex items-center justify-center -m-6 mb-6 rounded-t-2xl">
           <FileText className="w-16 h-16 text-white opacity-90 drop-shadow-lg" />
         </div>

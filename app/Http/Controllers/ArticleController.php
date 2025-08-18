@@ -14,7 +14,7 @@ class ArticleController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = 12; // Articles per page
+        $perPage = 12;
         $search = $request->get('search');
         $category = $request->get('category');
 
@@ -22,7 +22,6 @@ class ArticleController extends Controller
             ->where('status', 'published')
             ->orderBy('published_at', 'desc');
 
-        // Add search functionality
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -31,45 +30,34 @@ class ArticleController extends Controller
             });
         }
 
-        // Add category filter
         if ($category && $category !== 'all') {
             $query->where('category', $category);
         }
 
         $articles = $query->paginate($perPage);
 
-        // Transform the paginated results
         $articles->through(function ($article) {
-            // Support multiple images: featured_image can be a JSON array or a single path
-            $images = [];
+            $image = null;
             if ($article->featured_image) {
-                $decoded = json_decode($article->featured_image, true);
-                if (is_array($decoded)) {
-                    $images = array_map(fn ($p) => Storage::url($p), array_filter($decoded));
-                } else {
-                    $images = [Storage::url($article->featured_image)];
-                }
+                $image = Storage::url($article->featured_image);
             }
-            $firstImage = $images[0] ?? null;
             
             return [
                 'id' => $article->id,
                 'title' => $article->title,
                 'excerpt' => $article->excerpt,
-                'content' => substr(strip_tags($article->content), 0, 150) . '...', // Preview content
+                'content' => substr(strip_tags($article->content), 0, 150) . '...',
                 'author' => $article->user->name,
                 'date' => $article->created_at->format('d-m-Y'),
                 'status' => $article->status,
                 'category' => $article->category,
                 'views' => $article->views,
-                'image' => $firstImage,
-                'images' => $images,
+                'image' => $image,
                 'published_at' => $article->published_at?->format('Y-m-d H:i:s'),
                 'reading_time' => $this->calculateReadingTime($article->content),
             ];
         });
 
-        // Get available categories for filter (cached for 1 hour)
         $categories = Cache::remember('article_categories', 3600, function () {
             return Article::where('status', 'published')
                 ->distinct()
@@ -89,13 +77,10 @@ class ArticleController extends Controller
         ]);
     }
 
-    /**
-     * Calculate estimated reading time
-     */
     private function calculateReadingTime($content)
     {
         $wordCount = str_word_count(strip_tags($content));
-        $readingSpeed = 200; // words per minute
+        $readingSpeed = 200;
         $minutes = ceil($wordCount / $readingSpeed);
         return $minutes;
     }
@@ -107,24 +92,16 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
-        // Only allow viewing published articles for students
         if ($article->status !== 'published') {
             abort(404, 'Article not found');
         }
 
         $article->increment('views');
         
-        // Prepare images array (supports JSON array or single path)
-        $images = [];
+        $image = null;
         if ($article->featured_image) {
-            $decoded = json_decode($article->featured_image, true);
-            if (is_array($decoded)) {
-                $images = array_map(fn ($p) => Storage::url($p), array_filter($decoded));
-            } else {
-                $images = [Storage::url($article->featured_image)];
-            }
+            $image = Storage::url($article->featured_image);
         }
-        $firstImage = $images[0] ?? null;
 
         $articleData = [
             'id' => $article->id,
@@ -136,8 +113,7 @@ class ArticleController extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'image' => $firstImage,
-            'images' => $images,
+            'image' => $image,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
             'published_at' => $article->published_at?->toISOString(),
@@ -150,17 +126,10 @@ class ArticleController extends Controller
 
     public function edit(Article $article)
     {
-        // Prepare images array for potential use in admin edit view
-        $images = [];
+        $image = null;
         if ($article->featured_image) {
-            $decoded = json_decode($article->featured_image, true);
-            if (is_array($decoded)) {
-                $images = array_map(fn ($p) => Storage::url($p), array_filter($decoded));
-            } else {
-                $images = [Storage::url($article->featured_image)];
-            }
+            $image = Storage::url($article->featured_image);
         }
-        $firstImage = $images[0] ?? null;
 
         $articleData = [
             'id' => $article->id,
@@ -172,8 +141,7 @@ class ArticleController extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'image' => $firstImage,
-            'images' => $images,
+            'image' => $image,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
         ];
@@ -243,28 +211,20 @@ class ArticleController extends Controller
         return redirect()->route('articles.index')->with('success', 'Article mis à jour avec succès!');
     }
 
-    /**
-     * Get featured articles for homepage or widgets
-     */
     public function featured(Request $request)
     {
         $limit = $request->get('limit', 6);
         
         $articles = Article::with('user')
             ->where('status', 'published')
-            ->orderBy('views', 'desc') // Most viewed first
+            ->orderBy('views', 'desc')
             ->orderBy('published_at', 'desc')
             ->limit($limit)
             ->get()
             ->map(function ($article) {
-                $images = [];
+                $image = null;
                 if ($article->featured_image) {
-                    $decoded = json_decode($article->featured_image, true);
-                    if (is_array($decoded)) {
-                        $images = array_map(fn ($p) => Storage::url($p), array_filter($decoded));
-                    } else {
-                        $images = [Storage::url($article->featured_image)];
-                    }
+                    $image = Storage::url($article->featured_image);
                 }
                 
                 return [
@@ -275,7 +235,7 @@ class ArticleController extends Controller
                     'date' => $article->created_at->format('d-m-Y'),
                     'category' => $article->category,
                     'views' => $article->views,
-                    'image' => $images[0] ?? null,
+                    'image' => $image,
                     'reading_time' => $this->calculateReadingTime($article->content),
                 ];
             });
@@ -283,9 +243,6 @@ class ArticleController extends Controller
         return response()->json($articles);
     }
 
-    /**
-     * Get latest articles
-     */
     public function latest(Request $request)
     {
         $limit = $request->get('limit', 5);

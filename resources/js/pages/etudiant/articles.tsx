@@ -25,7 +25,6 @@ interface Article {
   date: string;
   category: string;
   image?: string;
-  images?: string[];
 }
 
 interface PaginationData {
@@ -187,17 +186,9 @@ export default function Articles({ articles, categories, filters }: Props) {
                       className="group hover:shadow-lg transition-all duration-300 border-gray-200 overflow-hidden flex flex-col"
                     >
                       <div className="aspect-video bg-gray-100 overflow-hidden">
-                        {(
-                          article.images && article.images.length > 0
-                            ? article.images[0]
-                            : article.image
-                        ) ? (
+                        {article.image ? (
                           <img
-                            src={
-                              (article.images && article.images.length > 0
-                                ? article.images[0]
-                                : article.image) as string
-                            }
+                            src={article.image}
                             alt={article.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -318,7 +309,7 @@ export default function Articles({ articles, categories, filters }: Props) {
                 )}
               </>
             ) : (
-              <div className="text-center py-16 bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="text-center py-16 w-full bg-white rounded-lg shadow-sm border border-gray-200">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                   <svg
                     className="w-8 h-8 text-gray-400"

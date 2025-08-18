@@ -27,8 +27,7 @@ interface Article {
   status: "published" | "draft" | "archived";
   category: string;
   views: number;
-  images?: string[];
-  image_urls?: string[];
+  image?: string;
   created_at: string;
   updated_at: string;
 }
@@ -61,40 +60,24 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
     status: article.status,
   });
 
-  const [existingImages, setExistingImages] = useState<string[]>(
-    article.images || []
+  const [existingImage, setExistingImage] = useState<string | null>(
+    article.image || null
   );
-  const [newImages, setNewImages] = useState<File[]>([]);
+  const [newImage, setNewImage] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [imageError, setImageError] = useState("");
 
-  const handleRemoveExistingImage = (idx: number) => {
-    setExistingImages((prev) => prev.filter((_, i) => i !== idx));
-  };
-
-  const handleRemoveNewImage = (idx: number) => {
-    setNewImages((prev) => prev.filter((_, i) => i !== idx));
+  const handleRemoveExistingImage = () => {
+    setExistingImage(null);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const files = Array.from(e.target.files);
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
 
-    const canAdd = 5 - existingImages.length - newImages.length;
-    const filesToAdd = files.slice(0, canAdd);
-
-    if (existingImages.length + newImages.length + files.length > 5) {
-      setImageError(
-        "Vous pouvez ajouter jusqu'à 5 images maximum. Seules les 5 premières seront conservées."
-      );
-    } else {
-      setImageError("");
-    }
-
-    setNewImages((prev) =>
-      [...prev, ...filesToAdd].slice(0, 5 - existingImages.length)
-    );
+    setNewImage(file);
+    setImageError("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -104,8 +87,14 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
 
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => data.append(key, value));
-    newImages.forEach((file, idx) => data.append(`images[${idx}]`, file));
-    data.append("existing_images", JSON.stringify(existingImages));
+
+    if (newImage) {
+      data.append("image", newImage);
+    }
+
+    if (existingImage) {
+      data.append("existing_image", existingImage);
+    }
 
     router.post(`/admin/articles/${article.id}?_method=PUT`, data, {
       onSuccess: () => setIsSubmitting(false),
@@ -254,75 +243,63 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                 </Select>
               </div>
 
-              {/* Existing Images */}
-              {existingImages.length > 0 && (
+              {/* Existing Image */}
+              {existingImage && (
                 <div className="space-y-2">
-                  <Label>Image Actuelle</Label>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {existingImages.map((img, idx) => (
-                      <div key={idx} className="relative group">
-                        <img
-                          src={
-                            article.image_urls
-                              ? article.image_urls[idx]
-                              : `/storage/${img}`
-                          }
-                          alt={`existing-${idx}`}
-                          className="w-16 h-16 object-cover rounded border"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveExistingImage(idx)}
-                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
-                          title="Supprimer"
-                        >
-                          <X className="w-4 h-4 text-red-600" />
-                        </button>
-                      </div>
-                    ))}
+                  
+                  <div className="relative group inline-block">
+                    <img
+                      src={existingImage}
+                      alt="existing"
+                      className="w-32 h-32 object-cover rounded border"
+                    />
+
+                    <Label>Image Actuelle</Label>
+                    <button
+                      type="button"
+                      onClick={handleRemoveExistingImage}
+                      className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                      title="Supprimer"
+                    >
+                      <X className="w-4 h-4 text-red-600" />
+                    </button>
                   </div>
                 </div>
               )}
 
-              
-              {newImages.length > 0 && (
+              {newImage && (
                 <div className="space-y-2">
-                  <Label>Nouvelles images</Label>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {newImages.map((img, idx) => (
-                      <div key={idx} className="relative group">
-                        <img
-                          src={URL.createObjectURL(img)}
-                          alt={`new-${idx}`}
-                          className="w-16 h-16 object-cover rounded border"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveNewImage(idx)}
-                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
-                          title="Supprimer"
-                        >
-                          <X className="w-4 h-4 text-red-600" />
-                        </button>
-                      </div>
-                    ))}
+                  
+                  <div className="relative group inline-block">
+                    <img
+                      src={URL.createObjectURL(newImage)}
+                      alt="new"
+                      className="w-32 h-32 object-cover rounded border"
+                    />
+                    <Label>Nouvelle image</Label>
+                    <button
+                      type="button"
+                      onClick={() => setNewImage(null)}
+                      className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                      title="Supprimer"
+                    >
+                      <X className="w-4 h-4 text-red-600" />
+                    </button>
                   </div>
                 </div>
               )}
 
               {/* Image Upload Input */}
               <div className="space-y-2">
-                <Label htmlFor="images">Ajouter une image</Label>
+                <Label htmlFor="image">Changer l'image</Label>
                 <Input
-                  id="images"
+                  id="image"
                   type="file"
                   accept="image/*"
-                  multiple
                   onChange={handleImageChange}
-                  disabled={existingImages.length + newImages.length >= 5}
-                  className={errors.images ? "border-red-500" : ""}
+                  className={errors.image ? "border-red-500" : ""}
                 />
-                
+
                 {imageError && (
                   <p className="text-sm text-red-600">{imageError}</p>
                 )}
