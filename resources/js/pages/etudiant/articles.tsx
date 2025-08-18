@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { AppContent } from "@/components/layout/app-content";
 import { AppShell } from "@/components/layout/app-shell";
 import { AppSidebar } from "@/components/layout/app-sidebar";
@@ -16,6 +17,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+=======
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
+import { Head, Link } from '@inertiajs/react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, User, Eye } from 'lucide-react';
+import { type BreadcrumbItem } from '@/types';
+>>>>>>> ca9d5c2dba3d2586bbbd24cfecee7ec68290a758
 
 interface Article {
   published_at: string | number | Date;
@@ -56,11 +69,31 @@ interface Props {
   };
 }
 
+<<<<<<< HEAD
 export default function Articles({ articles, categories, filters }: Props) {
   const [searchTerm, setSearchTerm] = useState(filters.search || "");
   const [categoryFilter, setCategoryFilter] = useState(
     filters.category || "all"
   );
+=======
+export default function Articles({ articles }: Props) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { href: '/dashboard', title: 'Dashboard' },
+        { href: '/articles', title: 'Articles', isActive: true },
+    ];
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'published':
+                return 'bg-green-100 text-green-800';
+            case 'draft':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'archived':
+                return 'bg-gray-100 text-gray-800';
+            default:
+                return 'bg-blue-100 text-blue-800';
+        }
+    };
+>>>>>>> ca9d5c2dba3d2586bbbd24cfecee7ec68290a758
 
   const handleSearch = () => {
     router.get(

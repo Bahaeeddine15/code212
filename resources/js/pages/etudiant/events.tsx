@@ -35,12 +35,11 @@ function formatTimeRange(startISO: string, endISO: string){
     try{
         const s = new Date(startISO);
         const e = new Date(endISO);
-        const opts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
         const sameDay = s.toDateString() === e.toDateString();
         if(sameDay){
-            return `${s.toLocaleDateString('fr-FR')} ${s.toLocaleTimeString('fr-FR', opts)} – ${e.toLocaleTimeString('fr-FR', opts)}`;
+            return `${s.toLocaleDateString('fr-FR')} – ${e.toLocaleDateString('fr-FR')}`;
         }
-        return `${s.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} – ${e.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`;
+        return `${s.toLocaleDateString('fr-FR')} – ${e.toLocaleDateString('fr-FR')}`;
     }catch{
         return '';
     }
@@ -135,7 +134,7 @@ export default function Events({ events }: Props) {
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
                     <AppSidebar />
-                    <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
                         <div className="p-6">
                         <div className="flex flex-col lg:flex-row gap-6">
                             {/* LEFT PANEL */}

@@ -1,8 +1,8 @@
 import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
-import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +34,11 @@ interface Competition {
     updated_at: string;
     closed_at?: string;
     closed_by?: string;
+    type: 'individual' | 'group'; // Ajout du type de compétition
+    my_registration?: {
+        status: 'En attente' | 'Confirmé' | 'Refusé';
+        [key: string]: any;
+    }; // Ajout de la propriété my_registration
 }
 
 interface CompetitionPageProps {
@@ -53,7 +58,6 @@ interface FlashMessages {
     error?: string;
 }
 
-// Composant de notification
 const Notification = ({ type, message, onClose }: { type: 'success' | 'error', message: string, onClose: () => void }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -92,11 +96,6 @@ const Notification = ({ type, message, onClose }: { type: 'success' | 'error', m
     );
 };
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { href: '/dashboard', title: 'Dashboard Étudiant' },
-    { href: '/etudiant/competition', title: 'Compétitions' },
-];
-
 export default function CompetitionPage({ competitions, registrations, statistics }: CompetitionPageProps) {
     const { props } = usePage();
     const flash = props.flash as FlashMessages;
@@ -124,23 +123,30 @@ export default function CompetitionPage({ competitions, registrations, statistic
     };
 
     return (
-        <AppShell variant="sidebar">
-            <Head title="Compétitions" />
-            <div className="flex w-full min-h-screen">
-                <AppSidebar />
-                <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white">
-                    <AppSidebarHeader breadcrumbs={breadcrumbs} />
-                    
-                    {/* Notification */}
-                    {notification && (
-                        <Notification
-                            type={notification.type}
-                            message={notification.message}
-                            onClose={() => setNotification(null)}
-                        />
-                    )}
-
-                    <div className="container mx-auto p-6">
+        <>
+            <Head>
+                <title>Compétitions</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+            </Head>
+            
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+                        <div className="p-6">
+                            {/* Notification */}
+                            {notification && (
+                                <Notification
+                                    type={notification.type}
+                                    message={notification.message}
+                                    onClose={() => setNotification(null)}
+                                />
+                            )}
                         <div className="mb-8">
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">Compétitions</h1>
                             <p className="text-gray-600">Découvrez et participez aux compétitions de programmation</p>
@@ -184,6 +190,9 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                                 {competition.status}
                                             </Badge>
                                             <Badge variant="outline">{competition.category}</Badge>
+                                            <Badge variant="outline" className="ml-2">
+                                              {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
+                                            </Badge>
                                         </div>
                                         <CardTitle className="text-xl">{competition.title}</CardTitle>
                                         <CardDescription className="line-clamp-3">
@@ -215,7 +224,23 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                         </div>
                                         
                                         <div className="flex gap-2">
-                                            {competition.status === 'Ouvert' ? (
+                                            {competition.my_registration ? (
+                                                <Badge
+                                                    className={
+                                                        competition.my_registration.status === 'En attente'
+                                                            ? 'bg-yellow-500 text-white'
+                                                            : competition.my_registration.status === 'Confirmé'
+                                                            ? 'bg-green-600 text-white'
+                                                            : 'bg-red-600 text-white'
+                                                    }
+                                                >
+                                                    {competition.my_registration.status === 'En attente'
+                                                        ? 'En attente de validation'
+                                                        : competition.my_registration.status === 'Confirmé'
+                                                        ? 'Inscription acceptée'
+                                                        : 'Inscription refusée'}
+                                                </Badge>
+                                            ) : competition.status === 'Ouvert' ? (
                                                 <Button className="flex-1" asChild>
                                                     <Link href={`/competition/${competition.id}/register`}>
                                                         S'inscrire
@@ -240,9 +265,13 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                 <p className="text-gray-500 text-lg">Aucune compétition disponible pour le moment.</p>
                             </div>
                         )}
-                    </div>
-                </AppContent>
-            </div>
-        </AppShell>
+                        </div>
+                    </AppContent>
+                </div>
+            </AppShell>
+            
+            {/* Footer */}
+            <Footer />
+        </>
     );
 }

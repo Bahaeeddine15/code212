@@ -29,4 +29,9 @@ class Etudiant extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function eventRegistrations()
+    {
+        return $this->hasMany(EventRegistration::class, 'user_id');
+    }
 }

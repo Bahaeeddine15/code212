@@ -61,12 +61,14 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset" className="dark:bg-[#0A1F44] m-4 peer-data-[variant=inset]:rounded-xl peer-data-[variant=inset]:shadow-sm">
-            <SidebarContent className="bg-white pt-4 text-gray-800 rounded-xl shadow-2xl overflow-y-auto">
-                <NavMain items={mainNavItems} />
+        <Sidebar collapsible="icon" variant="inset" className="fixed-sidebar dark:bg-[#0A1F44] sidebar-no-scroll">
+            <SidebarContent className="bg-white text-gray-800 rounded-t-2xl shadow-2xl sidebar-content-no-scroll flex flex-col">
+                <div className="flex-1 pt-4">
+                    <NavMain items={mainNavItems} />
+                </div>
             </SidebarContent>
 
-            <SidebarFooter className="bg-white rounded-xl shadow-2xl mx-2 mb-2 mt-auto sticky bottom-2 z-10 border-t border-gray-100">
+            <SidebarFooter className="bg-white shadow-2xl mx-0 mb-0 p-2">
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

@@ -2,7 +2,7 @@ import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,21 +21,16 @@ interface Event {
   logo?: string | null;
   created_at?: string;
   updated_at?: string;
+  registrations_count?: number;
+  is_registered?: boolean;
+  seats_left?: number | null;
 }
 
 interface Props { event: Event }
 
 export default function EventDetail({ event }: Props) {
-  function fmt(d?: string | null){ return d ? new Date(d).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }) : '' }
-  function timeRange(a?: string|null, b?: string|null){
-    if(!a || !b) return '';
-    const s = new Date(a); const e = new Date(b);
-    const opts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
-    const sameDay = s.toDateString() === e.toDateString();
-    return sameDay
-      ? `${s.toLocaleTimeString('fr-FR', opts)} – ${e.toLocaleTimeString('fr-FR', opts)}`
-      : `${fmt(a)} – ${fmt(b)}`;
-  }
+  // Dates uniquement, sans heures
+  function fmt(d?: string | null){ return d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '' }
   const badgeColors: Record<string,string> = {
     upcoming: 'bg-emerald-100 text-emerald-800',
     ongoing: 'bg-blue-100 text-blue-800',
@@ -79,9 +74,16 @@ export default function EventDetail({ event }: Props) {
                   <CardTitle className="text-3xl">{event.title}</CardTitle>
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600 mt-3">
                     <div className="flex items-center gap-2"><CalendarIcon className="w-4 h-4" /> {fmt(event.start_date)} → {fmt(event.end_date)}</div>
-                    <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> {timeRange(event.start_date, event.end_date)}</div>
                     <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {event.location}</div>
-                    <div className="flex items-center gap-2"><Users className="w-4 h-4" /> Max {event.max_attendees}</div>
+                    <div className="flex items-center gap-2"><Users className="w-4 h-4" />
+                      {event.max_attendees ? (
+                        <>
+                          {event.registrations_count ?? 0}/{event.max_attendees} inscrits{typeof event.seats_left === 'number' ? ` · ${event.seats_left} places restantes` : ''}
+                        </>
+                      ) : (
+                        'Capacité non limitée'
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -90,6 +92,28 @@ export default function EventDetail({ event }: Props) {
                   ) : (
                     <p className="text-gray-600">Aucune description fournie.</p>
                   )}
+
+                  {/* Participate / Cancel actions */}
+                  <div className="mt-6">
+                    {event.status !== 'completed' && event.status !== 'cancelled' ? (
+                      event.is_registered ? (
+                        <button
+                          onClick={() => router.delete(`/events/${event.id}/register`)}
+                          className="px-4 py-2 rounded-md bg-rose-600 text-white hover:bg-rose-700"
+                        >
+                          Annuler ma participation
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => router.post(`/events/${event.id}/register`, {})}
+                          className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                          disabled={typeof event.seats_left === 'number' && event.seats_left <= 0}
+                        >
+                          Participer à cet événement
+                        </button>
+                      )
+                    ) : null}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -103,7 +127,7 @@ export default function EventDetail({ event }: Props) {
                   <div className="flex justify-between"><span>Catégorie</span><span className="font-medium">{event.category}</span></div>
                   <div className="flex justify-between"><span>Statut</span><span className="font-medium capitalize">{event.status}</span></div>
                   <div className="flex justify-between"><span>Lieu</span><span className="font-medium">{event.location}</span></div>
-                  <div className="flex justify-between"><span>Places</span><span className="font-medium">{event.max_attendees}</span></div>
+                  <div className="flex justify-between"><span>Places</span><span className="font-medium">{event.max_attendees ?? 'Illimité'}</span></div>
                 </CardContent>
               </Card>
             </aside>

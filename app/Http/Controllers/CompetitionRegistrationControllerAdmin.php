@@ -66,38 +66,24 @@ class CompetitionRegistrationControllerAdmin extends Controller
     /**
      * Approve a pending registration.
      */
-    public function approve(CompetitionRegistration $registration)
+    public function approve($id)
     {
-        if ($registration->status === 'Confirmé') {
-            return back()->with('info', "L'inscription est déjà confirmée.");
-        }
-        if ($registration->status === 'Refusé') {
-            return back()->with('error', "Cette inscription a déjà été refusée.");
-        }
+        $registration = CompetitionRegistration::findOrFail($id);
+        $registration->status = 'Confirmé';
+        $registration->save();
 
-        $registration->update([
-            'status' => 'Confirmé',
-        ]);
-
-        return back()->with('success', "Inscription confirmée avec succès.");
+        return back()->with('success', 'Inscription confirmée.');
     }
 
     /**
      * Reject a pending registration.
      */
-    public function reject(CompetitionRegistration $registration)
+    public function reject($id)
     {
-        if ($registration->status === 'Refusé') {
-            return back()->with('info', "L'inscription est déjà refusée.");
-        }
-        if ($registration->status === 'Confirmé') {
-            return back()->with('error', "Cette inscription a déjà été confirmée.");
-        }
+        $registration = CompetitionRegistration::findOrFail($id);
+        $registration->status = 'Refusé';
+        $registration->save();
 
-        $registration->update([
-            'status' => 'Refusé',
-        ]);
-
-        return back()->with('success', "Inscription refusée avec succès.");
+        return back()->with('success', 'Inscription refusée.');
     }
 }

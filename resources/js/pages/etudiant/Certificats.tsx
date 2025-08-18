@@ -1,7 +1,9 @@
 import { Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileDown } from 'lucide-react';
@@ -50,45 +52,49 @@ export default function Certificats() {
       {/* Custom Dashboard Header */}
       <DashboardHeader breadcrumbs={headerBreadcrumbs} />
       
-      <AppLayout>
+      <AppShell variant="sidebar">
+        <div className="flex w-full min-h-screen">
+          <AppSidebar />
+          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+            <div className="p-6">
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  Mes Certificats
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Tous les certificats obtenus après la validation d'une formation dans le lab Code212 – Université Cadi Ayyad.
+                </p>
+              </div>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Mes Certificats
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Tous les certificats obtenus après la validation d'une formation dans le lab Code212 – Université Cadi Ayyad.
-          </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mockCertificates.map((cert) => (
+                  <Card key={cert.id} className="overflow-hidden dark:bg-[#1a1a1c]">
+                    {cert.previewImage && (
+                      <img src={cert.previewImage} alt="Certificat" className="w-full h-40 object-cover" />
+                    )}
+
+                    <CardContent className="p-4 space-y-3">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{cert.formation}</h3>
+
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <p><span className="font-medium">Code :</span> {cert.code}</p>
+                        <p><span className="font-medium">Délivré le :</span> {cert.date}</p>
+                      </div>
+
+                      <Button variant="default" className="w-full flex items-center gap-2" asChild>
+                        <a href={cert.pdfUrl} target="_blank" rel="noopener noreferrer">
+                          <FileDown className="w-4 h-4" />
+                          Télécharger le certificat (PDF)
+                        </a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </AppContent>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockCertificates.map((cert) => (
-            <Card key={cert.id} className="overflow-hidden dark:bg-[#1a1a1c]">
-              {cert.previewImage && (
-                <img src={cert.previewImage} alt="Certificat" className="w-full h-40 object-cover" />
-              )}
-
-              <CardContent className="p-4 space-y-3">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{cert.formation}</h3>
-
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <p><span className="font-medium">Code :</span> {cert.code}</p>
-                  <p><span className="font-medium">Délivré le :</span> {cert.date}</p>
-                </div>
-
-                <Button variant="default" className="w-full flex items-center gap-2" asChild>
-                  <a href={cert.pdfUrl} target="_blank" rel="noopener noreferrer">
-                    <FileDown className="w-4 h-4" />
-                    Télécharger le certificat (PDF)
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-      </AppLayout>
+      </AppShell>
       
       {/* Footer */}
       <Footer />

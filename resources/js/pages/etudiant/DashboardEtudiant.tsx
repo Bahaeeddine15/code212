@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
 
 interface Stats {
   total_formations: number;
@@ -122,9 +125,13 @@ export default function Dashboard({ stats, formations, events, user }: Props) {
       {/* Custom Dashboard Header */}
       <DashboardHeader breadcrumbs={headerBreadcrumbs} />
       
-      <AppLayout>
-        <div className="flex flex-col gap-6 p-8 bg-transparent text-gray-900 dark:text-white font-[Poppins]">
-        <div className="space-y-4">
+      <AppShell variant="sidebar">
+        <div className="flex w-full min-h-screen">
+          <AppSidebar />
+          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+            <div className="p-6">
+              <div className="flex flex-col gap-6 text-gray-900 dark:text-white">
+              <div className="space-y-4">
           {/* Header Profile Section */}
           <div className="flex gap-6">
             {/* Left Card - Avatar */}
@@ -181,70 +188,70 @@ export default function Dashboard({ stats, formations, events, user }: Props) {
           {/* Stat Cards */}
           <div className="grid grid-cols-5 gap-3">
             <Card className="bg-white border-l-4 border-l-[#c5027f] shadow hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-2">
-                <div className="flex items-center justify-between pl-3">
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">{mockData.certificats.length}</p>
-                    <p className="text-xs text-gray-600">Certificats</p>
+              <CardContent className="px-3 py-1 pt-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-lg font-bold text-gray-900">{mockData.certificats.length}</p>
+                    <p className="text-xs text-gray-500">Certificats</p>
                   </div>
-                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
-                    <Medal className="h-8 w-8 text-[#c5027f]" />
+                  <div className="flex-shrink-0">
+                    <Medal className="h-5 w-5 text-[#c5027f]" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white border-l-4 border-l-[#6366f1] shadow hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-2">
-                <div className="flex items-center justify-between pl-3">
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total_formations}</p>
-                    <p className="text-xs text-gray-600">Formations</p>
+              <CardContent className="px-3 py-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-lg font-bold text-gray-900">{stats.total_formations}</p>
+                    <p className="text-xs text-gray-500">Formations</p>
                   </div>
-                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
-                    <ScrollText className="h-8 w-8 text-[#6366f1]" />
+                  <div className="flex-shrink-0">
+                    <ScrollText className="h-5 w-5 text-[#6366f1]" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white border-l-4 border-l-[#ff8500] shadow hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-2">
-                <div className="flex items-center justify-between pl-3">
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total_reservations}</p>
-                    <p className="text-xs text-gray-600">Réservations</p>
+              <CardContent className="px-3 py-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-lg font-bold text-gray-900">{stats.total_reservations}</p>
+                    <p className="text-xs text-gray-500">En attente</p>
                   </div>
-                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
-                    <ClipboardCheck className="h-8 w-8 text-[#ff8500]" />
+                  <div className="flex-shrink-0">
+                    <ClipboardCheck className="h-5 w-5 text-[#ff8500]" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white border-l-4 border-l-[#e11d48] shadow hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-2">
-                <div className="flex items-center justify-between pl-3">
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total_competitions || 0}</p>
-                    <p className="text-xs text-gray-600">Compétitions</p>
+              <CardContent className="px-3 py-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-lg font-bold text-gray-900">{stats.total_competitions || 0}</p>
+                    <p className="text-xs text-gray-500">Compétitions</p>
                   </div>
-                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
-                    <Trophy className="h-8 w-8 text-[#e11d48]" />
+                  <div className="flex-shrink-0">
+                    <Trophy className="h-5 w-5 text-[#e11d48]" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white border-l-4 border-l-[#2cd3a3] shadow hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-2">
-                <div className="flex items-center justify-between pl-3">
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total_events || 0}</p>
-                    <p className="text-xs text-gray-600">Événements</p>
+              <CardContent className="px-3 py-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-lg font-bold text-gray-900">{stats.total_events || 0}</p>
+                    <p className="text-xs text-gray-500">Événements</p>
                   </div>
-                  <div className="w-10 h-10 bg-transparent rounded-full flex items-center justify-center pr-3">
-                    <Calendar className="h-8 w-8 text-[#2cd3a3]" />
+                  <div className="flex-shrink-0">
+                    <Calendar className="h-5 w-5 text-[#2cd3a3]" />
                   </div>
                 </div>
               </CardContent>
@@ -335,8 +342,11 @@ export default function Dashboard({ stats, formations, events, user }: Props) {
             </CardContent>
           </Card>
         </div>
-      </div>
-      </AppLayout>
+              </div>
+            </div>
+          </AppContent>
+        </div>
+      </AppShell>
       
       {/* Footer */}
       <Footer />

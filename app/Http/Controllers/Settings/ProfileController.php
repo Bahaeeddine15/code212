@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Etudiant; // <-- Add this
 
 class ProfileController extends Controller
 {
@@ -29,13 +30,16 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        /** @var Etudiant $etudiant */
+        $etudiant = $request->user(); // or $request->user('etudiant') if using a custom guard
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $etudiant->fill($request->validated());
+
+        if ($etudiant->isDirty('email')) {
+            $etudiant->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $etudiant->save();
 
         return to_route('profile.edit');
     }
@@ -49,11 +53,12 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-        $user = $request->user();
+        /** @var Etudiant $etudiant */
+        $etudiant = $request->user();
 
-        Auth::logout();
+        Auth::guard('etudiant')->logout();
 
-        $user->delete();
+        $etudiant->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

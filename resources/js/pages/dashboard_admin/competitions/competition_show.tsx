@@ -27,6 +27,7 @@ interface Competition {
     date: string;
     location: string;
     category: string;
+    type: 'individual' | 'group'; // Added type property
     maxParticipants: number;
     deadline: string;
     description?: string;
@@ -43,6 +44,7 @@ interface Registration {
     phone: string;
     status: 'En attente' | 'Confirmé' | 'Refusé';
     registered_at: string;
+    groupMembers?: string; // <-- Add this
 }
 
 interface CompetitionShowProps {
@@ -163,6 +165,15 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                         {competition.category}
                                     </Badge>
                                     {getStatusBadge()}
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <Badge
+                                        variant="outline"
+                                        className="bg-indigo-50 text-indigo-700 border-indigo-200 text-sm px-3 py-1"
+                                    >
+                                        {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
+                                    </Badge>
                                 </div>
                             </div>
 
@@ -329,6 +340,29 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                                         >
                                                             <XCircle className="w-4 h-4 mr-1" /> Refuser
                                                         </Button>
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            {/* Group Members List - New Code Block */}
+                                            <div className="mt-2 text-xs text-gray-700">
+                                                {competition.type === 'group' && registration.groupMembers ? (
+                                                    <>
+                                                        <span className="font-semibold">Nom du groupe :</span> {registration.participant_name}
+                                                        <br />
+                                                        <span className="font-semibold">Membres :</span>
+                                                        <ul className="list-disc ml-4">
+                                                            {registration.groupMembers
+                                                                .split('\n')
+                                                                .filter(Boolean)
+                                                                .map((member, idx) => (
+                                                                    <li key={idx}>{member}</li>
+                                                                ))}
+                                                        </ul>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <span className="font-semibold">Nom :</span> {registration.participant_name}
                                                     </>
                                                 )}
                                             </div>

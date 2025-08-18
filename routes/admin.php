@@ -10,6 +10,7 @@ use App\Http\Controllers\FormationControllerAdmin;
 use App\Http\Controllers\ModuleControllerAdmin;
 use App\Http\Controllers\EventControllerAdmin;
 use App\Http\Controllers\ReservationControllerAdmin;
+use App\Http\Controllers\EventRegistrationAdminController;
 use App\Http\Controllers\CompetitionRegistrationControllerAdmin;
 use App\Http\Controllers\Auth\AdminAuthController;
 
@@ -34,6 +35,10 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->group(function (
 
     Route::resource('events', EventControllerAdmin::class);
     Route::patch('/events/{id}/status', [EventControllerAdmin::class, 'updateStatus'])->name('events.updateStatus');
+    // Event registrations management
+    Route::get('/events/{event}/registrations', [EventRegistrationAdminController::class, 'index'])->name('events.registrations');
+    Route::patch('/events/registrations/{registration}/approve', [EventRegistrationAdminController::class, 'approve'])->name('events.registrations.approve');
+    Route::patch('/events/registrations/{registration}/reject', [EventRegistrationAdminController::class, 'reject'])->name('events.registrations.reject');
 
     // Media routes - cleaned up
     Route::resource('media', MediaControllerAdmin::class)->parameters(['media' => 'media']);

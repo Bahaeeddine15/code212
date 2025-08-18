@@ -1,5 +1,27 @@
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+
+// Compteur animé pour les statistiques
+import React, { useEffect, useState } from 'react';
+
+function CountUp({ end, duration = 2, className = "" }) {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        let start = 0;
+        const increment = end / (duration * 60);
+        const interval = setInterval(() => {
+            start += increment;
+            if (start >= end) {
+                setCount(0);
+                start = 0;
+            } else {
+                setCount(Math.floor(start));
+            }
+        }, 1000 / 60);
+        return () => clearInterval(interval);
+    }, [end, duration]);
+    return <span className={className}>{count.toLocaleString()}+</span>;
+}
 import { MainFooter } from '@/components/main-footer';
 import {
     Code2,
@@ -23,11 +45,12 @@ export default function Welcome() {
             <Head title="Code212 - Center of Digital Empowerment">
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+                <link rel="stylesheet" href="/css/animations.css" />
             </Head>
 
             <div className="min-h-screen bg-gray-900">
                 {/* Header/Navigation */}
-                <header className="bg-gray-900 relative z-50">
+                <header className="bg-gray-900 fixed top-0 left-0 w-full z-50 shadow-lg">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-20">
                             {/* Logo */}
@@ -41,9 +64,9 @@ export default function Welcome() {
                             <nav className="hidden md:flex items-center space-x-8">
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">HOME</a>
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">OUR PROGRAMS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">CODE EVENTS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">REGISTRATION STEPS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT US</a>
+                                <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium">À PROPOS</Link>
+                                <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
+                                <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT</Link>
                             </nav>
 
                             {/* Auth Buttons */}
@@ -116,11 +139,11 @@ export default function Welcome() {
                                 </div>
 
                                 <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
-                                    CENTER OF
+                                    <span className="animated-gradient">CENTER OF</span>
                                     <br />
-                                    <span className="text-white">DIGITAL</span>
+                                    <span className="animated-gradient">DIGITAL</span>
                                     <br />
-                                    <span className="text-white">EMPOWERMENT</span>
+                                    <span className="animated-gradient">EMPOWERMENT</span>
                                 </h1>
 
                                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -143,7 +166,7 @@ export default function Welcome() {
                                 {/* Code/Tech Visual */}
                                 <div className="relative">
                                     {/* Background card with WE DO CODE text */}
-                                    <div className="absolute top-20 right-0 bg-gradient-to-r from-pink-500 to-purple-600 p-6 rounded-lg transform rotate-12 z-20">
+                                    <div className="absolute top-20 right-0 bg-gradient-to-r from-pink-500 to-purple-600 p-6 rounded-lg transform rotate-12 z-20 float-sticker">
                                         <div className="text-white font-bold text-2xl">WE</div>
                                         <div className="text-white font-bold text-2xl">DO</div>
                                         <div className="text-white font-bold text-2xl">CODE</div>
@@ -190,160 +213,202 @@ export default function Welcome() {
                     </div>
                 </section>
 
+
+                {/* Présentation avant les espaces */}
+                <section className="py-20 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-100">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
+                        <div className="flex-shrink-0 w-full md:w-1/2 flex justify-center items-center">
+                            <img src="/images/build-break-become.png" alt="Build Break Become" className="rounded-2xl shadow-2xl w-full max-w-2xl h-auto object-cover" />
+                        </div>
+                        <div className="w-full md:w-1/2 text-gray-900">
+                            <h2 className="text-5xl font-extrabold mb-6 bg-gradient-to-r from-blue-500 via-pink-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+                                Préparez votre avenir avec les certifications CODE 212
+                            </h2>
+                            <p className="text-lg mb-4">
+                                Les certifications CODE 212 ouvrent la porte aux carrières technologiques de demain. Elles couvrent un large éventail de compétences techniques et vous préparent à évoluer dans un monde numérique en constante évolution.<br /><br />
+                                Conçues pour répondre aux besoins du marché, elles vous apportent des savoir-faire pratiques, spécialisés et très demandés par les recruteurs. Avec ces certifications, vous augmentez votre valeur professionnelle et accédez à des opportunités dans les entreprises tech, startups, agences digitales, organisations publiques et bien plus encore.<br /><br />
+                                Mais nous allons plus loin que la simple formation. Chez CODE 212, vous bénéficiez d’un accompagnement personnalisé avec une équipe dédiée à votre réussite, d’un plan de carrière sur mesure pour atteindre vos objectifs, de formations toujours à jour adaptées aux tendances du secteur, ainsi que d’un accès illimité aux ressources pour progresser à votre rythme.<br /><br />
+                                <span className="font-bold text-blue-700">Avec CODE 212, vous ne suivez pas seulement une formation : vous construisez votre avenir dans la tech.</span>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Statistics Section */}
                 <section className="py-16 bg-gray-800 text-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                             <div>
-                                <div className="text-4xl font-bold text-pink-400 mb-2">176+</div>
+                                <div className="text-4xl font-bold text-pink-400 mb-2">
+                                    <CountUp end={176} duration={2} className="text-pink-400" />
+                                </div>
                                 <div className="text-gray-300">Total Institutions</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-bold text-purple-400 mb-2">123,320+</div>
+                                <div className="text-4xl font-bold text-purple-400 mb-2">
+                                    <CountUp end={123320} duration={2.5} className="text-purple-400" />
+                                </div>
                                 <div className="text-gray-300">Total Students</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-bold text-blue-400 mb-2">46+</div>
+                                <div className="text-4xl font-bold text-blue-400 mb-2">
+                                    <CountUp end={46} duration={1.5} className="text-blue-400" />
+                                </div>
                                 <div className="text-gray-300">Total Trackers</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-bold text-green-400 mb-2">104+</div>
+                                <div className="text-4xl font-bold text-green-400 mb-2">
+                                    <CountUp end={104} duration={2} className="text-green-400" />
+                                </div>
                                 <div className="text-gray-300">Total Certificates</div>
                             </div>
                         </div>
                     </div>
                 </section>
-
                 {/* Spaces Section */}
-                <section className="py-20 bg-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                                Chaque Espace Favorise L'innovation
+                <section className="py-20 bg-white w-full">
+                    <div className="w-full px-4 sm:px-8 lg:px-16">
+                        <div className="text-center mb-16 w-full">
+                            <h2 className="text-5xl md:text-6xl font-extrabold mb-8 bg-gradient-to-r from-blue-600 via-pink-500 via-purple-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg tracking-tight w-full">
+                                Des espaces pensés pour stimuler l’innovation
                             </h2>
-                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                                Nos espaces sont équipés de technologies modernes pour offrir
-                                un environnement d'apprentissage optimal
-                            </p>
                         </div>
-
-                        <div className="grid md:grid-cols-3 gap-8">
-                            {/* Coding Space */}
-                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl">
-                                <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                                    <Code2 className="w-8 h-8 text-white" />
+                        <div className="w-full">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 w-full">
+                                {/* CODAGE */}
+                                <div className="bg-blue-50 p-8 rounded-2xl flex flex-col items-start shadow-md">
+                                    <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
+                                        <Code2 className="w-8 h-8 text-white" />
+                                    </div>
+                                    <h3 className="text-2xl font-extrabold text-gray-900 mb-4">CODAGE</h3>
+                                    <p className="text-gray-700 mb-4">Cet espace est équipé de 100 machines modernes, permettant aux étudiants de travailler sur des projets de programmation et de développement.</p>
+                                    <ul className="text-gray-700 space-y-1">
+                                        <li>• Développement Web</li>
+                                        <li>• Programmation</li>
+                                        <li>• Collaboration</li>
+                                        <li>• Innovation</li>
+                                    </ul>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 mb-4">CODAGE</h3>
-                                <p className="text-gray-700 mb-6">
-                                    Cet espace est équipé de 100 machines modernes, permettant aux étudiants de
-                                    travailler sur des projets de programmation et de développement.
-                                </p>
-                                <ul className="space-y-2 text-gray-600">
-                                    <li>• Développement Web</li>
-                                    <li>• Programmation</li>
-                                    <li>• Collaboration</li>
-                                    <li>• Innovation</li>
-                                </ul>
-                            </div>
-
-                            {/* Presentation Space */}
-                            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl">
-                                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mb-6">
-                                    <Users className="w-8 h-8 text-white" />
+                                {/* PRÉSENTATIONS */}
+                                <div className="bg-purple-50 p-8 rounded-2xl flex flex-col items-start shadow-md">
+                                    <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-6">
+                                        <Users className="w-8 h-8 text-white" />
+                                    </div>
+                                    <h3 className="text-2xl font-extrabold text-gray-900 mb-4">PRÉSENTATIONS</h3>
+                                    <p className="text-gray-700 mb-4">Espace dédié aux présentations et démonstrations avec équipements audiovisuels de pointe pour partager et présenter les projets.</p>
+                                    <ul className="text-gray-700 space-y-1">
+                                        <li>• Présentations interactives</li>
+                                        <li>• Démonstrations</li>
+                                        <li>• Conférences</li>
+                                        <li>• Pitch sessions</li>
+                                    </ul>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 mb-4">PRÉSENTATIONS</h3>
-                                <p className="text-gray-700 mb-6">
-                                    Espace dédié aux présentations et démonstrations avec équipements audiovisuels
-                                    de pointe pour partager et présenter les projets.
-                                </p>
-                                <ul className="space-y-2 text-gray-600">
-                                    <li>• Présentations interactives</li>
-                                    <li>• Démonstrations</li>
-                                    <li>• Conférences</li>
-                                    <li>• Pitch sessions</li>
-                                </ul>
-                            </div>
-
-                            {/* Robotics Space */}
-                            <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl">
-                                <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mb-6">
-                                    <Cpu className="w-8 h-8 text-white" />
+                                {/* ROBOTIQUE */}
+                                <div className="bg-green-50 p-8 rounded-2xl flex flex-col items-start shadow-md">
+                                    <div className="w-14 h-14 bg-green-600 rounded-xl flex items-center justify-center mb-6">
+                                        <Cpu className="w-8 h-8 text-white" />
+                                    </div>
+                                    <h3 className="text-2xl font-extrabold text-gray-900 mb-4">ROBOTIQUE</h3>
+                                    <p className="text-gray-700 mb-4">Laboratoire de robotique équipé pour la conception, le prototypage et le développement d'objets connectés et systèmes robotiques.</p>
+                                    <ul className="text-gray-700 space-y-1">
+                                        <li>• IoT Development</li>
+                                        <li>• Prototypage</li>
+                                        <li>• Systèmes embarqués</li>
+                                        <li>• Intelligence artificielle</li>
+                                    </ul>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 mb-4">ROBOTIQUE</h3>
-                                <p className="text-gray-700 mb-6">
-                                    Laboratoire de robotique équipé pour la conception, le prototypage
-                                    et le développement d'objets connectés et systèmes robotiques.
-                                </p>
-                                <ul className="space-y-2 text-gray-600">
-                                    <li>• IoT Development</li>
-                                    <li>• Prototypage</li>
-                                    <li>• Systèmes embarqués</li>
-                                    <li>• Intelligence artificielle</li>
-                                </ul>
+                                {/* RECHERCHE */}
+                                <div className="bg-blue-100 p-8 rounded-2xl flex flex-col items-start shadow-md">
+                                    <div className="w-14 h-14 bg-blue-500 rounded-xl flex items-center justify-center mb-6">
+                                        <BookOpen className="w-8 h-8 text-white" />
+                                    </div>
+                                    <h3 className="text-2xl font-extrabold text-gray-900 mb-4">RECHERCHE</h3>
+                                    <p className="text-gray-700 mb-4">Espace dédié à la recherche, à l’exploration scientifique et à l’innovation technologique.</p>
+                                    <ul className="text-gray-700 space-y-1">
+                                        <li>• Projets scientifiques</li>
+                                        <li>• Veille technologique</li>
+                                        <li>• Publications</li>
+                                        <li>• Partenariats académiques</li>
+                                    </ul>
+                                </div>
+                                {/* CRÉATIVITÉ */}
+                                <div className="bg-pink-100 p-8 rounded-2xl flex flex-col items-start shadow-md">
+                                    <div className="w-14 h-14 bg-pink-600 rounded-xl flex items-center justify-center mb-6">
+                                        <Award className="w-8 h-8 text-white" />
+                                    </div>
+                                    <h3 className="text-2xl font-extrabold text-gray-900 mb-4">CRÉATIVITÉ</h3>
+                                    <p className="text-gray-700 mb-4">Espace pour stimuler la créativité, l’expression artistique et le design innovant.</p>
+                                    <ul className="text-gray-700 space-y-1">
+                                        <li>• Design graphique</li>
+                                        <li>• Projets artistiques</li>
+                                        <li>• Ateliers créatifs</li>
+                                        <li>• Collaboration interdisciplinaire</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Programs Section */}
-                <section className="py-20 bg-gray-50">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <section className="py-20 bg-gray-50 w-full">
+                    <div className="w-full px-4 sm:px-8 lg:px-16">
                         <div className="text-center mb-16">
-                            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                                Nos Programmes de Formation
-                            </h2>
+                            <h2 className="text-2xl font-bold">Nos Programmes de Formation</h2>
                             <p className="text-xl text-gray-600">
                                 Des formations certifiantes pour les métiers du numérique de demain
                             </p>
                         </div>
 
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                    <Code2 className="w-6 h-6 text-blue-600" />
+                        <div className="w-full">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 w-full">
+                                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                        <Code2 className="w-6 h-6 text-blue-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                        CODEUR & DÉVELOPPEUR
+                                    </h3>
+                                    <p className="text-gray-600 text-sm">
+                                        Formation complète en développement web et logiciel
+                                    </p>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                    CODEUR & DÉVELOPPEUR
-                                </h3>
-                                <p className="text-gray-600 text-sm">
-                                    Formation complète en développement web et logiciel
-                                </p>
-                            </div>
 
-                            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                                    <Globe className="w-6 h-6 text-purple-600" />
+                                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                                        <Globe className="w-6 h-6 text-purple-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                        DATA SPECIALISTS
+                                    </h3>
+                                    <p className="text-gray-600 text-sm">
+                                        Spécialisation en analyse et science des données
+                                    </p>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                    DATA SPECIALISTS
-                                </h3>
-                                <p className="text-gray-600 text-sm">
-                                    Spécialisation en analyse et science des données
-                                </p>
-                            </div>
 
-                            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                                    <Cpu className="w-6 h-6 text-green-600" />
+                                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                                        <Cpu className="w-6 h-6 text-green-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                        IOT DEVELOPER/ARCHITECT
+                                    </h3>
+                                    <p className="text-gray-600 text-sm">
+                                        Développement d'objets connectés et systèmes IoT
+                                    </p>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                    IOT DEVELOPER/ARCHITECT
-                                </h3>
-                                <p className="text-gray-600 text-sm">
-                                    Développement d'objets connectés et systèmes IoT
-                                </p>
-                            </div>
 
-                            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                                    <Award className="w-6 h-6 text-red-600" />
+                                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                                        <Award className="w-6 h-6 text-red-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                        SYSTÈMES ET SÉCURITÉ
+                                    </h3>
+                                    <p className="text-gray-600 text-sm">
+                                        Sécurité informatique et administration systèmes
+                                    </p>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                    SYSTÈMES ET SÉCURITÉ
-                                </h3>
-                                <p className="text-gray-600 text-sm">
-                                    Sécurité informatique et administration systèmes
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -417,4 +482,19 @@ export default function Welcome() {
             </div>
         </>
     );
+}
+
+function useInView(ref, options = {}) {
+    const [inView, setInView] = useState(false);
+    useEffect(() => {
+        const observer = new window.IntersectionObserver(
+            ([entry]) => setInView(entry.isIntersecting),
+            options
+        );
+        if (ref.current) observer.observe(ref.current);
+        return () => {
+            if (ref.current) observer.unobserve(ref.current);
+        };
+    }, [ref, options]);
+    return inView;
 }
