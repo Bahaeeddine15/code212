@@ -105,6 +105,9 @@ const EventCard = ({
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800">{event.title}</h3>
                         <p className="text-sm text-gray-600">{event.description}</p>
+                        {('type' in event) && (
+                            <p className="text-xs text-gray-500 mt-1">Type: {(event as any).type}</p>
+                        )}
                     </div>
                 </div>
                 {getStatusBadge()}
@@ -117,13 +120,6 @@ const EventCard = ({
                         {fmtDate(event.date)}
                         {event.endDate && !sameDay(event.date, event.endDate) && (
                             <> - {fmtDate(event.endDate)}</>
-                        )}
-                    </span>
-                    <Clock className="w-4 h-4 ml-3" />
-                    <span>
-                        {fmtTime(event.date)}
-                        {event.endDate && (
-                            <> - {fmtTime(event.endDate)}</>
                         )}
                     </span>
                 </div>
@@ -141,7 +137,7 @@ const EventCard = ({
                 <div className="flex items-center justify-between text-sm mb-1">
                     <span className="text-gray-600">Inscription</span>
                     <span className="font-medium text-gray-800">
-                    { (typeof event.attendees === 'number' && typeof event.maxAttendees === 'number' && event.maxAttendees !== 0)
+                    { (typeof event.attendees === 'number' && typeof event.maxAttendees === 'number' && event.maxAttendees > 0)
                         ? Math.round((event.attendees / event.maxAttendees) * 100) + '%'
                         : '0%' }
                     </span>
@@ -149,7 +145,7 @@ const EventCard = ({
                 <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                         className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(event.attendees / event.maxAttendees) * 100}%` }}
+                        style={{ width: `${(event.maxAttendees>0 ? (event.attendees / event.maxAttendees) * 100 : 0)}%` }}
                     ></div>
                 </div>
             </div>
@@ -157,6 +153,12 @@ const EventCard = ({
             <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">{event.category}</span>
                 <div className="flex space-x-2">
+                    <Link
+                        href={`/admin/events/${event.id}/registrations`}
+                        className="px-3 py-1 bg-indigo-600 text-white text-xs rounded-xl hover:bg-indigo-700 transition-all duration-200 font-medium"
+                    >
+                        Inscriptions
+                    </Link>
                     <Link
                         href={`/admin/events/${event.id}/edit`}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200">

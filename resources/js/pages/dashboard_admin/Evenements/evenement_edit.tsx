@@ -20,6 +20,25 @@ interface Props {
 }
 
 export default function EventEdit({ event }: Props) {
+    const CATEGORIES = [
+        'Cybersécurité',
+        'DevOps & Cloud',
+        'Intelligence Artificielle',
+        'Entrepreneuriat Tech',
+        'Design & UX',
+        'Développement Web',
+        'Événement Spécial',
+        'Data Science',
+        'Mobile Development',
+    ];
+    const normalizeDateInput = (v: string) => {
+        if(!v) return '';
+        // Already YYYY-MM-DD
+        if (/^\d{4}-\d{2}-\d{2}/.test(v)) return v.slice(0,10);
+        const d = new Date(v);
+        return isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0];
+    };
+
     const [form, setForm] = useState({
         title: event.title ?? '',
         description: event.description ?? '',
@@ -27,7 +46,8 @@ export default function EventEdit({ event }: Props) {
         end_date: event.end_date ?? '',
         location: event.location ?? '',
         maxAttendees: event.maxAttendees?.toString() ?? '',
-        category: event.category ?? '',
+    category: event.category ?? '',
+    type: (event as any).type ?? 'Conférence',
         status: event.status ?? 'upcoming',
     });
 
@@ -66,13 +86,13 @@ export default function EventEdit({ event }: Props) {
                         {errors.description && <p className="text-red-600 text-sm">{errors.description}</p>}
                     </div>
                     <div>
-                        <label className="block mb-1 font-medium">Date et heure de début</label>
-                        <input type="datetime-local" value={form.start_date} onChange={e => handleChange('start_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
+                        <label className="block mb-1 font-medium">Date de début</label>
+                        <input type="date" value={normalizeDateInput(form.start_date)} onChange={e => handleChange('start_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
                         {errors.start_date && <p className="text-red-600 text-sm">{errors.start_date}</p>}
                     </div>
                     <div>
-                        <label className="block mb-1 font-medium">Date et heure de fin</label>
-                        <input type="datetime-local" value={form.end_date} onChange={e => handleChange('end_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
+                        <label className="block mb-1 font-medium">Date de fin</label>
+                        <input type="date" value={normalizeDateInput(form.end_date)} onChange={e => handleChange('end_date', e.target.value)} className="w-full border rounded px-3 py-2" required />
                         {errors.end_date && <p className="text-red-600 text-sm">{errors.end_date}</p>}
                     </div>
                     <div>
@@ -88,11 +108,20 @@ export default function EventEdit({ event }: Props) {
                     <div>
                         <label className="block mb-1 font-medium">Catégorie</label>
                         <select value={form.category} onChange={e => handleChange('category', e.target.value)} className="w-full border rounded px-3 py-2">
-                            <option value="Conférence">Conférence</option>
-                            <option value="Workshop">Workshop</option>
-                            <option value="Séminaire">Séminaire</option>
+                            {CATEGORIES.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
                         </select>
                         {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
+                    </div>
+                    <div>
+                        <label className="block mb-1 font-medium">Type</label>
+                        <select value={form.type} onChange={e => handleChange('type', e.target.value)} className="w-full border rounded px-3 py-2">
+                            <option value="Conférence">Conférence</option>
+                            <option value="Séminaire">Séminaire</option>
+                            <option value="Workshop">Workshop</option>
+                        </select>
+                        {(errors as any).type && <p className="text-red-600 text-sm">{(errors as any).type}</p>}
                     </div>
                     <button type="submit" className="w-full bg-indigo-600 text-white py-2 rounded flex items-center justify-center gap-2">
                         <Save className="w-4 h-4" /> Sauvegarder

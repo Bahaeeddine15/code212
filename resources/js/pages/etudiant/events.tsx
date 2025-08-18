@@ -35,12 +35,11 @@ function formatTimeRange(startISO: string, endISO: string){
     try{
         const s = new Date(startISO);
         const e = new Date(endISO);
-        const opts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
         const sameDay = s.toDateString() === e.toDateString();
         if(sameDay){
-            return `${s.toLocaleDateString('fr-FR')} ${s.toLocaleTimeString('fr-FR', opts)} – ${e.toLocaleTimeString('fr-FR', opts)}`;
+            return `${s.toLocaleDateString('fr-FR')} – ${e.toLocaleDateString('fr-FR')}`;
         }
-        return `${s.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} – ${e.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}`;
+        return `${s.toLocaleDateString('fr-FR')} – ${e.toLocaleDateString('fr-FR')}`;
     }catch{
         return '';
     }

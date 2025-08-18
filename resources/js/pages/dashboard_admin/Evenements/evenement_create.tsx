@@ -20,6 +20,18 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function EventCreate() {
+    // Catégories disponibles (alignées avec la page Étudiant)
+    const CATEGORIES = [
+        'Cybersécurité',
+        'DevOps & Cloud',
+        'Intelligence Artificielle',
+        'Entrepreneuriat Tech',
+        'Design & UX',
+        'Développement Web',
+        'Événement Spécial',
+        'Data Science',
+        'Mobile Development',
+    ];
     const [form, setForm] = useState({
         title: '',
         description: '',
@@ -27,7 +39,8 @@ export default function EventCreate() {
         end_date: '',
         location: '',
         maxAttendees: '',
-        category: 'Conférence',
+    category: 'Développement Web',
+    type: 'Conférence',
     });
     const [errors, setErrors] = useState<{[key: string]: string}>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -113,18 +126,33 @@ export default function EventCreate() {
                                         onChange={e => handleChange('category', e.target.value)}
                                         className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200"
                                     >
-                                        <option value="Conférence">Conférence</option>
-                                        <option value="Workshop">Workshop</option>
-                                        <option value="Séminaire">Séminaire</option>
+                                        {CATEGORIES.map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
                                     </select>
                                     {errors.category && <p className="text-sm text-red-600">{errors.category}</p>}
                                 </div>
 
-                                {/* Date et heure de début */}
+                                {/* Type */}
                                 <div className="space-y-3">
-                                    <label className="text-sm font-semibold text-gray-700">Date et heure de début *</label>
+                                    <label className="text-sm font-semibold text-gray-700">Type *</label>
+                                    <select
+                                        value={form.type}
+                                        onChange={e => handleChange('type', e.target.value)}
+                                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                    >
+                                        <option value="Conférence">Conférence</option>
+                                        <option value="Séminaire">Séminaire</option>
+                                        <option value="Workshop">Workshop</option>
+                                    </select>
+                                    {errors.type && <p className="text-sm text-red-600">{errors.type}</p>}
+                                </div>
+
+                                {/* Date de début */}
+                                <div className="space-y-3">
+                                    <label className="text-sm font-semibold text-gray-700">Date de début *</label>
                                     <input
-                                        type="datetime-local"
+                                        type="date"
                                         value={form.start_date}
                                         onChange={e => handleChange('start_date', e.target.value)}
                                         className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.start_date ? 'border-red-500' : 'border-gray-200'}`}
@@ -133,11 +161,11 @@ export default function EventCreate() {
                                     {errors.start_date && <p className="text-sm text-red-600">{errors.start_date}</p>}
                                 </div>
 
-                                {/* Date et heure de fin */}
+                                {/* Date de fin */}
                                 <div className="space-y-3">
-                                    <label className="text-sm font-semibold text-gray-700">Date et heure de fin *</label>
+                                    <label className="text-sm font-semibold text-gray-700">Date de fin *</label>
                                     <input
-                                        type="datetime-local"
+                                        type="date"
                                         value={form.end_date}
                                         onChange={e => handleChange('end_date', e.target.value)}
                                         className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.end_date ? 'border-red-500' : 'border-gray-200'}`}

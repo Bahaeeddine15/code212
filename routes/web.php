@@ -28,6 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('events', [App\Http\Controllers\EventController::class, 'index'])->name('etudiant.events');
     Route::get('events/{event}', [App\Http\Controllers\EventController::class, 'show'])->name('etudiant.events.show');
+    // Event participation
+    Route::post('events/{event}/register', [App\Http\Controllers\EventRegistrationController::class, 'store'])->name('events.register');
+    Route::delete('events/{event}/register', [App\Http\Controllers\EventRegistrationController::class, 'destroy'])->name('events.unregister');
     Route::get('competition', [App\Http\Controllers\CompetitionController::class, 'index'])->name('etudiant.competition');
     Route::get('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'showRegistration'])->name('competition.register');
     Route::post('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'storeRegistration'])->name('competition.store');

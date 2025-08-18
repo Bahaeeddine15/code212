@@ -17,6 +17,7 @@ class Event extends Model
         'location',
         'max_attendees',
         'category',
+    'type',
         'status',
         'logo',
     ];
@@ -25,4 +26,24 @@ class Event extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+
+    public function registrations()
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+
+    // Compute a consistent status from dates and stored status
+    public function computedStatus(): string
+    {
+        if ($this->status === 'cancelled') {
+            return 'cancelled';
+        }
+        if ($this->end_date && $this->end_date->isPast()) {
+            return 'completed';
+        }
+        if ($this->start_date && $this->start_date->isFuture()) {
+            return 'upcoming';
+        }
+        return 'ongoing';
+    }
 }
