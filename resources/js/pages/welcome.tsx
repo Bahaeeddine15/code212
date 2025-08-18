@@ -41,7 +41,7 @@ export default function Welcome() {
                             <nav className="hidden md:flex items-center space-x-8">
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">HOME</a>
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">OUR PROGRAMS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">CODE EVENTS</a>
+                                <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium">À PROPOS</Link>
                                 <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
                                 <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT</Link>
                             </nav>
