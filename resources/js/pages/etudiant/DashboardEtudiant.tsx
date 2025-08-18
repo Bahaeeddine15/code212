@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
 
 interface Stats {
   total_formations: number;
@@ -122,9 +125,13 @@ export default function Dashboard({ stats, formations, events, user }: Props) {
       {/* Custom Dashboard Header */}
       <DashboardHeader breadcrumbs={headerBreadcrumbs} />
       
-      <AppLayout>
-        <div className="flex flex-col gap-6 p-8 bg-transparent text-gray-900 dark:text-white font-[Poppins]">
-        <div className="space-y-4">
+      <AppShell variant="sidebar">
+        <div className="flex w-full min-h-screen">
+          <AppSidebar />
+          <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
+            <div className="p-6">
+              <div className="flex flex-col gap-6 text-gray-900 dark:text-white">
+              <div className="space-y-4">
           {/* Header Profile Section */}
           <div className="flex gap-6">
             {/* Left Card - Avatar */}
@@ -335,8 +342,11 @@ export default function Dashboard({ stats, formations, events, user }: Props) {
             </CardContent>
           </Card>
         </div>
-      </div>
-      </AppLayout>
+              </div>
+            </div>
+          </AppContent>
+        </div>
+      </AppShell>
       
       {/* Footer */}
       <Footer />

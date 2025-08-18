@@ -42,8 +42,8 @@ export default function Welcome() {
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">HOME</a>
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">OUR PROGRAMS</a>
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">CODE EVENTS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">REGISTRATION STEPS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT US</a>
+                                <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
+                                <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT</Link>
                             </nav>
 
                             {/* Auth Buttons */}
