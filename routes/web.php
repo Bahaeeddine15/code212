@@ -10,6 +10,14 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::get('/clubs-partners', function () {
+    return Inertia::render('clubs-partners');
+})->name('clubs.partners');
+
+Route::get('/contact', function () {
+    return Inertia::render('contact');
+})->name('contact');
+
 require __DIR__ . '/admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
