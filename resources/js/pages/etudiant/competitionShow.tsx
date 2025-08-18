@@ -44,7 +44,7 @@ export default function CompetitionShow({ competition }: Props) {
       <Head title={`Compétition - ${competition.title}`} />
       <div className="flex w-full min-h-screen">
         <AppSidebar />
-        <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white">
+        <AppContent variant="sidebar" className="flex-1 bg-white">
           <AppSidebarHeader breadcrumbs={breadcrumbs} />
           <div className="container mx-auto p-6 max-w-4xl space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-4">

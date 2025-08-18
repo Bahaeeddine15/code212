@@ -131,7 +131,7 @@ export default function Media({ mediaByFolder }: PageProps) {
       <AppShell variant="sidebar">
         <div className="flex w-full min-h-screen">
           <AppSidebar />
-          <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
+          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
             <div className="px-6 py-6 space-y-6">
               {/* Header */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">

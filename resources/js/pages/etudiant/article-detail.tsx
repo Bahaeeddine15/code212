@@ -1,7 +1,8 @@
 import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
-import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,10 @@ interface Props {
 }
 
 export default function ArticleDetail({ article }: Props) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { href: '/dashboard', title: 'Dashboard' },
+        { href: '/articles', title: 'Articles', isActive: true },
+    ];
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'published':
@@ -56,26 +61,24 @@ export default function ArticleDetail({ article }: Props) {
     };
 
     return (
-        <AppShell variant="sidebar">
+        <>
             <Head title={`${article.title} - Articles`} />
-            <AppSidebar />
-            <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
-                <AppSidebarHeader 
-                    breadcrumbs={[
-                        { title: 'Dashboard Étudiant', href: '/dashboard' },
-                        { title: 'Articles', href: '/articles' },
-                        { title: article.title, href: '' }
-                    ]} 
-                />
-                
-                <div className="p-6 space-y-6 max-w-4xl mx-auto">
-                    {/* Back Button */}
-                    <Link href="/articles">
-                        <Button variant="outline" className="mb-4">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Retour aux articles
-                        </Button>
-                    </Link>
+            
+            <DashboardHeader breadcrumbs={breadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="flex-1 bg-white">
+                        <div className="p-6 font-sans">
+                            <div className="space-y-6 max-w-4xl mx-auto">
+                                {/* Back Button */}
+                                <Link href="/articles">
+                                    <Button variant="outline" className="mb-4">
+                                        <ArrowLeft className="w-4 h-4 mr-2" />
+                                        Retour aux articles
+                                    </Button>
+                                </Link>
 
                     {/* Article Card */}
                     <Card className="overflow-hidden">
@@ -181,16 +184,22 @@ export default function ArticleDetail({ article }: Props) {
                         </CardContent>
                     </Card>
 
-                    {/* Back to Articles Button */}
-                    <div className="text-center pt-6">
-                        <Link href="/articles">
-                            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                                Voir plus d'articles
-                            </Button>
-                        </Link>
-                    </div>
+                                {/* Back to Articles Button */}
+                                <div className="text-center pt-6">
+                                    <Link href="/articles">
+                                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                                            Voir plus d'articles
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </AppContent>
                 </div>
-            </AppContent>
-        </AppShell>
+            </AppShell>
+            
+            {/* Footer */}
+            <Footer />
+        </>
     );
 }

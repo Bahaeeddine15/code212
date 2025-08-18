@@ -1,7 +1,6 @@
 import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
-import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
 import { Head, Link } from '@inertiajs/react';
@@ -9,13 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Eye } from 'lucide-react';
 import { type BreadcrumbItem } from '@/types';
-import { type PropsWithChildren } from 'react';
-
-// Create breadcrumbs for the header component
-const headerBreadcrumbs = [
-  { title: "Dashboard", href: "/dashboard" },
-  { title: "Articles", isActive: true },
-];
 
 interface Article {
     id: number;
@@ -38,6 +30,10 @@ interface Props {
 }
 
 export default function Articles({ articles }: Props) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { href: '/dashboard', title: 'Dashboard' },
+        { href: '/articles', title: 'Articles', isActive: true },
+    ];
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'published':
@@ -67,37 +63,30 @@ export default function Articles({ articles }: Props) {
         <>
             <Head title="Articles" />
             
-            {/* Custom Dashboard Header */}
-            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            <DashboardHeader breadcrumbs={breadcrumbs} />
             
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
                     <AppSidebar />
-                    <div className="sidebar-content-offset">
-                        <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto min-h-screen w-full">
-                            <AppSidebarHeader 
-                                breadcrumbs={[
-                                    { title: 'Dashboard Étudiant', href: '/dashboard' },
-                                    { title: 'Articles', href: '/articles' }
-                                ]} 
-                            />
-                            <div className="p-6 space-y-6">
-                        {/* Header */}
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <h1 className="text-3xl font-bold text-gray-900">Articles</h1>
-                                <p className="text-gray-600 mt-2">
-                                    Découvrez nos derniers articles et ressources
-                                </p>
-                            </div>
-                            <Badge variant="secondary" className="text-sm">
-                                {articles.length} article{articles.length > 1 ? 's' : ''}
-                            </Badge>
-                        </div>
+                    <AppContent variant="sidebar" className="flex-1 bg-white">
+                        <div className="p-6 font-sans">
+                            <div className="space-y-6">
+                                {/* Header */}
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <h1 className="text-3xl font-bold text-gray-900 font-sans">Articles</h1>
+                                        <p className="text-gray-600 mt-2 font-sans">
+                                            Découvrez nos derniers articles et ressources
+                                        </p>
+                                    </div>
+                                    <Badge variant="secondary" className="text-sm">
+                                        {articles.length} article{articles.length > 1 ? 's' : ''}
+                                    </Badge>
+                                </div>
 
-                        {/* Articles Grid */}
-                        {articles.length > 0 ? (
-                            <div className="space-y-4">
+                                {/* Articles Grid */}
+                                {articles.length > 0 ? (
+                                    <div className="space-y-4">
                                 {articles.map((article) => (
                                     <Card key={article.id} className="hover:shadow-lg transition-shadow duration-200">
                                         <div className="flex">
@@ -174,23 +163,25 @@ export default function Articles({ articles }: Props) {
                                     </Card>
                                 ))}
                             </div>
-                        ) : (
-                            /* Empty State */
-                            <div className="text-center py-12">
-                                <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun article disponible</h3>
-                                <p className="text-gray-500">Il n'y a pas encore d'articles publiés.</p>
+                                ) : (
+                                    /* Empty State */
+                                    <div className="text-center py-12">
+                                        <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
+                                        <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun article disponible</h3>
+                                        <p className="text-gray-500">Il n'y a pas encore d'articles publiés.</p>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                            </div>
-                        </AppContent>
-                    </div>
+                        </div>
+                    </AppContent>
                 </div>
             </AppShell>
+            
+            {/* Footer */}
             <Footer />
         </>
     );
