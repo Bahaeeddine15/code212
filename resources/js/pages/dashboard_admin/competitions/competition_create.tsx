@@ -27,7 +27,8 @@ export default function CompetitionCreate() {
         category: '',
         maxParticipants: '',
         deadline: '',
-        description: ''
+        description: '',
+        type: 'individual', // default value
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -168,6 +169,21 @@ export default function CompetitionCreate() {
                                         <p className="text-sm text-gray-500">
                                             Décrivez les détails de la compétition, le règlement et les prix.
                                         </p>
+                                    </div>
+
+                                    {/* Type de compétition */}
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-gray-700">Type de compétition *</label>
+                                        <select
+                                            value={formData.type}
+                                            onChange={e => handleInputChange('type', e.target.value)}
+                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.type ? 'border-red-500' : 'border-gray-200'}`}
+                                            required
+                                        >
+                                            <option value="individual">Individuelle</option>
+                                            <option value="group">Par groupe</option>
+                                        </select>
+                                        {errors.type && <p className="text-sm text-red-600">{errors.type}</p>}
                                     </div>
 
                                     {/* Boutons */}

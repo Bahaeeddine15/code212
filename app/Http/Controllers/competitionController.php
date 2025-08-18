@@ -16,10 +16,16 @@ class CompetitionController extends Controller
      */
     public function index()
     {
+        $studentId = auth()->id();
+
         $competitions = Competition::with(['user', 'registrations', 'closedBy'])
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($competition) {
+            ->map(function ($competition) use ($studentId) {
+                $registration = $competition->registrations()
+                    ->where('user_id', $studentId)
+                    ->first();
+
                 return [
                     'id' => $competition->id,
                     'title' => $competition->title,
@@ -37,6 +43,10 @@ class CompetitionController extends Controller
                     'updated_at' => $competition->updated_at->toISOString(),
                     'closed_at' => $competition->closed_at ? $competition->closed_at->toISOString() : null,
                     'closed_by' => $competition->closedBy ? $competition->closedBy->name : null,
+                    'type' => $competition->type, // <-- Add this line
+                    'my_registration' => $registration ? [
+                        'status' => $registration->status,
+                    ] : null,
                 ];
             });
 
@@ -59,6 +69,7 @@ class CompetitionController extends Controller
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
+                    'groupMembers' => $registration->group_members, // <-- ADD THIS LINE
                 ];
             });
 
@@ -106,6 +117,8 @@ class CompetitionController extends Controller
                 'maxParticipants' => $competition->max_participants,
                 'registrations' => $competition->registrations->count(),
                 'status' => $competition->status,
+                'type' => $competition->type, // <-- Add this line
+                'groupMembers' => $competition->group_members,
             ]
         ]);
     }
@@ -116,6 +129,11 @@ class CompetitionController extends Controller
     public function showDetails($id)
     {
         $competition = Competition::with(['registrations'])->findOrFail($id);
+        $studentId = auth()->id();
+
+        $myRegistration = $competition->registrations()
+            ->where('user_id', $studentId)
+            ->first();
 
         $competitionData = [
             'id' => $competition->id,
@@ -129,6 +147,11 @@ class CompetitionController extends Controller
             'registrations' => $competition->registrations->count(),
             'status' => $competition->status,
             'views' => $competition->views,
+            'type' => $competition->type,
+            // Add this:
+            'my_registration' => $myRegistration ? [
+                'status' => $myRegistration->status,
+            ] : null,
         ];
 
         return Inertia::render('etudiant/competitionShow', [
@@ -143,15 +166,20 @@ class CompetitionController extends Controller
     {
         $competition = Competition::findOrFail($competitionId);
 
-        // Validate input
-        $validated = $request->validate([
+        $rules = [
             'participant_name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
             'club' => 'nullable|string|max:255',
             'category' => 'required|string|max:255',
             'notes' => 'nullable|string|max:1000',
-        ]);
+        ];
+
+        if ($competition->type === 'group') {
+            $rules['group_members'] = 'required|string|max:1000';
+        }
+
+        $validated = $request->validate($rules);
 
         // Check if already registered
         $existing = CompetitionRegistration::where('competition_id', $competitionId)
@@ -172,12 +200,13 @@ class CompetitionController extends Controller
             'club' => $validated['club'],
             'category' => $validated['category'],
             'notes' => $validated['notes'],
+            'group_members' => $competition->type === 'group' ? $validated['group_members'] : null,
             'status' => 'En attente', // Pending
             'payment_status' => 'En attente',
             'registered_at' => now(),
         ]);
 
-        return redirect()->route('competition.index')->with('success', 'Votre demande a été envoyée et est en attente de validation.');
+        return redirect()->route('etudiant.competition')->with('success', 'Votre demande a été envoyée et est en attente de validation.');
     }
 
     /**
@@ -228,6 +257,7 @@ class CompetitionController extends Controller
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'maxParticipants' => 'required|integer|min:1',
+            'type' => 'required|in:individual,group', // <-- add this
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -262,6 +292,7 @@ class CompetitionController extends Controller
             'views' => $competition->views,
             'created_at' => $competition->created_at->toISOString(),
             'updated_at' => $competition->updated_at->toISOString(),
+            'type' => $competition->type, // <-- Add this line
         ];
 
         $registrations = $competition->registrations->map(function ($registration) {
@@ -274,6 +305,7 @@ class CompetitionController extends Controller
                 'club' => $registration->club,
                 'status' => $registration->status,
                 'registered_at' => $registration->registered_at->format('d-m-Y'),
+                'groupMembers' => $registration->group_members, // <-- add this line
             ];
         });
 
@@ -299,6 +331,7 @@ class CompetitionController extends Controller
             'maxParticipants' => $competition->max_participants,
             'registrations' => $competition->registrations->count(),
             'status' => $competition->status,
+            'type' => $competition->type, // <-- Add this line
         ];
 
         return Inertia::render('dashboard_admin/competitions/competition_edit', [
@@ -319,6 +352,7 @@ class CompetitionController extends Controller
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'maxParticipants' => 'required|integer|min:1',
+            'type' => 'required|in:individual,group',
         ]);
 
         $validated['slug'] = $this->generateUniqueSlug($validated['title'], $competition->id);

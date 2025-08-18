@@ -23,6 +23,7 @@ interface Competition {
     maxParticipants: number;
     registrations: number;
     status: string;
+    type: string; // 'individual' or 'group'
 }
 
 interface CompetitionRegistrationPageProps {
@@ -37,6 +38,7 @@ export default function CompetitionRegistrationPage({ competition }: Competition
         club: '',
         category: competition.category,
         notes: '',
+        group_members: '', // <-- add this
     });
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -127,7 +129,9 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                     <form onSubmit={handleSubmit} className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <Label htmlFor="participant_name">Nom complet *</Label>
+                                                <Label htmlFor="participant_name">
+                                                    {competition.type === 'individual' ? 'Nom complet *' : 'Nom du groupe *'}
+                                                </Label>
                                                 <Input
                                                     id="participant_name"
                                                     type="text"
@@ -212,6 +216,24 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                                 <p className="text-red-500 text-sm mt-1">{errors.notes}</p>
                                             )}
                                         </div>
+
+                                        {competition.type === 'group' && (
+                                            <div>
+                                                <Label htmlFor="group_members">Membres du groupe *</Label>
+                                                <Textarea
+                                                    id="group_members"
+                                                    value={data.group_members}
+                                                    onChange={(e) => setData('group_members', e.target.value)}
+                                                    placeholder="Listez les membres du groupe, un par ligne"
+                                                    className="mt-1"
+                                                    rows={3}
+                                                    required
+                                                />
+                                                {errors.group_members && (
+                                                    <p className="text-red-500 text-sm mt-1">{errors.group_members}</p>
+                                                )}
+                                            </div>
+                                        )}
 
                                         <div className="flex gap-4 pt-4">
                                             <Button
