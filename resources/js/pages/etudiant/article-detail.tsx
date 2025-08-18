@@ -2,12 +2,7 @@ import AppLayout from "@/layouts/app-layout";
 import { Head, Link } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 import { type BreadcrumbItem } from "@/types";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AppContent } from "@/components/layout/app-content";
 import { AppSidebarHeader } from "@/components/layout/app-sidebar-header";
@@ -19,7 +14,7 @@ interface Article {
   content: string;
   published_at: string;
   author: string;
-  image?: string; // <-- ajout pour l'image
+  image?: string;
 }
 
 interface Props {
@@ -41,7 +36,7 @@ export default function ArticleDetail({ article }: Props) {
           ]}
         />
 
-        <div className="p-6 space-y-6 w-full">
+        <div className="p-6 w-full min-w-0">
           <Link href="/articles">
             <Button
               variant="outline"
@@ -52,38 +47,40 @@ export default function ArticleDetail({ article }: Props) {
             </Button>
           </Link>
 
-          <Card className="overflow-hidden border border-gray-300 w-full">
+          <Card className="overflow-hidden border border-gray-300 w-full min-w-0">
             {article.image && (
               <img
                 src={article.image}
                 alt={article.title}
-                className="w-full h-70 object-cover"
+                className="w-full h-auto max-h-[400px] object-cover"
               />
             )}
-            <CardHeader className="bg-gray-50 border-b border-gray-200 p-6">
-              <CardTitle className="text-2xl font-bold text-[#121214]">
+            <CardHeader className="bg-gray-50 border-b border-gray-200 p-6 w-full">
+              <CardTitle className="text-2xl font-bold text-[#121214] w-full">
                 {article.title}
               </CardTitle>
-              <div className="text-sm text-gray-500 mt-1">
+              <div className="text-sm text-gray-500 mt-1 w-full">
                 Publié le{" "}
                 {new Date(article.published_at).toLocaleDateString("fr-FR")} par{" "}
                 {article.author}
               </div>
             </CardHeader>
-            <CardContent className="p-6">
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed whitespace-pre-line">
-                {article.excerpt.length > 150
-                  ? article.excerpt.substring(0, 150) + "..."
-                  : article.excerpt}
-              </p>
+            <CardContent className="p-6 w-full min-w-0">
+              <div className="w-full min-w-0">
+                <p className="text-gray-600 font-bold mb-4 leading-relaxed whitespace-pre-line w-full">
+                  {article.excerpt}
+                </p>
 
-              <div className="prose max-w-none text-gray-800">
-                <p className="whitespace-pre-line">{article.content}</p>
+                <div className="w-full min-w-0">
+                  <p className="whitespace-pre-line text-gray-800 w-full min-w-0">
+                    {article.content}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <div className="text-center pt-6">
+          <div className="text-center pt-6 w-full">
             <Link href="/articles">
               <Button
                 size="lg"
