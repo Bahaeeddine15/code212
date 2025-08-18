@@ -1,7 +1,5 @@
 import { Head, useForm } from "@inertiajs/react";
-
 import { FormEventHandler, useState } from "react";
-
 import InputError from "@/components/forms/input-error";
 import TextLink from "@/components/common/text-link";
 import { Button } from "@/components/ui/button";
@@ -28,19 +26,39 @@ export default function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
-    post(route("register"));
+    post(route("register"), {
+      onFinish: () => reset("password", "password_confirmation"),
+    });
   };
+
   return (
     <AuthLayout
       title="Création de compte"
       description="Veuillez renseigner vos informations afin de créer votre compte étudiant au sein de la plateforme Code212"
     >
       <Head title="Register" />
-      {/* Paragraphe d'introduction supprimé selon la demande */}
       <form onSubmit={submit} className="space-y-4">
         <div className="grid gap-6 rounded-xl shadow-md p-8" style={{ background: 'transparent' }}>
+          {/* Name Field */}
+          <div>
+            <Label htmlFor="name" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Nom complet</Label>
+            <Input
+              id="name"
+              type="text"
+              required
+              tabIndex={1}
+              autoComplete="name"
+              value={data.name}
+              onChange={(e) => setData("name", e.target.value)}
+              disabled={processing}
+              placeholder="Votre nom complet"
+            />
+            <InputError message={errors.name} className="mt-1" />
+          </div>
+          {/* Email Field */}
           <div>
             <Label htmlFor="email" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Adresse E-mail Académique</Label>
             <Input
@@ -56,6 +74,7 @@ export default function Register() {
             />
             <InputError message={errors.email} className="mt-1" />
           </div>
+          {/* Ecole Field */}
           <div>
             <Label htmlFor="ecole" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Nom d’établissement:</Label>
             <select
@@ -95,6 +114,7 @@ export default function Register() {
             </select>
             <InputError message={errors.ecole} />
           </div>
+          {/* Password Field */}
           <div>
             <Label htmlFor="password" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Mot de passe</Label>
             <div className="relative">
@@ -128,6 +148,7 @@ export default function Register() {
             </div>
             <InputError message={errors.password} />
           </div>
+          {/* Password Confirmation Field */}
           <div>
             <Label htmlFor="password_confirmation" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Confirmer le mot de passe</Label>
             <div className="relative">

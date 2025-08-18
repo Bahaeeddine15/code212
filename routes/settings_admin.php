@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware('auth:admin')->prefix('admin')->group(function () {
-    Route::redirect('settings', 'settings/profile');
+    Route::redirect('settings', 'admin/settings/profile');
 
     Route::get('settings/profile', [ProfileControllerAdmin::class, 'edit'])->name('admin.settings.profile.edit');
     Route::patch('settings/profile', [ProfileControllerAdmin::class, 'update'])->name('admin.settings.profile.update');

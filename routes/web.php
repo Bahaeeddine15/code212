@@ -25,6 +25,7 @@ Route::get('/contact', function () {
 require __DIR__ . '/admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/settings_admin.php';
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard', [App\Http\Controllers\DashboardEtudiantController::class, 'index'])->name('dashboard');
@@ -138,9 +139,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('reservations.dismissNotification');
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
-require __DIR__ . '/settings_admin.php';
+
 
 // ⚠️ ROUTES DE TEST - À SUPPRIMER EN PRODUCTION
 // Décommentez la ligne suivante pour activer les routes de test :
