@@ -1,6 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
 import DashboardHeader from "@/components/layout/dashboard-header";
 import Footer from "@/components/layout/footer";
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
@@ -110,8 +113,11 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
             {/* Custom Dashboard Header */}
             <DashboardHeader breadcrumbs={headerBreadcrumbs} />
             
-            <AppLayout>
-            <div className="p-6">
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
+                        <div className="p-6">
                 {/* Message de succès */}
                 {showSuccess && (
                     <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
@@ -425,8 +431,10 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                     
                 </div>
                 
-            </div>
-            </AppLayout>
+                        </div>
+                    </AppContent>
+                </div>
+            </AppShell>
             
             {/* Footer */}
             <Footer />

@@ -64,18 +64,24 @@ export default function Articles({ articles }: Props) {
     };
 
     return (
-        <AppShell variant="sidebar">
+        <>
             <Head title="Articles" />
-            <div className="flex w-full min-h-screen">
-                <AppSidebar />
-                <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white">
-                    <AppSidebarHeader 
-                        breadcrumbs={[
-                            { title: 'Dashboard Étudiant', href: '/dashboard' },
-                            { title: 'Articles', href: '/articles' }
-                        ]} 
-                    />
-                    <div className="p-6 space-y-6">
+            
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <div className="sidebar-content-offset">
+                        <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto min-h-screen w-full">
+                            <AppSidebarHeader 
+                                breadcrumbs={[
+                                    { title: 'Dashboard Étudiant', href: '/dashboard' },
+                                    { title: 'Articles', href: '/articles' }
+                                ]} 
+                            />
+                            <div className="p-6 space-y-6">
                         {/* Header */}
                         <div className="flex justify-between items-center">
                             <div>
@@ -180,9 +186,12 @@ export default function Articles({ articles }: Props) {
                                 <p className="text-gray-500">Il n'y a pas encore d'articles publiés.</p>
                             </div>
                         )}
+                            </div>
+                        </AppContent>
                     </div>
-                </AppContent>
-            </div>
-        </AppShell>
+                </div>
+            </AppShell>
+            <Footer />
+        </>
     );
 }

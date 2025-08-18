@@ -7,6 +7,40 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Custom sidebar positioning - scrolls with page */
+.fixed-sidebar {
+  position: absolute !important; /* Changed from fixed to absolute */
+  left: 0 !important;
+  top: 144px !important; /* Position below header (approx 48px padding + 96px image height) */
+  width: 16rem !important;
+  z-index: 50 !important;
+  overflow: visible !important; /* Allow content to be visible */
+  height: auto !important; /* Let height be determined by content */
+  min-height: calc(100vh - 44px) !important; /* Make sidebar much longer - almost full viewport height */
+}
+
+.sidebar-content-offset {
+  margin-left: 1.25rem !important; /* Slight adjustment to align directly next to sidebar */
+  margin-top: 20px !important; /* Add top margin to push content below header */
+  min-height: 100vh !important;
+  position: relative !important; /* Add relative positioning for absolute sidebar */
+  padding-left: 0 !important; /* Remove any extra padding */
+}
+
+/* Allow sidebar content to flow naturally */
+.sidebar-no-scroll {
+  overflow: visible !important; /* Changed from hidden to visible */
+  height: auto !important; /* Let height be natural */
+  min-height: calc(100vh - 44px) !important; /* Ensure sidebar container is longer */
+}
+
+.sidebar-content-no-scroll {
+  overflow: visible !important; /* Changed from hidden to visible */
+  height: auto !important; /* Let height be natural */
+  max-height: none !important; /* Remove max-height restriction */
+  min-height: calc(100vh - 44px) !important; /* Make sidebar content area longer */
+}
+
 @theme {
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';

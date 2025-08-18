@@ -4,10 +4,12 @@ import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppContent } from '@/components/layout/app-content';
 import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Folder, Images, Search, ChevronRight } from 'lucide-react';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Folder, Image as ImageIcon, Video, RefreshCw } from 'lucide-react';
 
 interface MediaFile {
   id: number;
@@ -43,6 +45,7 @@ export default function Media({ mediaByFolder }: PageProps) {
     return videoExts.includes(ext) ? 'Vidéo' : 'Image';
   };
 
+<<<<<<< Updated upstream
   const MediaCard = ({ media }: { media: MediaFile }) => (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-4">
@@ -71,6 +74,44 @@ export default function Media({ mediaByFolder }: PageProps) {
               {getMediaType(media.file_path)}
             </span>
             <span>{formatDate(media.created_at)}</span>
+=======
+  const load = (params: Record<string, any> = {}) => {
+    setLoading(true);
+    const query = new URLSearchParams({ folder, search, ...params }).toString();
+    fetch(`/media/filter?${query}`)
+      .then(r => r.json())
+      .then(data => {
+        applyTypeFilter(data.medias.data);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const mediaIcon = (m: MediaItem) => <ImageIcon className="w-6 h-6" />; // always image icon now
+
+  return (
+    <>
+      <Head title="Médiathèque" />
+      
+      {/* Custom Dashboard Header */}
+      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+      
+      <AppShell variant="sidebar">
+        <div className="flex w-full min-h-screen">
+          <AppSidebar />
+          <div className="sidebar-content-offset">
+            <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto min-h-screen w-full">
+              <AppSidebarHeader breadcrumbs={[{ title: 'Dashboard Étudiant', href: '/dashboard' }, { title: 'Médiathèque', href: '/media' }]} />
+              <div className="px-6 py-6 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Médiathèque</h1>
+            <p className="text-gray-600">Images et vidéos</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => load()} disabled={loading}>
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Rafraîchir
+            </Button>
+>>>>>>> Stashed changes
           </div>
         </div>
       </CardContent>
@@ -109,6 +150,7 @@ export default function Media({ mediaByFolder }: PageProps) {
                   </div>
                 </div>
               </div>
+<<<<<<< Updated upstream
 
               {/* Stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -225,5 +267,19 @@ export default function Media({ mediaByFolder }: PageProps) {
         </div>
       </AppShell>
     </div>
+=======
+            )}
+          </div>
+          </div>
+              </div>
+            </AppContent>
+          </div>
+        </div>
+      </AppShell>
+      
+      {/* Footer */}
+      <Footer />
+    </>
+>>>>>>> Stashed changes
   );
 }
