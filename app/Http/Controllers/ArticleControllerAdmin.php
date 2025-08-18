@@ -17,6 +17,19 @@ class ArticleControllerAdmin extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($article) {
+               
+                $images = [];
+                if ($article->featured_image) {
+                    $decoded = json_decode($article->featured_image, true);
+                    if (is_array($decoded)) {
+                        
+                        $images = array_map(fn($p) => Storage::url($p), array_filter($decoded));
+                    } else {
+                     
+                        $images = [Storage::url($article->featured_image)];
+                    }
+                }
+                
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
@@ -27,8 +40,10 @@ class ArticleControllerAdmin extends Controller
                     'status' => $article->status,
                     'category' => $article->category,
                     'views' => $article->views,
-                    // Decode featured_image JSON to array for frontend
-                    'images' => $article->featured_image ? json_decode($article->featured_image, true) : [],
+                    
+                    'images' => $images,
+                    
+                    'raw_images' => $article->featured_image ? json_decode($article->featured_image, true) : [],
                 ];
             });
 
@@ -47,7 +62,19 @@ class ArticleControllerAdmin extends Controller
         // Increment view count
         $article->increment('views');
 
-        // Prepare article data for the show page
+        // Prepare images - handle both single path and JSON array
+        $images = [];
+        if ($article->featured_image) {
+            $decoded = json_decode($article->featured_image, true);
+            if (is_array($decoded)) {
+                // It's a JSON array of paths
+                $images = array_map(fn($p) => Storage::url($p), array_filter($decoded));
+            } else {
+                // It's a single path string
+                $images = [Storage::url($article->featured_image)];
+            }
+        }
+
         $articleData = [
             'id' => $article->id,
             'title' => $article->title,
@@ -58,7 +85,7 @@ class ArticleControllerAdmin extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'images' => $article->featured_image ? json_decode($article->featured_image, true) : [],
+            'images' => $images,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
         ];
@@ -70,6 +97,22 @@ class ArticleControllerAdmin extends Controller
 
     public function edit(Article $article)
     {
+        // Prepare images - handle both single path and JSON array
+        $images = [];
+        $rawImages = [];
+        if ($article->featured_image) {
+            $decoded = json_decode($article->featured_image, true);
+            if (is_array($decoded)) {
+                // It's a JSON array of paths
+                $rawImages = $decoded;
+                $images = array_map(fn($p) => Storage::url($p), array_filter($decoded));
+            } else {
+                // It's a single path string
+                $rawImages = [$article->featured_image];
+                $images = [Storage::url($article->featured_image)];
+            }
+        }
+
         $articleData = [
             'id' => $article->id,
             'title' => $article->title,
@@ -80,7 +123,8 @@ class ArticleControllerAdmin extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'images' => $article->featured_image ? json_decode($article->featured_image, true) : [],
+            'images' => $rawImages, // Raw paths for editing
+            'image_urls' => $images, // URLs for display
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
         ];
@@ -182,6 +226,24 @@ class ArticleControllerAdmin extends Controller
 
     public function destroy(Article $article)
     {
+        // Delete associated images from storage
+        if ($article->featured_image) {
+            $decoded = json_decode($article->featured_image, true);
+            if (is_array($decoded)) {
+                // It's a JSON array of paths
+                foreach ($decoded as $imagePath) {
+                    if (Storage::disk('public')->exists($imagePath)) {
+                        Storage::disk('public')->delete($imagePath);
+                    }
+                }
+            } else {
+                // It's a single path string
+                if (Storage::disk('public')->exists($article->featured_image)) {
+                    Storage::disk('public')->delete($article->featured_image);
+                }
+            }
+        }
+
         $article->delete();
         return redirect()->route('articles.index')->with('success', 'Article supprimé avec succès!');
     }
