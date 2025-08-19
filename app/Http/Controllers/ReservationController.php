@@ -63,8 +63,12 @@ class ReservationController extends Controller
             'prenom' => 'required|string|max:255',
             'num_apogee' => 'required|string|max:20',
             'email' => 'required|email|max:255',
+            'telephone' => 'nullable|string|max:20',
             'description' => 'required|string',
             'date_reservation' => 'required|date|after_or_equal:today',
+            'resource_type' => 'required|in:pc,local',
+            'location_type' => 'nullable|required_if:resource_type,local|in:salle_conference,salle_reunion',
+            'room_details' => 'nullable|required_if:location_type,salle_reunion|in:1er_etage,2eme_etage,3eme_etage',
         ]);
 
         Reservation::create([
@@ -72,8 +76,12 @@ class ReservationController extends Controller
             'prenom' => $request->prenom,
             'num_apogee' => $request->num_apogee,
             'email' => $request->email,
+            'telephone' => $request->telephone,
             'description' => $request->description,
             'date_reservation' => $request->date_reservation,
+            'resource_type' => $request->resource_type,
+            'location_type' => $request->location_type,
+            'room_details' => $request->room_details,
             'status' => Reservation::STATUS_PENDING,
         ]);
 
@@ -135,8 +143,12 @@ class ReservationController extends Controller
             'prenom' => 'required|string|max:255',
             'num_apogee' => 'required|string|max:20',
             'email' => 'required|email|max:255',
+            'telephone' => 'nullable|string|max:20',
             'description' => 'required|string',
             'date_reservation' => 'required|date|after_or_equal:today',
+            'resource_type' => 'required|in:pc,local',
+            'location_type' => 'nullable|required_if:resource_type,local|in:salle_conference,salle_reunion',
+            'room_details' => 'nullable|required_if:location_type,salle_reunion|in:1er_etage,2eme_etage,3eme_etage',
         ]);
 
         $reservation->update([
@@ -144,8 +156,12 @@ class ReservationController extends Controller
             'prenom' => $request->prenom,
             'num_apogee' => $request->num_apogee,
             'email' => $request->email,
+            'telephone' => $request->telephone,
             'description' => $request->description,
             'date_reservation' => $request->date_reservation,
+            'resource_type' => $request->resource_type,
+            'location_type' => $request->location_type,
+            'room_details' => $request->room_details,
         ]);
 
         // Mettre à jour l'email en session si changé

@@ -30,11 +30,15 @@ interface Reservation {
     prenom: string;
     num_apogee: string;
     email: string;
+    telephone?: string;
     description: string;
     date_reservation: string;
     status: 'pending' | 'approved' | 'rejected';
     created_at: string;
     updated_at: string;
+    resource_type?: string;
+    location_type?: string;
+    room_details?: string;
 }
 
 interface DashboardProps {
@@ -54,8 +58,12 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
         prenom: '',
         num_apogee: '',
         email: userEmail || '',
+        telephone: '',
         description: '',
         date_reservation: '',
+        resource_type: '',
+        location_type: '',
+        room_details: '',
     });
 
     useEffect(() => {
@@ -95,8 +103,12 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                     prenom: '',
                     num_apogee: '',
                     email: '',
+                    telephone: '',
                     description: '',
                     date_reservation: '',
+                    resource_type: '',
+                    location_type: '',
+                    room_details: '',
                 });
             }
         });
@@ -261,6 +273,11 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                                 </div>
                                 
                                 <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                                    <p className="text-gray-900 bg-gray-50 p-2 rounded">{existingReservation.telephone || 'Non renseigné'}</p>
+                                </div>
+                                
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Date de réservation</label>
                                     <p className="text-gray-900 bg-gray-50 p-2 rounded">
                                         {new Date(existingReservation.date_reservation).toLocaleDateString('fr-FR')}
@@ -273,6 +290,40 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                                         {new Date(existingReservation.created_at).toLocaleDateString('fr-FR')}
                                     </p>
                                 </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Type de ressource</label>
+                                    <p className="text-gray-900 bg-gray-50 p-2 rounded">
+                                        {existingReservation.resource_type === 'pc' ? 'Poste (PC)' : 
+                                         existingReservation.resource_type === 'local' ? 'Local' : 
+                                         existingReservation.resource_type || 'Non spécifié'}
+                                    </p>
+                                </div>
+                                
+                                {existingReservation.resource_type === 'local' && (
+                                    <>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Type de local</label>
+                                            <p className="text-gray-900 bg-gray-50 p-2 rounded">
+                                                {existingReservation.location_type === 'salle_conference' ? 'Salle de conférence' :
+                                                 existingReservation.location_type === 'salle_reunion' ? 'Salle de réunion' :
+                                                 existingReservation.location_type || 'Non spécifié'}
+                                            </p>
+                                        </div>
+                                        
+                                        {existingReservation.location_type === 'salle_reunion' && existingReservation.room_details && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Étage</label>
+                                                <p className="text-gray-900 bg-gray-50 p-2 rounded">
+                                                    {existingReservation.room_details === '1er_etage' ? '1er étage' :
+                                                     existingReservation.room_details === '2eme_etage' ? '2ème étage' :
+                                                     existingReservation.room_details === '3eme_etage' ? '3ème étage' :
+                                                     existingReservation.room_details}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </div>
                             
                             <div className="mt-4">
@@ -384,6 +435,19 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                         </div>
 
+                        {/* Téléphone */}
+                        <div>
+                            <Label htmlFor="telephone">Numéro de téléphone</Label>
+                            <Input
+                                id="telephone"
+                                type="tel"
+                                value={data.telephone}
+                                onChange={(e) => setData('telephone', e.target.value)}
+                                placeholder="Ex: 06 12 34 56 78"
+                            />
+                            {errors.telephone && <p className="text-red-500 text-sm mt-1">{errors.telephone}</p>}
+                        </div>
+
                         {/* Date de réservation */}
                         <div>
                             <Label htmlFor="date_reservation">Date de réservation *</Label>
@@ -397,6 +461,74 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                             />
                             {errors.date_reservation && <p className="text-red-500 text-sm mt-1">{errors.date_reservation}</p>}
                         </div>
+
+                        {/* Type de ressource */}
+                        <div>
+                            <Label htmlFor="resource_type">Type de ressource *</Label>
+                            <select
+                                id="resource_type"
+                                value={data.resource_type}
+                                onChange={(e) => {
+                                    setData('resource_type', e.target.value);
+                                    // Reset location fields when resource type changes
+                                    if (e.target.value !== 'local') {
+                                        setData('location_type', '');
+                                        setData('room_details', '');
+                                    }
+                                }}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                            >
+                                <option value="">Sélectionnez le type de ressource</option>
+                                <option value="pc">Poste (PC)</option>
+                                <option value="local">Local</option>
+                            </select>
+                            {errors.resource_type && <p className="text-red-500 text-sm mt-1">{errors.resource_type}</p>}
+                        </div>
+
+                        {/* Options pour local */}
+                        {data.resource_type === 'local' && (
+                            <>
+                                <div>
+                                    <Label htmlFor="location_type">Type de local *</Label>
+                                    <select
+                                        id="location_type"
+                                        value={data.location_type}
+                                        onChange={(e) => {
+                                            setData('location_type', e.target.value);
+                                            // Reset room details when location type changes
+                                            setData('room_details', '');
+                                        }}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        required
+                                    >
+                                        <option value="">Sélectionnez le type de local</option>
+                                        <option value="salle_conference">Salle de conférence</option>
+                                        <option value="salle_reunion">Salle de réunion</option>
+                                    </select>
+                                    {errors.location_type && <p className="text-red-500 text-sm mt-1">{errors.location_type}</p>}
+                                </div>
+
+                                {data.location_type === 'salle_reunion' && (
+                                    <div>
+                                        <Label htmlFor="room_details">Étage *</Label>
+                                        <select
+                                            id="room_details"
+                                            value={data.room_details}
+                                            onChange={(e) => setData('room_details', e.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            required
+                                        >
+                                            <option value="">Sélectionnez l'étage</option>
+                                            <option value="1er_etage">1er étage</option>
+                                            <option value="2eme_etage">2ème étage</option>
+                                            <option value="3eme_etage">3ème étage</option>
+                                        </select>
+                                        {errors.room_details && <p className="text-red-500 text-sm mt-1">{errors.room_details}</p>}
+                                    </div>
+                                )}
+                            </>
+                        )}
 
                         {/* Description */}
                         <div>

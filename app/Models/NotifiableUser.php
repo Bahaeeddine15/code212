@@ -16,4 +16,9 @@ class NotifiableUser
         $this->email = $email;
         $this->name = $name;
     }
+
+    public function routeNotificationForMail()
+    {
+        return $this->email;
+    }
 }

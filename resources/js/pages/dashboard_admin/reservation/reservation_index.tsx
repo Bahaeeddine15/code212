@@ -40,6 +40,9 @@ interface Reservation {
     submittedAt: string;
     processedAt?: string;
     processedBy?: string;
+    resource_type?: string;
+    location_type?: string;
+    room_details?: string;
 }
 
 interface Room {
@@ -124,6 +127,28 @@ const ReservationCard = ({
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <User className="w-4 h-4" />
                     <span>ID Étudiant: {reservation.studentId || '--'}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <span className="font-medium">
+                        {reservation.resource_type === 'pc' ? '💻 Poste (PC)' : 
+                         reservation.resource_type === 'local' ? '🏢 Local' : 
+                         (reservation.resource_type || 'Type non spécifié')}
+                    </span>
+                    {reservation.resource_type === 'local' && reservation.location_type && (
+                        <span>
+                            - {reservation.location_type === 'salle_conference' ? 'Salle de conférence' :
+                               reservation.location_type === 'salle_reunion' ? 'Salle de réunion' :
+                               reservation.location_type}
+                        </span>
+                    )}
+                    {reservation.resource_type === 'local' && reservation.location_type === 'salle_reunion' && reservation.room_details && (
+                        <span>
+                            ({reservation.room_details === '1er_etage' ? '1er étage' :
+                              reservation.room_details === '2eme_etage' ? '2ème étage' :
+                              reservation.room_details === '3eme_etage' ? '3ème étage' :
+                              reservation.room_details})
+                        </span>
+                    )}
                 </div>
             </div>
 

@@ -20,6 +20,9 @@ interface Reservation {
     submittedAt: string;
     processedAt?: string;
     processedBy?: string;
+    resource_type?: string;
+    location_type?: string;
+    room_details?: string;
 }
 
 export default function ReservationShow() {
@@ -68,35 +71,61 @@ export default function ReservationShow() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div><User className="inline w-4 h-4 mr-1" />{reservation.studentName}</div>
                                 <div><Mail className="inline w-4 h-4 mr-1" />{reservation.studentEmail}</div>
-                                <div><Phone className="inline w-4 h-4 mr-1" />{reservation.studentPhone || '--'}</div>
-                                <div>ID Étudiant: {reservation.studentId || '--'}</div>
+                                {reservation.studentPhone && (
+                                    <div><Phone className="inline w-4 h-4 mr-1" />{reservation.studentPhone}</div>
+                                )}
+                                <div>ID Étudiant: {reservation.studentId}</div>
                             </div>
                         </div>
                         <div>
                             <h2 className="text-lg font-semibold text-gray-700 mb-2">Détails réservation</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>Salle: {reservation.roomName || '--'}</div>
-                                <div>Capacité: {reservation.capacity ?? '--'} personnes</div>
-                                <div><Calendar className="inline w-4 h-4 mr-1" />{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : '--'}</div>
-                                <div><Clock className="inline w-4 h-4 mr-1" />{reservation.timeStart || '--'} - {reservation.timeEnd || '--'}</div>
+                                <div><Calendar className="inline w-4 h-4 mr-1" />{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : 'Date non spécifiée'}</div>
+                                <div>
+                                    <strong>Type de ressource:</strong> {
+                                        reservation.resource_type === 'pc' ? '💻 Poste (PC)' : 
+                                        reservation.resource_type === 'local' ? '🏢 Local' : 
+                                        reservation.resource_type || 'Non spécifié'
+                                    }
+                                </div>
+                                {reservation.resource_type === 'local' && (
+                                    <div>
+                                        <strong>Type de local:</strong> {
+                                            reservation.location_type === 'salle_conference' ? '🎤 Salle de conférence' :
+                                            reservation.location_type === 'salle_reunion' ? '📋 Salle de réunion' :
+                                            reservation.location_type || 'Non spécifié'
+                                        }
+                                    </div>
+                                )}
+                                {reservation.resource_type === 'local' && reservation.location_type === 'salle_reunion' && reservation.room_details && (
+                                    <div>
+                                        <strong>Étage:</strong> {
+                                            reservation.room_details === '1er_etage' ? '🔼 1er étage' :
+                                            reservation.room_details === '2eme_etage' ? '🔼 2ème étage' :
+                                            reservation.room_details === '3eme_etage' ? '🔼 3ème étage' :
+                                            reservation.room_details
+                                        }
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Objectif</h2>
-                            <div>{reservation.purpose || '--'}</div>
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Description</h2>
-                            <div>{reservation.description || '--'}</div>
-                        </div>
+                        {reservation.description && (
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-700 mb-2">Description</h2>
+                                <div>{reservation.description}</div>
+                            </div>
+                        )}
                         <div>
                             <h2 className="text-lg font-semibold text-gray-700 mb-2">Soumise le</h2>
-                            <div>{reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleString('fr-FR') : '--'}</div>
+                            <div>{reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleString('fr-FR') : 'Date inconnue'}</div>
                         </div>
                         {reservation.processedAt && (
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-700 mb-2">Traitée le</h2>
-                                <div>{new Date(reservation.processedAt).toLocaleString('fr-FR')} par {reservation.processedBy || '--'}</div>
+                                <div>
+                                    {new Date(reservation.processedAt).toLocaleString('fr-FR')}
+                                    {reservation.processedBy && ` par ${reservation.processedBy}`}
+                                </div>
                             </div>
                         )}
                         {/* Approve/Reject buttons if pending */}
