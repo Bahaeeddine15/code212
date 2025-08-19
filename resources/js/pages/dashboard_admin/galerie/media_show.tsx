@@ -121,7 +121,7 @@ export default function MediaShow({ media }: MediaShowProps) {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="flex items-center">
-                                        <Image className="w-5 h-5 mr-2 text-blue-600" />
+                                        <Image className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
                                         Aperçu du média
                                     </CardTitle>
                                     <Badge variant="secondary" className="flex items-center">
@@ -133,7 +133,7 @@ export default function MediaShow({ media }: MediaShowProps) {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center min-h-[400px]">
+                                <div className="bg-background dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center min-h-[400px]">
                                     {fileType === 'image' ? (
                                         <img
                                             src={getImageUrl(media.file_path)}
@@ -152,10 +152,10 @@ export default function MediaShow({ media }: MediaShowProps) {
                                     ) : (
                                         <div className="text-center p-8">
                                             <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                                            <p className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+                                            <p className="text-lg font-medium text-muted-foreground dark:text-gray-400 mb-2">
                                                 Aperçu non disponible
                                             </p>
-                                            <p className="text-sm text-gray-500 mb-4">
+                                            <p className="text-sm text-muted-foreground mb-4">
                                                 Ce type de fichier ne peut pas être prévisualisé
                                             </p>
                                             <Button onClick={handleDownload} variant="outline">
@@ -199,20 +199,20 @@ export default function MediaShow({ media }: MediaShowProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Nom original</label>
-                                    <p className="text-sm font-medium bg-gray-50 dark:bg-gray-800 p-2 rounded mt-1">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Nom original</label>
+                                    <p className="text-sm font-medium bg-background dark:bg-gray-800 p-2 rounded mt-1">
                                         {media.original_name}
                                     </p>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Slug</label>
-                                    <p className="text-sm font-medium bg-gray-50 dark:bg-gray-800 p-2 rounded mt-1">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Slug</label>
+                                    <p className="text-sm font-medium bg-background dark:bg-gray-800 p-2 rounded mt-1">
                                         {media.slug}
                                     </p>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Chemin</label>
-                                    <p className="text-sm font-mono bg-gray-50 dark:bg-gray-800 p-2 rounded mt-1 break-all">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Chemin</label>
+                                    <p className="text-sm font-mono bg-background dark:bg-gray-800 p-2 rounded mt-1 break-all">
                                         {media.file_path}
                                     </p>
                                 </div>
@@ -226,8 +226,8 @@ export default function MediaShow({ media }: MediaShowProps) {
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Description</label>
-                                    <p className="text-sm bg-gray-50 dark:bg-gray-800 p-3 rounded mt-1 leading-relaxed">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Description</label>
+                                    <p className="text-sm bg-background dark:bg-gray-800 p-3 rounded mt-1 leading-relaxed">
                                         {media.detail}
                                     </p>
                                 </div>
@@ -235,21 +235,21 @@ export default function MediaShow({ media }: MediaShowProps) {
                                     <div className="flex items-center">
                                         <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                                         <div>
-                                            <p className="text-xs text-gray-500">Créé le</p>
+                                            <p className="text-xs text-muted-foreground">Créé le</p>
                                             <p className="text-sm font-medium">{formatDate(media.created_at)}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center">
                                         <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                                         <div>
-                                            <p className="text-xs text-gray-500">Modifié le</p>
+                                            <p className="text-xs text-muted-foreground">Modifié le</p>
                                             <p className="text-sm font-medium">{formatDate(media.updated_at)}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center">
                                         <User className="w-4 h-4 mr-2 text-gray-400" />
                                         <div>
-                                            <p className="text-xs text-gray-500">ID utilisateur</p>
+                                            <p className="text-xs text-muted-foreground">ID utilisateur</p>
                                             <p className="text-sm font-medium">{media.user_id}</p>
                                         </div>
                                     </div>

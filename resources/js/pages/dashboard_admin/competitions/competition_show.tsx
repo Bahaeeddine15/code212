@@ -27,7 +27,6 @@ interface Competition {
     date: string;
     location: string;
     category: string;
-    type: 'individual' | 'group'; // Added type property
     maxParticipants: number;
     deadline: string;
     description?: string;
@@ -44,7 +43,6 @@ interface Registration {
     phone: string;
     status: 'En attente' | 'Confirmé' | 'Refusé';
     registered_at: string;
-    groupMembers?: string; // <-- Add this
 }
 
 interface CompetitionShowProps {
@@ -85,9 +83,9 @@ export default function CompetitionShow({ competition, registrations }: Competit
 
     const getRegistrationStatusBadge = (status: string) => {
         const statusConfig = {
-            'En attente': { icon: AlertCircle, className: 'bg-yellow-100 text-yellow-800' },
-            'Confirmé': { icon: CheckCircle, className: 'bg-green-100 text-green-800' },
-            'Refusé': { icon: XCircle, className: 'bg-red-100 text-red-800' }
+            'En attente': { icon: AlertCircle, className: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800' },
+            'Confirmé': { icon: CheckCircle, className: 'bg-green-100 dark:bg-green-900 text-green-800' },
+            'Refusé': { icon: XCircle, className: 'bg-red-100 dark:bg-red-900 text-red-800' }
         };
 
         const config = statusConfig[status as keyof typeof statusConfig];
@@ -119,11 +117,11 @@ export default function CompetitionShow({ competition, registrations }: Competit
             <Head title={`Compétition: ${competition.title}`} />
 
             {/* Fixed Header with Actions */}
-            <div className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+            <div className="sticky top-0 z-10 bg-card dark:bg-card/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-border dark:border-gray-700 px-6 py-4">
                 <div className="flex justify-between items-center max-w-6xl mx-auto">
                     <Link
                         href="/admin/competitions"
-                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Retour aux compétitions
@@ -140,7 +138,7 @@ export default function CompetitionShow({ competition, registrations }: Competit
                             size="sm"
                             variant="outline"
                             onClick={handleDelete}
-                            className="text-red-600 hover:text-red-700 border-red-200"
+                            className="text-red-600 dark:text-red-400 hover:text-red-700 border-red-200"
                         >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Supprimer
@@ -150,47 +148,38 @@ export default function CompetitionShow({ competition, registrations }: Competit
             </div>
 
             {/* Competition Content */}
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+            <div className="min-h-screen bg-background dark:bg-gray-900 py-8">
                 <div className="max-w-6xl mx-auto px-6">
                     {/* Competition Header */}
-                    <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden mb-8">
-                        <header className="px-8 pt-8 pb-6 border-b border-gray-100 dark:border-gray-700">
+                    <div className="bg-card dark:bg-card dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden mb-8">
+                        <header className="px-8 pt-8 pb-6 border-b border-border dark:border-gray-700">
                             {/* Status & Category */}
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
                                     <Badge
                                         variant="outline"
-                                        className="bg-blue-50 text-blue-700 border-blue-200 text-sm px-3 py-1"
+                                        className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 border-blue-200 text-sm px-3 py-1"
                                     >
                                         {competition.category}
                                     </Badge>
                                     {getStatusBadge()}
                                 </div>
-
-                                <div className="flex items-center gap-3">
-                                    <Badge
-                                        variant="outline"
-                                        className="bg-indigo-50 text-indigo-700 border-indigo-200 text-sm px-3 py-1"
-                                    >
-                                        {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
-                                    </Badge>
-                                </div>
                             </div>
 
                             {/* Title */}
-                            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
+                            <h1 className="text-4xl md:text-5xl font-bold text-foreground dark:text-white leading-tight mb-6">
                                 {competition.title}
                             </h1>
 
                             {/* Competition Meta */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-gray-600 dark:text-gray-400">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-muted-foreground dark:text-gray-400">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
                                         <Calendar className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
-                                        <p className="text-sm text-gray-500">Date de la compétition</p>
-                                        <p className="font-semibold text-gray-900 dark:text-white">
+                                        <p className="text-sm text-muted-foreground">Date de la compétition</p>
+                                        <p className="font-semibold text-foreground dark:text-white">
                                             {new Date(competition.date).toLocaleDateString('fr-FR', {
                                                 year: 'numeric',
                                                 month: 'long',
@@ -205,8 +194,8 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                         <MapPin className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
-                                        <p className="text-sm text-gray-500">Lieu</p>
-                                        <p className="font-semibold text-gray-900 dark:text-white">{competition.location}</p>
+                                        <p className="text-sm text-muted-foreground">Lieu</p>
+                                        <p className="font-semibold text-foreground dark:text-white">{competition.location}</p>
                                     </div>
                                 </div>
 
@@ -215,8 +204,8 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                         <Users className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
-                                        <p className="text-sm text-gray-500">Participants</p>
-                                        <p className="font-semibold text-gray-900 dark:text-white">
+                                        <p className="text-sm text-muted-foreground">Participants</p>
+                                        <p className="font-semibold text-foreground dark:text-white">
                                             {competition.registrations}/{competition.maxParticipants}
                                         </p>
                                     </div>
@@ -227,8 +216,8 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                         <Clock className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
-                                        <p className="text-sm text-gray-500">Date limite</p>
-                                        <p className="font-semibold text-gray-900 dark:text-white">
+                                        <p className="text-sm text-muted-foreground">Date limite</p>
+                                        <p className="font-semibold text-foreground dark:text-white">
                                             {new Date(competition.deadline).toLocaleDateString('fr-FR')}
                                         </p>
                                     </div>
@@ -239,9 +228,9 @@ export default function CompetitionShow({ competition, registrations }: Competit
                         {/* Description */}
                         {competition.description && (
                             <div className="px-8 py-6">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Description</h3>
+                                <h3 className="text-lg font-semibold text-foreground dark:text-white mb-4">Description</h3>
                                 <div className="prose prose-gray dark:prose-invert max-w-none">
-                                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+                                    <p className="text-foreground dark:text-gray-300 leading-relaxed text-lg">
                                         {competition.description}
                                     </p>
                                 </div>
@@ -267,10 +256,10 @@ export default function CompetitionShow({ competition, registrations }: Competit
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">Inscriptions confirmées</CardTitle>
-                                <CheckCircle className="h-4 w-4 text-green-600" />
+                                <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold text-green-600">{confirmedRegistrations}</div>
+                                <div className="text-2xl font-bold text-green-600 dark:text-green-400">{confirmedRegistrations}</div>
                                 <p className="text-xs text-muted-foreground">
                                     {registrations.length > 0 ? ((confirmedRegistrations / registrations.length) * 100).toFixed(0) : 0}% du total
                                 </p>
@@ -280,10 +269,10 @@ export default function CompetitionShow({ competition, registrations }: Competit
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">En attente</CardTitle>
-                                <AlertCircle className="h-4 w-4 text-yellow-600" />
+                                <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold text-yellow-600">{pendingRegistrations}</div>
+                                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{pendingRegistrations}</div>
                                 <p className="text-xs text-muted-foreground">Nécessitent une action</p>
                             </CardContent>
                         </Card>
@@ -303,15 +292,15 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                     {registrations.map((registration) => (
                                         <div
                                             key={registration.id}
-                                            className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                            className="flex items-center justify-between p-4 border border-border dark:border-gray-700 rounded-lg hover:bg-background dark:hover:bg-gray-800 transition-colors"
                                         >
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-4">
                                                     <div>
-                                                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                                                        <h4 className="font-semibold text-foreground dark:text-white">
                                                             {registration.participant_name}
                                                         </h4>
-                                                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                                                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                                             <span>{registration.email}</span>
                                                             <span>{registration.phone}</span>
                                                             <span>
@@ -335,34 +324,11 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
-                                                            className="text-red-600 border-red-200 hover:text-red-700"
+                                                            className="text-red-600 dark:text-red-400 border-red-200 hover:text-red-700"
                                                             onClick={() => router.patch(`/admin/competition-registrations/${registration.id}/reject`)}
                                                         >
                                                             <XCircle className="w-4 h-4 mr-1" /> Refuser
                                                         </Button>
-                                                    </>
-                                                )}
-                                            </div>
-
-                                            {/* Group Members List - New Code Block */}
-                                            <div className="mt-2 text-xs text-gray-700">
-                                                {competition.type === 'group' && registration.groupMembers ? (
-                                                    <>
-                                                        <span className="font-semibold">Nom du groupe :</span> {registration.participant_name}
-                                                        <br />
-                                                        <span className="font-semibold">Membres :</span>
-                                                        <ul className="list-disc ml-4">
-                                                            {registration.groupMembers
-                                                                .split('\n')
-                                                                .filter(Boolean)
-                                                                .map((member, idx) => (
-                                                                    <li key={idx}>{member}</li>
-                                                                ))}
-                                                        </ul>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <span className="font-semibold">Nom :</span> {registration.participant_name}
                                                     </>
                                                 )}
                                             </div>
@@ -372,7 +338,7 @@ export default function CompetitionShow({ competition, registrations }: Competit
                             ) : (
                                 <div className="text-center py-12">
                                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                    <p className="text-gray-500 text-lg">Aucune inscription pour le moment</p>
+                                    <p className="text-muted-foreground text-lg">Aucune inscription pour le moment</p>
                                     <p className="text-gray-400 text-sm">Les inscriptions apparaîtront ici une fois soumises</p>
                                 </div>
                             )}

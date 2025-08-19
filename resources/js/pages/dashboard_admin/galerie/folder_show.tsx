@@ -49,15 +49,15 @@ export default function FolderShow(props: FolderShowProps) {
         <AppLayout>
             <Head title={`Dossier : ${folder}`} />
             <div className="max-w-6xl mx-auto py-10 px-4">
-                <Link href="/admin/media" className="text-blue-600 hover:underline mb-6 inline-block">&larr; Retour à la galerie</Link>
+                <Link href="/admin/media" className="text-primary hover:underline mb-6 inline-block">&larr; Retour à la galerie</Link>
                 <h1 className="text-3xl font-bold mb-8 flex items-center gap-4">
                     Dossier : {folder}
                     <button
                         onClick={handleDeleteFolder}
-                        className="ml-2 p-2 rounded hover:bg-red-100"
+                        className="ml-2 p-2 rounded hover:bg-red-100 dark:bg-red-900"
                         title="Supprimer le dossier"
                     >
-                        <Trash2 className="w-6 h-6 text-red-600" />
+                        <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
                     </button>
                 </h1>
 
@@ -77,7 +77,7 @@ export default function FolderShow(props: FolderShowProps) {
                     {filteredFiles.map(file => (
                         <div
                             key={file.id}
-                            className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 flex flex-col items-center hover:shadow-xl transition-shadow"
+                            className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-4 flex flex-col items-center hover:shadow-xl transition-shadow"
                         >
                             <Link href={`/admin/media/${file.id}`} className="w-full">
                                 {getMediaType(file.file_path) === 'Vidéo' ? (
@@ -95,8 +95,8 @@ export default function FolderShow(props: FolderShowProps) {
                                 )}
                             </Link>
                             <div className="font-medium text-center truncate w-full" title={file.title}>{file.title}</div>
-                            <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                                <span className={`px-2 py-1 rounded-full ${getMediaType(file.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                            <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                                <span className={`px-2 py-1 rounded-full ${getMediaType(file.file_path) === 'Vidéo' ? 'bg-red-100 dark:bg-red-900 text-red-800' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-800'}`}>
                                     {getMediaType(file.file_path)}
                                 </span>
                                 <span>{new Date(file.created_at).toLocaleDateString('fr-FR')}</span>
@@ -104,24 +104,24 @@ export default function FolderShow(props: FolderShowProps) {
                             <div className="flex gap-2 mt-3">
                                 <Link
                                     href={`/admin/media/${file.id}/edit`}
-                                    className="p-2 rounded hover:bg-blue-100"
+                                    className="p-2 rounded hover:bg-blue-50 dark:bg-blue-900/20"
                                     title="Modifier"
                                 >
-                                    <Edit3 className="w-5 h-5 text-blue-600" />
+                                    <Edit3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 </Link>
                                 <button
                                     onClick={() => handleDeleteMedia(file.id)}
-                                    className="p-2 rounded hover:bg-red-100"
+                                    className="p-2 rounded hover:bg-red-100 dark:bg-red-900"
                                     title="Supprimer"
                                 >
-                                    <Trash2 className="w-5 h-5 text-red-600" />
+                                    <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
                                 </button>
                             </div>
                         </div>
                     ))}
                 </div>
                 {filteredFiles.length === 0 && (
-                    <div className="text-center text-gray-500 py-12">Aucun média trouvé dans ce dossier.</div>
+                    <div className="text-center text-muted-foreground py-12">Aucun média trouvé dans ce dossier.</div>
                 )}
             </div>
         </AppLayout>

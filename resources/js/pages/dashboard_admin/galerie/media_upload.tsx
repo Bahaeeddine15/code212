@@ -102,14 +102,14 @@ export default function MediaUpload() {
         return (
             <div className="text-center">
                 {fileType === 'image' && (
-                    <img src={preview} alt="Preview" className="mx-auto mb-4 max-w-xs max-h-48 object-cover rounded-xl border-2 border-gray-200" />
+                    <img src={preview} alt="Preview" className="mx-auto mb-4 max-w-xs max-h-48 object-cover rounded-xl border-2 border-border" />
                 )}
                 {fileType === 'video' && (
-                    <video src={preview} controls className="mx-auto mb-4 max-w-xs max-h-48 rounded-xl border-2 border-gray-200" />
+                    <video src={preview} controls className="mx-auto mb-4 max-w-xs max-h-48 rounded-xl border-2 border-border" />
                 )}
-                <div className="text-sm font-medium text-gray-900 mb-2">{formData.file?.name}</div>
-                <div className="text-xs text-gray-500">{formData.file && formatFileSize(formData.file.size)}</div>
-                <p className="text-sm text-blue-600 mt-2">Cliquez pour changer le fichier</p>
+                <div className="text-sm font-medium text-foreground mb-2">{formData.file?.name}</div>
+                <div className="text-xs text-muted-foreground">{formData.file && formatFileSize(formData.file.size)}</div>
+                <p className="text-sm text-primary mt-2">Cliquez pour changer le fichier</p>
             </div>
         );
     };
@@ -121,11 +121,11 @@ export default function MediaUpload() {
 
         if (fileType === 'image') return <ImageIcon className={`${iconClass} text-blue-500`} />;
         if (fileType === 'video') return <Video className={`${iconClass} text-red-500`} />;
-        return <FileText className={`${iconClass} text-gray-500`} />;
+        return <FileText className={`${iconClass} text-muted-foreground`} />;
     };
 
     const ErrorMessage = ({ error }: { error: string }) => (
-        <div className="flex items-center mt-2 text-red-600 text-sm">
+        <div className="flex items-center mt-2 text-red-600 dark:text-red-400 text-sm">
             <AlertCircle className="w-4 h-4 mr-1" />
             {error}
         </div>
@@ -135,22 +135,22 @@ export default function MediaUpload() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Upload médias" />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-8">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                             <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
                                 <Camera className="w-8 h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-gray-900">Upload Médias</h1>
-                                <p className="text-gray-600 mt-2 text-lg">Ajoutez une nouvelle image ou vidéo à la galerie</p>
+                                <h1 className="text-3xl font-bold text-foreground">Upload Médias</h1>
+                                <p className="text-muted-foreground mt-2 text-lg">Ajoutez une nouvelle image ou vidéo à la galerie</p>
                             </div>
                         </div>
                         <Link
                             href="/admin/media"
-                            className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
+                            className="bg-card dark:bg-card text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200 dark:border-blue-700"
                         >
                             <ArrowLeft className="w-5 h-5" />
                             <span>Retour à la galerie</span>
@@ -158,126 +158,201 @@ export default function MediaUpload() {
                     </div>
                 </div>
 
-                {/* Formulaire */}
-                <div className="max-w-4xl mx-auto w-full">
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-                        <div className="flex items-center space-x-3 mb-8">
-                            <div className="p-3 bg-blue-100 rounded-xl">
-                                <Plus className="w-6 h-6 text-blue-600" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-900">Nouveau fichier média</h2>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="space-y-8">
-                            {/* Titre */}
-                            <div className="space-y-3">
-                                <label className="text-sm font-semibold text-gray-700">Titre du fichier *</label>
-                                <input
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleInputChange}
-                                    placeholder="Entrez le titre du fichier"
-                                    disabled={isUploading}
-                                    className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.title ? 'border-red-500' : 'border-gray-200'}`}
-                                />
-                                {errors.title && <ErrorMessage error={errors.title} />}
-                            </div>
-
-                            {/* Description */}
-                            <div className="space-y-3">
-                                <label className="text-sm font-semibold text-gray-700">Description *</label>
-                                <textarea
-                                    name="detail"
-                                    value={formData.detail}
-                                    onChange={handleInputChange}
-                                    placeholder="Décrivez le fichier..."
-                                    disabled={isUploading}
-                                    className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 resize-none ${errors.detail ? 'border-red-500' : 'border-gray-200'}`}
-                                    rows={4}
-                                />
-                                {errors.detail && <ErrorMessage error={errors.detail} />}
-                            </div>
-
-                            {/* Dossier */}
-                            <div className="space-y-3">
-                                <label className="text-sm font-semibold text-gray-700">Dossier *</label>
-                                <input
-                                    type="text"
-                                    name="folder"
-                                    value={formData.folder}
-                                    onChange={handleInputChange}
-                                    placeholder="Nom du dossier"
-                                    disabled={isUploading}
-                                    className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.folder ? 'border-red-500' : 'border-gray-200'}`}
-                                    required
-                                />
-                                {errors.folder && <ErrorMessage error={errors.folder} />}
-                            </div>
-
-                            {/* Upload de fichier */}
-                            <div className="space-y-3">
-                                <label className="text-sm font-semibold text-gray-700">Fichier *</label>
-                                <div className={`border-2 border-dashed rounded-xl p-8 transition-all duration-200 ${
-                                    errors.file ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
-                                }`}>
-                                    <input
-                                        type="file"
-                                        accept="image/*,video/mp4,video/avi,video/mov,video/wmv,.jpeg,.jpg,.png,.gif,.mp4,.avi,.mov,.wmv"
-                                        onChange={handleFileChange}
-                                        className="hidden"
-                                        id="file-input"
-                                        disabled={isUploading}
-                                    />
-                                    <label htmlFor="file-input" className="cursor-pointer flex flex-col items-center justify-center">
-                                        {preview && formData.file ? (
-                                            <FilePreview />
-                                        ) : (
-                                            <div className="text-center">
-                                                <FileIcon />
-                                                <p className="text-lg font-semibold text-gray-700 mb-2">
-                                                    Sélectionnez un fichier
-                                                </p>
-                                                <p className="text-sm text-gray-500 mb-4">Cliquez pour choisir un fichier</p>
-                                                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold pointer-events-none">
-                                                    Parcourir
-                                                </div>
-                                                <p className="text-xs text-gray-400 mt-4">
-                                                    Formats: JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV (Max: 50MB)
-                                                </p>
-                                            </div>
-                                        )}
-                                    </label>
+                {/* Layout organisé avec sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Section principale - Formulaire */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
+                            <div className="flex items-center space-x-3 mb-6">
+                                <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
+                                    <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 </div>
-                                {errors.file && <ErrorMessage error={errors.file} />}
+                                <h2 className="text-xl font-bold text-foreground">Informations du média</h2>
                             </div>
 
-                            {/* Boutons */}
-                            <div className="flex gap-4 pt-8 border-t border-gray-200">
-                                <button
-                                    type="submit"
-                                    disabled={isUploading}
-                                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2 disabled:opacity-50"
-                                >
-                                    {isUploading ? (
-                                        <>
-                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                            <span>Upload en cours...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <CheckCircle className="w-5 h-5" />
-                                            <span>Uploader le fichier</span>
-                                        </>
-                                    )}
-                                </button>
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Titre du fichier *</label>
+                                        <input
+                                            name="title"
+                                            value={formData.title}
+                                            onChange={handleInputChange}
+                                            placeholder="Ex: Photo événement 2024"
+                                            disabled={isUploading}
+                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                        />
+                                        {errors.title && <ErrorMessage error={errors.title} />}
+                                    </div>
+                                    
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Dossier *</label>
+                                        <input
+                                            type="text"
+                                            name="folder"
+                                            value={formData.folder}
+                                            onChange={handleInputChange}
+                                            placeholder="Ex: evenements-2024"
+                                            disabled={isUploading}
+                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            required
+                                        />
+                                        {errors.folder && <ErrorMessage error={errors.folder} />}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Description *</label>
+                                    <textarea
+                                        name="detail"
+                                        value={formData.detail}
+                                        onChange={handleInputChange}
+                                        placeholder="Décrivez le contenu de ce fichier..."
+                                        disabled={isUploading}
+                                        className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                                        rows={4}
+                                    />
+                                    {errors.detail && <ErrorMessage error={errors.detail} />}
+                                </div>
+
+                                {/* Zone d'upload */}
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Fichier à uploader *</label>
+                                    <div className={`border-2 border-dashed rounded-xl p-8 transition-all duration-200 ${
+                                        errors.file ? 'border-red-500 bg-red-50 dark:bg-red-900/10' : 'border-border hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10'
+                                    }`}>
+                                        <input
+                                            type="file"
+                                            accept="image/*,video/mp4,video/avi,video/mov,video/wmv,.jpeg,.jpg,.png,.gif,.mp4,.avi,.mov,.wmv"
+                                            onChange={handleFileChange}
+                                            className="hidden"
+                                            id="file-input"
+                                            disabled={isUploading}
+                                        />
+                                        <label htmlFor="file-input" className="cursor-pointer flex flex-col items-center justify-center">
+                                            {preview && formData.file ? (
+                                                <FilePreview />
+                                            ) : (
+                                                <div className="text-center">
+                                                    <FileIcon />
+                                                    <p className="text-lg font-semibold text-foreground mb-2">
+                                                        Glissez votre fichier ici
+                                                    </p>
+                                                    <p className="text-sm text-muted-foreground mb-4">ou cliquez pour sélectionner</p>
+                                                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold pointer-events-none">
+                                                        Choisir un fichier
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground mt-4">
+                                                        JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV • Max 50MB
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </label>
+                                    </div>
+                                    {errors.file && <ErrorMessage error={errors.file} />}
+                                </div>
+
+                                {/* Boutons d'action */}
+                                <div className="flex gap-4 pt-6">
+                                    <button
+                                        type="submit"
+                                        disabled={isUploading}
+                                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+                                    >
+                                        {isUploading ? (
+                                            <>
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                                <span>Upload en cours...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle className="w-5 h-5" />
+                                                <span>Uploader le fichier</span>
+                                            </>
+                                        )}
+                                    </button>
+                                    <Link
+                                        href="/admin/media"
+                                        className="px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+                                    >
+                                        Annuler
+                                    </Link>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {/* Sidebar - Conseils et actions */}
+                    <div className="space-y-6">
+                        {/* Actions rapides */}
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-6">
+                            <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+                                <Plus className="w-5 h-5 text-blue-600" />
+                                Actions rapides
+                            </h3>
+                            <div className="space-y-3">
                                 <Link
                                     href="/admin/media"
-                                    className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center"
+                                    className="w-full bg-muted hover:bg-muted/80 text-foreground py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                                 >
-                                    Annuler
+                                    <ArrowLeft className="w-4 h-4" />
+                                    Retour à la galerie
                                 </Link>
                             </div>
-                        </form>
+                        </div>
+
+                        {/* Conseils pour l'upload */}
+                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 rounded-2xl shadow-lg border border-green-200 dark:border-green-800 p-6">
+                            <h3 className="font-bold text-green-800 dark:text-green-400 mb-4">💡 Conseils pour vos médias</h3>
+                            <ul className="space-y-2 text-sm text-green-700 dark:text-green-300">
+                                <li>• Utilisez des noms explicites</li>
+                                <li>• Organisez par dossiers thématiques</li>
+                                <li>• Optimisez la taille des images</li>
+                                <li>• Ajoutez des descriptions détaillées</li>
+                                <li>• Vérifiez les droits d'usage</li>
+                            </ul>
+                        </div>
+
+                        {/* Formats supportés */}
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-6">
+                            <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+                                <ImageIcon className="w-5 h-5 text-blue-600" />
+                                Formats supportés
+                            </h3>
+                            <div className="space-y-3 text-sm">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Images</span>
+                                    <span className="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 px-2 py-1 rounded">JPG, PNG, GIF</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Vidéos</span>
+                                    <span className="text-xs bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400 px-2 py-1 rounded">MP4, AVI, MOV</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Taille max</span>
+                                    <span className="font-medium text-foreground">50 MB</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Statistiques */}
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-6">
+                            <h3 className="font-bold text-foreground mb-4">📊 Statistiques</h3>
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Photos</span>
+                                    <span className="font-medium text-foreground">127 fichiers</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Vidéos</span>
+                                    <span className="font-medium text-foreground">23 fichiers</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Espace utilisé</span>
+                                    <span className="font-medium text-foreground">2.4 GB</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

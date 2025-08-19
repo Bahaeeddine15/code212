@@ -41,14 +41,14 @@ const StatCard = ({
     icon: any;
     theme?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info';
 }) => (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow">
+    <div className="bg-card dark:bg-card rounded-lg shadow-sm border border-border p-5 hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between">
             <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-                <p className="text-2xl font-bold text-gray-900">{value}</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
+                <p className="text-2xl font-bold text-foreground">{value}</p>
             </div>
-            <div className="p-3 bg-blue-50 rounded-lg">
-                <Icon className="w-7 h-7 text-blue-600" />
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <Icon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
             </div>
         </div>
     </div>
@@ -72,22 +72,22 @@ const DataCompartment = ({
     href: string;
     showReadMore?: boolean;
 }) => (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow">
+    <div className="bg-card dark:bg-card rounded-lg shadow-sm border border-border p-5 hover:shadow-md transition-shadow">
         <div className="flex items-center mb-5">
-            <div className="p-3 bg-blue-50 rounded-lg mr-3">
-                <Icon className="w-6 h-6 text-blue-600" />
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg mr-3">
+                <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-                <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-                <p className="text-sm text-gray-600">{description}</p>
+                <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+                <p className="text-sm text-muted-foreground">{description}</p>
             </div>
         </div>
 
         <div className="space-y-2 mb-5">
             {data.map((item, index) => (
                 <div key={index} className="flex justify-between items-center py-1.5">
-                    <span className="text-sm text-gray-600">{item.label}</span>
-                    <span className="text-base font-semibold text-gray-900">{item.value}</span>
+                    <span className="text-sm text-muted-foreground">{item.label}</span>
+                    <span className="text-base font-semibold text-foreground">{item.value}</span>
                 </div>
             ))}
         </div>
@@ -95,7 +95,7 @@ const DataCompartment = ({
         {showReadMore && (
             <Link
                 href={href}
-                className="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors duration-200"
+                className="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white dark:text-white text-sm font-medium transition-colors duration-200"
             >
                 Lire plus
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -112,12 +112,12 @@ export default function Dashboard({name}: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="bg-gray-50 min-h-screen p-6">
+            <div className="bg-background min-h-screen p-6">
 
                 {/* Section du profil utilisateur inspirée de l'image */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
                     {/* Carte de profil avec design circulaire */}
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+                    <div className="bg-card dark:bg-card rounded-lg shadow-sm border border-border p-5">
                         <div className="flex flex-col items-center text-center">
                             <div className="w-22 h-22 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center mb-4 relative">
                                 <div className="text-white font-bold text-sm">
@@ -126,26 +126,26 @@ export default function Dashboard({name}: DashboardProps) {
                                     </div>
                                 </div>
                             </div>
-                            <h2 className="text-xl font-semibold text-gray-900 mb-1">{name}</h2>
+                            <h2 className="text-xl font-semibold text-foreground mb-1">{name}</h2>
                         </div>
                     </div>
 
                     {/* Carte d'informations */}
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+                    <div className="bg-card dark:bg-card rounded-lg shadow-sm border border-border p-5">
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span className="text-sm font-medium text-gray-600">University</span>
-                                <span className="text-sm text-gray-900 text-right">UNIVERSITÉ CADI AYYAD DE MARRAKECH</span>
+                            <div className="flex justify-between items-center py-2 border-b border-border">
+                                <span className="text-sm font-medium text-muted-foreground">University</span>
+                                <span className="text-sm text-foreground text-right">UNIVERSITÉ CADI AYYAD DE MARRAKECH</span>
                             </div>
 
-                            <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span className="text-sm font-medium text-gray-600">Center</span>
-                                <span className="text-sm text-gray-900 text-right">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE</span>
+                            <div className="flex justify-between items-center py-2 border-b border-border">
+                                <span className="text-sm font-medium text-muted-foreground">Center</span>
+                                <span className="text-sm text-foreground text-right">CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE</span>
                             </div>
 
                             <div className="flex justify-between items-center py-2">
-                                <span className="text-sm font-medium text-gray-600">Email</span>
-                                <span className="text-sm text-gray-900">admin@code212.ma</span>
+                                <span className="text-sm font-medium text-muted-foreground">Email</span>
+                                <span className="text-sm text-foreground">admin@code212.ma</span>
                             </div>
                         </div>
                     </div>

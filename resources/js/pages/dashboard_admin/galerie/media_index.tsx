@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 import { Images, Search, Download, Trash2, Edit3, Eye, Plus, MoreHorizontal, Folder, ChevronRight } from 'lucide-react';
 
 interface MediaFile {
@@ -56,7 +57,7 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                 <div className="flex flex-col items-center">
                     {getMediaType(media.file_path) === 'Vidéo' ? (
                         <video
-                            className="w-24 h-24 rounded-lg object-contain bg-gray-100 cursor-pointer mb-2"
+                            className="w-24 h-24 rounded-lg object-contain bg-muted cursor-pointer mb-2"
                             src={getImageUrl(media.file_path)}
                             muted
                             controls={false}
@@ -66,7 +67,7 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                         <img
                             src={getImageUrl(media.file_path)}
                             alt={media.title}
-                            className="w-24 h-24 rounded-lg object-contain bg-gray-100 cursor-pointer mb-2"
+                            className="w-24 h-24 rounded-lg object-contain bg-muted cursor-pointer mb-2"
                             onClick={() => handleView(media)}
                         />
                     )}
@@ -74,7 +75,7 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                         {media.title}
                     </h3>
                     <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
-                        <span className={`px-2 py-1 rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                        <span className={`px-2 py-1 rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 dark:bg-red-900 text-red-800' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-800'}`}>
                             {getMediaType(media.file_path)}
                         </span>
                         <span>{formatDate(media.created_at)}</span>
@@ -96,35 +97,29 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Galerie médias" />
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
 
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                                <Images className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-gray-900">Galerie Médias</h1>
-                                <p className="text-gray-600 mt-2 text-lg">Gérez vos images et vidéos</p>
-                            </div>
-                        </div>
-                        <Button asChild className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
-                            <Link href="/admin/media/create">
-                                <Plus className="w-5 h-5" />
-                                <span>Ajouter</span>
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
+                <PageHeader
+                    title="Galerie Médias"
+                    description="Gérez vos images et vidéos"
+                    icon={Images}
+                    theme="primary"
+                    actions={
+                        <Link href="/admin/media/create">
+                            <ModernButton theme="primary" icon={Plus}>
+                                Ajouter
+                            </ModernButton>
+                        </Link>
+                    }
+                />
 
                 {/* Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Total médias</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Total médias</p>
                                 <p className="text-3xl font-bold mt-2 text-emerald-600">{totalMedia}</p>
                             </div>
                             <div className="p-4 rounded-2xl bg-emerald-100">
@@ -132,34 +127,34 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                             </div>
                         </div>
                     </div>
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Résultats filtrés</p>
-                                <p className="text-3xl font-bold mt-2 text-blue-600">{totalFiltered}</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Résultats filtrés</p>
+                                <p className="text-3xl font-bold mt-2 text-blue-600 dark:text-blue-400">{totalFiltered}</p>
                             </div>
-                            <div className="p-4 rounded-2xl bg-blue-100">
-                                <Search className="w-8 h-8 text-blue-600" />
+                            <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20">
+                                <Search className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Search and Filters */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                             <Input
                                 type="text"
                                 placeholder="Rechercher un média..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <Select value={sortBy} onValueChange={setSortBy}>
-                            <SelectTrigger className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40">
+                            <SelectTrigger className="px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 w-40">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -182,9 +177,9 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                 </div>
 
                 {/* Media Gallery grouped by folder */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                        <h2 className="text-2xl font-bold text-foreground flex items-center">
                             <Images className="w-7 h-7 mr-3 text-emerald-600" />
                             Médias par dossier
                         </h2>
@@ -210,23 +205,23 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
 
                                 if (filteredFiles.length === 0) return null;
                                 return (
-                                    <div key={folder} className="border border-gray-200 rounded-xl overflow-hidden">
+                                    <div key={folder} className="border border-border rounded-xl overflow-hidden">
                                         {/* Clickable folder header */}
                                         <Link
                                             href={`/admin/media/folder/${folder}`}
-                                            className="block bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 p-6 border-b border-gray-200"
+                                            className="block bg-muted/30 hover:bg-muted/50 dark:bg-muted/20 dark:hover:bg-muted/30 transition-all duration-200 p-6 border-b border-border"
                                         >
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center space-x-3">
-                                                    <div className="p-2 bg-blue-100 rounded-lg">
-                                                        <Folder className="w-6 h-6 text-blue-600" />
+                                                    <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                                        <Folder className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-xl font-bold text-gray-900">{folder}</h3>
-                                                        <p className="text-sm text-gray-600">{filteredFiles.length} média(s)</p>
+                                                        <h3 className="text-xl font-bold text-foreground">{folder}</h3>
+                                                        <p className="text-sm text-muted-foreground">{filteredFiles.length} média(s)</p>
                                                     </div>
                                                 </div>
-                                                <ChevronRight className="w-5 h-5 text-gray-400" />
+                                                <ChevronRight className="w-5 h-5 text-muted-foreground" />
                                             </div>
                                         </Link>
 
@@ -241,7 +236,7 @@ export default function MediaIndex({ mediaByFolder }: { mediaByFolder: Record<st
                                                 <div className="flex justify-center mt-4">
                                                     <Link
                                                         href={`/admin/media/folder/${folder}`}
-                                                        className="text-blue-600 hover:underline font-semibold"
+                                                        className="text-primary hover:underline font-semibold"
                                                     >
                                                         Voir plus de médias dans ce dossier &rarr;
                                                     </Link>
