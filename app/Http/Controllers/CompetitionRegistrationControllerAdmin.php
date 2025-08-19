@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\CompetitionRegistration;
+use App\Models\NotifiableUser;
+use App\Notifications\CompetitionRegistrationStatusNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CompetitionRegistrationControllerAdmin extends Controller
 {
@@ -64,26 +67,58 @@ class CompetitionRegistrationControllerAdmin extends Controller
     }
 
     /**
-     * Approve a pending registration.
+     * Approve a pending registration and send notification email.
      */
     public function approve($id)
     {
         $registration = CompetitionRegistration::findOrFail($id);
+        $oldStatus = $registration->status;
+        
         $registration->status = 'Confirmé';
         $registration->save();
 
-        return back()->with('success', 'Inscription confirmée.');
+        // Send email notification if status changed
+        if ($oldStatus !== 'Confirmé') {
+            $this->sendNotificationEmail($registration);
+        }
+
+        return back()->with('success', 'Inscription confirmée et email de notification envoyé.');
     }
 
     /**
-     * Reject a pending registration.
+     * Reject a pending registration and send notification email.
      */
     public function reject($id)
     {
         $registration = CompetitionRegistration::findOrFail($id);
+        $oldStatus = $registration->status;
+        
         $registration->status = 'Refusé';
         $registration->save();
 
-        return back()->with('success', 'Inscription refusée.');
+        // Send email notification if status changed
+        if ($oldStatus !== 'Refusé') {
+            $this->sendNotificationEmail($registration);
+        }
+
+        return back()->with('success', 'Inscription refusée et email de notification envoyé.');
+    }
+
+    /**
+     * Send notification email to the registered participant.
+     */
+    private function sendNotificationEmail(CompetitionRegistration $registration)
+    {
+        try {
+            // Create a notifiable user instance
+            $notifiableUser = new NotifiableUser($registration->email, $registration->participant_name);
+
+            // Send the notification
+            $notifiableUser->notify(new CompetitionRegistrationStatusNotification($registration));
+            
+        } catch (\Exception $e) {
+            // Log the error but don't fail the status update
+            Log::error('Failed to send competition registration notification: ' . $e->getMessage());
+        }
     }
 }
