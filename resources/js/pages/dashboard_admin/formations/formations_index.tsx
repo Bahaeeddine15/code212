@@ -33,26 +33,26 @@ const ModuleCard = ({
     selectedFormationId: number;
 }) => {
     return (
-        <div className="bg-gray-50 rounded-xl shadow border border-gray-200 p-5 flex flex-col gap-4">
+        <div className="bg-background rounded-xl shadow border border-border p-5 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-                <h4 className="text-lg font-semibold text-gray-800">{module.title}</h4>
+                <h4 className="text-lg font-semibold text-foreground">{module.title}</h4>
                 <div className="flex space-x-2">
                     <button
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                        className="p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 rounded-lg"
                         onClick={() => onEdit(module)}
                         title="Modifier"
                     >
                         <Edit3 className="w-4 h-4" />
                     </button>
                     <button
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 rounded-lg"
                         onClick={() => onDelete(module)}
                         title="Supprimer"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
                     <button
-                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
+                        className="p-2 text-green-600 dark:text-green-400 hover:bg-green-50 rounded-lg"
                         onClick={() => onPlay(module)}
                         title="Lire"
                     >
@@ -60,8 +60,8 @@ const ModuleCard = ({
                     </button>
                 </div>
             </div>
-            <p className="text-gray-600 text-sm">{module.description}</p>
-            <div className="flex items-center justify-between text-xs text-gray-500">
+            <p className="text-muted-foreground text-sm">{module.description}</p>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>Durée : {module.duration}</span>
                 <span>Ordre : {module.order}</span>
             </div>
@@ -70,7 +70,7 @@ const ModuleCard = ({
                     href={`/storage/${module.file_path}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-blue-600 hover:underline text-xs"
+                    className="inline-flex items-center text-primary hover:underline text-xs"
                 >
                     <FileText className="w-4 h-4 mr-1" />
                     Voir le fichier
@@ -134,13 +134,13 @@ const FormationCard = ({
     const getLevelColor = () => {
         switch (level) {
             case 'Débutant':
-                return 'bg-green-100 text-green-800';
+                return 'bg-green-100 dark:bg-green-900 text-green-800';
             case 'Intermédiaire':
-                return 'bg-yellow-100 text-yellow-800';
+                return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800';
             case 'Avancé':
-                return 'bg-red-100 text-red-800';
+                return 'bg-red-100 dark:bg-red-900 text-red-800';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-gray-100 text-foreground';
         }
     };
 
@@ -154,7 +154,7 @@ const FormationCard = ({
 
     return (
         <div
-            className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-6 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer`}
+            className={`bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer`}
             onClick={handleCardClick}
             title={link ? "Voir la formation externe" : undefined}
         >
@@ -172,8 +172,8 @@ const FormationCard = ({
 
             <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
-                    <p className="text-gray-600 mb-4 leading-relaxed line-clamp-2">{description}</p>
+                    <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
+                    <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-2">{description}</p>
                 </div>
             </div>
 
@@ -182,7 +182,7 @@ const FormationCard = ({
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getLevelColor()}`}>
                         {level}
                     </span>
-                    <div className="flex items-center space-x-2 text-gray-500">
+                    <div className="flex items-center space-x-2 text-muted-foreground">
                         <Clock className="w-4 h-4" />
                         <span>{duration}</span>
                     </div>
@@ -191,12 +191,12 @@ const FormationCard = ({
 
             <div className="space-y-3 mb-6">
                 <div className="flex items-center justify-between">
-                    <span className="text-gray-600 font-medium">Modules</span>
-                    <span className="font-bold text-blue-600">{modules.length}</span>
+                    <span className="text-muted-foreground font-medium">Modules</span>
+                    <span className="font-bold text-blue-600 dark:text-blue-400">{modules.length}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className="text-gray-600 font-medium">Inscrits</span>
-                    <span className="font-bold text-green-600">{enrolledStudents}/{maxStudents}</span>
+                    <span className="text-muted-foreground font-medium">Inscrits</span>
+                    <span className="font-bold text-green-600 dark:text-green-400">{enrolledStudents}/{maxStudents}</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                     <div
@@ -207,18 +207,18 @@ const FormationCard = ({
             </div>
 
             <div className="flex items-center justify-between">
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
+                <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">{category}</span>
                 <div className="flex space-x-2">
                     <Link
                         href={`/admin/formations/${formation.id}/edit`}
-                        className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
+                        className="p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
                         onClick={e => e.stopPropagation()}
                     >
                         <Edit3 className="w-4 h-4" />
                     </Link>
                     <button
                         onClick={e => { e.stopPropagation(); onDelete(formation); }}
-                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
+                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
@@ -232,7 +232,7 @@ const FormationCard = ({
                         </ModernButton>
                     )}
                     {link && (
-                        <span className="text-blue-600 text-xs font-semibold ml-2">Lien externe</span>
+                        <span className="text-primary text-xs font-semibold ml-2">Lien externe</span>
                     )}
                 </div>
             </div>
@@ -307,34 +307,34 @@ export default function Formations({ formations }: Props) {
 
                 {/* Statistiques principales */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Total formations</p>
-                                <p className="text-3xl font-bold text-blue-600 mt-2">18</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Total formations</p>
+                                <p className="text-3xl font-bold text-primary mt-2">18</p>
                             </div>
-                            <div className="p-4 bg-blue-100 rounded-2xl">
-                                <GraduationCap className="w-8 h-8 text-blue-600" />
+                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+                                <GraduationCap className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Étudiants inscrits</p>
-                                <p className="text-3xl font-bold text-green-600 mt-2">247</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Étudiants inscrits</p>
+                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">247</p>
                             </div>
-                            <div className="p-4 bg-green-100 rounded-2xl">
-                                <Users className="w-8 h-8 text-green-600" />
+                            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
+                                <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Certifications</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Certifications</p>
                                 <p className="text-3xl font-bold text-purple-600 mt-2">89</p>
                             </div>
                             <div className="p-4 bg-purple-100 rounded-2xl">
@@ -343,10 +343,10 @@ export default function Formations({ formations }: Props) {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Modules actifs</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Modules actifs</p>
                                 <p className="text-3xl font-bold text-cyan-600 mt-2">156</p>
                             </div>
                             <div className="p-4 bg-cyan-100 rounded-2xl">
@@ -357,24 +357,24 @@ export default function Formations({ formations }: Props) {
                 </div>
 
                 {/* Barre de recherche et filtres */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Rechercher une formation..."
-                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <div className="flex gap-3">
-                            <select className="px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200">
+                            <select className="px-4 py-3 border-2 border-gray-300 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200">
                                 <option>Tous les niveaux</option>
                                 <option>Débutant</option>
                                 <option>Intermédiaire</option>
                                 <option>Avancé</option>
                             </select>
-                            <select className="px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200">
+                            <select className="px-4 py-3 border-2 border-gray-300 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200">
                                 <option>Toutes les catégories</option>
                                 <option>Développement</option>
                                 <option>IA</option>
@@ -386,10 +386,10 @@ export default function Formations({ formations }: Props) {
                 </div>
 
                 {/* Liste des formations */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                            <GraduationCap className="w-7 h-7 mr-3 text-blue-600" />
+                        <h2 className="text-2xl font-bold text-foreground flex items-center">
+                            <GraduationCap className="w-7 h-7 mr-3 text-blue-600 dark:text-blue-400" />
                             Formations disponibles
                         </h2>
                     </div>
@@ -408,9 +408,9 @@ export default function Formations({ formations }: Props) {
 
                 {/* Aperçu des modules sélectionnés */}
                 {showModules && selectedFormation && (
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                            <h2 className="text-2xl font-bold text-foreground flex items-center">
                                 <BookOpen className="w-7 h-7 mr-3 text-purple-600" />
                                 Modules - {selectedFormation.title}
                             </h2>

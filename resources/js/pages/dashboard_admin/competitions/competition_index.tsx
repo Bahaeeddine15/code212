@@ -30,6 +30,7 @@ import {
     CheckCircle2,
     XCircle
 } from 'lucide-react';
+import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 
@@ -51,7 +52,6 @@ interface Competition {
     updated_at: string;
     closed_at?: string | null;
     closed_by?: string | null;
-    type: 'individual' | 'group'; // Added property
 }
 
 interface Registration {
@@ -66,7 +66,6 @@ interface Registration {
     status: 'Confirmé' | 'En attente' | 'Refusé';
     paymentStatus: 'Payé' | 'En attente' | 'Refusé';
     notes?: string;
-    groupMembers?: string; // Added property
 }
 
 interface Statistics {
@@ -125,26 +124,26 @@ export default function CompetitionsPage({ competitions, registrations, statisti
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'Ouvert':
-                return 'bg-green-100 text-green-800';
+                return 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 font-semibold';
             case 'Complet':
-                return 'bg-red-100 text-red-800';
+                return 'bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 font-semibold';
             case 'Fermé':
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-semibold';
             default:
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-blue-50 dark:bg-blue-800 text-blue-800 dark:text-blue-100 font-semibold';
         }
     };
 
     const getParticipantStatusColor = (status: string) => {
         switch (status) {
             case 'Confirmé':
-                return 'bg-green-100 text-green-800';
+                return 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 font-semibold';
             case 'En attente':
-                return 'bg-yellow-100 text-yellow-800';
+                return 'bg-yellow-100 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 font-semibold';
             case 'Refusé':
-                return 'bg-red-100 text-red-800';
+                return 'bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 font-semibold';
             default:
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-blue-50 dark:bg-blue-800 text-blue-800 dark:text-blue-100 font-semibold';
         }
     };
 
@@ -191,43 +190,34 @@ export default function CompetitionsPage({ competitions, registrations, statisti
         <AppLayout>
             <Head title="Inscription aux compétitions" />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                                <Trophy className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-gray-900">Inscription aux compétitions</h1>
-                                <p className="text-gray-600 mt-2 text-lg">Gérez les inscriptions et les participants aux compétitions</p>
-                            </div>
-                        </div>
-                        <Button
-                            onClick={navigateToCreate}
-                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-                        >
-                            <Plus className="w-5 h-5" />
-                            <span>Nouvelle compétition</span>
-                        </Button>
-                    </div>
-                </div>
+                <PageHeader
+                    title="Inscription aux compétitions"
+                    description="Gérez les inscriptions et les participants aux compétitions"
+                    icon={Trophy}
+                    theme="primary"
+                    actions={
+                        <ModernButton theme="primary" icon={Plus} onClick={navigateToCreate}>
+                            Nouvelle compétition
+                        </ModernButton>
+                    }
+                />
 
                 {/* Search and Filters */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <Input
                                 placeholder="Rechercher par titre ou lieu..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="w-full px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <div className="flex items-center gap-2">
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-48">
+                                <SelectTrigger className="px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 w-48">
                                     <SelectValue placeholder="Filtrer par statut" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -243,43 +233,43 @@ export default function CompetitionsPage({ competitions, registrations, statisti
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Compétitions actives</p>
-                                <p className="text-3xl font-bold text-blue-600 mt-2">{statistics.activeCompetitions}</p>
-                                <p className="text-xs text-gray-500 mt-1">Total: {statistics.totalCompetitions}</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Compétitions actives</p>
+                                <p className="text-3xl font-bold text-primary mt-2">{statistics.activeCompetitions}</p>
+                                <p className="text-xs text-muted-foreground mt-1">Total: {statistics.totalCompetitions}</p>
                             </div>
-                            <div className="p-4 bg-blue-100 rounded-2xl">
-                                <Trophy className="w-8 h-8 text-blue-600" />
+                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+                                <Trophy className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Total inscriptions</p>
-                                <p className="text-3xl font-bold text-green-600 mt-2">{statistics.totalRegistrations}</p>
-                                <p className="text-xs text-gray-500 mt-1">
+                                <p className="text-sm font-semibold text-muted-foreground">Total inscriptions</p>
+                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{statistics.totalRegistrations}</p>
+                                <p className="text-xs text-muted-foreground mt-1">
                                     {statistics.totalRegistrations > 0
                                         ? `${Math.round((statistics.confirmedRegistrations / statistics.totalRegistrations) * 100)}% confirmées`
                                         : 'Aucune inscription'
                                     }
                                 </p>
                             </div>
-                            <div className="p-4 bg-green-100 rounded-2xl">
-                                <Users className="w-8 h-8 text-green-600" />
+                            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
+                                <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Confirmées</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Confirmées</p>
                                 <p className="text-3xl font-bold text-purple-600 mt-2">{statistics.confirmedRegistrations}</p>
-                                <p className="text-xs text-gray-500 mt-1">{statistics.pendingRegistrations} en attente</p>
+                                <p className="text-xs text-muted-foreground mt-1">{statistics.pendingRegistrations} en attente</p>
                             </div>
                             <div className="p-4 bg-purple-100 rounded-2xl">
                                 <Medal className="w-8 h-8 text-purple-600" />
@@ -287,12 +277,12 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Prochaine compétition</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Prochaine compétition</p>
                                 <p className="text-3xl font-bold text-orange-600 mt-2">{getNextCompetitionDays()}</p>
-                                <p className="text-xs text-gray-500 mt-1">jours restants</p>
+                                <p className="text-xs text-muted-foreground mt-1">jours restants</p>
                             </div>
                             <div className="p-4 bg-orange-100 rounded-2xl">
                                 <Calendar className="w-8 h-8 text-orange-600" />
@@ -302,20 +292,20 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                 </div>
 
                 {/* Competitions List */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                            <Trophy className="w-7 h-7 mr-3 text-blue-600" />
+                        <h2 className="text-2xl font-bold text-foreground flex items-center">
+                            <Trophy className="w-7 h-7 mr-3 text-blue-600 dark:text-blue-400" />
                             Compétitions disponibles
                         </h2>
                     </div>
-                    <p className="text-gray-600 mb-6">Liste des compétitions ouvertes aux inscriptions</p>
+                    <p className="text-muted-foreground mb-6">Liste des compétitions ouvertes aux inscriptions</p>
 
                     {filteredCompetitions.length === 0 ? (
                         <div className="text-center py-12">
-                            <Trophy className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune compétition</h3>
-                            <p className="text-gray-600 mb-6">Commencez par créer votre première compétition.</p>
+                            <Trophy className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-foreground mb-2">Aucune compétition</h3>
+                            <p className="text-muted-foreground mb-6">Commencez par créer votre première compétition.</p>
                             <Button
                                 onClick={navigateToCreate}
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all duration-200 mx-auto"
@@ -329,56 +319,55 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                             {filteredCompetitions.map((competition) => (
                                 <div
                                     key={competition.id}
-                                    className={`p-8 border rounded-2xl cursor-pointer transition-colors ${
+                                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${
                                         selectedCompetition === competition.id
-                                            ? 'border-blue-500 bg-blue-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                            : 'border-border hover:border-gray-300'
                                     }`}
-                                    style={{ minHeight: 160 }} // Optional: set a minimum height
                                     onClick={() => navigateToShow(competition)}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-4">
-                                                <h3 className="font-semibold text-xl">{competition.title}</h3>
+                                            <div className="flex items-center gap-3">
+                                                <h3 className="font-semibold">{competition.title}</h3>
                                                 <Badge className={getStatusColor(competition.status)}>
                                                     {competition.status}
                                                 </Badge>
                                             </div>
-                                            <div className="flex items-center gap-6 mt-4 text-base text-gray-600">
-                                                <div className="flex items-center gap-2">
-                                                    <Calendar className="h-5 w-5" />
+                                            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                                <div className="flex items-center gap-1">
+                                                    <Calendar className="h-4 w-4" />
                                                     {formatDate(competition.date)}
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <MapPin className="h-5 w-5" />
+                                                <div className="flex items-center gap-1">
+                                                    <MapPin className="h-4 w-4" />
                                                     {competition.location}
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Users className="h-5 w-5" />
+                                                <div className="flex items-center gap-1">
+                                                    <Users className="h-4 w-4" />
                                                     {competition.registrations}/{competition.maxParticipants}
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Eye className="h-5 w-5" />
+                                                <div className="flex items-center gap-1">
+                                                    <Eye className="h-4 w-4" />
                                                     {competition.views} vues
                                                 </div>
                                             </div>
                                             {competition.description && (
-                                                <p className="mt-4 text-base text-gray-600">
+                                                <p className="mt-2 text-sm text-muted-foreground">
                                                     {competition.description}
                                                 </p>
                                             )}
-                                            <p className="mt-2 text-sm text-gray-500">
+                                            <p className="mt-1 text-xs text-muted-foreground">
                                                 Date limite: {formatDate(competition.deadline)}
                                             </p>
                                             {competition.status === 'Fermé' && competition.closed_at && (
-                                                <p className="mt-2 text-sm text-red-600">
+                                                <p className="mt-1 text-xs text-red-600 dark:text-red-400">
                                                     Fermée le {formatDate(competition.closed_at)}
                                                     {competition.closed_by && ` par ${competition.closed_by}`}
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="flex flex-col items-end gap-3">
+                                        <div className="flex items-center gap-2">
                                             {competition.status === 'Ouvert' && (
                                                 <Button
                                                     variant="outline"
@@ -389,7 +378,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                     }}
                                                     className="border-orange-600 text-orange-600 hover:bg-orange-50"
                                                 >
-                                                    <Lock className="h-5 w-5 mr-1" />
+                                                    <Lock className="h-4 w-4 mr-1" />
                                                     Fermer
                                                 </Button>
                                             )}
@@ -401,7 +390,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                     navigateToEdit(competition);
                                                 }}
                                             >
-                                                <Edit className="h-5 w-5 mr-1" />
+                                                <Edit className="h-4 w-4 mr-1" />
                                                 Modifier
                                             </Button>
                                             <Button
@@ -411,19 +400,13 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                     e.stopPropagation();
                                                     deleteCompetition(competition.id);
                                                 }}
-                                                className="border-red-600 text-red-600 hover:bg-red-50"
+                                                className="border-red-600 text-red-600 dark:text-red-400 hover:bg-red-50"
                                             >
-                                                <Trash2 className="h-5 w-5 mr-1" />
+                                                <Trash2 className="h-4 w-4 mr-1" />
                                                 Supprimer
                                             </Button>
                                         </div>
                                     </div>
-                                    <Badge
-                                        variant="outline"
-                                        className="bg-indigo-50 text-indigo-700 border-indigo-200 text-base px-4 py-2 mt-4"
-                                    >
-                                        {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
-                                    </Badge>
                                 </div>
                             ))}
                         </div>
@@ -431,17 +414,17 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                 </div>
 
                 {/* Registrations Table */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                                <Users className="w-7 h-7 mr-3 text-green-600" />
+                            <h2 className="text-2xl font-bold text-foreground flex items-center">
+                                <Users className="w-7 h-7 mr-3 text-green-600 dark:text-green-400" />
                                 Inscriptions récentes
                             </h2>
-                            <p className="text-gray-600 mt-2">Liste des dernières inscriptions aux compétitions</p>
+                            <p className="text-muted-foreground mt-2">Liste des dernières inscriptions aux compétitions</p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+                            <Button variant="outline" size="sm" className="border-blue-600 text-primary hover:bg-blue-50 dark:bg-blue-900/20">
                                 <Download className="h-4 w-4 mr-1" />
                                 Exporter
                             </Button>
@@ -450,9 +433,9 @@ export default function CompetitionsPage({ competitions, registrations, statisti
 
                     {filteredRegistrations.length === 0 ? (
                         <div className="text-center py-12">
-                            <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune inscription</h3>
-                            <p className="text-gray-600">Aucune inscription trouvée.</p>
+                            <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-foreground mb-2">Aucune inscription</h3>
+                            <p className="text-muted-foreground">Aucune inscription trouvée.</p>
                         </div>
                     ) : (
                         <Table>
@@ -473,25 +456,11 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                     <TableRow key={registration.id}>
                                         <TableCell className="font-medium">
                                             {registration.participantName}
-                                            {/* Show group members if present */}
-                                            {registration.groupMembers && (
-                                                <div className="mt-1 text-xs text-gray-500">
-                                                    <span className="font-semibold">Membres:</span>
-                                                    <ul className="list-disc ml-4">
-                                                        {registration.groupMembers
-                                                            .split('\n')
-                                                            .filter(Boolean)
-                                                            .map((member, idx) => (
-                                                                <li key={idx}>{member}</li>
-                                                            ))}
-                                                    </ul>
-                                                </div>
-                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <div className="space-y-1">
                                                 <div className="text-sm">{registration.email}</div>
-                                                <div className="text-sm text-gray-500">
+                                                <div className="text-sm text-muted-foreground">
                                                     {registration.phone}
                                                 </div>
                                             </div>
@@ -522,7 +491,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                     disabled={registration.status === 'Confirmé'}
                                                     title="Accepter"
                                                 >
-                                                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                                                    <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
@@ -535,7 +504,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                     disabled={registration.status === 'Refusé'}
                                                     title="Refuser"
                                                 >
-                                                    <XCircle className="h-5 w-5 text-red-600" />
+                                                    <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
                                                 </Button>
                                                 {/* Removed Edit and Delete buttons */}
                                             </div>

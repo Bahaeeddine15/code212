@@ -36,7 +36,7 @@ function renderModuleFile(filePath?: string, onOpenVideo?: () => void) {
   if (extension === 'pdf') {
     return (
       <div className="mt-4">
-        <p className="text-sm text-gray-600 font-medium mb-1">Fichier attaché :</p>
+        <p className="text-sm text-muted-foreground font-medium mb-1">Fichier attaché :</p>
         <a href={`/storage/${filePath}`} target="_blank" className="text-indigo-600 hover:underline text-sm flex items-center gap-1">
           <FileText className="w-4 h-4" /> Voir le PDF
         </a>
@@ -46,8 +46,8 @@ function renderModuleFile(filePath?: string, onOpenVideo?: () => void) {
   if (["mp4", "avi", "mov"].includes(extension || '')) {
     return (
       <div className="mt-4">
-        <p className="text-sm text-gray-600 font-medium mb-1">Vidéo attachée :</p>
-        <button onClick={onOpenVideo} className="text-blue-600 hover:underline text-sm">
+        <p className="text-sm text-muted-foreground font-medium mb-1">Vidéo attachée :</p>
+        <button onClick={onOpenVideo} className="text-primary hover:underline text-sm">
           📹 Voir la vidéo
         </button>
       </div>
@@ -64,19 +64,19 @@ const ModuleCard = ({ module, onEdit, onDelete, onShowVideo }: {
   onShowVideo: (filePath: string) => void;
 }) => {
   return (
-    <div className="bg-white dark:bg-gray-700 rounded-2xl shadow-lg border border-gray-200 p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+    <div className="bg-card dark:bg-card dark:bg-gray-700 rounded-2xl shadow-lg border border-border p-6 flex flex-col hover:shadow-xl transition-all duration-300">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-bold text-gray-800 dark:text-white">{module.title}</h2>
-        <span className="text-xs text-gray-500">Durée : {module.duration}</span>
+        <h2 className="text-lg font-bold text-foreground dark:text-white">{module.title}</h2>
+        <span className="text-xs text-muted-foreground">Durée : {module.duration}</span>
       </div>
-      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{module.description}</p>
+      <p className="text-sm text-muted-foreground dark:text-gray-300 mb-4">{module.description}</p>
 
       <div className="flex justify-between mt-auto">
         {renderModuleFile(module.file_path, () => onShowVideo(`/storage/${module.file_path}`))}
         <button onClick={() => onEdit(module)} className="p-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl transition">
           <Edit3 className="w-4 h-4" />
         </button>
-        <button onClick={() => onDelete(module)} className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition">
+        <button onClick={() => onDelete(module)} className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
@@ -113,7 +113,7 @@ export default function ModulesList({ formation, modules }: Props) {
                 <div className="flex items-center mb-4">
                     <Link
                         href="/admin/formations"
-                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Retour aux formations
@@ -144,7 +144,7 @@ export default function ModulesList({ formation, modules }: Props) {
 
 
             {moduleList.length === 0 ? (
-            <div className="text-center text-gray-500">Aucun module pour cette formation.</div>
+            <div className="text-center text-muted-foreground">Aucun module pour cette formation.</div>
             ) : (
             <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(250px,1fr))]">
                 {moduleList.map(module => (
@@ -166,10 +166,10 @@ export default function ModulesList({ formation, modules }: Props) {
 
             {showVideo && videoPath && (
                 <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg shadow-lg p-4 max-w-xl w-full relative">
+                <div className="bg-card dark:bg-card rounded-lg shadow-lg p-4 max-w-xl w-full relative">
                     <button
                     onClick={() => setShowVideo(false)}
-                    className="absolute top-1 right-1 text-gray-600 hover:text-red-500 text-xl font-bold"
+                    className="absolute top-1 right-1 text-muted-foreground hover:text-red-500 text-xl font-bold"
                     >
                     ×
                     </button>
