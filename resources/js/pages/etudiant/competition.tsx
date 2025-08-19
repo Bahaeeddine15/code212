@@ -135,9 +135,9 @@ export default function CompetitionPage({ competitions, registrations, statistic
             <DashboardHeader breadcrumbs={headerBreadcrumbs} />
             
             <AppShell variant="sidebar">
-                <div className="flex">
+                <div className="flex w-full min-h-screen">
                     <AppSidebar />
-                    <AppContent className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
                         <div className="p-6">
                             {/* Notification */}
                             {notification && (

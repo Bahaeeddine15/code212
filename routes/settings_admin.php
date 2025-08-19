@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\Settings\EtudiantControllerAdmin;
 use App\Http\Controllers\Settings\PasswordControllerAdmin;
 use App\Http\Controllers\Settings\ProfileControllerAdmin;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware('auth:admin')->prefix('admin')->group(function () {
-    Route::redirect('settings', 'settings/profile');
+    Route::redirect('settings', 'admin/settings/profile');
 
     Route::get('settings/profile', [ProfileControllerAdmin::class, 'edit'])->name('admin.settings.profile.edit');
     Route::patch('settings/profile', [ProfileControllerAdmin::class, 'update'])->name('admin.settings.profile.update');
@@ -18,4 +19,9 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::get('settings/appearance', function () {
         return Inertia::render('settings_admin/appearance');
     })->name('appearance');
+});
+
+Route::middleware('auth:admin')->prefix('admin/settings')->group(function () {
+    Route::get('etudiants', [EtudiantControllerAdmin::class, 'index'])->name('admin.settings.etudiants');
+    Route::post('etudiants/{id}/reset-password', [EtudiantControllerAdmin::class, 'resetPassword'])->name('admin.settings.etudiants.reset');
 });

@@ -44,7 +44,7 @@ export default function Contact() {
                             <nav className="hidden md:flex items-center space-x-8">
                                 <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium">HOME</Link>
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">OUR PROGRAMS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">CODE EVENTS</a>
+                                <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium">À PROPOS</Link>
                                 <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
                                 <a href="#" className="text-pink-400 font-medium">CONTACT</a>
                             </nav>

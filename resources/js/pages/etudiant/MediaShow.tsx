@@ -30,7 +30,7 @@ export default function MediaShow() {
       <Head title={media.title} />
       <div className="flex w-full min-h-screen">
         <AppSidebar />
-        <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white">
+        <AppContent variant="sidebar" className="flex-1 bg-white">
           <AppSidebarHeader breadcrumbs={[{ title: 'Dashboard Étudiant', href: '/dashboard' }, { title: 'Médiathèque', href: '/media' }, { title: media.title, href: `/media/${media.id}` }]} />
           <div className="container mx-auto px-4 py-6 space-y-6 max-w-5xl">
             <div className="flex justify-between items-center flex-wrap gap-4">

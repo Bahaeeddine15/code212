@@ -1,7 +1,5 @@
 import { Head, useForm } from "@inertiajs/react";
-
 import { FormEventHandler, useState } from "react";
-
 import InputError from "@/components/forms/input-error";
 import TextLink from "@/components/common/text-link";
 import { Button } from "@/components/ui/button";
@@ -19,16 +17,13 @@ type RegisterForm = {
 };
 
 export default function Register() {
-  const { data, setData, post, processing, errors, reset } = useForm<
-    Required<RegisterForm>
-  >({
+  const { data, setData, post, processing, errors, reset } = useForm<RegisterForm>({
     name: "",
     email: "",
     ecole: "",
     password: "",
-    password_confirmation: "",
+    password_confirmation: ""
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
@@ -45,46 +40,43 @@ export default function Register() {
       description="Veuillez renseigner vos informations afin de créer votre compte étudiant au sein de la plateforme Code212"
     >
       <Head title="Register" />
-
       <form onSubmit={submit} className="space-y-4">
-        <div className="grid gap-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div>
-              <Label htmlFor="name">Nom</Label>
-              <Input
-                id="name"
-                type="text"
-                required
-                autoFocus
-                tabIndex={1}
-                autoComplete="name"
-                value={data.name}
-                onChange={(e) => setData("name", e.target.value)}
-                disabled={processing}
-                placeholder="Nom complet"
-              />
-              <InputError message={errors.name} className="mt-1" />
-            </div>
-
-            <div>
-              <Label htmlFor="email">Adresse E-mail Académique</Label>
-              <Input
-                id="email"
-                type="email"
-                required
-                tabIndex={2}
-                autoComplete="email"
-                value={data.email}
-                onChange={(e) => setData("email", e.target.value)}
-                disabled={processing}
-                placeholder="email@uca.ac.ma"
-              />
-              <InputError message={errors.email} className="mt-1" />
-            </div>
-          </div>
-
+        <div className="grid gap-6 rounded-xl shadow-md p-8" style={{ background: 'transparent' }}>
+          {/* Name Field */}
           <div>
-            <Label htmlFor="ecole">Nom d’établissement: </Label>
+            <Label htmlFor="name" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Nom complet</Label>
+            <Input
+              id="name"
+              type="text"
+              required
+              tabIndex={1}
+              autoComplete="name"
+              value={data.name}
+              onChange={(e) => setData("name", e.target.value)}
+              disabled={processing}
+              placeholder="Votre nom complet"
+            />
+            <InputError message={errors.name} className="mt-1" />
+          </div>
+          {/* Email Field */}
+          <div>
+            <Label htmlFor="email" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Adresse E-mail Académique</Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              tabIndex={2}
+              autoComplete="email"
+              value={data.email}
+              onChange={(e) => setData("email", e.target.value)}
+              disabled={processing}
+              placeholder="email@uca.ac.ma"
+            />
+            <InputError message={errors.email} className="mt-1" />
+          </div>
+          {/* Ecole Field */}
+          <div>
+            <Label htmlFor="ecole" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Nom d’établissement:</Label>
             <select
               id="ecole"
               required
@@ -92,11 +84,10 @@ export default function Register() {
               value={data.ecole}
               onChange={(e) => setData("ecole", e.target.value)}
               disabled={processing}
-              className="border border-gray-300 rounded-md p-2  text-sm"
+              className="border border-gray-300 rounded-md p-2 text-base font-semibold bg-gray-900 text-white focus:ring-2 focus:ring-[#A927B7] focus:border-[#A927B7] placeholder-gray-400"
             >
-              <option value="">-- Sélectionnez votre établissement --</option>
-
-              <optgroup label="Marrakech">
+              <option value="" className="font-bold text-gray-700">-- Sélectionnez votre établissement --</option>
+              <optgroup label="Marrakech" className="font-bold text-purple-700">
                 <option value="FSSM">Faculté des Sciences Semlalia</option>
                 <option value="FSJES Marrakech">FSJES Marrakech</option>
                 <option value="FLSH Marrakech">FLSH Marrakech</option>
@@ -106,33 +97,26 @@ export default function Register() {
                 <option value="ENSA Marrakech">ENSA Marrakech</option>
                 <option value="ENCG">ENCG Marrakech</option>
                 <option value="ENS">ENS Marrakech</option>
-
                 <option value="PED">Pôle Études Doctorales</option>
               </optgroup>
-
-              <optgroup label="Safi">
+              <optgroup label="Safi" className="font-bold text-blue-700">
                 <option value="FPS">Faculté Polydisciplinaire de Safi</option>
                 <option value="ENSA Safi">ENSA Safi</option>
                 <option value="EST Safi">EST Safi</option>
               </optgroup>
-
-              <optgroup label="Essaouira">
+              <optgroup label="Essaouira" className="font-bold text-green-700">
                 <option value="EST Essaouira">EST Essaouira</option>
               </optgroup>
-
-              <optgroup label="El Kelaâ">
+              <optgroup label="El Kelaâ" className="font-bold text-pink-700">
                 <option value="FSJESK">FSJES El Kelaâ</option>
                 <option value="ESTK">EST El Kelaâ</option>
               </optgroup>
             </select>
-
             <InputError message={errors.ecole} />
           </div>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
+          {/* Password Field */}
           <div>
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Mot de passe</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -156,17 +140,17 @@ export default function Register() {
                 }
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
+                  <EyeOff className="h-6 w-6" />
                 ) : (
-                  <Eye className="h-5 w-5" />
+                  <Eye className="h-6 w-6" />
                 )}
               </button>
             </div>
             <InputError message={errors.password} />
           </div>
-
+          {/* Password Confirmation Field */}
           <div>
-            <Label htmlFor="password_confirmation">Confirmer le mot de passe</Label>
+            <Label htmlFor="password_confirmation" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Confirmer le mot de passe</Label>
             <div className="relative">
               <Input
                 id="password_confirmation"
@@ -190,16 +174,15 @@ export default function Register() {
                 }
               >
                 {showPasswordConfirm ? (
-                  <EyeOff className="h-5 w-5" />
+                  <EyeOff className="h-6 w-6" />
                 ) : (
-                  <Eye className="h-5 w-5" />
+                  <Eye className="h-6 w-6" />
                 )}
               </button>
             </div>
             <InputError message={errors.password_confirmation} />
           </div>
         </div>
-
         <Button
           type="submit"
           className="mt-2 w-full bg-[#300069] hover:bg-[#2CD3A3] text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -208,10 +191,12 @@ export default function Register() {
         >
           Créer un compte
         </Button>
-
         <div className="text-center text-sm text-muted-foreground">
           Vous avez déjà un compte ?{" "}
-          <TextLink href={route("login")} tabIndex={7}>
+          <TextLink href={route("login")}
+            tabIndex={7}
+            className="text-[#A927B7] hover:text-purple-700 font-semibold"
+          >
             Se connecter
           </TextLink>
         </div>

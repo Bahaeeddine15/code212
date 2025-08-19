@@ -74,9 +74,10 @@ class AdminAuthController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Use the admin guard for login!
+        Auth::guard('admin')->login($user);
 
-        return redirect(route('admin.dashboard'));
+        return redirect()->intended(route('admin.dashboard'));
     }
 
     /**

@@ -29,14 +29,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // If you need validation, you can manually validate here or ensure LoginRequest extends Request
-        // $request->validate([...]);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        Auth::attempt($request->only('email', 'password'));
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
 
-        $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     /**

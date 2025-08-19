@@ -1,5 +1,6 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/components/user-info';
+import { UserMenuContentAdmin } from '@/components/user-menu-content-admin';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { type SharedData } from '@/types';
@@ -29,7 +30,10 @@ export function NavUser() {
                 align="end"
                 side={isMobile ? 'bottom' : 'bottom'}
             >
-                <UserMenuContent user={auth.user} />
+                {'guard' in auth && auth.guard === 'admin'
+                    ? <UserMenuContentAdmin user={auth.user} />
+                    : <UserMenuContent user={auth.user} />
+                }
             </DropdownMenuContent>
         </DropdownMenu>
     );

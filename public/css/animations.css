@@ -1,0 +1,22 @@
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animated-gradient {
+  background: linear-gradient(90deg, #2563eb, #ec4899, #a21caf, #facc15);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: gradientMove 4s ease-in-out infinite;
+}
+@keyframes floatSticker {
+  0% { transform: rotate(12deg) translateY(0); }
+  50% { transform: rotate(12deg) translateY(-20px); }
+  100% { transform: rotate(12deg) translateY(0); }
+}
+.float-sticker {
+  animation: floatSticker 2.5s ease-in-out infinite;
+}

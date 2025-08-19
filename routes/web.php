@@ -10,6 +10,10 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::get('/about', function () {
+    return Inertia::render('about');
+})->name('about');
+
 Route::get('/clubs-partners', function () {
     return Inertia::render('clubs-partners');
 })->name('clubs.partners');
@@ -21,6 +25,7 @@ Route::get('/contact', function () {
 require __DIR__ . '/admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/settings_admin.php';
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard', [App\Http\Controllers\DashboardEtudiantController::class, 'index'])->name('dashboard');
@@ -45,6 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Détails public d'une compétition
     Route::get('competition/{id}', [App\Http\Controllers\CompetitionController::class, 'showDetails'])->name('competition.show');
     Route::get('articles', [App\Http\Controllers\ArticleController::class, 'index'])->name('etudiant.article');
+    Route::get('articles/featured', [App\Http\Controllers\ArticleController::class, 'featured'])->name('etudiant.article.featured');
+    Route::get('articles/latest', [App\Http\Controllers\ArticleController::class, 'latest'])->name('etudiant.article.latest');
     Route::get('articles/{article}', [App\Http\Controllers\ArticleController::class, 'show'])->name('etudiant.article.show');
 
     // Grouped media routes with custom parameter binding
@@ -134,9 +141,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('reservations.dismissNotification');
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
-require __DIR__ . '/settings_admin.php';
+
 
 // ⚠️ ROUTES DE TEST - À SUPPRIMER EN PRODUCTION
 // Décommentez la ligne suivante pour activer les routes de test :

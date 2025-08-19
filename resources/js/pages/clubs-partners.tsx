@@ -44,7 +44,7 @@ export default function ClubsPartners() {
                             <nav className="hidden md:flex items-center space-x-8">
                                 <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium">HOME</Link>
                                 <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">OUR PROGRAMS</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">CODE EVENTS</a>
+                                <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium">À PROPOS</Link>
                                 <a href="#" className="text-pink-400 font-medium">CLUBS ET PARTENAIRES</a>
                                 <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT</Link>
                             </nav>

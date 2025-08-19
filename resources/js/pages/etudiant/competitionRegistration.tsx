@@ -1,7 +1,8 @@
 import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
-import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,9 +43,8 @@ export default function CompetitionRegistrationPage({ competition }: Competition
     });
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { href: '/dashboard', title: 'Dashboard Étudiant' },
-        { href: '/competition', title: 'Compétitions' },
-        { href: `/competition/${competition.id}/register`, title: `Inscription - ${competition.title}` },
+        { href: '/dashboard', title: 'Dashboard' },
+        { href: '/competition', title: 'Compétitions', isActive: true },
     ];
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -59,18 +59,24 @@ export default function CompetitionRegistrationPage({ competition }: Competition
     const remainingSpots = competition.maxParticipants - competition.registrations;
 
     return (
-        <AppShell variant="sidebar">
+        <>
             <Head title={`Inscription - ${competition.title}`} />
-            <AppSidebar />
-            <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
-                <AppSidebarHeader breadcrumbs={breadcrumbs} />
-                <div className="container mx-auto p-6 max-w-4xl">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Inscription à la compétition</h1>
-                        <p className="text-gray-600">Remplissez le formulaire ci-dessous pour vous inscrire</p>
-                    </div>
+            
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={breadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="flex-1 bg-white">
+                        <div className="p-6 font-sans">
+                            <div className="container mx-auto max-w-4xl">
+                                <div className="mb-8">
+                                    <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Inscription à la compétition</h1>
+                                    <p className="text-gray-600 font-sans">Remplissez le formulaire ci-dessous pour vous inscrire</p>
+                                </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Informations de la compétition */}
                         <div className="lg:col-span-1">
                             <Card className="sticky top-6">
@@ -265,7 +271,13 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                         </div>
                     </div>
                 </div>
+            </div>
             </AppContent>
-        </AppShell>
-    );
+        </div>
+    </AppShell>
+    
+    {/* Footer */}
+    <Footer />
+</>
+);
 }
