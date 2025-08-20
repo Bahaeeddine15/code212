@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Formation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Routing\Controller;
 
 class FormationControllerAdmin extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -38,14 +44,17 @@ class FormationControllerAdmin extends Controller
             'level' => 'nullable|string|max:100',
             'duration' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
-            'link' => 'nullable|url|max:255', // <-- add this line
-            'thumbnail' => 'nullable|image|max:2048', // 2MB max
+            'link' => 'nullable|url|max:255',
+            'thumbnail' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('thumbnail')) {
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
             $validated['thumbnail'] = $path;
         }
+
+        // Uncomment the next line if you want to track the admin who created the formation
+        // $validated['user_id'] = auth('admin')->id();
 
         Formation::create($validated);
 
@@ -83,14 +92,17 @@ class FormationControllerAdmin extends Controller
             'level' => 'nullable|string|max:100',
             'duration' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
-            'link' => 'nullable|url|max:255', // <-- add this line
-            'thumbnail' => 'nullable|image|max:2048', // 2MB max
+            'link' => 'nullable|url|max:255',
+            'thumbnail' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('thumbnail')) {
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
             $validated['thumbnail'] = $path;
         }
+
+        // Uncomment the next line if you want to track the admin who updated the formation
+        // $validated['updated_by'] = auth('admin')->id();
 
         $formation->update($validated);
 

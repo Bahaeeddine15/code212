@@ -13,15 +13,16 @@ class DashboardEtudiantController extends Controller
 {
     public function index()
     {
-        // Récupérer l'utilisateur authentifié
-        $user = auth()->user();
-        
+        // Utiliser explicitement le guard 'web'
+        $user = auth('web')->user();
+
         // Récupérer les statistiques depuis la base de données
         $stats = [
             'total_formations' => Formation::count(),
-            'total_reservations' => Reservation::count(),
-            'reservations_en_attente' => Reservation::where('status', 'pending')->count(),
-            'reservations_approuvees' => Reservation::where('status', 'approved')->count(),
+            // Only this student's reservations:
+            'student_reservations' => Reservation::where('email', $user->email)->count(),
+            'reservations_en_attente' => Reservation::where('email', $user->email)->where('status', 'pending')->count(),
+            'reservations_approuvees' => Reservation::where('email', $user->email)->where('status', 'approved')->count(),
             'total_competitions' => Competition::count(),
             'total_events' => Event::count(),
         ];
@@ -40,7 +41,7 @@ class DashboardEtudiantController extends Controller
             'stats' => $stats,
             'formations' => $formations,
             'events' => $events,
-            'user' => $user
+            'student' => $user // Rename to 'student' for clarity in frontend
         ]);
     }
 }

@@ -7,9 +7,15 @@ use App\Models\Formation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controller;
 
 class ModuleControllerAdmin extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
     /**
      * Display a listing of the modules for a formation.
      */

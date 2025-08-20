@@ -33,14 +33,14 @@ interface Reservation {
     roomId?: number;
     capacity?: number;
     date?: string;
-    timeStart?: string;
-    timeEnd?: string;
-    purpose?: string;
     description?: string;
     status: 'pending' | 'approved' | 'rejected';
     submittedAt: string;
     processedAt?: string;
     processedBy?: string;
+    resource_type?: string;
+    location_type?: string;
+    room_details?: string;
 }
 
 interface Room {
@@ -115,8 +115,6 @@ const ReservationCard = ({
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <span>{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : 'Date inconnue'}</span>
-                    <Clock className="w-4 h-4 ml-3" />
-                    <span>{reservation.timeStart || '--'} - {reservation.timeEnd || '--'}</span>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <Users className="w-4 h-4" />
@@ -126,11 +124,16 @@ const ReservationCard = ({
                     <User className="w-4 h-4" />
                     <span>ID Étudiant: {reservation.studentId || '--'}</span>
                 </div>
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <span>Ressource: {reservation.resource_type ?? '--'}</span>
+                    <span className="ml-4">Lieu: {reservation.location_type ?? '--'}</span>
+                    <span className="ml-4">Détails salle: {reservation.room_details ?? '--'}</span>
+                </div>
             </div>
 
             <div className="mb-4">
-                <p className="text-sm text-muted-foreground mb-1">Objectif:</p>
-                <p className="text-sm font-medium text-foreground">{reservation.purpose || '--'}</p>
+                <p className="text-sm text-muted-foreground mb-1">Description:</p>
+                <p className="text-sm font-medium text-foreground">{reservation.description || '--'}</p>
             </div>
 
             <div className="mb-4">
@@ -207,7 +210,7 @@ export default function Reservations() {
     const filteredReservations = localReservations.filter(reservation => {
         const matchesSearch = (reservation.studentName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                              (reservation.roomName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             (reservation.purpose || '').toLowerCase().includes(searchTerm.toLowerCase());
+                             (reservation.description || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'all' || reservation.status === filterStatus;
         const matchesRoom = filterRoom === 'all' || (reservation.roomId && reservation.roomId.toString() === filterRoom);
 

@@ -10,22 +10,24 @@ class EventControllerAdmin extends Controller
 {
     public function index()
     {
-        $events = Event::withCount(['registrations' => function($q){ $q->where('status','approved'); }])
+        $events = Event::withCount(['registrations' => function ($q) {
+            $q->where('status', 'approved');
+        }])
             ->latest()->get()->map(function ($event) {
-            return [
-                'id' => $event->id,
-                'title' => $event->title,
-                'description' => $event->description,
-                'date' => optional($event->start_date)->toISOString(),
-                'endDate' => optional($event->end_date)->toISOString(),
-                'location' => $event->location,
-                'attendees' => $event->registrations_count ?? 0,
-                'maxAttendees' => $event->max_attendees,
-                'status' => $event->status ?? 'upcoming',
-                'category' => $event->category ?? 'Conférence',
-                'type' => $event->type ?? 'Conférence',
-            ];
-        });
+                return [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'description' => $event->description,
+                    'date' => optional($event->start_date)->toISOString(),
+                    'endDate' => optional($event->end_date)->toISOString(),
+                    'location' => $event->location,
+                    'attendees' => $event->registrations_count ?? 0,
+                    'maxAttendees' => $event->max_attendees,
+                    'status' => $event->status ?? 'upcoming',
+                    'category' => $event->category ?? 'Conférence',
+                    'type' => $event->type ?? 'Conférence',
+                ];
+            });
         return Inertia::render('dashboard_admin/Evenements/evenement_index', ['events' => $events]);
     }
 
@@ -42,10 +44,13 @@ class EventControllerAdmin extends Controller
             'type' => 'required|in:Conférence,Séminaire,Workshop',
         ]);
 
-    $validated['max_attendees'] = $validated['maxAttendees'];
-    unset($validated['maxAttendees']);
+        $validated['max_attendees'] = $validated['maxAttendees'];
+        unset($validated['maxAttendees']);
 
-    Event::create($validated);
+        // Track which admin created the event (if your events table has user_id/admin_id)
+        $validated['user_id'] = auth('admin')->id();
+
+        Event::create($validated);
         return redirect()->route('events.index');
     }
 
@@ -81,8 +86,11 @@ class EventControllerAdmin extends Controller
             'type' => 'required|in:Conférence,Séminaire,Workshop',
         ]);
 
-    $validated['max_attendees'] = $validated['maxAttendees'];
-    unset($validated['maxAttendees']);
+        $validated['max_attendees'] = $validated['maxAttendees'];
+        unset($validated['maxAttendees']);
+
+        // Optionally track which admin updated the event
+        $validated['updated_by'] = auth('admin')->id();
 
         $event->update($validated);
         return redirect()->route('events.index');
@@ -104,6 +112,8 @@ class EventControllerAdmin extends Controller
 
         $event->update([
             'status' => $request->input('status'),
+            // Optionally track which admin updated the status
+            'updated_by' => auth('admin')->id(),
         ]);
 
         return back();

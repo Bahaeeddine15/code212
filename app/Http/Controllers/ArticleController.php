@@ -4,14 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Illuminate\Routing\Controller;
 
 class ArticleController extends Controller
 {
+    public function __construct()
+    {
+        // Only authenticated students can create, edit, update, destroy
+        $this->middleware('auth:web')->except(['index', 'show', 'featured', 'latest']);
+    }
+
     public function index(Request $request)
     {
         $perPage = 12;
@@ -23,10 +29,10 @@ class ArticleController extends Controller
             ->orderBy('published_at', 'desc');
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('excerpt', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
+                    ->orWhere('excerpt', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
             });
         }
 
@@ -37,11 +43,7 @@ class ArticleController extends Controller
         $articles = $query->paginate($perPage);
 
         $articles->through(function ($article) {
-            $image = null;
-            if ($article->featured_image) {
-                $image = Storage::url($article->featured_image);
-            }
-            
+            $images = $article->featured_image ? json_decode($article->featured_image, true) : [];
             return [
                 'id' => $article->id,
                 'title' => $article->title,
@@ -52,7 +54,7 @@ class ArticleController extends Controller
                 'status' => $article->status,
                 'category' => $article->category,
                 'views' => $article->views,
-                'image' => $image,
+                'images' => $images,
                 'published_at' => $article->published_at?->format('Y-m-d H:i:s'),
                 'reading_time' => $this->calculateReadingTime($article->content),
             ];
@@ -97,11 +99,8 @@ class ArticleController extends Controller
         }
 
         $article->increment('views');
-        
-        $image = null;
-        if ($article->featured_image) {
-            $image = Storage::url($article->featured_image);
-        }
+
+        $images = $article->featured_image ? json_decode($article->featured_image, true) : [];
 
         $articleData = [
             'id' => $article->id,
@@ -113,7 +112,7 @@ class ArticleController extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'image' => $image,
+            'images' => $images,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
             'published_at' => $article->published_at?->toISOString(),
@@ -126,10 +125,7 @@ class ArticleController extends Controller
 
     public function edit(Article $article)
     {
-        $image = null;
-        if ($article->featured_image) {
-            $image = Storage::url($article->featured_image);
-        }
+        $images = $article->featured_image ? json_decode($article->featured_image, true) : [];
 
         $articleData = [
             'id' => $article->id,
@@ -141,7 +137,7 @@ class ArticleController extends Controller
             'status' => $article->status,
             'category' => $article->category,
             'views' => $article->views,
-            'image' => $image,
+            'images' => $images,
             'created_at' => $article->created_at->toISOString(),
             'updated_at' => $article->updated_at->toISOString(),
         ];
@@ -159,21 +155,30 @@ class ArticleController extends Controller
             'content' => 'required|string',
             'category' => 'required|string',
             'status' => 'required|in:draft,published,archived',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
         ]);
 
-        $validated['user_id'] = Auth::id();
+        $validated['user_id'] = auth('web')->id();
         $validated['slug'] = Str::slug($validated['title']);
-
-        if ($request->hasFile('featured_image')) {
-            $image = $request->file('featured_image');
-            $path = $image->store('article', 'public');
-            $validated['featured_image'] = $path;
-        }
 
         if ($validated['status'] === 'published' && !isset($validated['published_at'])) {
             $validated['published_at'] = now();
         }
+
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('article', 'public');
+                Storage::disk('public')->setVisibility($path, 'public');
+                $imagePaths[] = $path;
+            }
+        }
+
+        if (count($imagePaths) > 5) {
+            return back()->withErrors(['images' => 'Vous pouvez ajouter jusqu\'à 5 images maximum.']);
+        }
+
+        $validated['featured_image'] = !empty($imagePaths) ? json_encode($imagePaths) : null;
 
         Article::create($validated);
 
@@ -188,23 +193,36 @@ class ArticleController extends Controller
             'content' => 'required|string',
             'category' => 'required|string',
             'status' => 'required|in:draft,published,archived',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
+            'existing_images' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
 
-        if ($request->hasFile('featured_image')) {
-            if ($article->featured_image && Storage::disk('public')->exists($article->featured_image)) {
-                Storage::disk('public')->delete($article->featured_image);
-            }
-            $image = $request->file('featured_image');
-            $path = $image->store('article', 'public');
-            $validated['featured_image'] = $path;
-        }
-
         if ($validated['status'] === 'published' && $article->status !== 'published') {
             $validated['published_at'] = now();
         }
+
+        $imagePaths = [];
+
+        if ($request->filled('existing_images')) {
+            $existingImages = json_decode($request->input('existing_images'), true) ?? [];
+            $imagePaths = array_filter($existingImages, fn($img) => !empty($img));
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('article', 'public');
+                Storage::disk('public')->setVisibility($path, 'public');
+                $imagePaths[] = $path;
+            }
+        }
+
+        if (count($imagePaths) > 5) {
+            return back()->withErrors(['images' => 'Vous pouvez ajouter jusqu\'à 5 images maximum.']);
+        }
+
+        $validated['featured_image'] = !empty($imagePaths) ? json_encode($imagePaths) : null;
 
         $article->update($validated);
 
@@ -214,7 +232,7 @@ class ArticleController extends Controller
     public function featured(Request $request)
     {
         $limit = $request->get('limit', 6);
-        
+
         $articles = Article::with('user')
             ->where('status', 'published')
             ->orderBy('views', 'desc')
@@ -222,11 +240,7 @@ class ArticleController extends Controller
             ->limit($limit)
             ->get()
             ->map(function ($article) {
-                $image = null;
-                if ($article->featured_image) {
-                    $image = Storage::url($article->featured_image);
-                }
-                
+                $images = $article->featured_image ? json_decode($article->featured_image, true) : [];
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
@@ -235,7 +249,7 @@ class ArticleController extends Controller
                     'date' => $article->created_at->format('d-m-Y'),
                     'category' => $article->category,
                     'views' => $article->views,
-                    'image' => $image,
+                    'images' => $images,
                     'reading_time' => $this->calculateReadingTime($article->content),
                 ];
             });
@@ -246,13 +260,14 @@ class ArticleController extends Controller
     public function latest(Request $request)
     {
         $limit = $request->get('limit', 5);
-        
+
         $articles = Article::with('user')
             ->where('status', 'published')
             ->orderBy('published_at', 'desc')
             ->limit($limit)
             ->get()
             ->map(function ($article) {
+                $images = $article->featured_image ? json_decode($article->featured_image, true) : [];
                 return [
                     'id' => $article->id,
                     'title' => $article->title,
@@ -261,6 +276,7 @@ class ArticleController extends Controller
                     'date' => $article->created_at->format('d-m-Y'),
                     'category' => $article->category,
                     'views' => $article->views,
+                    'images' => $images,
                 ];
             });
 

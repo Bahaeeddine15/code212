@@ -6,10 +6,17 @@ use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
+
 
 class MediaControllerAdmin extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
     public function index()
     {
         $media = Media::all()->groupBy('folder');
@@ -39,13 +46,13 @@ class MediaControllerAdmin extends Controller
             'folder' => $data['folder'],
             'original_name' => $file->getClientOriginalName(),
             'file_path' => Storage::disk('public')->put("media/{$data['folder']}", $file),
-            'slug' => str($data['title'])->slug() . '-' . uniqid(),
-            'user_id' => $request->user()->id,
+            'slug' => Str::slug($data['title']) . '-' . uniqid(),
+            'user_id' => auth('admin')->id(), // <-- Changed this line
         ];
         Storage::disk('public')->setVisibility($mediaData['file_path'], 'public');
-        \App\Models\Media::create($mediaData);
+        Media::create($mediaData);
 
-        return redirect()->route('media.index');
+        return redirect()->route('admin.media.index');
     }
 
     public function show(Media $media)
@@ -64,15 +71,10 @@ class MediaControllerAdmin extends Controller
 
     public function download(Media $media)
     {
-        // Check if the file exists
         if (!Storage::disk('public')->exists($media->file_path)) {
             abort(404, 'File not found');
         }
-
-        // Get the full path to the file
         $filePath = Storage::disk('public')->path($media->file_path);
-
-        // Return the file as a download response
         return Response::download($filePath, $media->original_name);
     }
 
@@ -87,10 +89,9 @@ class MediaControllerAdmin extends Controller
 
         // Generate new slug if title changed
         if ($data['title'] !== $media->title) {
-            $baseSlug = str($data['title'])->slug();
+            $baseSlug = Str::slug($data['title']);
             $slug = $baseSlug;
             $counter = 1;
-
             while (Media::where('slug', $slug)->where('id', '!=', $media->id)->exists()) {
                 $slug = $baseSlug . '-' . $counter;
                 $counter++;
@@ -104,35 +105,38 @@ class MediaControllerAdmin extends Controller
             if ($media->file_path && Storage::disk('public')->exists($media->file_path)) {
                 Storage::disk('public')->delete($media->file_path);
             }
-
-            // Store new file
+            // Store new file in the correct folder
             $file = $request->file('file');
             $data['original_name'] = $file->getClientOriginalName();
-            $data['file_path'] = Storage::disk('public')->put('media', $file);
+            $data['file_path'] = Storage::disk('public')->put("media/{$data['folder']}", $file);
             Storage::disk('public')->setVisibility($data['file_path'], 'public');
+        } elseif ($data['folder'] !== $media->folder && $media->file_path && Storage::disk('public')->exists($media->file_path)) {
+            // Move file to new folder if folder changed and no new file uploaded
+            $oldPath = $media->file_path;
+            $filename = basename($oldPath);
+            $newPath = "media/{$data['folder']}/{$filename}";
+            Storage::disk('public')->move($oldPath, $newPath);
+            $data['file_path'] = $newPath;
         }
 
         $media->update($data);
 
-        return redirect()->route('media.index');
+        return redirect()->route('admin.media.index');
     }
 
     public function destroy(Media $media)
     {
-        // Delete file from storage
         if ($media->file_path && Storage::disk('public')->exists($media->file_path)) {
             Storage::disk('public')->delete($media->file_path);
         }
-
         $media->delete();
-
-        return redirect()->route('media.index');
+        return redirect()->route('admin.media.index');
     }
 
     public function showFolder($folder)
     {
-        $mediaFiles = \App\Models\Media::where('folder', $folder)->get();
-        return \Inertia\Inertia::render('dashboard_admin/galerie/folder_show', [
+        $mediaFiles = Media::where('folder', $folder)->get();
+        return Inertia::render('dashboard_admin/galerie/folder_show', [
             'folder' => $folder,
             'files' => $mediaFiles,
         ]);
@@ -140,22 +144,17 @@ class MediaControllerAdmin extends Controller
 
     public function destroyFolder($folder)
     {
-        $mediaFiles = \App\Models\Media::where('folder', $folder)->get();
-
+        $mediaFiles = Media::where('folder', $folder)->get();
         foreach ($mediaFiles as $media) {
-            // Delete file from storage
             if ($media->file_path && Storage::disk('public')->exists($media->file_path)) {
                 Storage::disk('public')->delete($media->file_path);
             }
             $media->delete();
         }
-
-        // Optionally, remove the empty folder from storage
         $folderPath = "media/{$folder}";
         if (Storage::disk('public')->exists($folderPath)) {
             Storage::disk('public')->deleteDirectory($folderPath);
         }
-
-        return redirect()->route('media.index');
+        return redirect()->route('admin.media.index');
     }
 }

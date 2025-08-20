@@ -44,7 +44,7 @@ export function UserMenuContentAdmin({ user }: UserMenuContentProps) {
                 <Link
                     className="block w-full"
                     method="post"
-                    href={route('logout')}
+                    href={route('admin.logout')}
                     as="button"
                     onClick={handleLogout}
                 >

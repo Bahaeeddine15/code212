@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Competition; // Fix the import - should be Competition, not competition
+use App\Models\Competition;
 use App\Models\CompetitionRegistration;
 use App\Models\NotifiableUser;
 use App\Notifications\CompetitionRegistrationStatusNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -20,7 +19,7 @@ class CompetitionController extends Controller
      */
     public function index()
     {
-        $studentId = Auth::id();
+        $studentId = auth('web')->id();
 
         $competitions = Competition::with(['user', 'registrations', 'closedBy'])
             ->orderBy('created_at', 'desc')
@@ -47,7 +46,7 @@ class CompetitionController extends Controller
                     'updated_at' => $competition->updated_at->toISOString(),
                     'closed_at' => $competition->closed_at ? $competition->closed_at->toISOString() : null,
                     'closed_by' => $competition->closedBy ? $competition->closedBy->name : null,
-                    'type' => $competition->type, // <-- Add this line
+                    'type' => $competition->type,
                     'my_registration' => $registration ? [
                         'status' => $registration->status,
                     ] : null,
@@ -73,7 +72,7 @@ class CompetitionController extends Controller
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
-                    'groupMembers' => $registration->group_members, // <-- ADD THIS LINE
+                    'groupMembers' => $registration->group_members,
                 ];
             });
 
@@ -97,13 +96,11 @@ class CompetitionController extends Controller
     {
         $competition = Competition::findOrFail($id);
 
-        // Vérifier si la compétition est ouverte aux inscriptions
         if ($competition->status !== 'Ouvert') {
             return redirect()->route('etudiant.competition')
                 ->with('error', 'Cette compétition n\'est plus ouverte aux inscriptions.');
         }
 
-        // Vérifier si la date limite n'est pas dépassée
         if ($competition->deadline < now()) {
             return redirect()->route('etudiant.competition')
                 ->with('error', 'La date limite d\'inscription pour cette compétition est dépassée.');
@@ -121,7 +118,7 @@ class CompetitionController extends Controller
                 'maxParticipants' => $competition->max_participants,
                 'registrations' => $competition->registrations->count(),
                 'status' => $competition->status,
-                'type' => $competition->type, // <-- Add this line
+                'type' => $competition->type,
                 'groupMembers' => $competition->group_members,
             ]
         ]);
@@ -133,7 +130,7 @@ class CompetitionController extends Controller
     public function showDetails($id)
     {
         $competition = Competition::with(['registrations'])->findOrFail($id);
-        $studentId = Auth::id();
+        $studentId = auth('web')->id();
 
         $myRegistration = $competition->registrations()
             ->where('user_id', $studentId)
@@ -152,7 +149,6 @@ class CompetitionController extends Controller
             'status' => $competition->status,
             'views' => $competition->views,
             'type' => $competition->type,
-            // Add this:
             'my_registration' => $myRegistration ? [
                 'status' => $myRegistration->status,
             ] : null,
@@ -178,16 +174,17 @@ class CompetitionController extends Controller
             'notes' => 'nullable|string|max:1000',
         ];
 
-        // Règles conditionnelles selon le type de compétition
         if ($competition->type === 'group') {
             $rules['group_name'] = 'required|string|max:255';
         }
 
         $validated = $request->validate($rules);
 
+        $studentId = auth('web')->id();
+
         // Check if already registered
         $existing = CompetitionRegistration::where('competition_id', $competitionId)
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', $studentId)
             ->first();
 
         if ($existing) {
@@ -197,21 +194,19 @@ class CompetitionController extends Controller
         // Create registration with status "En attente"
         $registration = CompetitionRegistration::create([
             'competition_id' => $competitionId,
-            'user_id' => $request->user()->id,
+            'user_id' => $studentId,
             'participant_name' => $validated['participant_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'club' => null, // Supprimé le champ club
+            'club' => null,
             'category' => $validated['category'],
             'notes' => $validated['notes'],
-            // Utiliser group_members pour stocker le nom du groupe si c'est une compétition par groupe
             'group_members' => $competition->type === 'group' ? $validated['group_name'] : null,
-            'status' => 'En attente', // Pending
+            'status' => 'En attente',
             'payment_status' => 'En attente',
             'registered_at' => now(),
         ]);
 
-        // Send confirmation email
         $this->sendRegistrationConfirmationEmail($registration);
 
         return redirect()->route('etudiant.competition')->with('success', 'Votre demande a été envoyée et est en attente de validation. Un email de confirmation vous a été envoyé.');
@@ -223,14 +218,9 @@ class CompetitionController extends Controller
     private function sendRegistrationConfirmationEmail(CompetitionRegistration $registration)
     {
         try {
-            // Create a notifiable user instance
             $notifiableUser = new NotifiableUser($registration->email, $registration->participant_name);
-
-            // Send the notification
             $notifiableUser->notify(new CompetitionRegistrationStatusNotification($registration));
-            
         } catch (\Exception $e) {
-            // Log the error but don't fail the registration
             Log::error('Failed to send competition registration confirmation email: ' . $e->getMessage());
         }
     }
@@ -283,10 +273,10 @@ class CompetitionController extends Controller
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'maxParticipants' => 'required|integer|min:1',
-            'type' => 'required|in:individual,group', // <-- add this
+            'type' => 'required|in:individual,group',
         ]);
 
-        $validated['user_id'] = Auth::id();
+        $validated['user_id'] = auth('web')->id();
         $validated['slug'] = $this->generateUniqueSlug($validated['title']);
         $validated['max_participants'] = $validated['maxParticipants'];
         unset($validated['maxParticipants']);
@@ -318,7 +308,7 @@ class CompetitionController extends Controller
             'views' => $competition->views,
             'created_at' => $competition->created_at->toISOString(),
             'updated_at' => $competition->updated_at->toISOString(),
-            'type' => $competition->type, // <-- Add this line
+            'type' => $competition->type,
         ];
 
         $registrations = $competition->registrations->map(function ($registration) {
@@ -331,7 +321,7 @@ class CompetitionController extends Controller
                 'club' => $registration->club,
                 'status' => $registration->status,
                 'registered_at' => $registration->registered_at->format('d-m-Y'),
-                'groupMembers' => $registration->group_members, // <-- add this line
+                'groupMembers' => $registration->group_members,
             ];
         });
 
@@ -357,7 +347,7 @@ class CompetitionController extends Controller
             'maxParticipants' => $competition->max_participants,
             'registrations' => $competition->registrations->count(),
             'status' => $competition->status,
-            'type' => $competition->type, // <-- Add this line
+            'type' => $competition->type,
         ];
 
         return Inertia::render('dashboard_admin/competitions/competition_edit', [
@@ -405,16 +395,14 @@ class CompetitionController extends Controller
      */
     public function close(Competition $competition)
     {
-        // Check if competition is already closed
         if ($competition->status === 'Fermé') {
             return back()->with('error', 'Cette compétition est déjà fermée.');
         }
 
-        // Update competition status
         $competition->update([
             'status' => 'Fermé',
             'closed_at' => now(),
-            'closed_by' => Auth::id()
+            'closed_by' => auth('web')->id()
         ]);
 
         return back()->with('success', 'Compétition fermée avec succès.');

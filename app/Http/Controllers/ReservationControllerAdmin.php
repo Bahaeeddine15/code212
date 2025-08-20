@@ -6,9 +6,15 @@ use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Routing\Controller;
 
 class ReservationControllerAdmin extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
     /**
      * Display a listing of the reservations for admin review.
      */
@@ -59,12 +65,12 @@ class ReservationControllerAdmin extends Controller
         // Envoyer la notification par email
         try {
             $notifiableUser = new \App\Models\NotifiableUser(
-                $reservation->email, 
+                $reservation->email,
                 $reservation->prenom . ' ' . $reservation->nom
             );
-            
+
             $notifiableUser->notify(new \App\Notifications\ReservationStatusNotification($reservation));
-            
+
             return redirect()->back()->with('success', 'Réservation approuvée et email de confirmation envoyé à l\'étudiant.');
         } catch (\Exception $e) {
             Log::error('Erreur envoi email approbation: ' . $e->getMessage());
@@ -83,12 +89,12 @@ class ReservationControllerAdmin extends Controller
         // Envoyer la notification par email
         try {
             $notifiableUser = new \App\Models\NotifiableUser(
-                $reservation->email, 
+                $reservation->email,
                 $reservation->prenom . ' ' . $reservation->nom
             );
-            
+
             $notifiableUser->notify(new \App\Notifications\ReservationStatusNotification($reservation));
-            
+
             return redirect()->back()->with('success', 'Réservation rejetée et email de notification envoyé à l\'étudiant.');
         } catch (\Exception $e) {
             Log::error('Erreur envoi email rejet: ' . $e->getMessage());

@@ -8,6 +8,11 @@ use Inertia\Inertia;
 
 class MediaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:web');
+    }
+
     /**
      * Display a listing of the resource, grouped by folder.
      */

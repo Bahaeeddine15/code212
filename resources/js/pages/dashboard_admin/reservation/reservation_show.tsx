@@ -12,14 +12,14 @@ interface Reservation {
     roomId?: number;
     capacity?: number;
     date?: string;
-    timeStart?: string;
-    timeEnd?: string;
-    purpose?: string;
     description?: string;
     status: 'pending' | 'approved' | 'rejected';
     submittedAt: string;
     processedAt?: string;
     processedBy?: string;
+    resource_type?: string;
+    location_type?: string;
+    room_details?: string;
 }
 
 export default function ReservationShow() {
@@ -36,7 +36,6 @@ export default function ReservationShow() {
         }
     };
 
-    // Add approve/reject handlers
     const handleApprove = () => {
         if (confirm('Êtes-vous sûr de vouloir approuver cette réservation ?')) {
             router.patch(`/admin/reservations/${reservation.id}/approve`);
@@ -78,12 +77,7 @@ export default function ReservationShow() {
                                 <div>Salle: {reservation.roomName || '--'}</div>
                                 <div>Capacité: {reservation.capacity ?? '--'} personnes</div>
                                 <div><Calendar className="inline w-4 h-4 mr-1" />{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : '--'}</div>
-                                <div><Clock className="inline w-4 h-4 mr-1" />{reservation.timeStart || '--'} - {reservation.timeEnd || '--'}</div>
                             </div>
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">Objectif</h2>
-                            <div>{reservation.purpose || '--'}</div>
                         </div>
                         <div>
                             <h2 className="text-lg font-semibold text-foreground mb-2">Description</h2>
@@ -99,7 +93,14 @@ export default function ReservationShow() {
                                 <div>{new Date(reservation.processedAt).toLocaleString('fr-FR')} par {reservation.processedBy || '--'}</div>
                             </div>
                         )}
-                        {/* Approve/Reject buttons if pending */}
+                        <div>
+                            <h2 className="text-lg font-semibold text-foreground mb-2">Informations techniques</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>Ressource: {reservation.resource_type ?? '--'}</div>
+                                <div>Lieu: {reservation.location_type ?? '--'}</div>
+                                <div>Détails salle: {reservation.room_details ?? '--'}</div>
+                            </div>
+                        </div>
                         {reservation.status === 'pending' && (
                             <div className="flex justify-end space-x-3 pt-4 border-t">
                                 <button

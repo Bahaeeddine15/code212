@@ -14,7 +14,7 @@ interface Article {
   content: string;
   published_at: string;
   author: string;
-  image?: string;
+  images: string[];
 }
 
 interface Props {
@@ -48,12 +48,27 @@ export default function ArticleDetail({ article }: Props) {
           </Link>
 
           <Card className="overflow-hidden border border-gray-300 w-full min-w-0">
-            {article.image && (
-              <img
-                src={article.image}
-                alt={article.title}
-                className="w-full h-auto max-h-[400px] object-cover"
-              />
+            {article.images && article.images.length > 0 && (
+              <>
+                <img
+                  src={`/storage/${article.images[0]}`}
+                  alt={article.title}
+                  className="w-full h-auto max-h-[400px] object-cover mb-4"
+                />
+                {article.images.length > 1 && (
+                  <div className="flex gap-2 overflow-x-auto pb-4">
+                    {article.images.slice(1).map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={`/storage/${img}`}
+                        alt={article.title + " image " + (idx + 2)}
+                        className="h-32 rounded object-cover"
+                        style={{ minWidth: 120, maxWidth: 180 }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
             <CardHeader className="bg-gray-50 border-b border-gray-200 p-6 w-full">
               <CardTitle className="text-2xl font-bold text-[#121214] w-full">

@@ -31,11 +31,27 @@ export default function MediaShow() {
       <div className="flex w-full min-h-screen">
         <AppSidebar />
         <AppContent variant="sidebar" className="flex-1 bg-white">
-          <AppSidebarHeader breadcrumbs={[{ title: 'Dashboard Étudiant', href: '/dashboard' }, { title: 'Médiathèque', href: '/media' }, { title: media.title, href: `/media/${media.id}` }]} />
+          <AppSidebarHeader breadcrumbs={[
+            { title: 'Dashboard Étudiant', href: '/dashboard' }, 
+            { title: 'Médiathèque', href: '/media' }, 
+            { title: media.folder || 'Média', href: media.folder ? `/media/folder/${media.folder}` : '/media' },
+            { title: media.title, href: `/media/${media.id}` }
+          ]} />
           <div className="container mx-auto px-4 py-6 space-y-6 max-w-5xl">
             <div className="flex justify-between items-center flex-wrap gap-4">
               <h1 className="text-2xl font-bold">{media.title}</h1>
-              <Button variant="outline" asChild><Link href="/media">← Retour</Link></Button>
+              <div className="flex gap-2">
+                {media.folder && (
+                  <Button variant="outline" asChild>
+                    <Link href={`/media/folder/${media.folder}`}>
+                      ← Dossier {media.folder}
+                    </Link>
+                  </Button>
+                )}
+                <Button variant="outline" asChild>
+                  <Link href="/media">← Médiathèque</Link>
+                </Button>
+              </div>
             </div>
 
             <Card>
@@ -45,7 +61,11 @@ export default function MediaShow() {
                     isVideo ? (
                       <video src={media.full_url} controls className="max-h-[70vh] w-auto" />
                     ) : (
-                      <img src={media.full_url} alt={media.title} className="max-h-[70vh] w-auto object-contain" />
+                      <img 
+                        src={media.full_url} 
+                        alt={media.title} 
+                        className="max-h-[70vh] w-auto object-contain" 
+                      />
                     )
                   )}
                 </div>
@@ -56,16 +76,26 @@ export default function MediaShow() {
               <Card className="md:col-span-2">
                 <CardHeader className="pb-2"><CardTitle>Détails</CardTitle></CardHeader>
                 <CardContent className="space-y-3 text-sm text-gray-600">
-                  <p>{media.detail}</p>
+                  <p>{media.detail || 'Aucune description disponible.'}</p>
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader className="pb-2"><CardTitle>Fichier</CardTitle></CardHeader>
+                <CardHeader className="pb-2"><CardTitle>Informations du fichier</CardTitle></CardHeader>
                 <CardContent className="text-sm space-y-2 text-gray-600">
-                  <p><strong>Nom original:</strong> {media.original_name}</p>
-                  <p><strong>Extension:</strong> {media.file_extension?.toUpperCase()}</p>
-                  <p><strong>Taille:</strong> {media.file_size}</p>
-                  <p><strong>Dossier:</strong> {media.folder}</p>
+                  <p><strong>Nom original:</strong> {media.original_name || 'N/A'}</p>
+                  <p><strong>Extension:</strong> {media.file_extension?.toUpperCase() || 'N/A'}</p>
+                  <p><strong>Taille:</strong> {media.file_size || 'N/A'}</p>
+                  {media.folder && (
+                    <p>
+                      <strong>Dossier:</strong> 
+                      <Link 
+                        href={`/media/folder/${media.folder}`} 
+                        className="text-blue-600 hover:underline ml-1"
+                      >
+                        {media.folder}
+                      </Link>
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             </div>

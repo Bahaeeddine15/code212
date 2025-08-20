@@ -24,7 +24,7 @@ interface Article {
   excerpt: string;
   date: string;
   category: string;
-  image?: string;
+  images: string[];
 }
 
 interface PaginationData {
@@ -186,9 +186,9 @@ export default function Articles({ articles, categories, filters }: Props) {
                       className="group hover:shadow-lg transition-all duration-300 border-gray-200 overflow-hidden flex flex-col"
                     >
                       <div className="aspect-video bg-gray-100 overflow-hidden">
-                        {article.image ? (
+                        {article.images && article.images.length > 0 ? (
                           <img
-                            src={article.image}
+                            src={`/storage/${article.images[0]}`}
                             alt={article.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />

@@ -11,7 +11,7 @@ class EventRegistrationAdminController extends Controller
 {
     public function index(Event $event)
     {
-    $registrations = EventRegistration::with('user')
+        $registrations = EventRegistration::with('user')
             ->where('event_id', $event->id)
             ->orderBy('created_at', 'desc')
             ->get()
@@ -20,7 +20,7 @@ class EventRegistrationAdminController extends Controller
                     'id' => $r->id,
                     'name' => $r->participant_name ?? optional($r->user)->name,
                     'email' => $r->email ?? optional($r->user)->email,
-            'ecole' => optional($r->user)->ecole,
+                    'ecole' => optional($r->user)->ecole,
                     'status' => $r->status,
                     'registered_at' => optional($r->registered_at)->toISOString(),
                 ];
@@ -40,13 +40,19 @@ class EventRegistrationAdminController extends Controller
 
     public function approve(EventRegistration $registration)
     {
-        $registration->update(['status' => 'approved']);
+        $registration->update([
+            'status' => 'approved',
+            // 'approved_by' => auth('admin')->id(), // Uncomment if you have this column
+        ]);
         return back();
     }
 
     public function reject(EventRegistration $registration)
     {
-        $registration->update(['status' => 'rejected']);
+        $registration->update([
+            'status' => 'rejected',
+            // 'rejected_by' => auth('admin')->id(), // Uncomment if you have this column
+        ]);
         return back();
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Competition; // Fix the import - should be Competition, not competition
+use App\Models\Competition;
 use App\Models\CompetitionRegistration;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -37,11 +36,10 @@ class CompetitionControllerAdmin extends Controller
                     'updated_at' => $competition->updated_at->toISOString(),
                     'closed_at' => $competition->closed_at ? $competition->closed_at->toISOString() : null,
                     'closed_by' => $competition->closedBy ? $competition->closedBy->name : null,
-                    'type' => $competition->type, // <-- Add this line
+                    'type' => $competition->type,
                 ];
             });
 
-        // Get all registrations for statistics
         $registrations = CompetitionRegistration::with(['competition', 'user'])
             ->orderBy('created_at', 'desc')
             ->get()
@@ -60,7 +58,7 @@ class CompetitionControllerAdmin extends Controller
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
-                    'groupMembers' => $registration->group_members, // <-- ADD THIS LINE
+                    'groupMembers' => $registration->group_members,
                 ];
             });
 
@@ -125,10 +123,10 @@ class CompetitionControllerAdmin extends Controller
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'maxParticipants' => 'required|integer|min:1',
-            'type' => 'required|in:individual,group', // <-- add this
+            'type' => 'required|in:individual,group',
         ]);
 
-        $validated['user_id'] = Auth::id();
+        $validated['user_id'] = auth('admin')->id();
         $validated['slug'] = $this->generateUniqueSlug($validated['title']);
         $validated['max_participants'] = $validated['maxParticipants'];
         unset($validated['maxParticipants']);
@@ -160,7 +158,7 @@ class CompetitionControllerAdmin extends Controller
             'views' => $competition->views,
             'created_at' => $competition->created_at->toISOString(),
             'updated_at' => $competition->updated_at->toISOString(),
-            'type' => $competition->type, // <-- Add this line
+            'type' => $competition->type,
         ];
 
         $registrations = $competition->registrations->map(function ($registration) {
@@ -173,7 +171,7 @@ class CompetitionControllerAdmin extends Controller
                 'club' => $registration->club,
                 'status' => $registration->status,
                 'registered_at' => $registration->registered_at->format('d-m-Y'),
-                'groupMembers' => $registration->group_members, // <-- ADD THIS LINE
+                'groupMembers' => $registration->group_members,
             ];
         });
 
@@ -199,7 +197,7 @@ class CompetitionControllerAdmin extends Controller
             'maxParticipants' => $competition->max_participants,
             'registrations' => $competition->registrations->count(),
             'status' => $competition->status,
-            'type' => $competition->type, // <-- Add this line
+            'type' => $competition->type,
         ];
 
         return Inertia::render('dashboard_admin/competitions/competition_edit', [
@@ -247,16 +245,14 @@ class CompetitionControllerAdmin extends Controller
      */
     public function close(Competition $competition)
     {
-        // Check if competition is already closed
         if ($competition->status === 'Fermé') {
             return back()->with('error', 'Cette compétition est déjà fermée.');
         }
 
-        // Update competition status
         $competition->update([
             'status' => 'Fermé',
             'closed_at' => now(),
-            'closed_by' => Auth::id()
+            'closed_by' => auth('admin')->id()
         ]);
 
         return back()->with('success', 'Compétition fermée avec succès.');

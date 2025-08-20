@@ -33,7 +33,7 @@ export default function FolderShow(props: FolderShowProps) {
 
     const headerBreadcrumbs = [
         { title: "Dashboard Étudiant", href: "/dashboard" },
-        { title: "Galerie Media", href: "/media" },
+        { title: "Médiathèque", href: "/media" }, // Fixed: was "Galerie Media"
         { title: `Dossier : ${folder}`, isActive: true },
     ];
     const subtitle = "Retrouvez tous les médias de ce dossier.";
@@ -44,7 +44,7 @@ export default function FolderShow(props: FolderShowProps) {
 
     return (
         <AppShell variant="sidebar">
-            <Head title={`Galerie - Dossier : ${folder}`} />
+            <Head title={`Médiathèque - Dossier : ${folder}`} />
             <div className="flex w-full min-h-screen">
                 <AppSidebar />
                 <div className="flex-1 flex flex-col min-h-screen bg-white">
@@ -54,14 +54,17 @@ export default function FolderShow(props: FolderShowProps) {
                     </div>
                     <AppContent variant="sidebar" className="bg-white">
                         <div className="max-w-6xl mx-auto px-4 py-10 mt-4">
-                            {/* Back link */}
-                            <div className="mb-8 flex justify-end">
+                            {/* Navigation */}
+                            <div className="mb-8 flex justify-between items-center">
                                 <Link
                                     href="/media"
                                     className="text-blue-600 hover:underline font-medium text-base"
                                 >
-                                    &larr; Retour à la galerie
+                                    ← Retour à la médiathèque
                                 </Link>
+                                <div className="text-sm text-gray-500">
+                                    {filteredFiles.length} média{filteredFiles.length > 1 ? 's' : ''} dans ce dossier
+                                </div>
                             </div>
 
                             {/* Search */}
@@ -81,39 +84,40 @@ export default function FolderShow(props: FolderShowProps) {
                             {/* Media grid */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
                                 {filteredFiles.map(file => (
-                                    <div
-                                        key={file.id}
-                                        className="bg-white rounded-2xl shadow-md border border-gray-200 p-4 flex flex-col items-center hover:shadow-xl transition-shadow group"
-                                    >
-                                        <Link href={`/media/${file.id}`} className="block w-full">
+                                    <Link key={file.id} href={`/media/${file.id}`}>
+                                        <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-4 flex flex-col items-center hover:shadow-xl transition-shadow group cursor-pointer">
                                             {getMediaType(file.file_path) === 'Vidéo' ? (
                                                 <video
                                                     src={getImageUrl(file.file_path)}
-                                                    controls
                                                     className="w-full h-48 object-contain rounded-lg bg-gray-100 mb-2 group-hover:ring-2 group-hover:ring-blue-400 transition"
+                                                    muted
                                                 />
                                             ) : (
                                                 <img
                                                     src={getImageUrl(file.file_path)}
                                                     alt={file.title}
-                                                    className="w-full h-48 object-contain rounded-lg bg-gray-100 mb-2 group-hover:ring-2 group-hover:ring-blue-400 transition"
+                                                    className="w-full h-48 object-contain rounded-lg bg-gray-100 mb-2 group-hover:ring-2 group_hover:ring-blue-400 transition"
                                                     style={{ userSelect: 'none' }}
                                                     onContextMenu={e => e.preventDefault()}
                                                 />
                                             )}
-                                        </Link>
-                                        <div className="font-medium text-center truncate w-full mt-1" title={file.title}>{file.title}</div>
-                                        <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                                            <span className={`px-2 py-1 rounded-full ${getMediaType(file.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
-                                                {getMediaType(file.file_path)}
-                                            </span>
-                                            <span>{new Date(file.created_at).toLocaleDateString('fr-FR')}</span>
+                                            <div className="font-medium text-center truncate w-full mt-1" title={file.title}>
+                                                {file.title}
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                                                <span className={`px-2 py-1 rounded-full ${getMediaType(file.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                                                    {getMediaType(file.file_path)}
+                                                </span>
+                                                <span>{new Date(file.created_at).toLocaleDateString('fr-FR')}</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                             {filteredFiles.length === 0 && (
-                                <div className="text-center text-gray-500 py-12">Aucun média trouvé dans ce dossier.</div>
+                                <div className="text-center text-gray-500 py-12">
+                                    Aucun média trouvé dans ce dossier.
+                                </div>
                             )}
                         </div>
                     </AppContent>
