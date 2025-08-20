@@ -8,7 +8,7 @@ function CountUp({ end, duration = 2, className = "" }) {
     const [count, setCount] = useState(0);
     useEffect(() => {
         let start = 0;
-        const increment = end / (duration * 60);
+        const increment = end / (duration * 60);8
         const interval = setInterval(() => {
             start += increment;
             if (start >= end) {
@@ -354,10 +354,9 @@ export default function Welcome() {
                 <section className="py-20 bg-gray-50 w-full">
                     <div className="w-full px-4 sm:px-8 lg:px-16">
                         <div className="text-center mb-16">
-                            <h2 className="text-2xl font-bold">Nos Programmes de Formation</h2>
-                            <p className="text-xl text-gray-600">
-                                Des formations certifiantes pour les métiers du numérique de demain
-                            </p>
+                            <h2 className="text-5xl md:text-6xl font-extrabold mb-8 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent drop-shadow-lg tracking-tight animate-pulse">
+                                🚀 Des formations certifiantes pour façonner les métiers du numérique de demain !
+                            </h2>
                         </div>
 
                         <div className="w-full">
@@ -415,64 +414,38 @@ export default function Welcome() {
                 </section>
 
                 {/* Events Section */}
-                <section className="py-20 bg-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                                Check Our Last Events In Code212
-                            </h2>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
-                                <div className="flex items-center mb-4">
-                                    <Calendar className="w-6 h-6 mr-2" />
-                                    <span className="text-sm opacity-90">Événement récent</span>
-                                </div>
-                                <h3 className="text-2xl font-bold mb-4">Semaine Fortinet</h3>
-                                <p className="mb-6 opacity-90">
-                                    Formation intensive en cybersécurité avec Fortinet
-                                </p>
-                                <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                                    Plus de détails
-                                </button>
-                            </div>
-
-                            <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl p-8 text-white">
-                                <div className="flex items-center mb-4">
-                                    <Users className="w-6 h-6 mr-2" />
-                                    <span className="text-sm opacity-90">Compétition</span>
-                                </div>
-                                <h3 className="text-2xl font-bold mb-4">University E-sport Battle</h3>
-                                <p className="mb-6 opacity-90">
-                                    Tournoi inter-universitaire de e-sport et gaming
-                                </p>
-                                <button className="bg-white text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                                    Plus de détails
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                {/* Events Section removed */}
 
                 {/* CTA Section */}
-                <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 className="text-4xl font-bold mb-6">
-                            Get Your Free Registration At The Code212 Center Of Ibnou Zohr University
+                <section className="py-20 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white relative overflow-hidden">
+                    {/* Floating animated shapes */}
+                    <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-pink-500 to-purple-500 rounded-full opacity-30 animate-float-slow blur-2xl"></div>
+                    <div className="absolute bottom-10 right-20 w-24 h-24 bg-gradient-to-br from-blue-500 to-green-400 rounded-full opacity-20 animate-float-fast blur-xl"></div>
+                    <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-pink-500 rounded-full opacity-20 animate-float-mid blur-lg"></div>
+                    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
+                        <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white">
+                            Rejoignez l'Aventure Code212
                         </h2>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+                        <p className="text-lg md:text-xl text-gray-300 mb-8">
+                            Découvrez comment notre approche unique peut transformer votre avenir dans le digital. Faites partie de la communauté qui façonne l'avenir technologique.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-4">
                             {!auth.user && (
                                 <Link
                                     href={route('register')}
-                                    className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-colors"
+                                    className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-purple-600 transition-all duration-300 flex items-center justify-center"
+                                    style={{ minWidth: '220px' }}
                                 >
-                                    GET STARTED
+                                    Commencer Maintenant <span className='ml-2'>→</span>
                                 </Link>
                             )}
-                            <button className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
-                                CONTACT US
-                            </button>
+                            <Link
+                                href={route('contact')}
+                                className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-gray-900 hover:scale-105 transition-all duration-300 flex items-center justify-center"
+                                style={{ minWidth: '220px' }}
+                            >
+                                Nous Contacter <span className='ml-2'>→</span>
+                            </Link>
                         </div>
                     </div>
                 </section>
