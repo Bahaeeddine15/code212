@@ -22,7 +22,6 @@ interface Competition {
     description?: string;
     status: 'Ouvert' | 'Complet' | 'Fermé';
     registrations: number;
-    type: 'individual' | 'group';
 }
 
 interface CompetitionEditProps {
@@ -52,8 +51,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
         category: competition.category,
         maxParticipants: competition.maxParticipants.toString(),
         deadline: competition.deadline,
-        description: competition.description || '',
-        type: competition.type, // instead of 'individual'
+        description: competition.description || ''
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,17 +95,17 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                     <div className="flex items-center gap-4">
                         <Link
                             href={`/admin/competitions/${competition.id}`}
-                            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
+                            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Retour à la compétition
                         </Link>
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">
                             Modifier la compétition
                         </h1>
-                        <p className="text-gray-600 dark:text-gray-400 mt-1">
+                        <p className="text-muted-foreground dark:text-gray-400 mt-1">
                             Modifiez les informations de votre compétition
                         </p>
                     </div>
@@ -138,7 +136,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                             className={errors.title ? 'border-red-500' : ''}
                                         />
                                         {errors.title && (
-                                            <p className="text-sm text-red-600">{errors.title}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.title}</p>
                                         )}
                                     </div>
 
@@ -155,7 +153,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                                 className={errors.date ? 'border-red-500' : ''}
                                             />
                                             {errors.date && (
-                                                <p className="text-sm text-red-600">{errors.date}</p>
+                                                <p className="text-sm text-red-600 dark:text-red-400">{errors.date}</p>
                                             )}
                                         </div>
                                         <div className="space-y-2">
@@ -169,7 +167,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                                 className={errors.deadline ? 'border-red-500' : ''}
                                             />
                                             {errors.deadline && (
-                                                <p className="text-sm text-red-600">{errors.deadline}</p>
+                                                <p className="text-sm text-red-600 dark:text-red-400">{errors.deadline}</p>
                                             )}
                                         </div>
                                     </div>
@@ -186,7 +184,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                             className={errors.location ? 'border-red-500' : ''}
                                         />
                                         {errors.location && (
-                                            <p className="text-sm text-red-600">{errors.location}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.location}</p>
                                         )}
                                     </div>
 
@@ -202,26 +200,11 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                             className={errors.description ? 'border-red-500' : ''}
                                         />
                                         {errors.description && (
-                                            <p className="text-sm text-red-600">{errors.description}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.description}</p>
                                         )}
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-muted-foreground">
                                             Décrivez les détails de la compétition, le règlement et les prix.
                                         </p>
-                                    </div>
-
-                                    {/* Type of Competition */}
-                                    <div className="space-y-3">
-                                        <label className="text-sm font-semibold text-gray-700">Type de compétition *</label>
-                                        <select
-                                            value={formData.type}
-                                            onChange={e => handleInputChange('type', e.target.value)}
-                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.type ? 'border-red-500' : 'border-gray-200'}`}
-                                            required
-                                        >
-                                            <option value="individual">Individuelle</option>
-                                            <option value="group">Par groupe</option>
-                                        </select>
-                                        {errors.type && <p className="text-sm text-red-600">{errors.type}</p>}
                                     </div>
 
                                     {/* Form Actions */}
@@ -273,7 +256,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                             </SelectContent>
                                         </Select>
                                         {errors.category && (
-                                            <p className="text-sm text-red-600">{errors.category}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.category}</p>
                                         )}
                                     </div>
 
@@ -291,9 +274,9 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                             className={errors.maxParticipants ? 'border-red-500' : ''}
                                         />
                                         {errors.maxParticipants && (
-                                            <p className="text-sm text-red-600">{errors.maxParticipants}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.maxParticipants}</p>
                                         )}
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-muted-foreground">
                                             Limitez le nombre de participants pour cette compétition.
                                         </p>
                                     </div>

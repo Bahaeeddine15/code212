@@ -131,13 +131,13 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
         return (
             <div className="text-center">
                 {fileType === 'image' && (
-                    <img src={preview} alt="Preview" className="mx-auto mb-4 max-w-xs max-h-48 object-cover rounded-lg border border-gray-200" />
+                    <img src={preview} alt="Preview" className="mx-auto mb-4 max-w-xs max-h-48 object-cover rounded-lg border border-border" />
                 )}
                 {fileType === 'video' && (
-                    <video src={preview} controls className="mx-auto mb-4 max-w-xs max-h-48 rounded-lg border border-gray-200" />
+                    <video src={preview} controls className="mx-auto mb-4 max-w-xs max-h-48 rounded-lg border border-border" />
                 )}
-                <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">{formData.file?.name}</div>
-                <div className="text-xs text-gray-500">{formData.file && formatFileSize(formData.file.size)}</div>
+                <div className="text-sm text-muted-foreground dark:text-gray-400 mb-2">{formData.file?.name}</div>
+                <div className="text-xs text-muted-foreground">{formData.file && formatFileSize(formData.file.size)}</div>
                 <p className="text-sm text-emerald-600 mt-2">Cliquez pour changer le fichier</p>
             </div>
         );
@@ -150,11 +150,11 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
 
         if (fileType === 'image') return <ImageIcon className={`${iconClass} text-blue-500`} />;
         if (fileType === 'video') return <Video className={`${iconClass} text-red-500`} />;
-        return <FileText className={`${iconClass} text-gray-500`} />;
+        return <FileText className={`${iconClass} text-muted-foreground`} />;
     };
 
     const ErrorMessage = ({ error }: { error: string }) => (
-        <div className="flex items-center mt-2 text-red-600 text-sm">
+        <div className="flex items-center mt-2 text-red-600 dark:text-red-400 text-sm">
             <AlertCircle className="w-4 h-4 mr-1" />
             {error}
         </div>
@@ -170,13 +170,13 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/admin/media"
-                            className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 transition-colors font-medium"
+                            className="flex items-center gap-2 text-muted-foreground hover:text-emerald-600 transition-colors font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Retour à la galerie
                         </Link>
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">
                         Éditer le média
                     </h1>
                 </div>
@@ -256,10 +256,10 @@ export default function MediaEdit({ media }: { media: MediaFile }) {
                                         ) : (
                                             <div className="text-center">
                                                 <FileIcon />
-                                                <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                <p className="text-lg font-medium text-foreground dark:text-gray-300 mb-2">
                                                     Remplacer le fichier
                                                 </p>
-                                                <p className="text-sm text-gray-500 mb-4">Cliquez pour choisir un nouveau fichier</p>
+                                                <p className="text-sm text-muted-foreground mb-4">Cliquez pour choisir un nouveau fichier</p>
                                                 <Button type="button" variant="outline" className="pointer-events-none">
                                                     Parcourir
                                                 </Button>

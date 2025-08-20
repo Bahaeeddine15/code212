@@ -28,11 +28,11 @@ export default function ReservationShow() {
     const getStatus = () => {
         switch (reservation.status) {
             case 'pending':
-                return <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full"><AlertCircle className="w-4 h-4" />En attente</span>;
+                return <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 rounded-full"><AlertCircle className="w-4 h-4" />En attente</span>;
             case 'approved':
-                return <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full"><CheckCircle className="w-4 h-4" />Approuvée</span>;
+                return <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 rounded-full"><CheckCircle className="w-4 h-4" />Approuvée</span>;
             case 'rejected':
-                return <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full"><XCircle className="w-4 h-4" />Rejetée</span>;
+                return <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 rounded-full"><XCircle className="w-4 h-4" />Rejetée</span>;
         }
     };
 
@@ -53,18 +53,18 @@ export default function ReservationShow() {
         <AppLayout>
             <Head title={`Détails réservation #${reservation.id}`} />
             <div className="max-w-2xl mx-auto py-10 px-4">
-                <Link href="/admin/reservations" className="flex items-center gap-2 text-gray-600 hover:text-purple-600 mb-6">
+                <Link href="/admin/reservations" className="flex items-center gap-2 text-muted-foreground hover:text-purple-600 mb-6">
                     <ArrowLeft className="w-4 h-4" />
                     Retour à la liste
                 </Link>
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-card dark:bg-card rounded-lg shadow p-6">
                     <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold text-gray-800">Détails de la réservation</h1>
+                        <h1 className="text-2xl font-bold text-foreground">Détails de la réservation</h1>
                         {getStatus()}
                     </div>
                     <div className="space-y-4">
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Informations étudiant</h2>
+                            <h2 className="text-lg font-semibold text-foreground mb-2">Informations étudiant</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div><User className="inline w-4 h-4 mr-1" />{reservation.studentName}</div>
                                 <div><Mail className="inline w-4 h-4 mr-1" />{reservation.studentEmail}</div>
@@ -73,7 +73,7 @@ export default function ReservationShow() {
                             </div>
                         </div>
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Détails réservation</h2>
+                            <h2 className="text-lg font-semibold text-foreground mb-2">Détails réservation</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>Salle: {reservation.roomName || '--'}</div>
                                 <div>Capacité: {reservation.capacity ?? '--'} personnes</div>
@@ -82,20 +82,20 @@ export default function ReservationShow() {
                             </div>
                         </div>
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Objectif</h2>
+                            <h2 className="text-lg font-semibold text-foreground mb-2">Objectif</h2>
                             <div>{reservation.purpose || '--'}</div>
                         </div>
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Description</h2>
+                            <h2 className="text-lg font-semibold text-foreground mb-2">Description</h2>
                             <div>{reservation.description || '--'}</div>
                         </div>
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Soumise le</h2>
+                            <h2 className="text-lg font-semibold text-foreground mb-2">Soumise le</h2>
                             <div>{reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleString('fr-FR') : '--'}</div>
                         </div>
                         {reservation.processedAt && (
                             <div>
-                                <h2 className="text-lg font-semibold text-gray-700 mb-2">Traitée le</h2>
+                                <h2 className="text-lg font-semibold text-foreground mb-2">Traitée le</h2>
                                 <div>{new Date(reservation.processedAt).toLocaleString('fr-FR')} par {reservation.processedBy || '--'}</div>
                             </div>
                         )}

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 import { BreadcrumbItem } from '@/types';
 import { Plus, Edit, Trash2, Eye, Search, Filter, FileText, BookOpen, Users, TrendingUp } from 'lucide-react';
 
@@ -51,9 +52,9 @@ const ArticleCard = ({
 }) => {
     const getStatusBadge = () => {
         const statusConfig = {
-            published: { label: 'Publié', variant: 'default' as const, className: 'bg-green-100 text-green-800' },
-            draft: { label: 'Brouillon', variant: 'secondary' as const, className: 'bg-yellow-100 text-yellow-800' },
-            archived: { label: 'Archivé', variant: 'outline' as const, className: 'bg-gray-100 text-gray-800' }
+            published: { label: 'Publié', variant: 'default' as const, className: 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 font-semibold' },
+            draft: { label: 'Brouillon', variant: 'secondary' as const, className: 'bg-yellow-100 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 font-semibold' },
+            archived: { label: 'Archivé', variant: 'outline' as const, className: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-semibold' }
         };
 
         const config = statusConfig[article.status];
@@ -73,7 +74,7 @@ const ArticleCard = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
+        <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6 hover:shadow-xl transition-all duration-300 cursor-pointer"
             onClick={handleCardClick}
         >
             {article.images && article.images.length > 0 && (
@@ -94,43 +95,43 @@ const ArticleCard = ({
             <div className="space-y-4">
                 <div>
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-xl font-bold text-gray-900 line-clamp-2 hover:text-purple-600 transition-colors">
+                        <h3 className="text-xl font-bold text-foreground line-clamp-2 hover:text-purple-600 transition-colors">
                             {article.title}
                         </h3>
                         {getStatusBadge()}
                     </div>
-                    <p className="text-gray-600 leading-relaxed line-clamp-3 mb-4">{article.excerpt}</p>
+                    <p className="text-muted-foreground leading-relaxed line-clamp-3 mb-4">{article.excerpt}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="flex items-center space-x-2">
-                        <Users className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">Par {article.author}</span>
+                        <Users className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Par {article.author}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Eye className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">{article.views} vues</span>
+                        <Eye className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">{article.views} vues</span>
                     </div>
                 </div>
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 text-sm">
-                        <span className="text-gray-600">{article.date}</span>
+                        <span className="text-muted-foreground">{article.date}</span>
                     </div>
                     <Badge variant="outline" className="bg-indigo-100 text-indigo-800 border-indigo-200">{article.category}</Badge>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                <div className="flex items-center justify-between pt-4 border-t border-border">
                     <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                         <button
                             onClick={() => onEdit(article)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
+                            className="p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 rounded-xl transition-all duration-200"
                         >
                             <Edit className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => onDelete(article.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+                            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 rounded-xl transition-all duration-200"
                         >
                             <Trash2 className="w-4 h-4" />
                         </button>
@@ -180,71 +181,65 @@ export default function Articles({ articles }: ArticlesProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestion des articles" />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
 
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                                <FileText className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-gray-900">Articles & Publications</h1>
-                                <p className="text-gray-600 mt-2 text-lg">Créez et gérez vos articles et publications</p>
-                            </div>
-                        </div>
+                <PageHeader
+                    title="Articles & Publications"
+                    description="Créez et gérez vos articles et publications"
+                    icon={FileText}
+                    theme="primary"
+                    actions={
                         <Link href="/admin/articles/create">
-                            <button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
-                                <Plus className="w-5 h-5" />
-                                <span>Nouvel article</span>
-                            </button>
+                            <ModernButton theme="primary" icon={Plus}>
+                                Nouvel article
+                            </ModernButton>
                         </Link>
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* Statistiques */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Total articles</p>
-                                <p className="text-3xl font-bold text-blue-600 mt-2">{stats.total}</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Total articles</p>
+                                <p className="text-3xl font-bold text-primary mt-2">{stats.total}</p>
                             </div>
-                            <div className="p-4 bg-blue-100 rounded-2xl">
-                                <FileText className="w-8 h-8 text-blue-600" />
+                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+                                <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Publiés</p>
-                                <p className="text-3xl font-bold text-green-600 mt-2">{stats.published}</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Publiés</p>
+                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{stats.published}</p>
                             </div>
-                            <div className="p-4 bg-green-100 rounded-2xl">
-                                <BookOpen className="w-8 h-8 text-green-600" />
+                            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
+                                <BookOpen className="w-8 h-8 text-green-600 dark:text-green-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Brouillons</p>
-                                <p className="text-3xl font-bold text-yellow-600 mt-2">{stats.draft}</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Brouillons</p>
+                                <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mt-2">{stats.draft}</p>
                             </div>
-                            <div className="p-4 bg-yellow-100 rounded-2xl">
-                                <Edit className="w-8 h-8 text-yellow-600" />
+                            <div className="p-4 bg-yellow-100 dark:bg-yellow-900 rounded-2xl">
+                                <Edit className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Vues totales</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Vues totales</p>
                                 <p className="text-3xl font-bold text-purple-600 mt-2">{stats.totalViews}</p>
                             </div>
                             <div className="p-4 bg-purple-100 rounded-2xl">
@@ -255,20 +250,20 @@ export default function Articles({ articles }: ArticlesProps) {
                 </div>
 
                 {/* Filtres et recherche */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                             <Input
                                 placeholder="Rechercher un article..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <div className="flex gap-3">
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40">
+                                <SelectTrigger className="px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 w-40">
                                     <SelectValue placeholder="Statut" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -279,7 +274,7 @@ export default function Articles({ articles }: ArticlesProps) {
                                 </SelectContent>
                             </Select>
                             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40">
+                                <SelectTrigger className="px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 w-40">
                                     <SelectValue placeholder="Catégorie" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -295,10 +290,10 @@ export default function Articles({ articles }: ArticlesProps) {
                 </div>
 
                 {/* Liste des articles */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                            <FileText className="w-7 h-7 mr-3 text-blue-600" />
+                        <h2 className="text-2xl font-bold text-foreground flex items-center">
+                            <FileText className="w-7 h-7 mr-3 text-blue-600 dark:text-blue-400" />
                             Articles disponibles ({filteredArticles.length})
                         </h2>
                     </div>
@@ -316,9 +311,9 @@ export default function Articles({ articles }: ArticlesProps) {
                         </div>
                     ) : (
                         <div className="text-center py-12">
-                            <FileText className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun article trouvé</h3>
-                            <p className="text-gray-600 mb-6">
+                            <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-foreground mb-2">Aucun article trouvé</h3>
+                            <p className="text-muted-foreground mb-6">
                                 {searchTerm ? 'Modifiez vos critères de recherche' : 'Commencez par créer votre premier article'}
                             </p>
                             <Link href="/admin/articles/create">

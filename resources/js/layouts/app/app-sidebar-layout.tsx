@@ -11,7 +11,7 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
         <AppShell variant="sidebar">
             <div className="flex w-full min-h-screen">
                 <AppSidebar />
-                <div className="sidebar-content-offset">
+                <div className="sidebar-content-offset flex-1 min-w-0">
                     <AppContent
                         variant="sidebar"
                         className="overflow-x-hidden overflow-y-auto min-h-screen w-full"

@@ -38,29 +38,110 @@ class ReservationStatusNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $status = $this->reservation->status;
-        $statusText = $status === 'approved' ? 'approuvée' : 'rejetée';
-        $statusColor = $status === 'approved' ? 'success' : 'error';
+        $studentName = $this->reservation->prenom . ' ' . $this->reservation->nom;
+        
+        if ($status === Reservation::STATUS_APPROVED) {
+            return $this->buildApprovedEmail($studentName);
+        } elseif ($status === Reservation::STATUS_REJECTED) {
+            return $this->buildRejectedEmail($studentName);
+        }
+        
+        return $this->buildPendingEmail($studentName);
+    }
 
+    private function buildApprovedEmail($studentName)
+    {
+        $resourceInfo = $this->getResourceInfo();
+        
         return (new MailMessage)
-            ->subject("Statut de votre réservation - {$statusText}")
-            ->greeting("Bonjour {$this->reservation->prenom} {$this->reservation->nom},")
-            ->line("Nous vous informons que votre réservation du " . 
-                   $this->reservation->date_reservation . " a été {$statusText}.")
-            ->line("**Détails de votre réservation :**")
-            ->line("- Numéro Apogée : {$this->reservation->num_apogee}")
-            ->line("- Date de réservation : {$this->reservation->date_reservation}")
-            ->line("- Description : {$this->reservation->description}")
-            ->when($status === 'approved', function ($message) {
-                return $message->line('🎉 Félicitations ! Votre réservation a été acceptée.')
-                              ->action('Voir mes réservations', url('/reservations'));
-            })
-            ->when($status === 'rejected', function ($message) {
-                return $message->line('😔 Malheureusement, votre réservation n\'a pas pu être acceptée.')
-                              ->line('Vous pouvez faire une nouvelle demande de réservation.')
-                              ->action('Faire une nouvelle réservation', url('/reservations'));
-            })
-            ->line('Merci de faire confiance à notre service.')
-            ->salutation('Cordialement, L\'équipe Code212');
+            ->subject('✅ Réservation Approuvée - CODE212-UCA')
+            ->view('emails.reservation-notification', [
+                'subject' => '✅ Réservation Approuvée',
+                'greeting' => 'Bonjour ' . $studentName . ',',
+                'introMessage' => 'Nous avons le plaisir de vous informer que votre demande de réservation a été <strong>approuvée</strong> !',
+                'reservation' => $this->reservation,
+                'resourceInfo' => $resourceInfo,
+                'statusClass' => 'status-approved',
+                'statusMessage' => '🎉 <strong>Félicitations !</strong> Votre réservation est maintenant confirmée. Vous pouvez vous présenter à la date prévue.',
+                'importantNote' => 'Veuillez vous présenter à l\'heure avec votre <strong>carte d\'étudiant</strong>.',
+                'actionUrl' => url('/reservations'),
+                'actionText' => 'Voir mes réservations',
+                'closingMessage' => 'Merci de faire confiance à CODE212-UCA !'
+            ]);
+    }
+
+    private function buildRejectedEmail($studentName)
+    {
+        $resourceInfo = $this->getResourceInfo();
+        
+        return (new MailMessage)
+            ->subject('❌ Réservation Non Approuvée - CODE212-UCA')
+            ->view('emails.reservation-notification', [
+                'subject' => '❌ Réservation Non Approuvée',
+                'greeting' => 'Bonjour ' . $studentName . ',',
+                'introMessage' => 'Nous vous informons que votre demande de réservation n\'a malheureusement pas pu être approuvée.',
+                'reservation' => $this->reservation,
+                'resourceInfo' => $resourceInfo,
+                'statusClass' => 'status-rejected',
+                'statusMessage' => '😔 Nous nous excusons pour ce désagrément.',
+                'reasonsList' => [
+                    'Ressource non disponible à la date demandée',
+                    'Conflit avec d\'autres réservations',
+                    'Informations incomplètes',
+                    'Politique de réservation non respectée'
+                ],
+                'actionsList' => [
+                    'Faire une nouvelle demande pour une autre date',
+                    'Contacter l\'administration pour plus d\'informations'
+                ],
+                'actionUrl' => url('/reservations'),
+                'actionText' => 'Faire une nouvelle réservation',
+                'closingMessage' => 'Merci de votre compréhension.'
+            ]);
+    }
+
+    private function buildPendingEmail($studentName)
+    {
+        return (new MailMessage)
+            ->subject('⏳ Réservation en Attente - CODE212-UCA')
+            ->view('emails.reservation-notification', [
+                'subject' => '⏳ Réservation en Attente',
+                'greeting' => 'Bonjour ' . $studentName . ',',
+                'introMessage' => 'Votre demande de réservation est en cours de traitement.',
+                'reservation' => $this->reservation,
+                'resourceInfo' => $this->getResourceInfo(),
+                'statusClass' => 'status-pending',
+                'statusMessage' => 'Vous recevrez une notification dès qu\'elle sera traitée.',
+                'closingMessage' => 'Merci de votre patience.'
+            ]);
+    }
+
+    private function getResourceInfo()
+    {
+        $resourceType = $this->reservation->resource_type;
+        $locationType = $this->reservation->location_type;
+        $roomDetails = $this->reservation->room_details;
+
+        if ($resourceType === 'pc') {
+            return '💻 Poste (PC)';
+        } elseif ($resourceType === 'local') {
+            if ($locationType === 'salle_conference') {
+                return '🏢 Local - Salle de conférence';
+            } elseif ($locationType === 'salle_reunion') {
+                $etage = '';
+                if ($roomDetails === '1er_etage') {
+                    $etage = ' (1er étage)';
+                } elseif ($roomDetails === '2eme_etage') {
+                    $etage = ' (2ème étage)';
+                } elseif ($roomDetails === '3eme_etage') {
+                    $etage = ' (3ème étage)';
+                }
+                return '🏢 Local - Salle de réunion' . $etage;
+            }
+            return '🏢 Local';
+        }
+        
+        return 'Ressource non spécifiée';
     }
 
     /**

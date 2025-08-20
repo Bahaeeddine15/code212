@@ -12,9 +12,13 @@ interface Reservation {
     prenom: string;
     num_apogee: string;
     email: string;
+    telephone?: string;
     description: string;
     date_reservation: string;
     status: string;
+    resource_type?: string;
+    location_type?: string;
+    room_details?: string;
 }
 
 interface Props {
@@ -28,8 +32,12 @@ export default function EditReservation({ reservation }: Props) {
         prenom: reservation.prenom,
         num_apogee: reservation.num_apogee,
         email: reservation.email,
+        telephone: reservation.telephone || '',
         description: reservation.description,
         date_reservation: reservation.date_reservation,
+        resource_type: reservation.resource_type || '',
+        location_type: reservation.location_type || '',
+        room_details: reservation.room_details || '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -114,6 +122,19 @@ export default function EditReservation({ reservation }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
+                                    <Label htmlFor="telephone">Numéro de téléphone</Label>
+                                    <Input
+                                        id="telephone"
+                                        type="tel"
+                                        value={data.telephone}
+                                        onChange={(e) => setData('telephone', e.target.value)}
+                                        className={errors.telephone ? 'border-red-500' : ''}
+                                        placeholder="Ex: 06 12 34 56 78"
+                                    />
+                                    {errors.telephone && <p className="text-red-500 text-sm">{errors.telephone}</p>}
+                                </div>
+
+                                <div className="space-y-2">
                                     <Label htmlFor="date_reservation">Date de réservation souhaitée *</Label>
                                     <Input
                                         id="date_reservation"
@@ -126,6 +147,72 @@ export default function EditReservation({ reservation }: Props) {
                                     />
                                     {errors.date_reservation && <p className="text-red-500 text-sm">{errors.date_reservation}</p>}
                                 </div>
+
+                                {/* Type de ressource */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="resource_type">Type de ressource *</Label>
+                                    <select
+                                        id="resource_type"
+                                        value={data.resource_type}
+                                        onChange={(e) => {
+                                            setData('resource_type', e.target.value);
+                                            if (e.target.value !== 'local') {
+                                                setData('location_type', '');
+                                                setData('room_details', '');
+                                            }
+                                        }}
+                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.resource_type ? 'border-red-500' : 'border-gray-300'}`}
+                                        required
+                                    >
+                                        <option value="">Sélectionnez le type de ressource</option>
+                                        <option value="pc">Poste (PC)</option>
+                                        <option value="local">Local</option>
+                                    </select>
+                                    {errors.resource_type && <p className="text-red-500 text-sm">{errors.resource_type}</p>}
+                                </div>
+
+                                {/* Options pour local */}
+                                {data.resource_type === 'local' && (
+                                    <>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="location_type">Type de local *</Label>
+                                            <select
+                                                id="location_type"
+                                                value={data.location_type}
+                                                onChange={(e) => {
+                                                    setData('location_type', e.target.value);
+                                                    setData('room_details', '');
+                                                }}
+                                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.location_type ? 'border-red-500' : 'border-gray-300'}`}
+                                                required
+                                            >
+                                                <option value="">Sélectionnez le type de local</option>
+                                                <option value="salle_conference">Salle de conférence</option>
+                                                <option value="salle_reunion">Salle de réunion</option>
+                                            </select>
+                                            {errors.location_type && <p className="text-red-500 text-sm">{errors.location_type}</p>}
+                                        </div>
+
+                                        {data.location_type === 'salle_reunion' && (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="room_details">Étage *</Label>
+                                                <select
+                                                    id="room_details"
+                                                    value={data.room_details}
+                                                    onChange={(e) => setData('room_details', e.target.value)}
+                                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.room_details ? 'border-red-500' : 'border-gray-300'}`}
+                                                    required
+                                                >
+                                                    <option value="">Sélectionnez l'étage</option>
+                                                    <option value="1er_etage">1er étage</option>
+                                                    <option value="2eme_etage">2ème étage</option>
+                                                    <option value="3eme_etage">3ème étage</option>
+                                                </select>
+                                                {errors.room_details && <p className="text-red-500 text-sm">{errors.room_details}</p>}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
 
                                 <div className="space-y-2">
                                     <Label htmlFor="description">Description de votre demande *</Label>

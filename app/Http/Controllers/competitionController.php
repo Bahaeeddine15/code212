@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Competition; // Fix the import - should be Competition, not competition
 use App\Models\CompetitionRegistration;
+use App\Models\NotifiableUser;
+use App\Notifications\CompetitionRegistrationStatusNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -16,7 +20,7 @@ class CompetitionController extends Controller
      */
     public function index()
     {
-        $studentId = auth()->id();
+        $studentId = Auth::id();
 
         $competitions = Competition::with(['user', 'registrations', 'closedBy'])
             ->orderBy('created_at', 'desc')
@@ -30,8 +34,8 @@ class CompetitionController extends Controller
                     'id' => $competition->id,
                     'title' => $competition->title,
                     'description' => $competition->description,
-                    'date' => $competition->date->format('Y-m-d'),
-                    'deadline' => $competition->deadline->format('Y-m-d'),
+                    'date' => $competition->date ? Carbon::parse($competition->date)->format('Y-m-d') : null,
+                    'deadline' => $competition->deadline ? Carbon::parse($competition->deadline)->format('Y-m-d') : null,
                     'location' => $competition->location,
                     'category' => $competition->category,
                     'maxParticipants' => $competition->max_participants,
@@ -110,8 +114,8 @@ class CompetitionController extends Controller
                 'id' => $competition->id,
                 'title' => $competition->title,
                 'description' => $competition->description,
-                'date' => $competition->date->format('Y-m-d'),
-                'deadline' => $competition->deadline->format('Y-m-d'),
+                'date' => $competition->date ? Carbon::parse($competition->date)->format('Y-m-d') : null,
+                'deadline' => $competition->deadline ? Carbon::parse($competition->deadline)->format('Y-m-d') : null,
                 'location' => $competition->location,
                 'category' => $competition->category,
                 'maxParticipants' => $competition->max_participants,
@@ -129,7 +133,7 @@ class CompetitionController extends Controller
     public function showDetails($id)
     {
         $competition = Competition::with(['registrations'])->findOrFail($id);
-        $studentId = auth()->id();
+        $studentId = Auth::id();
 
         $myRegistration = $competition->registrations()
             ->where('user_id', $studentId)
@@ -139,8 +143,8 @@ class CompetitionController extends Controller
             'id' => $competition->id,
             'title' => $competition->title,
             'description' => $competition->description,
-            'date' => $competition->date->format('Y-m-d'),
-            'deadline' => $competition->deadline->format('Y-m-d'),
+            'date' => $competition ? Carbon::parse($competition->date)->format('Y-m-d') : null,
+            'deadline' => $competition ? Carbon::parse($competition->deadline)->format('Y-m-d') : null,
             'location' => $competition->location,
             'category' => $competition->category,
             'maxParticipants' => $competition->max_participants,
@@ -170,13 +174,13 @@ class CompetitionController extends Controller
             'participant_name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
-            'club' => 'nullable|string|max:255',
             'category' => 'required|string|max:255',
             'notes' => 'nullable|string|max:1000',
         ];
 
+        // Règles conditionnelles selon le type de compétition
         if ($competition->type === 'group') {
-            $rules['group_members'] = 'required|string|max:1000';
+            $rules['group_name'] = 'required|string|max:255';
         }
 
         $validated = $request->validate($rules);
@@ -191,22 +195,44 @@ class CompetitionController extends Controller
         }
 
         // Create registration with status "En attente"
-        CompetitionRegistration::create([
+        $registration = CompetitionRegistration::create([
             'competition_id' => $competitionId,
             'user_id' => $request->user()->id,
             'participant_name' => $validated['participant_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'club' => $validated['club'],
+            'club' => null, // Supprimé le champ club
             'category' => $validated['category'],
             'notes' => $validated['notes'],
-            'group_members' => $competition->type === 'group' ? $validated['group_members'] : null,
+            // Utiliser group_members pour stocker le nom du groupe si c'est une compétition par groupe
+            'group_members' => $competition->type === 'group' ? $validated['group_name'] : null,
             'status' => 'En attente', // Pending
             'payment_status' => 'En attente',
             'registered_at' => now(),
         ]);
 
-        return redirect()->route('etudiant.competition')->with('success', 'Votre demande a été envoyée et est en attente de validation.');
+        // Send confirmation email
+        $this->sendRegistrationConfirmationEmail($registration);
+
+        return redirect()->route('etudiant.competition')->with('success', 'Votre demande a été envoyée et est en attente de validation. Un email de confirmation vous a été envoyé.');
+    }
+
+    /**
+     * Send registration confirmation email.
+     */
+    private function sendRegistrationConfirmationEmail(CompetitionRegistration $registration)
+    {
+        try {
+            // Create a notifiable user instance
+            $notifiableUser = new NotifiableUser($registration->email, $registration->participant_name);
+
+            // Send the notification
+            $notifiableUser->notify(new CompetitionRegistrationStatusNotification($registration));
+            
+        } catch (\Exception $e) {
+            // Log the error but don't fail the registration
+            Log::error('Failed to send competition registration confirmation email: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -281,8 +307,8 @@ class CompetitionController extends Controller
             'id' => $competition->id,
             'title' => $competition->title,
             'description' => $competition->description,
-            'date' => $competition->date->format('d-m-Y'),
-            'deadline' => $competition->deadline->format('d-m-Y'),
+            'date' => $competition->date ? Carbon::parse($competition->date)->format('d-m-Y') : null,
+            'deadline' => $competition->deadline ? Carbon::parse($competition->deadline)->format('d-m-Y') : null,
             'location' => $competition->location,
             'category' => $competition->category,
             'maxParticipants' => $competition->max_participants,
@@ -324,8 +350,8 @@ class CompetitionController extends Controller
             'id' => $competition->id,
             'title' => $competition->title,
             'description' => $competition->description,
-            'date' => $competition->date->format('Y-m-d'),
-            'deadline' => $competition->deadline->format('Y-m-d'),
+            'date' => $competition ? Carbon::parse($competition->date)->format('Y-m-d') : null,
+            'deadline' => $competition ? Carbon::parse($competition->deadline)->format('Y-m-d') : null,
             'location' => $competition->location,
             'category' => $competition->category,
             'maxParticipants' => $competition->max_participants,

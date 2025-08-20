@@ -108,13 +108,13 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                     <div className="flex items-center gap-4">
                         <Link
                             href={`/admin/articles/${article.id}`}
-                            className="flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors font-medium"
+                            className="flex items-center gap-2 text-muted-foreground hover:text-purple-600 transition-colors font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Retour à l'article
                         </Link>
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">
                         Modifier l'article
                     </h1>
                 </div>
@@ -213,10 +213,10 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveExistingImage(idx)}
-                                                className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                                                className="absolute -top-2 -right-2 bg-card dark:bg-card rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
                                                 title="Supprimer"
                                             >
-                                                <X className="w-4 h-4 text-red-600" />
+                                                <X className="w-4 h-4 text-red-600 dark:text-red-400" />
                                             </button>
                                         </div>
                                     ))}
@@ -236,10 +236,10 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveNewImage(idx)}
-                                                className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                                                className="absolute -top-2 -right-2 bg-card dark:bg-card rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
                                                 title="Supprimer"
                                             >
-                                                <X className="w-4 h-4 text-red-600" />
+                                                <X className="w-4 h-4 text-red-600 dark:text-red-400" />
                                             </button>
                                         </div>
                                     ))}
@@ -257,11 +257,11 @@ export default function ArticleEdit({ article }: ArticleEditProps) {
                                     onChange={handleImageChange}
                                     disabled={existingImages.length + newImages.length >= 5}
                                 />
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-muted-foreground">
                                     Vous pouvez ajouter jusqu'à 5 images au total.
                                 </p>
                                 {imageError && (
-                                    <p className="text-sm text-red-600">{imageError}</p>
+                                    <p className="text-sm text-red-600 dark:text-red-400">{imageError}</p>
                                 )}
                             </div>
 

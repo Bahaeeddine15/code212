@@ -106,22 +106,22 @@ export default function ArticleCreate() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Créer un nouvel article" />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-8">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                             <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
                                 <Plus className="w-8 h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-gray-900">Créer un nouvel article</h1>
-                                <p className="text-gray-600 mt-2 text-lg">Rédigez et publiez votre article</p>
+                                <h1 className="text-3xl font-bold text-foreground">Créer un nouvel article</h1>
+                                <p className="text-muted-foreground mt-2 text-lg">Rédigez et publiez votre article</p>
                             </div>
                         </div>
                         <Link
                             href="/admin/articles"
-                            className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
+                            className="bg-card dark:bg-card text-primary hover:bg-blue-50 dark:bg-blue-900/20 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200"
                         >
                             <ArrowLeft className="w-5 h-5" />
                             <span>Retour aux articles</span>
@@ -133,33 +133,33 @@ export default function ArticleCreate() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main Form */}
                     <div className="lg:col-span-2">
-                        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                        <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-8">
                             <div className="flex items-center space-x-3 mb-8">
-                                <div className="p-3 bg-blue-100 rounded-xl">
-                                    <Plus className="w-6 h-6 text-blue-600" />
+                                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                                    <Plus className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                                 </div>
-                                <h2 className="text-2xl font-bold text-gray-900">Nouvel article</h2>
+                                <h2 className="text-2xl font-bold text-foreground">Nouvel article</h2>
                             </div>
                                 <form onSubmit={handleSubmit} className="space-y-8">
                                     {/* Title */}
                                     <div className="space-y-3">
-                                        <Label htmlFor="title" className="text-sm font-semibold text-gray-700">Titre de l'article *</Label>
+                                        <Label htmlFor="title" className="text-sm font-semibold text-foreground">Titre de l'article *</Label>
                                         <Input
                                             id="title"
                                             value={formData.title}
                                             onChange={(e) => handleInputChange('title', e.target.value)}
                                             placeholder="Saisissez le titre de votre article..."
                                             required
-                                            className={`px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.title ? 'border-red-500' : 'border-gray-200'}`}
+                                            className={`px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.title ? 'border-red-500' : 'border-border'}`}
                                         />
                                         {errors.title && (
-                                            <p className="text-sm text-red-600">{errors.title}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.title}</p>
                                         )}
                                     </div>
 
                                     {/* Excerpt */}
                                     <div className="space-y-3">
-                                        <Label htmlFor="excerpt" className="text-sm font-semibold text-gray-700">Résumé *</Label>
+                                        <Label htmlFor="excerpt" className="text-sm font-semibold text-foreground">Résumé *</Label>
                                         <Textarea
                                             id="excerpt"
                                             value={formData.excerpt}
@@ -167,19 +167,19 @@ export default function ArticleCreate() {
                                             placeholder="Rédigez un résumé de votre article (sera affiché dans la liste des articles)..."
                                             rows={3}
                                             required
-                                            className={`px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 resize-none ${errors.excerpt ? 'border-red-500' : 'border-gray-200'}`}
+                                            className={`px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 resize-none ${errors.excerpt ? 'border-red-500' : 'border-border'}`}
                                         />
                                         {errors.excerpt && (
-                                            <p className="text-sm text-red-600">{errors.excerpt}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.excerpt}</p>
                                         )}
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-muted-foreground">
                                             Le résumé apparaîtra sur les cartes d'articles et dans les aperçus.
                                         </p>
                                     </div>
 
                                     {/* Content */}
                                     <div className="space-y-3">
-                                        <Label htmlFor="content" className="text-sm font-semibold text-gray-700">Contenu de l'article *</Label>
+                                        <Label htmlFor="content" className="text-sm font-semibold text-foreground">Contenu de l'article *</Label>
                                         <Textarea
                                             id="content"
                                             value={formData.content}
@@ -187,12 +187,12 @@ export default function ArticleCreate() {
                                             placeholder="Rédigez le contenu complet de votre article..."
                                             rows={15}
                                             required
-                                            className={`px-4 py-3 border-2 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 resize-none ${errors.content ? 'border-red-500' : 'border-gray-200'}`}
+                                            className={`px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 resize-none ${errors.content ? 'border-red-500' : 'border-border'}`}
                                         />
                                         {errors.content && (
-                                            <p className="text-sm text-red-600">{errors.content}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.content}</p>
                                         )}
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-muted-foreground">
                                             Vous pouvez utiliser des sauts de ligne pour séparer les paragraphes.
                                         </p>
                                     </div>
@@ -220,25 +220,25 @@ export default function ArticleCreate() {
                                                         <button
                                                             type="button"
                                                             onClick={() => handleRemoveImage(idx)}
-                                                            className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
+                                                            className="absolute -top-2 -right-2 bg-card dark:bg-card rounded-full p-1 shadow group-hover:opacity-100 opacity-80 transition"
                                                             title="Supprimer"
                                                         >
-                                                            <X className="w-4 h-4 text-red-600" />
+                                                            <X className="w-4 h-4 text-red-600 dark:text-red-400" />
                                                         </button>
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
                                         {imageError && (
-                                            <p className="text-sm text-red-600">{imageError}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{imageError}</p>
                                         )}
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-muted-foreground">
                                             Vous pouvez ajouter jusqu'à 5 images.
                                         </p>
                                     </div>
 
                                     {/* Form Actions */}
-                                    <div className="flex gap-4 pt-8 border-t border-gray-200">
+                                    <div className="flex gap-4 pt-8 border-t border-border">
                                         <Button
                                             type="submit"
                                             disabled={isSubmitting}
@@ -251,7 +251,7 @@ export default function ArticleCreate() {
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200"
+                                                className="border-2 border-gray-300 text-foreground hover:bg-background px-8 py-3 rounded-xl font-semibold transition-all duration-200"
                                             >
                                                 Annuler
                                             </Button>
@@ -265,17 +265,17 @@ export default function ArticleCreate() {
                     <div className="lg:col-span-1">
                         <div className="space-y-6">
                             {/* Article Settings */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-                                <h3 className="text-lg font-bold text-gray-900 mb-6">Paramètres de l'article</h3>
+                            <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
+                                <h3 className="text-lg font-bold text-foreground mb-6">Paramètres de l'article</h3>
                                 <div className="space-y-4">
                                     {/* Category */}
                                     <div className="space-y-3">
-                                        <Label htmlFor="category" className="text-sm font-semibold text-gray-700">Catégorie *</Label>
+                                        <Label htmlFor="category" className="text-sm font-semibold text-foreground">Catégorie *</Label>
                                         <Select
                                             value={formData.category}
                                             onValueChange={(value) => handleInputChange('category', value)}
                                         >
-                                            <SelectTrigger className={`px-4 py-3 border-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.category ? 'border-red-500' : 'border-gray-200'}`}>
+                                            <SelectTrigger className={`px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.category ? 'border-red-500' : 'border-border'}`}>
                                                 <SelectValue placeholder="Choisir une catégorie" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -288,20 +288,20 @@ export default function ArticleCreate() {
                                             </SelectContent>
                                         </Select>
                                         {errors.category && (
-                                            <p className="text-sm text-red-600">{errors.category}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.category}</p>
                                         )}
                                     </div>
 
                                     {/* Status */}
                                     <div className="space-y-3">
-                                        <Label htmlFor="status" className="text-sm font-semibold text-gray-700">Statut de publication</Label>
+                                        <Label htmlFor="status" className="text-sm font-semibold text-foreground">Statut de publication</Label>
                                         <Select
                                             value={formData.status}
                                             onValueChange={(value: 'draft' | 'published' | 'archived') =>
                                                 handleInputChange('status', value)
                                             }
                                         >
-                                            <SelectTrigger className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200">
+                                            <SelectTrigger className="px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -310,7 +310,7 @@ export default function ArticleCreate() {
                                                 <SelectItem value="archived">Archivé</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        <div className="text-sm text-gray-500 mt-2">
+                                        <div className="text-sm text-muted-foreground mt-2">
                                             {formData.status === 'draft' && 'L\'article sera sauvegardé comme brouillon'}
                                             {formData.status === 'published' && 'L\'article sera publié immédiatement'}
                                             {formData.status === 'archived' && 'L\'article sera archivé'}
@@ -320,11 +320,11 @@ export default function ArticleCreate() {
                             </div>
 
                             {/* Tips Card */}
-                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-6">
-                                <h3 className="text-lg font-bold text-blue-800 mb-4">
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-6">
+                                <h3 className="text-lg font-bold text-blue-800 dark:text-blue-200 mb-4">
                                     💡 Conseils de rédaction
                                 </h3>
-                                <div className="text-sm text-blue-700 space-y-2">
+                                <div className="text-sm text-blue-700 dark:text-blue-300 space-y-2">
                                     <ul className="space-y-2">
                                         <li>• Utilisez un titre accrocheur et descriptif</li>
                                         <li>• Rédigez un résumé engageant pour attirer les lecteurs</li>

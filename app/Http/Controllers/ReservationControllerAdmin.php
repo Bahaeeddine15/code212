@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ReservationControllerAdmin extends Controller
 {
@@ -22,7 +23,7 @@ class ReservationControllerAdmin extends Controller
                 'id' => $reservation->id,
                 'studentName' => $reservation->nom . ' ' . $reservation->prenom,
                 'studentEmail' => $reservation->email,
-                'studentPhone' => '', // Add if you have this field
+                'studentPhone' => $reservation->telephone ?: '',
                 'studentId' => $reservation->num_apogee,
                 'roomName' => '', // Add if you have room relation
                 'roomId' => null, // Add if you have room relation
@@ -36,6 +37,9 @@ class ReservationControllerAdmin extends Controller
                 'submittedAt' => $reservation->created_at,
                 'processedAt' => $reservation->updated_at,
                 'processedBy' => '', // Add if you have this field
+                'resource_type' => $reservation->resource_type,
+                'location_type' => $reservation->location_type,
+                'room_details' => $reservation->room_details,
             ];
         });
 
@@ -52,7 +56,20 @@ class ReservationControllerAdmin extends Controller
         $reservation->status = Reservation::STATUS_APPROVED;
         $reservation->save();
 
-        return redirect()->back()->with('success', 'Réservation approuvée.');
+        // Envoyer la notification par email
+        try {
+            $notifiableUser = new \App\Models\NotifiableUser(
+                $reservation->email, 
+                $reservation->prenom . ' ' . $reservation->nom
+            );
+            
+            $notifiableUser->notify(new \App\Notifications\ReservationStatusNotification($reservation));
+            
+            return redirect()->back()->with('success', 'Réservation approuvée et email de confirmation envoyé à l\'étudiant.');
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi email approbation: ' . $e->getMessage());
+            return redirect()->back()->with('success', 'Réservation approuvée (mais erreur d\'envoi d\'email).');
+        }
     }
 
     /**
@@ -63,7 +80,20 @@ class ReservationControllerAdmin extends Controller
         $reservation->status = Reservation::STATUS_REJECTED;
         $reservation->save();
 
-        return redirect()->back()->with('success', 'Réservation rejetée.');
+        // Envoyer la notification par email
+        try {
+            $notifiableUser = new \App\Models\NotifiableUser(
+                $reservation->email, 
+                $reservation->prenom . ' ' . $reservation->nom
+            );
+            
+            $notifiableUser->notify(new \App\Notifications\ReservationStatusNotification($reservation));
+            
+            return redirect()->back()->with('success', 'Réservation rejetée et email de notification envoyé à l\'étudiant.');
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi email rejet: ' . $e->getMessage());
+            return redirect()->back()->with('success', 'Réservation rejetée (mais erreur d\'envoi d\'email).');
+        }
     }
 
     /**
@@ -75,7 +105,7 @@ class ReservationControllerAdmin extends Controller
             'id' => $reservation->id,
             'studentName' => $reservation->nom . ' ' . $reservation->prenom,
             'studentEmail' => $reservation->email,
-            'studentPhone' => '', // Add if you have this field
+            'studentPhone' => $reservation->telephone ?: '',
             'studentId' => $reservation->num_apogee,
             'roomName' => '', // Add if you have room relation
             'roomId' => null, // Add if you have room relation
@@ -89,6 +119,9 @@ class ReservationControllerAdmin extends Controller
             'submittedAt' => $reservation->created_at,
             'processedAt' => $reservation->updated_at,
             'processedBy' => '', // Add if you have this field
+            'resource_type' => $reservation->resource_type,
+            'location_type' => $reservation->location_type,
+            'room_details' => $reservation->room_details,
         ];
 
         return Inertia::render('dashboard_admin/reservation/reservation_show', [

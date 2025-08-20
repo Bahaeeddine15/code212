@@ -12,9 +12,13 @@ class Reservation extends Model
         'prenom',
         'num_apogee',
         'email',
+        'telephone',
         'description',
         'status',
         'date_reservation',
+        'resource_type',
+        'location_type',
+        'room_details',
     ];
 
     protected $casts = [

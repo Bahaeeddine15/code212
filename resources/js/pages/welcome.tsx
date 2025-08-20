@@ -2,9 +2,15 @@ import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 // Compteur animé pour les statistiques
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-function CountUp({ end, duration = 2, className = "" }) {
+interface CountUpProps {
+    end: number;
+    duration?: number;
+    className?: string;
+}
+
+function CountUp({ end, duration = 2, className = "" }: CountUpProps) {
     const [count, setCount] = useState(0);
     useEffect(() => {
         let start = 0;
@@ -457,7 +463,8 @@ export default function Welcome() {
     );
 }
 
-function useInView(ref, options = {}) {
+import type React from 'react';
+function useInView(ref: React.RefObject<Element>, options = {}) {
     const [inView, setInView] = useState(false);
     useEffect(() => {
         const observer = new window.IntersectionObserver(

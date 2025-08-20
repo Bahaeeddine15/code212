@@ -14,6 +14,7 @@ import {
     AlertCircle,
     Search
 } from 'lucide-react';
+import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 
 // Types
 interface Event {
@@ -61,10 +62,10 @@ const EventCard = ({
                 className={`
                     px-2 py-1 text-xs font-medium rounded-full
                     ${
-                        event.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
-                        event.status === 'ongoing' ? 'bg-green-100 text-green-800' :
-                        event.status === 'completed' ? 'bg-gray-100 text-gray-800' :
-                        'bg-red-100 text-red-800'
+                        event.status === 'upcoming' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-800' :
+                        event.status === 'ongoing' ? 'bg-green-100 dark:bg-green-900 text-green-800' :
+                        event.status === 'completed' ? 'bg-gray-100 text-foreground' :
+                        'bg-red-100 dark:bg-red-900 text-red-800'
                     }
                     dark:bg-gray-700 dark:text-gray-100
                 `}
@@ -80,11 +81,11 @@ const EventCard = ({
     const getStatusIcon = () => {
         switch (event.status) {
             case 'completed':
-                return <CheckCircle className="w-5 h-5 text-green-600" />;
+                return <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />;
             case 'cancelled':
-                return <AlertCircle className="w-5 h-5 text-red-600" />;
+                return <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />;
             default:
-                return <Calendar className="w-5 h-5 text-blue-600" />;
+                return <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
         }
     };
 
@@ -98,23 +99,20 @@ const EventCard = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+        <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6 hover:shadow-xl transition-all duration-300">
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
                     {getStatusIcon()}
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-800">{event.title}</h3>
-                        <p className="text-sm text-gray-600">{event.description}</p>
-                        {('type' in event) && (
-                            <p className="text-xs text-gray-500 mt-1">Type: {(event as any).type}</p>
-                        )}
+                        <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
+                        <p className="text-sm text-muted-foreground">{event.description}</p>
                     </div>
                 </div>
                 {getStatusBadge()}
             </div>
 
             <div className="space-y-3 mb-4">
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <span>
                         {fmtDate(event.date)}
@@ -122,12 +120,19 @@ const EventCard = ({
                             <> - {fmtDate(event.endDate)}</>
                         )}
                     </span>
+                    <Clock className="w-4 h-4 ml-3" />
+                    <span>
+                        {fmtTime(event.date)}
+                        {event.endDate && (
+                            <> - {fmtTime(event.endDate)}</>
+                        )}
+                    </span>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <MapPin className="w-4 h-4" />
                     <span>{event.location}</span>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <Users className="w-4 h-4" />
                     <span>{event.attendees}/{event.maxAttendees}</span>
                 </div>
@@ -135,9 +140,9 @@ const EventCard = ({
 
             <div className="mb-4">
                 <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-600">Inscription</span>
-                    <span className="font-medium text-gray-800">
-                    { (typeof event.attendees === 'number' && typeof event.maxAttendees === 'number' && event.maxAttendees > 0)
+                    <span className="text-muted-foreground">Inscription</span>
+                    <span className="font-medium text-foreground">
+                    { (typeof event.attendees === 'number' && typeof event.maxAttendees === 'number' && event.maxAttendees !== 0)
                         ? Math.round((event.attendees / event.maxAttendees) * 100) + '%'
                         : '0%' }
                     </span>
@@ -145,7 +150,7 @@ const EventCard = ({
                 <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                         className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(event.maxAttendees>0 ? (event.attendees / event.maxAttendees) * 100 : 0)}%` }}
+                        style={{ width: `${(event.attendees / event.maxAttendees) * 100}%` }}
                     ></div>
                 </div>
             </div>
@@ -154,19 +159,13 @@ const EventCard = ({
                 <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">{event.category}</span>
                 <div className="flex space-x-2">
                     <Link
-                        href={`/admin/events/${event.id}/registrations`}
-                        className="px-3 py-1 bg-indigo-600 text-white text-xs rounded-xl hover:bg-indigo-700 transition-all duration-200 font-medium"
-                    >
-                        Inscriptions
-                    </Link>
-                    <Link
                         href={`/admin/events/${event.id}/edit`}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200">
+                        className="p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 rounded-xl transition-all duration-200">
                         <Edit3 className="w-4 h-4" />
                     </Link>
                     <button
                         onClick={() => onDelete(event.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 rounded-xl transition-all duration-200"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
@@ -237,35 +236,26 @@ const Events = ({ events }: { events: Event[] }) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestion des événements" />
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-gray-50">
+            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                                <Calendar className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-gray-900">Gestion des Événements</h1>
-                                <p className="text-gray-600 mt-2 text-lg">Organisez et gérez vos événements</p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={handleAddEvent}
-                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
-                        >
-                            <Plus className="w-5 h-5" />
-                            <span>Nouvel événement</span>
-                        </button>
-                    </div>
-                </div>
+                <PageHeader
+                    title="Gestion des Événements"
+                    description="Organisez et gérez vos événements"
+                    icon={Calendar}
+                    theme="primary"
+                    actions={
+                        <ModernButton theme="primary" icon={Plus} onClick={handleAddEvent}>
+                            Nouvel événement
+                        </ModernButton>
+                    }
+                />
 
                 {/* Statistiques rapides */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Total événements</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Total événements</p>
                                 <p className="text-3xl font-bold text-purple-600 mt-2">{stats.total}</p>
                             </div>
                             <div className="p-4 bg-purple-100 rounded-2xl">
@@ -274,34 +264,34 @@ const Events = ({ events }: { events: Event[] }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">À venir</p>
-                                <p className="text-3xl font-bold text-blue-600 mt-2">{stats.upcoming}</p>
+                                <p className="text-sm font-semibold text-muted-foreground">À venir</p>
+                                <p className="text-3xl font-bold text-primary mt-2">{stats.upcoming}</p>
                             </div>
-                            <div className="p-4 bg-blue-100 rounded-2xl">
-                                <Clock className="w-8 h-8 text-blue-600" />
+                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+                                <Clock className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Participants</p>
-                                <p className="text-3xl font-bold text-green-600 mt-2">{stats.participants}</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Participants</p>
+                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{stats.participants}</p>
                             </div>
-                            <div className="p-4 bg-green-100 rounded-2xl">
-                                <Users className="w-8 h-8 text-green-600" />
+                            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
+                                <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Terminés</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Terminés</p>
                                 <p className="text-3xl font-bold text-emerald-600 mt-2">{stats.completed}</p>
                             </div>
                             <div className="p-4 bg-emerald-100 rounded-2xl">
@@ -312,23 +302,23 @@ const Events = ({ events }: { events: Event[] }) => {
                 </div>
 
                 {/* Barre de recherche et filtres */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Rechercher un événement..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
+                                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
                             />
                         </div>
                         <div className="flex gap-3">
                             <select
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
+                                className="px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
                             >
                                 <option value="all">Tous les statuts</option>
                                 <option value="upcoming">À venir</option>
@@ -339,7 +329,7 @@ const Events = ({ events }: { events: Event[] }) => {
                             <select
                                 value={filterCategory}
                                 onChange={(e) => setFilterCategory(e.target.value)}
-                                className="px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
+                                className="px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 w-40"
                             >
                                 <option value="all">Toutes les catégories</option>
                                 <option value="Conférence">Conférence</option>
@@ -351,9 +341,9 @@ const Events = ({ events }: { events: Event[] }) => {
                 </div>
 
                 {/* Liste des événements */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                        <h2 className="text-2xl font-bold text-foreground flex items-center">
                             <Calendar className="w-7 h-7 mr-3 text-purple-600" />
                             Événements ({filteredEvents.length})
                         </h2>
@@ -373,9 +363,9 @@ const Events = ({ events }: { events: Event[] }) => {
 
                     {filteredEvents.length === 0 && (
                         <div className="text-center py-12">
-                            <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun événement trouvé</h3>
-                            <p className="text-gray-600 mb-6">
+                            <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-foreground mb-2">Aucun événement trouvé</h3>
+                            <p className="text-muted-foreground mb-6">
                                 {searchTerm ? 'Modifiez vos critères de recherche' : 'Commencez par créer votre premier événement'}
                             </p>
                             <button

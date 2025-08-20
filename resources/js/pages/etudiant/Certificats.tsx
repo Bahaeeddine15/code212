@@ -55,7 +55,7 @@ export default function Certificats() {
       <AppShell variant="sidebar">
         <div className="flex w-full min-h-screen">
           <AppSidebar />
-          <AppContent variant="sidebar" className="overflow-x-hidden overflow-y-auto h-screen bg-white font-[Poppins]">
+          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
             <div className="p-6">
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
