@@ -1,11 +1,19 @@
-import AppLayout from "@/layouts/app-layout";
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Head, Link } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 import { type BreadcrumbItem } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AppContent } from "@/components/layout/app-content";
-import { AppSidebarHeader } from "@/components/layout/app-sidebar-header";
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Articles", isActive: true },
+];
 
 interface Article {
   id: number;
@@ -24,19 +32,22 @@ interface Props {
 
 export default function ArticleDetail({ article }: Props) {
   return (
-    <AppLayout>
-      <Head title={article.title} />
-
-      <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
-        <AppSidebarHeader
-          breadcrumbs={[
-            { title: "Dashboard Étudiant", href: "/dashboard" },
-            { title: "Articles", href: "/articles" },
-            { title: article.title, href: "" },
-          ]}
-        />
-
-        <div className="p-6 w-full min-w-0">
+    <>
+      <Head>
+        <title>{article.title}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      {/* Custom Dashboard Header */}
+      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+      
+      <AppShell variant="sidebar">
+        <div className="flex w-full min-h-screen">
+          <AppSidebar />
+          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+            <div className="p-6 w-full min-w-0">
           <Link href="/articles">
             <Button
               variant="outline"
@@ -105,8 +116,13 @@ export default function ArticleDetail({ article }: Props) {
               </Button>
             </Link>
           </div>
+            </div>
+          </AppContent>
         </div>
-      </AppContent>
-    </AppLayout>
+      </AppShell>
+      
+      {/* Footer */}
+      <Footer />
+    </>
   );
 }

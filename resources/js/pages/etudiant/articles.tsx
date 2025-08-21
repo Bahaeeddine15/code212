@@ -1,7 +1,8 @@
 import { AppContent } from "@/components/layout/app-content";
 import { AppShell } from "@/components/layout/app-shell";
 import { AppSidebar } from "@/components/layout/app-sidebar";
-import { AppSidebarHeader } from "@/components/layout/app-sidebar-header";
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Head, Link, router } from "@inertiajs/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { type BreadcrumbItem } from "@/types";
+
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Articles", isActive: true },
+];
 
 interface Article {
   published_at: string | number | Date;
@@ -113,20 +121,24 @@ export default function Articles({ articles, categories, filters }: Props) {
   };
 
   return (
-    <AppShell variant="sidebar">
-      <Head title="Articles" />
-      <div className="flex w-full min-h-screen">
-        <AppSidebar />
-        <AppContent
-          variant="sidebar"
-          className="overflow-x-hidden overflow-y-auto h-screen bg-gray-50"
-        >
-          <AppSidebarHeader
-            breadcrumbs={[
-              { title: "Dashboard Étudiant", href: "/dashboard" },
-              { title: "Articles", href: "/articles" },
-            ]}
-          />
+    <>
+      <Head>
+        <title>Articles</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      {/* Custom Dashboard Header */}
+      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+      
+      <AppShell variant="sidebar">
+        <div className="flex w-full min-h-screen">
+          <AppSidebar />
+          <AppContent
+            variant="sidebar"
+            className="flex-1 bg-gray-50 font-[Poppins]"
+          >
 
           <div className="max-w-7xl mx-auto px-4 py-5">
             <div className="mb-4">
@@ -343,8 +355,12 @@ export default function Articles({ articles, categories, filters }: Props) {
               </div>
             )}
           </div>
-        </AppContent>
-      </div>
-    </AppShell>
+          </AppContent>
+        </div>
+      </AppShell>
+      
+      {/* Footer */}
+      <Footer />
+    </>
   );
 }

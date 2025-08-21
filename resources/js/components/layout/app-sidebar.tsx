@@ -26,12 +26,12 @@ const mainNavItems: NavItem[] = [
         icon: Medal,
     },
     {
-        title: 'Reservations',
+        title: 'Réservations',
         href: '/reservations',
         icon: ClipboardCheck,
     },
     {
-        title: 'Evenements',
+        title: 'Événements',
         href:'/events',
         icon: Calendar,
     },
@@ -41,7 +41,7 @@ const mainNavItems: NavItem[] = [
         icon: Trophy,
     },
     {
-        title: 'Article',
+        title: 'Articles',
         href:'/articles',
         icon: FileText
     },
@@ -62,13 +62,13 @@ const footerNavItems: NavItem[] = [
 export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" variant="inset" className="fixed-sidebar dark:bg-[#0A1F44] sidebar-no-scroll">
-            <SidebarContent className="bg-white text-gray-800 rounded-t-2xl shadow-2xl sidebar-content-no-scroll flex flex-col">
-                <div className="flex-1 pt-4">
+            <SidebarContent className="bg-white text-gray-800 rounded-t-2xl shadow-2xl sidebar-content-no-scroll flex flex-col h-full">
+                <div className="pt-4 flex-1 overflow-visible">
                     <NavMain items={mainNavItems} />
                 </div>
             </SidebarContent>
-
-            <SidebarFooter className="bg-white shadow-2xl mx-0 mb-0 p-2">
+            
+            <SidebarFooter className="bg-white shadow-2xl mx-0 mb-0 p-2 rounded-b-2xl relative z-10">
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
