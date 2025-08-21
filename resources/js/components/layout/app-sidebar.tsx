@@ -26,12 +26,12 @@ const mainNavItems: NavItem[] = [
         icon: Medal,
     },
     {
-        title: 'Reservations',
+        title: 'Réservations',
         href: '/reservations',
         icon: ClipboardCheck,
     },
     {
-        title: 'Evenements',
+        title: 'Événements',
         href:'/events',
         icon: Calendar,
     },
@@ -41,7 +41,7 @@ const mainNavItems: NavItem[] = [
         icon: Trophy,
     },
     {
-        title: 'Article',
+        title: 'Articles',
         href:'/articles',
         icon: FileText
     },
