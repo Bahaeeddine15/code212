@@ -25,10 +25,10 @@ class EventController extends Controller
                     'end_date' => $e->end_date?->toISOString(),
                     'location' => $e->location,
                     'category' => $e->category,
+                    'type' => $e->type ?? 'Événement', // Add type field
                     'max_attendees' => $e->max_attendees,
                     'status' => method_exists($e, 'computedStatus') ? $e->computedStatus() : ($e->status ?? 'upcoming'),
                     'logo' => $e->logo ? Storage::url($e->logo) : null,
-                    'type' => $e->type ?? null,
                 ];
             });
         return inertia('etudiant/events', ['events' => $events]);
@@ -123,6 +123,7 @@ class EventController extends Controller
             'end_date' => $event->end_date?->toISOString(),
             'location' => $event->location,
             'category' => $event->category,
+            'type' => $event->type ?? 'Événement', // Add type field
             'max_attendees' => $event->max_attendees,
             'status' => method_exists($event, 'computedStatus') ? $event->computedStatus() : ($event->status ?? 'upcoming'),
             'logo' => $event->logo ? Storage::url($event->logo) : null,

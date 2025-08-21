@@ -47,6 +47,8 @@ class CompetitionControllerAdmin extends Controller
                 return [
                     'id' => $registration->id,
                     'competitionId' => $registration->competition_id,
+                    'competitionTitle' => $registration->competition->title,
+                    'competitionType' => $registration->competition->type, // Add this line
                     'userId' => $registration->user_id,
                     'userName' => $registration->user->name ?? null,
                     'participantName' => $registration->participant_name,
@@ -54,7 +56,7 @@ class CompetitionControllerAdmin extends Controller
                     'phone' => $registration->phone,
                     'category' => $registration->category,
                     'club' => $registration->club,
-                    'registrationDate' => $registration->registered_at->format('Y-m-d'),
+                    'registrationDate' => $registration->registered_at?->format('Y-m-d'),
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
@@ -133,7 +135,7 @@ class CompetitionControllerAdmin extends Controller
 
         Competition::create($validated);
 
-        return redirect()->route('competitions.index')->with('success', 'Compétition créée avec succès!');
+        return redirect()->route('admin.competitions.index')->with('success', 'Compétition créée avec succès!');
     }
 
     /**
@@ -143,41 +145,39 @@ class CompetitionControllerAdmin extends Controller
     {
         $competition->increment('views');
 
-        $competitionData = [
-            'id' => $competition->id,
-            'title' => $competition->title,
-            'description' => $competition->description,
-            'date' => optional($competition->date)->toDateString(),
-            'deadline' => optional($competition->deadline)->toDateString(),
-            'location' => $competition->location,
-            'category' => $competition->category,
-            'maxParticipants' => $competition->max_participants,
-            'registrations' => $competition->registrations->count(),
-            'status' => $competition->status,
-            'slug' => $competition->slug,
-            'views' => $competition->views,
-            'created_at' => $competition->created_at->toISOString(),
-            'updated_at' => $competition->updated_at->toISOString(),
-            'type' => $competition->type,
-        ];
-
         $registrations = $competition->registrations->map(function ($registration) {
             return [
                 'id' => $registration->id,
                 'participant_name' => $registration->participant_name,
                 'email' => $registration->email,
                 'phone' => $registration->phone,
+                'status' => $registration->status,
                 'category' => $registration->category,
                 'club' => $registration->club,
-                'status' => $registration->status,
-                'registered_at' => $registration->registered_at->format('d-m-Y'),
-                'groupMembers' => $registration->group_members,
+                'notes' => $registration->notes,
+                'group_name' => $registration->group_name,
+                'group_members' => $registration->group_members,
+                'registered_at' => $registration->registered_at ? $registration->registered_at->toISOString() : null,
             ];
         });
 
         return Inertia::render('dashboard_admin/competitions/competition_show', [
-            'competition' => $competitionData,
-            'registrations' => $registrations
+            'competition' => [
+                'id' => $competition->id,
+                'title' => $competition->title,
+                'date' => $competition->date?->format('Y-m-d'),
+                'location' => $competition->location,
+                'category' => $competition->category,
+                'maxParticipants' => $competition->max_participants,
+                'deadline' => $competition->deadline?->format('Y-m-d'),
+                'description' => $competition->description,
+                'status' => $competition->status,
+                'registrations' => $competition->registrations->count(),
+                'created_at' => $competition->created_at->toISOString(),
+                'updated_at' => $competition->updated_at->toISOString(),
+                'type' => $competition->type, // Add this line
+            ],
+            'registrations' => $registrations,
         ]);
     }
 
@@ -227,7 +227,7 @@ class CompetitionControllerAdmin extends Controller
 
         $competition->update($validated);
 
-        return redirect()->route('competitions.index')->with('success', 'Compétition mise à jour avec succès!');
+        return redirect()->route('admin.competitions.index')->with('success', 'Compétition mise à jour avec succès!');
     }
 
     /**
@@ -237,7 +237,7 @@ class CompetitionControllerAdmin extends Controller
     {
         $competition->delete();
 
-        return redirect()->route('competitions.index')->with('success', 'Compétition supprimée avec succès!');
+        return redirect()->route('admin.competitions.index')->with('success', 'Compétition supprimée avec succès!');
     }
 
     /**

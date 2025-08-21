@@ -17,6 +17,7 @@ interface Event {
     location: string;
     maxAttendees: number;
     category: string;
+    type?: string;  // Add type field
     status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 }
 
@@ -32,7 +33,8 @@ export default function EventEdit({ event }: Props) {
         end_date: event.end_date ?? '',
         location: event.location ?? '',
         maxAttendees: event.maxAttendees?.toString() ?? '',
-        category: event.category ?? '',
+        category: event.category ?? 'Développement Web',
+        type: event.type ?? 'Conférence',  // Add type field
         status: event.status ?? 'upcoming',
     });
 
@@ -106,6 +108,7 @@ export default function EventEdit({ event }: Props) {
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
+                                {/* First row - Title and Category */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Titre de l'événement *</label>
@@ -114,7 +117,7 @@ export default function EventEdit({ event }: Props) {
                                             value={form.title}
                                             onChange={e => handleChange('title', e.target.value)}
                                             className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
-                                            placeholder="Ex: Conférence Tech 2024"
+                                            placeholder="Ex: Conférence Cybersécurité 2024"
                                             required
                                         />
                                         {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
@@ -125,18 +128,44 @@ export default function EventEdit({ event }: Props) {
                                         <select
                                             value={form.category}
                                             onChange={e => handleChange('category', e.target.value)}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:light]"
                                         >
-                                            <option value="Conférence">Conférence</option>
-                                            <option value="Workshop">Workshop</option>
-                                            <option value="Séminaire">Séminaire</option>
-                                            <option value="Formation">Formation</option>
-                                            <option value="Networking">Networking</option>
+                                            <option value="Développement Web" className="bg-card text-foreground">Développement Web</option>
+                                            <option value="Design & UX" className="bg-card text-foreground">Design & UX</option>
+                                            <option value="Événement Spécial" className="bg-card text-foreground">Événement Spécial</option>
+                                            <option value="DevOps & Cloud" className="bg-card text-foreground">DevOps & Cloud</option>
+                                            <option value="Data Science" className="bg-card text-foreground">Data Science</option>
+                                            <option value="Mobile Development" className="bg-card text-foreground">Mobile Development</option>
+                                            <option value="Intelligence Artificielle" className="bg-card text-foreground">Intelligence Artificielle</option>
+                                            <option value="Entrepreneuriat Tech" className="bg-card text-foreground">Entrepreneuriat Tech</option>
+                                            <option value="Cybersécurité" className="bg-card text-foreground">Cybersécurité</option>
+                                            <option value="Hackathon" className="bg-card text-foreground">Hackathon</option>
                                         </select>
                                         {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
                                     </div>
                                 </div>
 
+                                {/* Second row - Type d'événement (full width) */}
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Type d'événement *</label>
+                                    <select
+                                        value={form.type}
+                                        onChange={e => handleChange('type', e.target.value)}
+                                        className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:light]"
+                                    >
+                                        <option value="Conférence" className="bg-card text-foreground">Conférence</option>
+                                        <option value="Workshop" className="bg-card text-foreground">Workshop</option>
+                                        <option value="Séminaire" className="bg-card text-foreground">Séminaire</option>
+                                        <option value="Formation" className="bg-card text-foreground">Formation</option>
+                                        <option value="Networking" className="bg-card text-foreground">Networking</option>
+                                        <option value="Webinaire" className="bg-card text-foreground">Webinaire</option>
+                                        <option value="Table Ronde" className="bg-card text-foreground">Table Ronde</option>
+                                        <option value="Présentation" className="bg-card text-foreground">Présentation</option>
+                                    </select>
+                                    {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type}</p>}
+                                </div>
+
+                                {/* Description */}
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-2">Description *</label>
                                     <textarea
@@ -150,6 +179,7 @@ export default function EventEdit({ event }: Props) {
                                     {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                                 </div>
 
+                                {/* Date and Time */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Date et heure de début *</label>
@@ -158,6 +188,9 @@ export default function EventEdit({ event }: Props) {
                                             value={form.start_date}
                                             onChange={e => handleChange('start_date', e.target.value)}
                                             className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            style={{
+                                                colorScheme: 'light'
+                                            }}
                                             required
                                         />
                                         {errors.start_date && <p className="text-red-500 text-sm mt-1">{errors.start_date}</p>}
@@ -170,12 +203,16 @@ export default function EventEdit({ event }: Props) {
                                             value={form.end_date}
                                             onChange={e => handleChange('end_date', e.target.value)}
                                             className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            style={{
+                                                colorScheme: 'light'
+                                            }}
                                             required
                                         />
                                         {errors.end_date && <p className="text-red-500 text-sm mt-1">{errors.end_date}</p>}
                                     </div>
                                 </div>
 
+                                {/* Location and Max Attendees */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Lieu *</label>
@@ -246,6 +283,10 @@ export default function EventEdit({ event }: Props) {
                                          event.status === 'ongoing' ? 'En cours' :
                                          event.status === 'completed' ? 'Terminé' : 'Annulé'}
                                     </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Type:</span>
+                                    <span className="font-medium text-foreground">{event.type || 'Non défini'}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Capacité:</span>

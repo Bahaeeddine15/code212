@@ -23,7 +23,8 @@ class CompetitionRegistration extends Model
         'status',
         'payment_status',
         'notes',
-        'group_members',
+        'group_name',      // Add this
+        'group_members',   // Keep this
         'registered_at'
     ];
 

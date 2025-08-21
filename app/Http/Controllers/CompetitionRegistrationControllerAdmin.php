@@ -61,9 +61,11 @@ class CompetitionRegistrationControllerAdmin extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CompetitionRegistration $competitionRegistration)
+    public function destroy(CompetitionRegistration $registration)
     {
-        //
+        $registration->delete();
+
+        return back()->with('success', 'Inscription supprimée avec succès.');
     }
 
     /**
@@ -73,7 +75,7 @@ class CompetitionRegistrationControllerAdmin extends Controller
     {
         $registration = CompetitionRegistration::findOrFail($id);
         $oldStatus = $registration->status;
-        
+
         $registration->status = 'Confirmé';
         $registration->save();
 
@@ -92,7 +94,7 @@ class CompetitionRegistrationControllerAdmin extends Controller
     {
         $registration = CompetitionRegistration::findOrFail($id);
         $oldStatus = $registration->status;
-        
+
         $registration->status = 'Refusé';
         $registration->save();
 
@@ -115,7 +117,6 @@ class CompetitionRegistrationControllerAdmin extends Controller
 
             // Send the notification
             $notifiableUser->notify(new CompetitionRegistrationStatusNotification($registration));
-            
         } catch (\Exception $e) {
             // Log the error but don't fail the status update
             Log::error('Failed to send competition registration notification: ' . $e->getMessage());

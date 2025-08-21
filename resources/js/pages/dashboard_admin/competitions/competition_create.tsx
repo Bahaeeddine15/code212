@@ -27,7 +27,8 @@ export default function CompetitionCreate() {
         category: '',
         maxParticipants: '',
         deadline: '',
-        description: ''
+        description: '',
+        type: 'individual' // Add this line
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,8 +125,10 @@ export default function CompetitionCreate() {
                                                 value={formData.date}
                                                 onChange={(e) => handleInputChange('date', e.target.value)}
                                                 required
-                                                style={{ colorScheme: 'dark' }}
-                                                className={`w-full px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 [color-scheme:dark] ${errors.date ? 'border-red-500' : 'border-border'}`}
+                                                style={{
+                                                    colorScheme: 'light'
+                                                }}
+                                                className={`w-full px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.date ? 'border-red-500' : 'border-border'}`}
                                             />
                                             {errors.date && <p className="text-sm text-red-600 dark:text-red-400">{errors.date}</p>}
                                         </div>
@@ -136,8 +139,10 @@ export default function CompetitionCreate() {
                                                 value={formData.deadline}
                                                 onChange={(e) => handleInputChange('deadline', e.target.value)}
                                                 required
-                                                style={{ colorScheme: 'dark' }}
-                                                className={`w-full px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 [color-scheme:dark] ${errors.deadline ? 'border-red-500' : 'border-border'}`}
+                                                style={{
+                                                    colorScheme: 'light'
+                                                }}
+                                                className={`w-full px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.deadline ? 'border-red-500' : 'border-border'}`}
                                             />
                                             {errors.deadline && <p className="text-sm text-red-600 dark:text-red-400">{errors.deadline}</p>}
                                         </div>
@@ -223,6 +228,23 @@ export default function CompetitionCreate() {
                                         {errors.category && <p className="text-sm text-red-600 dark:text-red-400">{errors.category}</p>}
                                     </div>
 
+                                    {/* Type de compétition - ADD THIS */}
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-foreground">Type de compétition *</label>
+                                        <select
+                                            value={formData.type}
+                                            onChange={(e) => handleInputChange('type', e.target.value)}
+                                            className={`w-full px-4 py-3 border-2 rounded-xl bg-card dark:bg-card text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 ${errors.type ? 'border-red-500' : 'border-border'}`}
+                                        >
+                                            <option value="individual">Individuelle</option>
+                                            <option value="group">En équipe</option>
+                                        </select>
+                                        {errors.type && <p className="text-sm text-red-600 dark:text-red-400">{errors.type}</p>}
+                                        <p className="text-sm text-muted-foreground">
+                                            Choisissez si la compétition est individuelle ou par équipe.
+                                        </p>
+                                    </div>
+
                                     {/* Nombre max de participants */}
                                     <div className="space-y-3">
                                         <label className="text-sm font-semibold text-foreground">Nombre maximum de participants *</label>
@@ -237,7 +259,7 @@ export default function CompetitionCreate() {
                                         />
                                         {errors.maxParticipants && <p className="text-sm text-red-600 dark:text-red-400">{errors.maxParticipants}</p>}
                                         <p className="text-sm text-muted-foreground">
-                                            Limitez le nombre de participants pour cette compétition.
+                                            {formData.type === 'group' ? 'Nombre maximum d\'équipes' : 'Nombre maximum de participants individuels'}.
                                         </p>
                                     </div>
                                 </div>

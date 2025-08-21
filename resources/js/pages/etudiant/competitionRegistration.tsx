@@ -39,12 +39,13 @@ export default function CompetitionRegistrationPage({ competition }: Competition
         club: '',
         category: competition.category,
         notes: '',
-        group_members: '', // <-- add this
+        group_name: '',
+        group_members: '',
     });
 
     const breadcrumbs: BreadcrumbItem[] = [
         { href: '/dashboard', title: 'Dashboard' },
-        { href: '/competition', title: 'Compétitions', isActive: true },
+        { href: '/competition', title: 'Compétitions' },
     ];
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -72,8 +73,23 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                         <div className="p-6 font-sans">
                             <div className="container mx-auto max-w-4xl">
                                 <div className="mb-8">
-                                    <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">Inscription à la compétition</h1>
-                                    <p className="text-gray-600 font-sans">Remplissez le formulaire ci-dessous pour vous inscrire</p>
+                                    <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
+                                        Inscription - {competition.title}
+                                    </h1>
+                                    <div className="flex items-center justify-center gap-2 mb-4">
+                                        <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                                            {competition.type === 'group' ? 'Compétition en équipe' : 'Compétition individuelle'}
+                                        </Badge>
+                                        <Badge variant="outline">
+                                            {competition.category}
+                                        </Badge>
+                                    </div>
+                                    <p className="text-gray-600">
+                                        {competition.type === 'group' 
+                                            ? 'Inscrivez votre équipe à cette compétition' 
+                                            : 'Inscrivez-vous à cette compétition'
+                                        }
+                                    </p>
                                 </div>
 
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -136,7 +152,7 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <Label htmlFor="participant_name">
-                                                    {competition.type === 'individual' ? 'Nom complet *' : 'Nom du groupe *'}
+                                                    {competition.type === 'individual' ? 'Nom complet *' : 'Nom du capitaine/contact *'}
                                                 </Label>
                                                 <Input
                                                     id="participant_name"
@@ -223,20 +239,59 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                             )}
                                         </div>
 
-                                        {competition.type === 'group' && (
+                                        {competition.type === 'group' ? (
+                                            <>
+                                                {/* Group Name */}
+                                                <div>
+                                                    <Label htmlFor="group_name">Nom de l'équipe *</Label>
+                                                    <Input
+                                                        id="group_name"
+                                                        type="text"
+                                                        value={data.group_name}
+                                                        onChange={(e) => setData('group_name', e.target.value)}
+                                                        placeholder="Nom de votre équipe"
+                                                        className="mt-1"
+                                                        required
+                                                    />
+                                                    {errors.group_name && (
+                                                        <p className="text-red-500 text-sm mt-1">{errors.group_name}</p>
+                                                    )}
+                                                </div>
+
+                                                {/* Group Members */}
+                                                <div>
+                                                    <Label htmlFor="group_members">Membres de l'équipe *</Label>
+                                                    <Textarea
+                                                        id="group_members"
+                                                        value={data.group_members}
+                                                        onChange={(e) => setData('group_members', e.target.value)}
+                                                        placeholder="Listez tous les membres de l'équipe (nom, prénom, rôle)&#10;Exemple:&#10;- Jean Dupont (Capitaine)&#10;- Marie Martin (Développeuse)&#10;- Pierre Bernard (Designer)"
+                                                        className="mt-1"
+                                                        rows={6}
+                                                        required
+                                                    />
+                                                    {errors.group_members && (
+                                                        <p className="text-red-500 text-sm mt-1">{errors.group_members}</p>
+                                                    )}
+                                                    <p className="text-sm text-gray-600 mt-1">
+                                                        Listez tous les membres de votre équipe avec leurs rôles
+                                                    </p>
+                                                </div>
+                                            </>
+                                        ) : (
                                             <div>
-                                                <Label htmlFor="group_members">Membres du groupe *</Label>
-                                                <Textarea
-                                                    id="group_members"
-                                                    value={data.group_members}
-                                                    onChange={(e) => setData('group_members', e.target.value)}
-                                                    placeholder="Listez les membres du groupe, un par ligne"
+                                                <Label htmlFor="participant_name">Nom du participant *</Label>
+                                                <Input
+                                                    id="participant_name"
+                                                    type="text"
+                                                    value={data.participant_name}
+                                                    onChange={(e) => setData('participant_name', e.target.value)}
+                                                    placeholder="Votre nom et prénom"
                                                     className="mt-1"
-                                                    rows={3}
                                                     required
                                                 />
-                                                {errors.group_members && (
-                                                    <p className="text-red-500 text-sm mt-1">{errors.group_members}</p>
+                                                {errors.participant_name && (
+                                                    <p className="text-red-500 text-sm mt-1">{errors.participant_name}</p>
                                                 )}
                                             </div>
                                         )}

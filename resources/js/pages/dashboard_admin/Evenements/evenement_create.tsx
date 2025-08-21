@@ -27,7 +27,8 @@ export default function EventCreate() {
         end_date: '',
         location: '',
         maxAttendees: '',
-        category: 'Conférence',
+        category: 'Développement Web',  // Changed default
+        type: 'Conférence',             // This will be the old category values
     });
     const [errors, setErrors] = useState<{[key: string]: string}>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,6 +94,7 @@ export default function EventCreate() {
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
+                                {/* First row - Title and Category */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Titre de l'événement *</label>
@@ -112,18 +114,44 @@ export default function EventCreate() {
                                         <select
                                             value={form.category}
                                             onChange={e => handleChange('category', e.target.value)}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:dark]"
+                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:light]"
                                         >
-                                            <option value="Conférence" className="bg-card text-foreground">Conférence</option>
-                                            <option value="Workshop" className="bg-card text-foreground">Workshop</option>
-                                            <option value="Séminaire" className="bg-card text-foreground">Séminaire</option>
-                                            <option value="Formation" className="bg-card text-foreground">Formation</option>
-                                            <option value="Networking" className="bg-card text-foreground">Networking</option>
+                                            <option value="Développement Web" className="bg-card text-foreground">Développement Web</option>
+                                            <option value="Design & UX" className="bg-card text-foreground">Design & UX</option>
+                                            <option value="Événement Spécial" className="bg-card text-foreground">Événement Spécial</option>
+                                            <option value="DevOps & Cloud" className="bg-card text-foreground">DevOps & Cloud</option>
+                                            <option value="Data Science" className="bg-card text-foreground">Data Science</option>
+                                            <option value="Mobile Development" className="bg-card text-foreground">Mobile Development</option>
+                                            <option value="Intelligence Artificielle" className="bg-card text-foreground">Intelligence Artificielle</option>
+                                            <option value="Entrepreneuriat Tech" className="bg-card text-foreground">Entrepreneuriat Tech</option>
+                                            <option value="Cybersécurité" className="bg-card text-foreground">Cybersécurité</option>
+                                            <option value="Hackathon" className="bg-card text-foreground">Hackathon</option>
                                         </select>
                                         {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
                                     </div>
                                 </div>
 
+                                {/* Second row - Type d'événement (full width) */}
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Type d'événement *</label>
+                                    <select
+                                        value={form.type}
+                                        onChange={e => handleChange('type', e.target.value)}
+                                        className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:light]"
+                                    >
+                                        <option value="Conférence" className="bg-card text-foreground">Conférence</option>
+                                        <option value="Workshop" className="bg-card text-foreground">Workshop</option>
+                                        <option value="Séminaire" className="bg-card text-foreground">Séminaire</option>
+                                        <option value="Formation" className="bg-card text-foreground">Formation</option>
+                                        <option value="Networking" className="bg-card text-foreground">Networking</option>
+                                        <option value="Webinaire" className="bg-card text-foreground">Webinaire</option>
+                                        <option value="Table Ronde" className="bg-card text-foreground">Table Ronde</option>
+                                        <option value="Présentation" className="bg-card text-foreground">Présentation</option>
+                                    </select>
+                                    {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type}</p>}
+                                </div>
+
+                                {/* Description */}
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-2">Description *</label>
                                     <textarea
@@ -137,6 +165,7 @@ export default function EventCreate() {
                                     {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                                 </div>
 
+                                {/* Date and Time */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Date et heure de début *</label>
@@ -144,7 +173,10 @@ export default function EventCreate() {
                                             type="datetime-local"
                                             value={form.start_date}
                                             onChange={e => handleChange('start_date', e.target.value)}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:dark]"
+                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            style={{
+                                                colorScheme: 'light'
+                                            }}
                                             required
                                         />
                                         {errors.start_date && <p className="text-red-500 text-sm mt-1">{errors.start_date}</p>}
@@ -156,13 +188,17 @@ export default function EventCreate() {
                                             type="datetime-local"
                                             value={form.end_date}
                                             onChange={e => handleChange('end_date', e.target.value)}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:dark]"
+                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            style={{
+                                                colorScheme: 'light'
+                                            }}
                                             required
                                         />
                                         {errors.end_date && <p className="text-red-500 text-sm mt-1">{errors.end_date}</p>}
                                     </div>
                                 </div>
 
+                                {/* Location and Max Attendees */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Lieu *</label>

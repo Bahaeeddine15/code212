@@ -33,8 +33,8 @@ class CompetitionController extends Controller
                     'id' => $competition->id,
                     'title' => $competition->title,
                     'description' => $competition->description,
-                    'date' => $competition->date ? Carbon::parse($competition->date)->format('Y-m-d') : null,
-                    'deadline' => $competition->deadline ? Carbon::parse($competition->deadline)->format('Y-m-d') : null,
+                    'date' => $competition->date?->format('Y-m-d'), // ✅ Fixed
+                    'deadline' => $competition->deadline?->format('Y-m-d'), // ✅ Fixed
                     'location' => $competition->location,
                     'category' => $competition->category,
                     'maxParticipants' => $competition->max_participants,
@@ -55,6 +55,7 @@ class CompetitionController extends Controller
 
         // Get all registrations for statistics
         $registrations = CompetitionRegistration::with(['competition', 'user'])
+            ->where('user_id', $studentId) // ✅ Only show current user's registrations
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($registration) {
@@ -68,7 +69,7 @@ class CompetitionController extends Controller
                     'phone' => $registration->phone,
                     'category' => $registration->category,
                     'club' => $registration->club,
-                    'registrationDate' => $registration->registered_at->format('Y-m-d'),
+                    'registrationDate' => $registration->registered_at?->format('Y-m-d'),
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
@@ -111,15 +112,15 @@ class CompetitionController extends Controller
                 'id' => $competition->id,
                 'title' => $competition->title,
                 'description' => $competition->description,
-                'date' => $competition->date ? Carbon::parse($competition->date)->format('Y-m-d') : null,
-                'deadline' => $competition->deadline ? Carbon::parse($competition->deadline)->format('Y-m-d') : null,
+                'date' => $competition->date?->format('Y-m-d'), // ✅ Fixed
+                'deadline' => $competition->deadline?->format('Y-m-d'), // ✅ Fixed
                 'location' => $competition->location,
                 'category' => $competition->category,
                 'maxParticipants' => $competition->max_participants,
                 'registrations' => $competition->registrations->count(),
                 'status' => $competition->status,
                 'type' => $competition->type,
-                'groupMembers' => $competition->group_members,
+                // ✅ Removed 'groupMembers' property that doesn't exist
             ]
         ]);
     }
@@ -140,8 +141,8 @@ class CompetitionController extends Controller
             'id' => $competition->id,
             'title' => $competition->title,
             'description' => $competition->description,
-            'date' => $competition ? Carbon::parse($competition->date)->format('Y-m-d') : null,
-            'deadline' => $competition ? Carbon::parse($competition->deadline)->format('Y-m-d') : null,
+            'date' => $competition->date?->format('Y-m-d'), // ✅ Fixed
+            'deadline' => $competition->deadline?->format('Y-m-d'), // ✅ Fixed
             'location' => $competition->location,
             'category' => $competition->category,
             'maxParticipants' => $competition->max_participants,
@@ -170,12 +171,15 @@ class CompetitionController extends Controller
             'participant_name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
+            'club' => 'nullable|string|max:255',
             'category' => 'required|string|max:255',
             'notes' => 'nullable|string|max:1000',
         ];
 
+        // Add group-specific validation rules
         if ($competition->type === 'group') {
             $rules['group_name'] = 'required|string|max:255';
+            $rules['group_members'] = 'required|string|max:2000'; // Increase limit for detailed member list
         }
 
         $validated = $request->validate($rules);
@@ -198,10 +202,12 @@ class CompetitionController extends Controller
             'participant_name' => $validated['participant_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'club' => null,
+            'club' => $validated['club'] ?? null,
             'category' => $validated['category'],
             'notes' => $validated['notes'],
-            'group_members' => $competition->type === 'group' ? $validated['group_name'] : null,
+            // Store both group name and members for group competitions
+            'group_name' => $competition->type === 'group' ? $validated['group_name'] : null,
+            'group_members' => $competition->type === 'group' ? $validated['group_members'] : null,
             'status' => 'En attente',
             'payment_status' => 'En attente',
             'registered_at' => now(),

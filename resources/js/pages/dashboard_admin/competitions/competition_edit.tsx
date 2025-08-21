@@ -22,6 +22,7 @@ interface Competition {
     description?: string;
     status: 'Ouvert' | 'Complet' | 'Fermé';
     registrations: number;
+    type: 'individual' | 'group';
 }
 
 interface CompetitionEditProps {
@@ -51,7 +52,8 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
         category: competition.category,
         maxParticipants: competition.maxParticipants.toString(),
         deadline: competition.deadline,
-        description: competition.description || ''
+        description: competition.description || '',
+        type: competition.type || 'individual'
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,6 +152,9 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                                 value={formData.date}
                                                 onChange={(e) => handleInputChange('date', e.target.value)}
                                                 required
+                                                style={{
+                                                    colorScheme: 'light'
+                                                }}
                                                 className={errors.date ? 'border-red-500' : ''}
                                             />
                                             {errors.date && (
@@ -164,6 +169,9 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                                 value={formData.deadline}
                                                 onChange={(e) => handleInputChange('deadline', e.target.value)}
                                                 required
+                                                style={{
+                                                    colorScheme: 'light'
+                                                }}
                                                 className={errors.deadline ? 'border-red-500' : ''}
                                             />
                                             {errors.deadline && (
@@ -260,9 +268,34 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                         )}
                                     </div>
 
+                                    {/* Type de compétition */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="type">Type de compétition *</Label>
+                                        <Select
+                                            value={formData.type}
+                                            onValueChange={(value) => handleInputChange('type', value)}
+                                        >
+                                            <SelectTrigger className={errors.type ? 'border-red-500' : ''}>
+                                                <SelectValue placeholder="Choisir un type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="individual">Individuelle</SelectItem>
+                                                <SelectItem value="group">En équipe</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.type && (
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.type}</p>
+                                        )}
+                                        <p className="text-sm text-muted-foreground">
+                                            Choisissez si la compétition est individuelle ou par équipe.
+                                        </p>
+                                    </div>
+
                                     {/* Max Participants */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="maxParticipants">Nombre maximum de participants *</Label>
+                                        <Label htmlFor="maxParticipants">
+                                            {formData.type === 'group' ? 'Nombre maximum d\'équipes' : 'Nombre maximum de participants'} *
+                                        </Label>
                                         <Input
                                             id="maxParticipants"
                                             type="number"
@@ -277,36 +310,64 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                             <p className="text-sm text-red-600 dark:text-red-400">{errors.maxParticipants}</p>
                                         )}
                                         <p className="text-sm text-muted-foreground">
-                                            Limitez le nombre de participants pour cette compétition.
+                                            {formData.type === 'group' 
+                                                ? 'Limitez le nombre d\'équipes pour cette compétition.'
+                                                : 'Limitez le nombre de participants pour cette compétition.'
+                                            }
                                         </p>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            {/* Competition Info */}
-                            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-700">
+                            {/* Competition Status */}
+                            <Card>
                                 <CardHeader>
-                                    <CardTitle className="text-lg text-blue-800 dark:text-blue-200">
-                                        📊 Informations actuelles
-                                    </CardTitle>
+                                    <CardTitle className="text-lg">Informations actuelles</CardTitle>
                                 </CardHeader>
-                                <CardContent className="text-sm text-blue-700 dark:text-blue-300 space-y-3">
-                                    <div className="flex justify-between">
-                                        <span>Inscriptions actuelles:</span>
-                                        <span className="font-semibold">{competition.registrations}</span>
+                                <CardContent className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm text-muted-foreground">Statut:</span>
+                                        <span className={`text-sm font-medium px-2 py-1 rounded-full ${
+                                            competition.status === 'Ouvert' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300' :
+                                            competition.status === 'Complet' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300' :
+                                            'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
+                                        }`}>
+                                            {competition.status}
+                                        </span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span>Places restantes:</span>
-                                        <span className="font-semibold">{competition.maxParticipants - competition.registrations}</span>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm text-muted-foreground">Inscriptions:</span>
+                                        <span className="text-sm font-medium text-foreground">
+                                            {competition.registrations}/{competition.maxParticipants}
+                                        </span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span>Statut:</span>
-                                        <span className="font-semibold">{competition.status}</span>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm text-muted-foreground">Type:</span>
+                                        <span className="text-sm font-medium text-foreground">
+                                            {formData.type === 'individual' ? 'Individuelle' : 'En équipe'}
+                                        </span>
                                     </div>
-                                    <div className="pt-2 border-t border-blue-200">
-                                        <p className="text-xs">
-                                            ⚠️ Attention: La modification du nombre maximum de participants peut affecter les inscriptions existantes.
-                                        </p>
+                                </CardContent>
+                            </Card>
+
+                            {/* Quick Actions */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-lg">Actions rapides</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-2">
+                                        <Link href={`/admin/competitions/${competition.id}`}>
+                                            <Button variant="outline" className="w-full justify-start">
+                                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                                Voir la compétition
+                                            </Button>
+                                        </Link>
+                                        <Link href="/admin/competitions">
+                                            <Button variant="ghost" className="w-full justify-start">
+                                                Retour à la liste
+                                            </Button>
+                                        </Link>
                                     </div>
                                 </CardContent>
                             </Card>
