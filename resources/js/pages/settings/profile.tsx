@@ -1,3 +1,7 @@
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
+import DashboardHeader from "@/components/layout/dashboard-header";
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
@@ -9,14 +13,12 @@ import InputError from '@/components/forms/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout-admin';
-import SettingsLayout from '@/layouts/settings/layout';
+import { User, Palette, Lock } from 'lucide-react';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Profile settings',
-        href: '/settings/profile',
-    },
+// Create breadcrumbs for the header component
+const headerBreadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Profile Settings", isActive: true },
 ];
 
 type ProfileForm = {
@@ -41,12 +43,44 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Profile settings" />
+        <>
+            <Head>
+                <title>Profile Settings</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+            </Head>
+            
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+                        <div className="p-6">
+                            <div className="space-y-6">
+                                <HeadingSmall title="Profile information" description="Update your name and email address" />
 
-            <SettingsLayout>
-                <div className="space-y-6">
-                    <HeadingSmall title="Profile information" description="Update your name and email address" />
+                                {/* Settings Navigation */}
+                                <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-lg border">
+                                    <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+                                        <User className="w-4 h-4" />
+                                        Profile
+                                    </Button>
+                                    <Link href="/settings/appearance">
+                                        <Button variant="outline" className="flex items-center gap-2">
+                                            <Palette className="w-4 h-4" />
+                                            Appearance
+                                        </Button>
+                                    </Link>
+                                    <Link href="/settings/password">
+                                        <Button variant="outline" className="flex items-center gap-2">
+                                            <Lock className="w-4 h-4" />
+                                            Password
+                                        </Button>
+                                    </Link>
+                                </div>
 
                     <form onSubmit={submit} className="space-y-6">
                         <div className="grid gap-2">
@@ -118,10 +152,13 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             </Transition>
                         </div>
                     </form>
-                </div>
 
-                <DeleteUser />
-            </SettingsLayout>
-        </AppLayout>
+                    <DeleteUser />
+                            </div>
+                        </div>
+                    </AppContent>
+                </div>
+            </AppShell>
+        </>
     );
 }

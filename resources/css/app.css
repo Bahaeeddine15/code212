@@ -9,14 +9,15 @@
 
 /* Custom sidebar positioning - scrolls with page */
 .fixed-sidebar {
-  position: absolute !important; /* Changed from fixed to absolute */
-  left: 0 !important;
-  top: 144px !important; /* Position below header (approx 48px padding + 96px image height) */
+  position: sticky !important; /* Changed from fixed to sticky */
+  top: var(--site-header-height)!important; /* Position below header (approx 48px padding + 96px image height) */
   width: 16rem !important;
-  z-index: 50 !important;
+  z-index: 20 !important;
   overflow: visible !important; /* Allow content to be visible */
-  height: auto !important; /* Let height be determined by content */
-  min-height: calc(100vh - 44px) !important; /* Make sidebar much longer - almost full viewport height */
+  height: 100% !important; /* Match viewport height minus header */
+  display: flex !important;
+  flex-direction: column !important;
+  bottom: var(--site-footer-height)!important;
 }
 
 .sidebar-content-offset {
@@ -30,15 +31,30 @@
 /* Allow sidebar content to flow naturally */
 .sidebar-no-scroll {
   overflow: visible !important; /* Changed from hidden to visible */
-  height: auto !important; /* Let height be natural */
-  min-height: calc(100vh - 44px) !important; /* Ensure sidebar container is longer */
+  height: 100% !important; /* Take full height of container */
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .sidebar-content-no-scroll {
   overflow: visible !important; /* Changed from hidden to visible */
-  height: auto !important; /* Let height be natural */
-  max-height: none !important; /* Remove max-height restriction */
-  min-height: calc(100vh - 44px) !important; /* Make sidebar content area longer */
+  height: auto !important; /* Take full height */
+  max-height: auto !important; /* Remove max-height restriction */
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important; /* Allow content to grow */
+}
+
+/* Ensure sidebar takes full height */
+.sidebar-content-no-scroll > div:first-child {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Force the user button to bottom */
+.sidebar-content-no-scroll > div:last-child {
+  margin-top: auto !important;
 }
 
 @theme {
@@ -145,6 +161,8 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
+    --site-header-height: 144px;
+    --site-footer-height: 220px;
 }
 
 .dark {
