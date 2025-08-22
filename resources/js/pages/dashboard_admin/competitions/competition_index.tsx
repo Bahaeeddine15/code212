@@ -28,7 +28,8 @@ import {
     Lock,
     Plus,
     CheckCircle2,
-    XCircle
+    XCircle,
+    User
 } from 'lucide-react';
 import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 import { useState } from 'react';
@@ -52,11 +53,14 @@ interface Competition {
     updated_at: string;
     closed_at?: string | null;
     closed_by?: string | null;
+    type: 'individual' | 'group';
 }
 
 interface Registration {
     id: number;
     competitionId: number;
+    competitionTitle: string; // Add this line
+    competitionType: 'individual' | 'group'; // Add this line
     participantName: string;
     email: string;
     phone: string;
@@ -147,6 +151,39 @@ export default function CompetitionsPage({ competitions, registrations, statisti
         }
     };
 
+    const getTypeColor = (type: string) => {
+        switch (type) {
+            case 'group':
+                return 'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300 border-purple-200';
+            case 'individual':
+                return 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 border-blue-200';
+            default:
+                return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 border-gray-200';
+        }
+    };
+
+    const getTypeLabel = (type: string) => {
+        switch (type) {
+            case 'group':
+                return 'En équipe';
+            case 'individual':
+                return 'Individuel';
+            default:
+                return 'Non défini';
+        }
+    };
+
+    const getTypeIcon = (type: string) => {
+        switch (type) {
+            case 'group':
+                return Users;
+            case 'individual':
+                return User;
+            default:
+                return Trophy;
+        }
+    };
+
     // Format date for display
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('fr-FR');
@@ -174,7 +211,8 @@ export default function CompetitionsPage({ competitions, registrations, statisti
         const matchesSearch = searchTerm === '' ||
             reg.participantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            reg.club.toLowerCase().includes(searchTerm.toLowerCase());
+            reg.club.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            reg.competitionTitle.toLowerCase().includes(searchTerm.toLowerCase()); // Add this line
         const matchesStatus = statusFilter === 'all' || reg.status === statusFilter;
         return matchesCompetition && matchesSearch && matchesStatus;
     });
@@ -209,7 +247,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <Input
-                                placeholder="Rechercher par titre ou lieu..."
+                                placeholder="Rechercher par participant, email, club ou compétition..." // Update this
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
@@ -280,12 +318,16 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                     <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-semibold text-muted-foreground">Prochaine compétition</p>
-                                <p className="text-3xl font-bold text-orange-600 mt-2">{getNextCompetitionDays()}</p>
-                                <p className="text-xs text-muted-foreground mt-1">jours restants</p>
+                                <p className="text-sm font-semibold text-muted-foreground">Compétitions individuelles</p>
+                                <p className="text-3xl font-bold text-blue-600 mt-2">
+                                    {competitions.filter(c => c.type === 'individual').length}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {competitions.filter(c => c.type === 'group').length} en équipe
+                                </p>
                             </div>
-                            <div className="p-4 bg-orange-100 rounded-2xl">
-                                <Calendar className="w-8 h-8 text-orange-600" />
+                            <div className="p-4 bg-blue-100 dark:bg-blue-900/20 rounded-2xl">
+                                <User className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
                     </div>
@@ -333,6 +375,17 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                 <Badge className={getStatusColor(competition.status)}>
                                                     {competition.status}
                                                 </Badge>
+                                                <Badge variant="outline" className={getTypeColor(competition.type)}>
+                                                    {(() => {
+                                                        const IconComponent = getTypeIcon(competition.type);
+                                                        return (
+                                                            <>
+                                                                <IconComponent className="w-3 h-3 mr-1" />
+                                                                {getTypeLabel(competition.type)}
+                                                            </>
+                                                        );
+                                                    })()}
+                                                </Badge>
                                             </div>
                                             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                                                 <div className="flex items-center gap-1">
@@ -350,6 +403,13 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                 <div className="flex items-center gap-1">
                                                     <Eye className="h-4 w-4" />
                                                     {competition.views} vues
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    {(() => {
+                                                        const IconComponent = getTypeIcon(competition.type);
+                                                        return <IconComponent className="h-4 w-4" />;
+                                                    })()}
+                                                    {getTypeLabel(competition.type)}
                                                 </div>
                                             </div>
                                             {competition.description && (
@@ -442,6 +502,8 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Participant</TableHead>
+                                    <TableHead>Compétition</TableHead> {/* Add this line */}
+                                    <TableHead>Type</TableHead> {/* Add this line */}
                                     <TableHead>Contact</TableHead>
                                     <TableHead>Club</TableHead>
                                     <TableHead>Catégorie</TableHead>
@@ -456,6 +518,39 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                     <TableRow key={registration.id}>
                                         <TableCell className="font-medium">
                                             {registration.participantName}
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="max-w-[200px]">
+                                                <button
+                                                    onClick={() => {
+                                                        const competition = competitions.find(c => c.id === registration.competitionId);
+                                                        if (competition) {
+                                                            navigateToShow(competition);
+                                                        }
+                                                    }}
+                                                    className="font-medium text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 truncate text-left block w-full"
+                                                    title={registration.competitionTitle}
+                                                >
+                                                    {registration.competitionTitle}
+                                                </button>
+                                                <div className="text-xs text-muted-foreground">
+                                                    ID: {registration.competitionId}
+                                                </div>
+                                            </div>
+                                        </TableCell>
+                                        {/* Add this new Type cell */}
+                                        <TableCell>
+                                            <Badge variant="outline" className={getTypeColor(registration.competitionType)}>
+                                                {(() => {
+                                                    const IconComponent = getTypeIcon(registration.competitionType);
+                                                    return (
+                                                        <>
+                                                            <IconComponent className="w-3 h-3 mr-1" />
+                                                            {getTypeLabel(registration.competitionType)}
+                                                        </>
+                                                    );
+                                                })()}
+                                            </Badge>
                                         </TableCell>
                                         <TableCell>
                                             <div className="space-y-1">
@@ -506,7 +601,6 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                 >
                                                     <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
                                                 </Button>
-                                                {/* Removed Edit and Delete buttons */}
                                             </div>
                                         </TableCell>
                                     </TableRow>

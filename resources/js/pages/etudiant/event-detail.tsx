@@ -16,6 +16,7 @@ interface Event {
   end_date: string | null;
   location: string;
   category: string;
+  type?: string; // Add type field
   max_attendees: number;
   status: string;
   logo?: string | null;
@@ -70,6 +71,11 @@ export default function EventDetail({ event }: Props) {
                   <div className="flex items-center gap-2 mb-2">
                     <Badge className={badgeColors[event.status] || 'bg-slate-100 text-slate-800'}>{event.status}</Badge>
                     <Badge variant="secondary">{event.category}</Badge>
+                    {event.type && (
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        {event.type}
+                      </Badge>
+                    )}
                   </div>
                   <CardTitle className="text-3xl">{event.title}</CardTitle>
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600 mt-3">
@@ -125,6 +131,9 @@ export default function EventDetail({ event }: Props) {
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm text-gray-700">
                   <div className="flex justify-between"><span>Catégorie</span><span className="font-medium">{event.category}</span></div>
+                  {event.type && (
+                    <div className="flex justify-between"><span>Type</span><span className="font-medium">{event.type}</span></div>
+                  )}
                   <div className="flex justify-between"><span>Statut</span><span className="font-medium capitalize">{event.status}</span></div>
                   <div className="flex justify-between"><span>Lieu</span><span className="font-medium">{event.location}</span></div>
                   <div className="flex justify-between"><span>Places</span><span className="font-medium">{event.max_attendees ?? 'Illimité'}</span></div>

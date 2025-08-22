@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout-admin';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { BreadcrumbItem } from '@/types';
 import {
     ArrowLeft,
     Edit,
-    Trash2,
+    Trash2, // Make sure this is imported
     Calendar,
     MapPin,
     Users,
@@ -17,7 +18,10 @@ import {
     User,
     CheckCircle,
     XCircle,
-    AlertCircle
+    AlertCircle,
+    Search,
+    ChevronLeft,
+    ChevronRight
 } from 'lucide-react';
 
 // Types
@@ -34,6 +38,7 @@ interface Competition {
     registrations: number;
     created_at: string;
     updated_at: string;
+    type: 'individual' | 'group'; // Add this line
 }
 
 interface Registration {
@@ -43,6 +48,8 @@ interface Registration {
     phone: string;
     status: 'En attente' | 'Confirmé' | 'Refusé';
     registered_at: string;
+    group_name?: string;
+    group_members?: string;
 }
 
 interface CompetitionShowProps {
@@ -66,6 +73,36 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CompetitionShow({ competition, registrations }: CompetitionShowProps) {
+    // Search and pagination states
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    // Filter and search registrations
+    const filteredRegistrations = useMemo(() => {
+        return registrations.filter(registration => {
+            const matchesSearch = registration.participant_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                  registration.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                  registration.phone.includes(searchTerm);
+            
+            const matchesStatus = statusFilter === 'all' || registration.status === statusFilter;
+            
+            return matchesSearch && matchesStatus;
+        });
+    }, [registrations, searchTerm, statusFilter]);
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredRegistrations.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedRegistrations = filteredRegistrations.slice(startIndex, endIndex);
+
+    // Reset to page 1 when search/filter changes
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, statusFilter]);
+
     const getStatusBadge = () => {
         const statusConfig = {
             'Ouvert': { label: 'Ouvert', className: 'bg-green-500 text-white' },
@@ -111,6 +148,118 @@ export default function CompetitionShow({ competition, registrations }: Competit
 
     const confirmedRegistrations = registrations.filter(r => r.status === 'Confirmé').length;
     const pendingRegistrations = registrations.filter(r => r.status === 'En attente').length;
+
+    const formatRegistrationDate = (dateString: string) => {
+        if (!dateString) return 'Date inconnue';
+        
+        try {
+            // Handle different date formats that might come from the backend
+            let date;
+            
+            // If it's already a valid date string
+            if (dateString.includes('T') || dateString.includes('Z')) {
+                // ISO format (2024-01-01T00:00:00.000Z)
+                date = new Date(dateString);
+            } else if (dateString.includes('-')) {
+                // Date format (2024-01-01)
+                date = new Date(dateString + 'T00:00:00');
+            } else {
+                // Try parsing as-is
+                date = new Date(dateString);
+            }
+            
+            // Check if date is valid
+            if (isNaN(date.getTime())) {
+                console.warn('Invalid date:', dateString);
+                return 'Date invalide';
+            }
+            
+            return date.toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        } catch (error) {
+            console.error('Date parsing error:', error, 'for date:', dateString);
+            return 'Date invalide';
+        }
+    };
+
+    // Pagination component
+    const PaginationControls = () => {
+        if (totalPages <= 1) return null;
+
+        return (
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+                <div className="text-sm text-muted-foreground">
+                    Affichage de {startIndex + 1} à {Math.min(endIndex, filteredRegistrations.length)} sur {filteredRegistrations.length} inscriptions
+                </div>
+                
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                        Précédent
+                    </Button>
+                    
+                    <div className="flex items-center gap-1">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            let pageNum;
+                            if (totalPages <= 5) {
+                                pageNum = i + 1;
+                            } else if (currentPage <= 3) {
+                                pageNum = i + 1;
+                            } else if (currentPage >= totalPages - 2) {
+                                pageNum = totalPages - 4 + i;
+                            } else {
+                                pageNum = currentPage - 2 + i;
+                            }
+                            
+                            return (
+                                <Button
+                                    key={pageNum}
+                                    variant={currentPage === pageNum ? "default" : "outline"}
+                                    size="sm"
+                                    className="w-8 h-8"
+                                    onClick={() => setCurrentPage(pageNum)}
+                                >
+                                    {pageNum}
+                                </Button>
+                            );
+                        })}
+                    </div>
+                    
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                    >
+                        Suivant
+                        <ChevronRight className="w-4 h-4" />
+                    </Button>
+                </div>
+            </div>
+        );
+    };
+
+    const handleDeleteRegistration = (registrationId: number) => {
+        if (confirm('Êtes-vous sûr de vouloir supprimer définitivement cette inscription ? Cette action est irréversible.')) {
+            router.delete(`/admin/competition-registrations/${registrationId}`, {
+                onSuccess: () => {
+                    // The page will automatically refresh with updated data
+                },
+                onError: (errors) => {
+                    console.error('Erreur lors de la suppression:', errors);
+                    alert('Une erreur est survenue lors de la suppression de l\'inscription.');
+                }
+            });
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -163,6 +312,26 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                         {competition.category}
                                     </Badge>
                                     {getStatusBadge()}
+                                    {/* Add competition type badge */}
+                                    <Badge
+                                        variant="outline"
+                                        className={competition.type === 'group' 
+                                            ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 border-purple-200 text-sm px-3 py-1"
+                                            : "bg-green-50 dark:bg-green-900/20 text-green-700 border-green-200 text-sm px-3 py-1"
+                                        }
+                                    >
+                                        {competition.type === 'group' ? (
+                                            <>
+                                                <Users className="w-3 h-3 mr-1" />
+                                                En équipe
+                                            </>
+                                        ) : (
+                                            <>
+                                                <User className="w-3 h-3 mr-1" />
+                                                Individuel
+                                            </>
+                                        )}
+                                    </Badge>
                                 </div>
                             </div>
 
@@ -278,18 +447,42 @@ export default function CompetitionShow({ competition, registrations }: Competit
                         </Card>
                     </div>
 
-                    {/* Registrations List */}
+                    {/* Registrations List with Search and Filters */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <User className="w-5 h-5" />
-                                Liste des inscriptions ({registrations.length})
+                                Liste des inscriptions ({filteredRegistrations.length})
                             </CardTitle>
+                            
+                            {/* Search and Filter Controls */}
+                            <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Rechercher par nom, email ou téléphone..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="pl-10"
+                                    />
+                                </div>
+                                
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="all">Tous les statuts</option>
+                                    <option value="En attente">En attente</option>
+                                    <option value="Confirmé">Confirmé</option>
+                                    <option value="Refusé">Refusé</option>
+                                </select>
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            {registrations.length > 0 ? (
+                            {paginatedRegistrations.length > 0 ? (
                                 <div className="space-y-4">
-                                    {registrations.map((registration) => (
+                                    {paginatedRegistrations.map((registration) => (
                                         <div
                                             key={registration.id}
                                             className="flex items-center justify-between p-4 border border-border dark:border-gray-700 rounded-lg hover:bg-background dark:hover:bg-gray-800 transition-colors"
@@ -298,15 +491,37 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                                 <div className="flex items-center gap-4">
                                                     <div>
                                                         <h4 className="font-semibold text-foreground dark:text-white">
-                                                            {registration.participant_name}
+                                                            {registration.group_name ? (
+                                                                <>
+                                                                    {registration.group_name}
+                                                                    <span className="text-sm text-muted-foreground ml-2">
+                                                                        (Contact: {registration.participant_name})
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                registration.participant_name
+                                                            )}
                                                         </h4>
                                                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                                             <span>{registration.email}</span>
                                                             <span>{registration.phone}</span>
                                                             <span>
-                                                                Inscrit le {new Date(registration.registered_at).toLocaleDateString('fr-FR')}
+                                                                Inscrit le {formatRegistrationDate(registration.registered_at)}
                                                             </span>
                                                         </div>
+                                                        
+                                                        {/* Show group members if it's a group competition */}
+                                                        {registration.group_members && (
+                                                            <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm">
+                                                                <div className="flex items-center gap-2 mb-2">
+                                                                    <Users className="w-4 h-4 text-gray-600" />
+                                                                    <strong className="text-gray-900 dark:text-gray-100">Membres de l'équipe:</strong>
+                                                                </div>
+                                                                <div className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono text-xs bg-white dark:bg-gray-700 p-2 rounded border">
+                                                                    {registration.group_members}
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -316,30 +531,76 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                                     <>
                                                         <Button
                                                             size="sm"
-                                                            className="bg-green-600 hover:bg-green-700"
+                                                            className="bg-green-600 hover:bg-green-700 text-white"
                                                             onClick={() => router.patch(`/admin/competition-registrations/${registration.id}/approve`)}
                                                         >
-                                                            <CheckCircle className="w-4 h-4 mr-1" /> Valider
+                                                            <CheckCircle className="w-4 h-4 mr-1" /> 
+                                                            Valider
                                                         </Button>
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
-                                                            className="text-red-600 dark:text-red-400 border-red-200 hover:text-red-700"
+                                                            className="text-red-600 dark:text-red-400 border-red-200 hover:bg-red-50"
                                                             onClick={() => router.patch(`/admin/competition-registrations/${registration.id}/reject`)}
                                                         >
-                                                            <XCircle className="w-4 h-4 mr-1" /> Refuser
+                                                            <XCircle className="w-4 h-4 mr-1" /> 
+                                                            Refuser
+                                                        </Button>
+                                                    </>
+                                                )}
+                                                {registration.status === 'Confirmé' && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="text-red-600 dark:text-red-400 border-red-200 hover:bg-red-50"
+                                                        onClick={() => router.patch(`/admin/competition-registrations/${registration.id}/reject`)}
+                                                    >
+                                                        <XCircle className="w-4 h-4 mr-1" /> 
+                                                        Annuler
+                                                    </Button>
+                                                )}
+                                                {registration.status === 'Refusé' && (
+                                                    <>
+                                                        <Button
+                                                            size="sm"
+                                                            className="bg-green-600 hover:bg-green-700 text-white"
+                                                            onClick={() => router.patch(`/admin/competition-registrations/${registration.id}/approve`)}
+                                                        >
+                                                            <CheckCircle className="w-4 h-4 mr-1" /> 
+                                                            Réactiver
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="destructive"
+                                                            className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                                                            onClick={() => handleDeleteRegistration(registration.id)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4 mr-1" /> 
+                                                            Supprimer
                                                         </Button>
                                                     </>
                                                 )}
                                             </div>
                                         </div>
                                     ))}
+                                    
+                                    <PaginationControls />
                                 </div>
                             ) : (
                                 <div className="text-center py-12">
                                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                    <p className="text-muted-foreground text-lg">Aucune inscription pour le moment</p>
-                                    <p className="text-gray-400 text-sm">Les inscriptions apparaîtront ici une fois soumises</p>
+                                    <p className="text-muted-foreground text-lg">
+                                        {searchTerm || statusFilter !== 'all' 
+                                            ? 'Aucun résultat trouvé'
+                                            : 'Aucune inscription pour le moment'
+                                        }
+                                    </p>
+                                    <p className="text-gray-400 text-sm">
+                                        {searchTerm || statusFilter !== 'all'
+                                            ? 'Essayez de modifier vos critères de recherche'
+                                            : 'Les inscriptions apparaîtront ici une fois soumises'
+                                        }
+                                    </p>
                                 </div>
                             )}
                         </CardContent>

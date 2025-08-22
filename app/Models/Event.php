@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'title',
         'description',
@@ -17,11 +17,12 @@ class Event extends Model
         'location',
         'max_attendees',
         'category',
-    'type',
+        'type',
         'status',
         'logo',
+        'user_id',
     ];
-    
+
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',

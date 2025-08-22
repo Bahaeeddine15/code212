@@ -24,15 +24,16 @@ Route::prefix('admin')->group(function () {
 });
 
 // Protected admin routes
-Route::prefix('admin')->middleware(['auth:admin', 'verified'])->group(function () {
+Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard_admin/dashboard', [
             'name' => Auth::user()->name,
         ]);
-    })->name('admin.dashboard');
+    })->name('dashboard'); // This will be admin.dashboard
 
     Route::resource('articles', ArticleControllerAdmin::class);
 
+    // Events routes - will automatically be named admin.events.*
     Route::resource('events', EventControllerAdmin::class);
     Route::patch('/events/{id}/status', [EventControllerAdmin::class, 'updateStatus'])->name('events.updateStatus');
     // Event registrations management
@@ -41,15 +42,7 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->group(function (
     Route::patch('/events/registrations/{registration}/reject', [EventRegistrationAdminController::class, 'reject'])->name('events.registrations.reject');
 
     // Media routes - cleaned up
-    Route::resource('media', MediaControllerAdmin::class)->parameters(['media' => 'media'])->names([
-        'index' => 'admin.media.index',
-        'create' => 'admin.media.create',
-        'store' => 'admin.media.store',
-        'show' => 'admin.media.show',
-        'edit' => 'admin.media.edit',
-        'update' => 'admin.media.update',
-        'destroy' => 'admin.media.destroy',
-    ]);
+    Route::resource('media', MediaControllerAdmin::class)->parameters(['media' => 'media']);
     Route::get('/media/{media}/download', [MediaControllerAdmin::class, 'download'])->name('media.download');
     Route::get('/media/folder/{folder}', [MediaControllerAdmin::class, 'showFolder'])->name('media.folder');
     Route::delete('/media/folder/{folder}', [MediaControllerAdmin::class, 'destroyFolder'])->name('media.folder.destroy');
@@ -63,6 +56,7 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->group(function (
     // Approve/Reject competition registrations
     Route::patch('/competition-registrations/{registration}/approve', [CompetitionRegistrationControllerAdmin::class, 'approve'])->name('competitionRegistrations.approve');
     Route::patch('/competition-registrations/{registration}/reject', [CompetitionRegistrationControllerAdmin::class, 'reject'])->name('competitionRegistrations.reject');
+    Route::delete('/competition-registrations/{registration}', [CompetitionRegistrationControllerAdmin::class, 'destroy'])->name('competitionRegistrations.destroy');
 
     Route::resource('reservations', ReservationControllerAdmin::class);
     Route::patch('/reservations/{reservation}/approve', [ReservationControllerAdmin::class, 'approve'])->name('reservations.approve');

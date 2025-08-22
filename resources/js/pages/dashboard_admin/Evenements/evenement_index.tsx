@@ -12,7 +12,8 @@ import {
     Users,
     CheckCircle,
     AlertCircle,
-    Search
+    Search,
+    UserCheck // Add this import for registration icon
 } from 'lucide-react';
 import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 
@@ -158,17 +159,31 @@ const EventCard = ({
             <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">{event.category}</span>
                 <div className="flex space-x-2">
+                    {/* Add View Registrations button */}
+                    <Link
+                        href={`/admin/events/${event.id}/registrations`}
+                        className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
+                        title="Voir les inscriptions"
+                    >
+                        <UserCheck className="w-4 h-4" />
+                    </Link>
+                    
                     <Link
                         href={`/admin/events/${event.id}/edit`}
-                        className="p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 rounded-xl transition-all duration-200">
+                        className="p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 rounded-xl transition-all duration-200"
+                        title="Modifier"
+                    >
                         <Edit3 className="w-4 h-4" />
                     </Link>
+                    
                     <button
                         onClick={() => onDelete(event.id)}
                         className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 rounded-xl transition-all duration-200"
+                        title="Supprimer"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
+                    
                     {(event.status === 'upcoming' || event.status === 'ongoing') && (
                         <button
                             onClick={() => onMarkCompleted(event.id)}

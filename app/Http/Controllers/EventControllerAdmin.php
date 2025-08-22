@@ -34,36 +34,41 @@ class EventControllerAdmin extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required',
-            'description' => 'nullable',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'location' => 'required',
+            'end_date' => 'required|date|after:start_date',
+            'location' => 'required|string|max:255',
             'maxAttendees' => 'required|integer|min:1',
             'category' => 'required|string',
-            'type' => 'required|in:Conférence,Séminaire,Workshop',
+            'type' => 'required|string',
         ]);
 
         $validated['max_attendees'] = $validated['maxAttendees'];
         unset($validated['maxAttendees']);
-
-        // Track which admin created the event (if your events table has user_id/admin_id)
         $validated['user_id'] = auth('admin')->id();
 
         Event::create($validated);
-        return redirect()->route('events.index');
+
+        return redirect()->route('admin.events.index')->with('success', 'Événement créé avec succès!');
     }
 
     public function edit(Event $event)
     {
         return Inertia::render('dashboard_admin/Evenements/evenement_edit', [
-            'event' => array_merge(
-                $event->toArray(),
-                [
-                    'maxAttendees' => $event->max_attendees,
-                    'date' => $event->start_date,
-                ]
-            ),
+            'event' => [
+                'id' => $event->id,
+                'title' => $event->title,
+                'description' => $event->description,
+                'category' => $event->category,
+                'type' => $event->type,
+                'location' => $event->location,
+                'status' => $event->status,
+                'maxAttendees' => $event->max_attendees,
+                // Format datetime fields properly for datetime-local inputs
+                'start_date' => $event->start_date ? $event->start_date->format('Y-m-d\TH:i') : '',
+                'end_date' => $event->end_date ? $event->end_date->format('Y-m-d\TH:i') : '',
+            ],
         ]);
     }
 
@@ -75,15 +80,15 @@ class EventControllerAdmin extends Controller
     public function update(Request $request, Event $event)
     {
         $validated = $request->validate([
-            'title' => 'required',
-            'description' => 'nullable',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'location' => 'required',
+            'location' => 'required|string|max:255',
             'maxAttendees' => 'required|integer|min:1',
             'category' => 'required|string',
             'status' => 'required|in:upcoming,ongoing,completed,cancelled',
-            'type' => 'required|in:Conférence,Séminaire,Workshop',
+            'type' => 'required|string|in:Conférence,Workshop,Séminaire,Formation,Networking,Webinaire,Table Ronde,Présentation',
         ]);
 
         $validated['max_attendees'] = $validated['maxAttendees'];
@@ -93,7 +98,8 @@ class EventControllerAdmin extends Controller
         $validated['updated_by'] = auth('admin')->id();
 
         $event->update($validated);
-        return redirect()->route('events.index');
+
+        return redirect()->route('admin.events.index')->with('success', 'Événement modifié avec succès!');
     }
 
     public function destroy(Event $event)
