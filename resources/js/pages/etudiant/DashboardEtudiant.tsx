@@ -84,52 +84,52 @@ export default function Dashboard({ stats, formations, events, student }: Props)
       <AppShell variant="sidebar">
         <div className="flex w-full min-h-screen">
           <AppSidebar />
-          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+          <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#140C2C] font-[Poppins]">
             <div className="p-6">
               <div className="flex flex-col gap-6 text-gray-900 dark:text-white">
                 <div className="space-y-4">
                   {/* Profile Section */}
                   <div className="flex gap-6">
                     {/* Avatar Card */}
-                    <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex-shrink-0">
+                    <div className="bg-white dark:bg-[#0c142c] rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-[#140C2C] flex-shrink-0">
                       <div className="text-center">
                         <div className="w-24 h-24 bg-gradient-to-br from-[#c5027f] to-[#8b5cf6] rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
                           <span className="text-white font-bold text-xl">
                             CODE
                           </span>
                         </div>
-                        <h3 className="font-bold text-gray-900 text-lg">{student.name}</h3>
+                        <h3 className="font-bold text-gray-900 dark:text-white text-lg">{student.name}</h3>
                       </div>
                     </div>
                     {/* Info Card */}
-                    <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex-1">
-                      <div className="space-y-6">
+                    <div className="bg-white dark:bg-[#0c142c] rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-[#140C2C] flex-1">
+                                              <div className="space-y-6">
                         <div className="flex items-center">
-                          <div className="w-24 text-sm font-medium text-gray-600">
+                          <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-300">
                             Université
                           </div>
                           <div className="flex-1">
-                            <span className="text-sm text-gray-900 font-medium">
+                            <span className="text-sm text-gray-900 dark:text-white font-medium">
                               {student.ecole || 'UNIVERSITÉ CADI AYYAD DE MARRAKECH'}
                             </span>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <div className="w-24 text-sm font-medium text-gray-600">
+                          <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-300">
                             Centre
                           </div>
                           <div className="flex-1">
-                            <span className="text-sm text-gray-900 font-medium">
+                            <span className="text-sm text-gray-900 dark:text-white font-medium">
                               CODE212 - BIBLIOTHÈQUE UNIVERSITAIRE
                             </span>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <div className="w-24 text-sm font-medium text-gray-600">
+                          <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-300">
                             Email
                           </div>
                           <div className="flex-1">
-                            <span className="text-sm text-gray-900 font-medium">
+                            <span className="text-sm text-gray-900 dark:text-white font-medium">
                               {student.email}
                             </span>
                           </div>
@@ -141,12 +141,12 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                   {/* Stat Cards */}
                   <div className="grid grid-cols-5 gap-3">
                     {/* Certificats (mocked for now) */}
-                    <Card className="bg-white border-l-4 border-l-[#c5027f] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#c5027f] dark:border-l-[#c5027f] shadow hover:shadow-lg transition-all duration-300">
                       <CardContent className="px-3 py-1 pt-2">
                         <div className="flex items-center gap-3">
                           <div className="flex-1">
-                            <p className="text-lg font-bold text-gray-900">0</p>
-                            <p className="text-xs text-gray-500">Certificats</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">0</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-300">Mes certificats</p>
                           </div>
                           <div className="flex-shrink-0">
                             <Medal className="h-5 w-5 text-[#c5027f]" />
@@ -155,12 +155,12 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Formations */}
-                    <Card className="bg-white border-l-4 border-l-[#6366f1] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#6366f1] dark:border-l-[#6366f1] shadow hover:shadow-lg transition-all duration-300">
                       <CardContent className="px-3 py-1">
                         <div className="flex items-center gap-3">
                           <div className="flex-1">
-                            <p className="text-lg font-bold text-gray-900">{stats.total_formations || 0}</p>
-                            <p className="text-xs text-gray-500">Formations</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.total_formations || 0}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-300">Mes formations</p>
                           </div>
                           <div className="flex-shrink-0">
                             <ScrollText className="h-5 w-5 text-[#6366f1]" />
@@ -169,12 +169,12 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Mes réservations */}
-                    <Card className="bg-white border-l-4 border-l-[#ff8500] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#ff8500] dark:border-l-[#ff8500] shadow hover:shadow-lg transition-all duration-300">
                       <CardContent className="px-3 py-1">
                         <div className="flex items-center gap-3">
                           <div className="flex-1">
-                            <p className="text-lg font-bold text-gray-900">{stats.student_reservations || 0}</p>
-                            <p className="text-xs text-gray-500">Mes réservations</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.student_reservations || 0}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-300">Mes réservations</p>
                           </div>
                           <div className="flex-shrink-0">
                             <ClipboardCheck className="h-5 w-5 text-[#ff8500]" />
@@ -183,12 +183,12 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Compétitions */}
-                    <Card className="bg-white border-l-4 border-l-[#e11d48] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#e11d48] dark:border-l-[#e11d48] shadow hover:shadow-lg transition-all duration-300">
                       <CardContent className="px-3 py-1">
                         <div className="flex items-center gap-3">
                           <div className="flex-1">
-                            <p className="text-lg font-bold text-gray-900">{stats.total_competitions || 0}</p>
-                            <p className="text-xs text-gray-500">Compétitions</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.total_competitions || 0}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-300">Mes compétitions</p>
                           </div>
                           <div className="flex-shrink-0">
                             <Trophy className="h-5 w-5 text-[#e11d48]" />
@@ -197,12 +197,12 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Événements */}
-                    <Card className="bg-white border-l-4 border-l-[#2cd3a3] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#2cd3a3] dark:border-l-[#2cd3a3] shadow hover:shadow-lg transition-all duration-300">
                       <CardContent className="px-3 py-1">
                         <div className="flex items-center gap-3">
                           <div className="flex-1">
-                            <p className="text-lg font-bold text-gray-900">{stats.total_events || 0}</p>
-                            <p className="text-xs text-gray-500">Événements</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.total_events || 0}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-300">Mes événements</p>
                           </div>
                           <div className="flex-shrink-0">
                             <Calendar className="h-5 w-5 text-[#2cd3a3]" />
@@ -215,7 +215,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
 
                 {/* Formations en cours */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card className="bg-white dark:bg-[#121214] transition-all duration-300">
+                  <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] transition-all duration-300">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-[#081f44] dark:text-white text-lg font-semibold">
                         Formations en cours
@@ -225,13 +225,13 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       {formations.length > 0 ? formations.slice(0, 5).map((formation) => (
                         <div
                           key={formation.id}
-                          className="p-3 bg-[#f8f9fa] dark:bg-[#1e1e1e] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#2a2a2a] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#ff8500]"
+                          className="p-3 bg-[#f8f9fa] dark:bg-[#061020] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#0a1628] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#ff8500]"
                         >
                           <div className="flex justify-between items-start mb-2">
                             <h3 className="font-medium text-[#081f44] dark:text-white text-sm group-hover:text-[#ff8500] transition-colors">
                               {formation.titre}
                             </h3>
-                            <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                            <span className="text-xs text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-[#140C2C] px-2 py-1 rounded">
                               {formation.niveau}
                             </span>
                           </div>
@@ -240,19 +240,19 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                           </p>
                           <div className="mt-2 flex items-center gap-2">
                             <div className="w-1.5 h-1.5 bg-[#ff8500] rounded-full"></div>
-                            <span className="text-xs text-gray-500">{formation.category}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">{formation.category}</span>
                           </div>
                         </div>
                       )) : (
                         <div className="text-center py-8">
-                          <p className="text-gray-500 text-sm">Aucune formation disponible</p>
+                          <p className="text-gray-500 dark:text-gray-400 text-sm">Aucune formation disponible</p>
                         </div>
                       )}
                     </CardContent>
                   </Card>
 
                   {/* Événements */}
-                  <Card className="bg-white dark:bg-[#121214] transition-all duration-300">
+                  <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] transition-all duration-300">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-[#081f44] dark:text-white text-lg font-semibold">
                         Événements à venir
@@ -262,7 +262,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       {events.length > 0 ? events.map((event) => (
                         <div
                           key={event.id}
-                          className="p-3 bg-[#f8f9fa] dark:bg-[#1e1e1e] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#2a2a2a] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#6366f1]"
+                          className="p-3 bg-[#f8f9fa] dark:bg-[#061020] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#0a1628] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#6366f1]"
                         >
                           <div className="flex items-start gap-2 mb-2">
                             <div className="w-1.5 h-1.5 bg-[#6366f1] rounded-full mt-2"></div>
@@ -270,7 +270,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                               <h3 className="font-medium text-[#081f44] dark:text-white text-sm group-hover:text-[#6366f1] transition-colors">
                                 {event.title}
                               </h3>
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                 {new Date(event.start_date).toLocaleDateString('fr-FR', { 
                                   year: 'numeric', 
                                   month: 'short', 
@@ -284,12 +284,12 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                           </p>
                           <div className="mt-2 flex items-center gap-2">
                             <div className="w-1.5 h-1.5 bg-[#6366f1] rounded-full"></div>
-                            <span className="text-xs text-gray-500">{event.category}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">{event.category}</span>
                           </div>
                         </div>
                       )) : (
                         <div className="text-center py-8">
-                          <p className="text-gray-500 text-sm">Aucun événement à venir</p>
+                          <p className="text-gray-500 dark:text-gray-400 text-sm">Aucun événement à venir</p>
                         </div>
                       )}
                     </CardContent>

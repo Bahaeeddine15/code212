@@ -61,16 +61,23 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset" className="fixed-sidebar dark:bg-[#0A1F44] sidebar-no-scroll">
-            <SidebarContent className="bg-white text-gray-800 rounded-t-2xl shadow-2xl sidebar-content-no-scroll flex flex-col h-full">
-                <div className="pt-4 flex-1 overflow-visible">
+        <div className="bg-card rounded-xl shadow-lg border border-border overflow-hidden h-full flex flex-col">
+            <div className="p-6 flex-1 flex flex-col">
+                <div className="text-center mb-8">
+                    <h1 className="text-xl font-bold text-foreground">CODE212-UCA</h1>
+                </div>
+
+                <div className="space-y-4 flex-1">
                     <NavMain items={mainNavItems} />
                 </div>
-            </SidebarContent>
-            
-            <SidebarFooter className="bg-white shadow-2xl mx-0 mb-0 p-2 rounded-b-2xl relative z-10">
-                <NavUser />
-            </SidebarFooter>
-        </Sidebar>
+
+                <div className="mt-8 pt-6 border-t border-border flex-shrink-0">
+                    <NavFooter items={footerNavItems} />
+                    <div className="mt-4">
+                        <NavUser />
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
