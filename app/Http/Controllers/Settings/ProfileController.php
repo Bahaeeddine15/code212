@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\Etudiant; // <-- Add this
+use App\Models\Etudiant;
 
 class ProfileController extends Controller
 {
@@ -21,27 +21,29 @@ class ProfileController extends Controller
     {
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => $request->session()->get('status'),
+            'status' => session('status'),
         ]);
     }
 
     /**
      * Update the user's profile settings.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
+        // Validate only the name field since email and ecole are read-only
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
         /** @var Etudiant $etudiant */
-        $etudiant = $request->user(); // or $request->user('etudiant') if using a custom guard
+        $etudiant = $request->user();
 
-        $etudiant->fill($request->validated());
+        // Update only the name
+        $etudiant->update([
+            'name' => $validated['name']
+        ]);
 
-        if ($etudiant->isDirty('email')) {
-            $etudiant->email_verified_at = null;
-        }
-
-        $etudiant->save();
-
-        return to_route('profile.edit');
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
@@ -56,7 +58,7 @@ class ProfileController extends Controller
         /** @var Etudiant $etudiant */
         $etudiant = $request->user();
 
-        Auth::guard('etudiant')->logout();
+        Auth::logout();
 
         $etudiant->delete();
 
