@@ -139,6 +139,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
         return response()->json(['success' => true]);
     })->name('reservations.dismissNotification');
+
+    // Media streaming routes
+    Route::get('/media/{media}/stream/{quality?}', [App\Http\Controllers\MediaController::class, 'stream'])->name('media.stream');
+    Route::get('/media/{media}/stream/quality/{quality}', [App\Http\Controllers\MediaController::class, 'stream'])->name('media.stream.quality');
 });
 
 

@@ -10,12 +10,13 @@ class Media extends Model
 {
     /** @use HasFactory<\Database\Factories\MediaFactory> */
     use HasFactory;
-    
+
     protected $fillable = [
         'title',
         'slug',
         'detail',
         'file_path',
+        'video_qualities', // Add this line
         'original_name',
         'user_id',
         'folder',
@@ -44,9 +45,9 @@ class Media extends Model
         if (!$this->file_path || !Storage::disk('public')->exists($this->file_path)) {
             return null;
         }
-        
+
         $bytes = Storage::disk('public')->size($this->file_path);
-        
+
         if ($bytes >= 1073741824) {
             return number_format($bytes / 1073741824, 2) . ' GB';
         } elseif ($bytes >= 1048576) {

@@ -132,7 +132,7 @@ class ArticleControllerAdmin extends Controller
 
         $article = Article::create($validated);
 
-        return redirect()->route('articles.index')->with('success', 'Article créé avec succès!');
+        return redirect()->route('admin.articles.index')->with('success', 'Article créé avec succès!');
     }
 
     public function update(Request $request, Article $article)
@@ -181,12 +181,12 @@ class ArticleControllerAdmin extends Controller
 
         $article->update($validated);
 
-        return redirect()->route('articles.index')->with('success', 'Article mis à jour avec succès!');
+        return redirect()->route('admin.articles.index')->with('success', 'Article mis à jour avec succès!');
     }
 
     public function destroy(Article $article)
     {
         $article->delete();
-        return redirect()->route('articles.index')->with('success', 'Article supprimé avec succès!');
+        return redirect()->route('admin.articles.index')->with('success', 'Article supprimé avec succès!');
     }
 }
