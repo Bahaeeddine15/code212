@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Folder, Image as ImageIcon, Video, RefreshCw, Images, ArrowRight } from 'lucide-react';
+import { Folder, Image as ImageIcon, Video, RefreshCw, Images, ArrowRight, Play } from 'lucide-react';
 
 interface MediaFile {
   id: number;
@@ -20,6 +20,7 @@ interface MediaFile {
   folder: string;
   file_extension?: string;
   full_url?: string;
+  video_qualities?: string;
 }
 
 interface PageProps {
@@ -37,49 +38,87 @@ export default function Media({ mediaByFolder }: PageProps) {
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
 
   const getImageUrl = (filePath: string) => `/storage/${filePath.replace(/^\/+/, '')}`;
+  const getStreamUrl = (mediaId: number) => `/media/${mediaId}/stream`;
   const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('fr-FR');
   const getMediaType = (filePath: string) => {
     const ext = filePath.split('.').pop()?.toLowerCase();
     if (!ext) return 'Image';
-    const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+    const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', 'wmv', 'flv'];
     return videoExts.includes(ext) ? 'Vidéo' : 'Image';
   };
 
-  const MediaCard = ({ media }: { media: MediaFile }) => (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <Link href={`/media/${media.id}`}>
-          <div className="flex flex-col items-center cursor-pointer">
-            {getMediaType(media.file_path) === 'Vidéo' ? (
-              <video
-                className="w-24 h-24 rounded-lg object-contain bg-gray-100 mb-2"
-                src={media.full_url || getImageUrl(media.file_path)}
-                muted
-                controls={false}
-              />
-            ) : (
-              <img
-                src={media.full_url || getImageUrl(media.file_path)}
-                alt={media.title}
-                className="w-24 h-24 rounded-lg object-contain bg-gray-100 mb-2"
-                style={{ userSelect: 'none' }}
-                onContextMenu={e => e.preventDefault()}
-              />
-            )}
-            <h3 className="font-medium text-center truncate w-full" title={media.title}>
-              {media.title}
-            </h3>
-            <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
-              <span className={`px-2 py-1 rounded-full ${getMediaType(media.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
-                {getMediaType(media.file_path)}
-              </span>
-              <span>{formatDate(media.created_at)}</span>
+  const MediaCard = ({ media }: { media: MediaFile }) => {
+    const isVideo = getMediaType(media.file_path) === 'Vidéo';
+    
+    return (
+      <Card className="hover:shadow-md transition-shadow group">
+        <CardContent className="p-4">
+          <Link href={`/media/${media.id}`}>
+            <div className="flex flex-col items-center cursor-pointer">
+              <div className="relative w-24 h-24 mb-2">
+                {isVideo ? (
+                  <>
+                    <video
+                      className="w-full h-full rounded-lg object-cover bg-gray-100"
+                      src={getStreamUrl(media.id)}
+                      muted
+                      preload="metadata"
+                      onLoadedMetadata={(e) => {
+                        // Seek to 1 second for better thumbnail
+                        const video = e.target as HTMLVideoElement;
+                        video.currentTime = 1;
+                      }}
+                    />
+                    {/* Video play overlay */}
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
+                      <div className="bg-white/90 rounded-full p-2 shadow-lg">
+                        <Play className="w-4 h-4 text-gray-900 ml-0.5" fill="currentColor" />
+                      </div>
+                    </div>
+                    {/* Video badge */}
+                    <div className="absolute bottom-1 right-1 bg-red-600 text-white text-xs px-1 py-0.5 rounded">
+                      <Play className="w-2 h-2" />
+                    </div>
+                  </>
+                ) : (
+                  <img
+                    src={media.full_url || getImageUrl(media.file_path)}
+                    alt={media.title}
+                    className="w-full h-full rounded-lg object-cover bg-gray-100"
+                    style={{ userSelect: 'none' }}
+                    onContextMenu={e => e.preventDefault()}
+                  />
+                )}
+              </div>
+              <h3 className="font-medium text-center truncate w-full" title={media.title}>
+                {media.title}
+              </h3>
+              <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
+                <span className={`px-2 py-1 rounded-full flex items-center gap-1 ${
+                  isVideo ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {isVideo ? <Video className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
+                  {getMediaType(media.file_path)}
+                </span>
+                <span>{formatDate(media.created_at)}</span>
+              </div>
+              {/* Quality indicator for videos */}
+              {isVideo && media.video_qualities && (
+                <div className="mt-1">
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    {JSON.parse(media.video_qualities).length > 0 
+                      ? `${Object.keys(JSON.parse(media.video_qualities)).length + 1} qualités`
+                      : 'Streaming'
+                    }
+                  </span>
+                </div>
+              )}
             </div>
-          </div>
-        </Link>
-      </CardContent>
-    </Card>
-  );
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  };
 
   // Filter folders first
   const filteredFolders = Object.entries(mediaByFolder)
@@ -194,7 +233,7 @@ export default function Media({ mediaByFolder }: PageProps) {
                 <div className="space-y-8">
                   {filteredFolders.map(([folderName, media]) => {
                     const filteredMedia = getFilteredMediaInFolder(media);
-                    const displayedMedia = filteredMedia.slice(0, 4); // Only show first 4 images
+                    const displayedMedia = filteredMedia.slice(0, 4);
                     const hasMoreMedia = filteredMedia.length > 4;
 
                     if (filteredMedia.length === 0 && searchTerm) return null;
@@ -237,7 +276,6 @@ export default function Media({ mediaByFolder }: PageProps) {
                                 ))}
                               </div>
                               
-                              {/* Show "See More" link if there are more than 4 images */}
                               {hasMoreMedia && (
                                 <div className="mt-4 text-center">
                                   <Link href={`/media/folder/${folderName}`}>

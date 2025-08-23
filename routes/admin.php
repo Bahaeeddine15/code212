@@ -46,6 +46,8 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::get('/media/{media}/download', [MediaControllerAdmin::class, 'download'])->name('media.download');
     Route::get('/media/folder/{folder}', [MediaControllerAdmin::class, 'showFolder'])->name('media.folder');
     Route::delete('/media/folder/{folder}', [MediaControllerAdmin::class, 'destroyFolder'])->name('media.folder.destroy');
+    Route::get('/media/{media}/stream/{quality?}', [MediaControllerAdmin::class, 'stream'])->name('media.stream');
+    Route::get('/media/{media}/stream/quality/{quality}', [MediaControllerAdmin::class, 'stream'])->name('media.stream.quality');
 
     Route::resource('formations', FormationControllerAdmin::class);
     Route::resource('formations.modules', ModuleControllerAdmin::class)->shallow();

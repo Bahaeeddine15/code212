@@ -1,6 +1,6 @@
 import { Link, Head } from '@inertiajs/react';
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Play, Image as ImageIcon, Video } from 'lucide-react';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppContent } from '@/components/layout/app-content';
@@ -12,6 +12,7 @@ interface MediaFile {
     title: string;
     file_path: string;
     created_at: string;
+    video_qualities?: string;
 }
 
 interface FolderShowProps {
@@ -22,11 +23,12 @@ interface FolderShowProps {
 const getMediaType = (filePath: string) => {
     const ext = filePath.split('.').pop()?.toLowerCase();
     if (!ext) return 'Image';
-    const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+    const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', 'wmv', 'flv'];
     return videoExts.includes(ext) ? 'Vidéo' : 'Image';
 };
 
 const getImageUrl = (filePath: string) => `/storage/${filePath.replace(/^\/+/, '')}`;
+const getStreamUrl = (mediaId: number) => `/media/${mediaId}/stream`;
 
 export default function FolderShow(props: FolderShowProps) {
     const { folder, files } = props;
@@ -93,41 +95,100 @@ export default function FolderShow(props: FolderShowProps) {
                             </div>
 
                             {/* Media grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                                {filteredFiles.map(file => (
-                                    <Link key={file.id} href={`/media/${file.id}`}>
-                                        <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-4 flex flex-col items-center hover:shadow-xl transition-shadow group cursor-pointer">
-                                            {getMediaType(file.file_path) === 'Vidéo' ? (
-                                                <video
-                                                    src={getImageUrl(file.file_path)}
-                                                    className="w-full h-48 object-contain rounded-lg bg-gray-100 mb-2 group-hover:ring-2 group-hover:ring-blue-400 transition"
-                                                    muted
-                                                />
-                                            ) : (
-                                                <img
-                                                    src={getImageUrl(file.file_path)}
-                                                    alt={file.title}
-                                                    className="w-full h-48 object-contain rounded-lg bg-gray-100 mb-2 group-hover:ring-2 group_hover:ring-blue-400 transition"
-                                                    style={{ userSelect: 'none' }}
-                                                    onContextMenu={e => e.preventDefault()}
-                                                />
-                                            )}
-                                            <div className="font-medium text-center truncate w-full mt-1" title={file.title}>
-                                                {file.title}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {filteredFiles.map(file => {
+                                    const isVideo = getMediaType(file.file_path) === 'Vidéo';
+                                    
+                                    return (
+                                        <Link key={file.id} href={`/media/${file.id}`}>
+                                            <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer">
+                                                {/* Media Preview */}
+                                                <div className="aspect-video bg-gray-100 flex items-center justify-center relative overflow-hidden">
+                                                    {isVideo ? (
+                                                        <>
+                                                            <video
+                                                                src={getStreamUrl(file.id)}
+                                                                className="w-full h-full object-cover"
+                                                                preload="metadata"
+                                                                muted
+                                                                onLoadedMetadata={(e) => {
+                                                                    const video = e.target as HTMLVideoElement;
+                                                                    video.currentTime = 1;
+                                                                }}
+                                                            />
+                                                            {/* Video play overlay */}
+                                                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                <div className="bg-white/90 rounded-full p-4 shadow-lg">
+                                                                    <Play className="w-8 h-8 text-gray-900 ml-1" fill="currentColor" />
+                                                                </div>
+                                                            </div>
+                                                            {/* Video badge */}
+                                                            <div className="absolute bottom-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                                                                <Video className="w-3 h-3" />
+                                                                Vidéo
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <img
+                                                            src={getImageUrl(file.file_path)}
+                                                            alt={file.title}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                            loading="lazy"
+                                                        />
+                                                    )}
+                                                </div>
+
+                                                {/* Media Info */}
+                                                <div className="p-4">
+                                                    <h3 className="font-semibold text-sm line-clamp-2 mb-2 hover:text-blue-600 transition-colors" title={file.title}>
+                                                        {file.title}
+                                                    </h3>
+                                                    
+                                                    <div className="flex items-center justify-between">
+                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
+                                                            isVideo 
+                                                                ? 'bg-red-100 text-red-800' 
+                                                                : 'bg-blue-100 text-blue-800'
+                                                        }`}>
+                                                            {isVideo ? <Video className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
+                                                            {getMediaType(file.file_path)}
+                                                        </span>
+                                                        <span className="text-xs text-gray-500">
+                                                            {new Date(file.created_at).toLocaleDateString('fr-FR')}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Video quality info */}
+                                                    {isVideo && file.video_qualities && (
+                                                        <div className="mt-2">
+                                                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                                                {JSON.parse(file.video_qualities).length > 0 
+                                                                    ? `${Object.keys(JSON.parse(file.video_qualities)).length + 1} qualités`
+                                                                    : 'Streaming'
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                                                <span className={`px-2 py-1 rounded-full ${getMediaType(file.file_path) === 'Vidéo' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
-                                                    {getMediaType(file.file_path)}
-                                                </span>
-                                                <span>{new Date(file.created_at).toLocaleDateString('fr-FR')}</span>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                        </Link>
+                                    );
+                                })}
                             </div>
+                            
                             {filteredFiles.length === 0 && (
                                 <div className="text-center text-gray-500 py-12">
-                                    Aucun média trouvé dans ce dossier.
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <Search className="w-8 h-8 text-gray-400" />
+                                        </div>
+                                        <div>
+                                            <p className="text-lg font-medium mb-2">Aucun média trouvé</p>
+                                            <p className="text-sm">
+                                                {search ? 'Essayez de modifier votre recherche.' : 'Ce dossier est vide.'}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>

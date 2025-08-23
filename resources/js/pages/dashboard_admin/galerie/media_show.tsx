@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import AppLayout from '@/layouts/app-layout-admin';
 import { Head, Link, router } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit3, Trash2, Download, Eye, Calendar, User, FileText, Image } from 'lucide-react';
+
+// Add the quality type definition
+type QualityType = 'original' | '144p' | '240p' | '360p' | '480p' | '720p' | '1080p';
 
 interface MediaFile {
     id: number;
@@ -21,6 +24,8 @@ interface MediaFile {
 
 interface MediaShowProps {
     media: MediaFile;
+    qualities: Record<string, string>;
+    streamUrl: string;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -29,8 +34,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Aperçu média', href: '#' },
 ];
 
-export default function MediaShow({ media }: MediaShowProps) {
+export default function MediaShow({ media, qualities, streamUrl }: MediaShowProps) {
+    const [currentQuality, setCurrentQuality] = useState<QualityType>('original');
+    const videoRef = useRef<HTMLVideoElement>(null);
+    
     const getImageUrl = (filePath: string) => `/storage/${filePath.replace(/^\/+/, '')}`;
+    
     const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('fr-FR', {
         year: 'numeric',
         month: 'long',
@@ -46,28 +55,6 @@ export default function MediaShow({ media }: MediaShowProps) {
         return 'other';
     };
 
-    const getFileSize = async (url: string) => {
-        try {
-            const response = await fetch(url, { method: 'HEAD' });
-            const contentLength = response.headers.get('content-length');
-            if (contentLength) {
-                const bytes = parseInt(contentLength);
-                return formatFileSize(bytes);
-            }
-        } catch (error) {
-            console.error('Error getting file size:', error);
-        }
-        return 'Taille inconnue';
-    };
-
-    const formatFileSize = (bytes: number) => {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };
-
     const handleEdit = () => router.visit(`/admin/media/${media.id}/edit`);
     const handleDelete = () => {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')) {
@@ -78,6 +65,50 @@ export default function MediaShow({ media }: MediaShowProps) {
     };
     const handleDownload = () => window.location.href = `/admin/media/${media.id}/download`;
     const handleViewFull = () => window.open(getImageUrl(media.file_path), '_blank');
+
+    const changeVideoQuality = (quality: QualityType) => {
+        if (videoRef.current) {
+            const currentTime = videoRef.current.currentTime;
+            const wasPlaying = !videoRef.current.paused;
+            
+            setCurrentQuality(quality);
+            
+            setTimeout(() => {
+                if (videoRef.current) {
+                    videoRef.current.currentTime = currentTime;
+                    if (wasPlaying) {
+                        videoRef.current.play().catch(console.error);
+                    }
+                }
+            }, 100);
+        }
+    };
+
+    const getQualityLabel = (quality: QualityType): string => {
+        const labels: Record<QualityType, string> = {
+            'original': 'Originale',
+            '144p': '144p (Ultra low)',
+            '240p': '240p (Low)',
+            '360p': '360p (SD)',
+            '480p': '480p (SD)',
+            '720p': '720p (HD)',
+            '1080p': '1080p (Full HD)'
+        };
+        return labels[quality];
+    };
+
+    const getQualityColor = (quality: QualityType): string => {
+        const colors: Record<QualityType, string> = {
+            'original': 'bg-purple-600',
+            '144p': 'bg-red-600',
+            '240p': 'bg-orange-600',
+            '360p': 'bg-yellow-600',
+            '480p': 'bg-green-600',
+            '720p': 'bg-blue-600',
+            '1080p': 'bg-indigo-600'
+        };
+        return colors[quality];
+    };
 
     const fileType = getFileType(media.file_path);
 
@@ -115,7 +146,7 @@ export default function MediaShow({ media }: MediaShowProps) {
                 </Card>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Media Preview */}
+                    {/* Enhanced Media Preview */}
                     <div className="lg:col-span-2">
                         <Card>
                             <CardHeader>
@@ -124,16 +155,23 @@ export default function MediaShow({ media }: MediaShowProps) {
                                         <Image className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
                                         Aperçu du média
                                     </CardTitle>
-                                    <Badge variant="secondary" className="flex items-center">
-                                        {fileType === 'image' && <Image className="w-3 h-3 mr-1" />}
-                                        {fileType === 'video' && <FileText className="w-3 h-3 mr-1" />}
-                                        {fileType === 'other' && <FileText className="w-3 h-3 mr-1" />}
-                                        {fileType.charAt(0).toUpperCase() + fileType.slice(1)}
-                                    </Badge>
+                                    <div className="flex items-center gap-2">
+                                        <Badge variant="secondary" className="flex items-center">
+                                            {fileType === 'image' && <Image className="w-3 h-3 mr-1" />}
+                                            {fileType === 'video' && <FileText className="w-3 h-3 mr-1" />}
+                                            {fileType === 'other' && <FileText className="w-3 h-3 mr-1" />}
+                                            {fileType.charAt(0).toUpperCase() + fileType.slice(1)}
+                                        </Badge>
+                                        {fileType === 'video' && (
+                                            <Badge className={`${getQualityColor(currentQuality)} text-white`}>
+                                                {getQualityLabel(currentQuality)}
+                                            </Badge>
+                                        )}
+                                    </div>
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="bg-background dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center min-h-[400px]">
+                                <div className="bg-background dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center min-h-[400px] relative">
                                     {fileType === 'image' ? (
                                         <img
                                             src={getImageUrl(media.file_path)}
@@ -142,13 +180,41 @@ export default function MediaShow({ media }: MediaShowProps) {
                                             onClick={handleViewFull}
                                         />
                                     ) : fileType === 'video' ? (
-                                        <video
-                                            src={getImageUrl(media.file_path)}
-                                            controls
-                                            controlsList="nodownload"
-                                            className="max-w-full max-h-[500px] rounded-lg shadow-lg"
-                                            style={{ background: "#000" }}
-                                        />
+                                        <>
+                                            <video
+                                                ref={videoRef}
+                                                src={currentQuality === 'original' ? streamUrl : qualities[currentQuality]}
+                                                controls
+                                                controlsList="nodownload"
+                                                className="max-w-full max-h-[500px] rounded-lg shadow-lg"
+                                                style={{ background: "#000" }}
+                                                preload="metadata"
+                                            />
+                                            
+                                            {/* Enhanced Status Indicator */}
+                                            <div className="absolute bottom-4 left-4">
+                                                <div className="bg-black/80 backdrop-blur-sm rounded-lg border border-white/20 px-3 py-2 text-white text-xs flex items-center gap-2">
+                                                    <div className="flex items-center gap-1">
+                                                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                        <span>Streaming actif</span>
+                                                    </div>
+                                                    <div className="w-px h-4 bg-white/20"></div>
+                                                    <span>{Object.keys(qualities).length + 1} qualités</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Quality Info Panel */}
+                                            {currentQuality !== 'original' && (
+                                                <div className="absolute top-4 left-4">
+                                                    <div className="bg-black/80 backdrop-blur-sm rounded-lg border border-white/20 px-3 py-2 text-white text-xs">
+                                                        <div className="flex items-center gap-1">
+                                                            <div className={`w-2 h-2 ${getQualityColor(currentQuality)} rounded-full`}></div>
+                                                            <span>Lecture en {getQualityLabel(currentQuality)}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </>
                                     ) : (
                                         <div className="text-center p-8">
                                             <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
@@ -165,11 +231,49 @@ export default function MediaShow({ media }: MediaShowProps) {
                                         </div>
                                     )}
                                 </div>
+                                
+                                {/* Quality Grid (below video for videos) */}
+                                {fileType === 'video' && (
+                                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                                        <h4 className="font-medium text-sm mb-3 text-gray-700 dark:text-gray-300">
+                                            Qualités disponibles:
+                                        </h4>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+                                            <button
+                                                onClick={() => changeVideoQuality('original')}
+                                                className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                                    currentQuality === 'original'
+                                                        ? 'bg-purple-600 text-white shadow-lg scale-105'
+                                                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 border'
+                                                }`}
+                                            >
+                                                Originale
+                                            </button>
+                                            {/* Show all qualities in proper order with type casting */}
+                                            {(['144p', '240p', '360p', '480p', '720p', '1080p'] as QualityType[])
+                                                .filter(quality => qualities[quality]) // Only show if quality exists
+                                                .map(quality => (
+                                                    <button
+                                                        key={quality}
+                                                        onClick={() => changeVideoQuality(quality)}
+                                                        className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                                            currentQuality === quality
+                                                                ? `${getQualityColor(quality)} text-white shadow-lg scale-105`
+                                                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border'
+                                                        }`}
+                                                    >
+                                                        {quality.toUpperCase()}
+                                                    </button>
+                                                ))
+                                            }
+                                        </div>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
 
-                    {/* Media Information */}
+                    {/* Enhanced Media Information */}
                     <div className="space-y-6">
                         {/* Actions */}
                         <Card>
@@ -191,6 +295,52 @@ export default function MediaShow({ media }: MediaShowProps) {
                                 </Button>
                             </CardContent>
                         </Card>
+
+                        {/* Enhanced Video Quality Info */}
+                        {fileType === 'video' && (
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center">
+                                        <FileText className="w-4 h-4 mr-2" />
+                                        Informations vidéo
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                    <div>
+                                        <label className="text-sm font-medium text-muted-foreground">Qualité actuelle</label>
+                                        <div className={`mt-1 px-3 py-2 rounded-lg ${getQualityColor(currentQuality)} text-white text-sm font-medium`}>
+                                            {getQualityLabel(currentQuality)}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-medium text-muted-foreground">Qualités disponibles</label>
+                                        <div className="mt-1 flex flex-wrap gap-1">
+                                            <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded text-xs">
+                                                Originale
+                                            </span>
+                                            {(['144p', '240p', '360p', '480p', '720p', '1080p'] as QualityType[])
+                                                .filter(quality => qualities[quality])
+                                                .map(quality => (
+                                                    <span 
+                                                        key={quality}
+                                                        className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs"
+                                                    >
+                                                        {quality}
+                                                    </span>
+                                                ))
+                                            }
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-medium text-muted-foreground">Streaming</label>
+                                        <div className="mt-1 flex items-center gap-2">
+                                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                            <span className="text-sm text-green-600 dark:text-green-400">Actif</span>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
 
                         {/* File Information */}
                         <Card>

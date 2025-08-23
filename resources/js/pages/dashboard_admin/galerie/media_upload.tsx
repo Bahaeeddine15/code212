@@ -333,26 +333,7 @@ export default function MediaUpload() {
                                     <span className="font-medium text-foreground">50 MB</span>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Statistiques */}
-                        <div className="bg-card rounded-2xl shadow-lg border border-border p-6">
-                            <h3 className="font-bold text-foreground mb-4">📊 Statistiques</h3>
-                            <div className="space-y-3 text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Photos</span>
-                                    <span className="font-medium text-foreground">127 fichiers</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Vidéos</span>
-                                    <span className="font-medium text-foreground">23 fichiers</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Espace utilisé</span>
-                                    <span className="font-medium text-foreground">2.4 GB</span>
-                                </div>
-                            </div>
-                        </div>
+                        </div>           
                     </div>
                 </div>
             </div>
