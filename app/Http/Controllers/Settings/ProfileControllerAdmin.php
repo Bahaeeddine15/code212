@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Http\Requests\Settings\ProfileUpdateRequestAdmin; // ✅ Use admin-specific request
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class ProfileControllerAdmin extends Controller
     /**
      * Update the admin's profile settings.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequestAdmin $request): RedirectResponse // ✅ Use admin request
     {
         $admin = auth('admin')->user();
         $admin->fill($request->validated());
@@ -40,7 +40,8 @@ class ProfileControllerAdmin extends Controller
 
         $admin->save();
 
-        return to_route('admin.settings.profile.edit');
+        return redirect()->route('admin.settings.profile.edit')
+            ->with('status', 'profile-updated');
     }
 
     /**
