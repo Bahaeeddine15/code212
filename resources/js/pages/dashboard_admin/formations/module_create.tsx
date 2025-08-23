@@ -20,7 +20,6 @@ interface Formation {
 }
 
 export default function ModuleCreate({ formationId, formations = [] }: Props) {
-    const [selectedFormationId, setSelectedFormationId] = useState<number | null>(null);
     const [form, setForm] = useState({
         title: '',
         description: '',
@@ -31,14 +30,12 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Use selectedFormationId for module creation
-    const id = selectedFormationId || formationId;
-    console.log('Selected Formation ID:', id);
+    console.log('Formation ID:', formationId);
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/admin/dashboard' },
         { title: 'Formations', href: '/admin/formations' },
-        { title: 'Modules', href: `/admin/formations/${id}/modules` },
+        { title: 'Modules', href: `/admin/formations/${formationId}/modules` },
         { title: 'Nouveau module', href: '#' },
     ];
 
@@ -49,20 +46,21 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!id) {
+        if (!formationId) {
             setErrors({ formationId: 'Formation ID manquant.' });
             return;
         }
+        
         setIsSubmitting(true);
         const formData = new FormData();
         formData.append('title', form.title);
         formData.append('description', form.description);
         formData.append('duration', form.duration);
         formData.append('order', form.order.toString());
-        formData.append('formation_id', id.toString());
         if (form.file) formData.append('file', form.file);
 
-        router.post('/admin/modules', formData, {
+        // ✅ Fix: Use the correct route with formation ID
+        router.post(`/admin/formations/${formationId}/modules`, formData, {
             forceFormData: true,
             onError: (err) => {
                 setErrors(err);
@@ -70,10 +68,12 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
             },
             onSuccess: () => {
                 setIsSubmitting(false);
-                router.visit(`/admin/formations/${id}/modules`);
+                router.visit(`/admin/formations/${formationId}/modules`);
             },
         });
-    };    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm(prev => ({ ...prev, file: e.target.files?.[0] || null }));
         setErrors(prev => ({ ...prev, file: '' }));
     };
@@ -96,7 +96,7 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
                             </div>
                         </div>
                         <Link
-                            href={id ? `/admin/formations/${id}/modules` : '/admin/formations'}
+                            href={`/admin/formations/${formationId}/modules`}
                             className="bg-card dark:bg-card text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200 dark:border-blue-700"
                         >
                             <ArrowLeft className="w-5 h-5" />
@@ -196,7 +196,7 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
                                         {isSubmitting ? 'Création...' : 'Créer le module'}
                                     </button>
                                     <Link
-                                        href={id ? `/admin/formations/${id}/modules` : '/admin/formations'}
+                                        href={`/admin/formations/${formationId}/modules`}
                                         className="px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors flex items-center gap-2"
                                     >
                                         Annuler
@@ -216,7 +216,7 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
                             </h3>
                             <div className="space-y-3">
                                 <Link
-                                    href={id ? `/admin/formations/${id}/modules` : '/admin/formations'}
+                                    href={`/admin/formations/${formationId}/modules`}
                                     className="w-full bg-muted hover:bg-muted/80 text-foreground py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                                 >
                                     <ArrowLeft className="w-4 h-4" />
@@ -234,7 +234,7 @@ export default function ModuleCreate({ formationId, formations = [] }: Props) {
                             <div className="space-y-3 text-sm">
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Formation ID:</span>
-                                    <span className="font-medium text-foreground">#{id}</span>
+                                    <span className="font-medium text-foreground">#{formationId}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Type de fichier:</span>

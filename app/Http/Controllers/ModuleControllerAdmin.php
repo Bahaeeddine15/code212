@@ -31,7 +31,6 @@ class ModuleControllerAdmin extends Controller
     /**
      * Show the form for creating a new module.
      */
-
     public function create(Formation $formation)
     {
         return Inertia::render('dashboard_admin/formations/module_create', [
@@ -50,10 +49,11 @@ class ModuleControllerAdmin extends Controller
             'description' => 'required|string',
             'duration' => 'required|string',
             'order' => 'required|integer',
-            'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:51200',
+            'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:102400', // 100MB max
         ]);
 
-        $validated['formation_id'] = $formation->id; // Use the model's ID
+        // ✅ The formation_id comes from the route parameter
+        $validated['formation_id'] = $formation->id;
 
         if ($request->hasFile('file')) {
             $validated['file_path'] = $request->file('file')->store('modules', 'public');
@@ -62,23 +62,21 @@ class ModuleControllerAdmin extends Controller
 
         Module::create($validated);
 
-        return redirect()->route('formations.modules.index', ['formation' => $formation->id])
+        return redirect()->route('admin.formations.modules.index', ['formation' => $formation->id])
             ->with('success', 'Module créé avec succès.');
     }
-
-
 
     /**
      * Show the form for editing the specified module.
      */
     public function edit(Module $module)
     {
-        $formation = $module->formation; // Get formation from the module
+        $formation = $module->formation;
 
         return Inertia::render('dashboard_admin/formations/module_edit', [
             'formation' => $formation,
             'module' => $module,
-            'formationId' => $formation->id, // Add this for React component
+            'formationId' => $formation->id,
         ]);
     }
 
@@ -87,7 +85,7 @@ class ModuleControllerAdmin extends Controller
      */
     public function update(Request $request, Module $module)
     {
-        $formation = $module->formation; // Get formation from module
+        $formation = $module->formation;
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -109,7 +107,7 @@ class ModuleControllerAdmin extends Controller
 
         $module->update($validated);
 
-        return redirect()->route('formations.modules.index', ['formation' => $formation->id])
+        return redirect()->route('admin.formations.modules.index', ['formation' => $formation->id])
             ->with('success', 'Module mis à jour avec succès.');
     }
 
@@ -127,7 +125,7 @@ class ModuleControllerAdmin extends Controller
 
         $module->delete();
 
-        return redirect()->route('formations.modules.index', ['formation' => $formationId])
+        return redirect()->route('admin.formations.modules.index', ['formation' => $formationId])
             ->with('success', 'Module supprimé avec succès.');
     }
 }

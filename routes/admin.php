@@ -49,8 +49,17 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::get('/media/{media}/stream/{quality?}', [MediaControllerAdmin::class, 'stream'])->name('media.stream');
     Route::get('/media/{media}/stream/quality/{quality}', [MediaControllerAdmin::class, 'stream'])->name('media.stream.quality');
 
+    // Formation routes
     Route::resource('formations', FormationControllerAdmin::class);
-    Route::resource('formations.modules', ModuleControllerAdmin::class)->shallow();
+
+    // ✅ Module routes - explicit definition for better control
+    Route::get('formations/{formation}/modules', [ModuleControllerAdmin::class, 'index'])->name('formations.modules.index');
+    Route::get('formations/{formation}/modules/create', [ModuleControllerAdmin::class, 'create'])->name('formations.modules.create');
+    Route::post('formations/{formation}/modules', [ModuleControllerAdmin::class, 'store'])->name('formations.modules.store');
+    Route::get('modules/{module}', [ModuleControllerAdmin::class, 'show'])->name('modules.show');
+    Route::get('modules/{module}/edit', [ModuleControllerAdmin::class, 'edit'])->name('modules.edit');
+    Route::put('modules/{module}', [ModuleControllerAdmin::class, 'update'])->name('modules.update');
+    Route::delete('modules/{module}', [ModuleControllerAdmin::class, 'destroy'])->name('modules.destroy');
 
     Route::resource('competitions', CompetitionControllerAdmin::class);
     Route::patch('/competitions/{competition}/close', [CompetitionControllerAdmin::class, 'close'])->name('competitions.close');
