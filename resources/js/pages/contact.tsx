@@ -17,6 +17,7 @@ import {
     Video,
     Globe
 } from 'lucide-react';
+import Footer from '@/components/layout/footer';
 
 export default function Contact() {
     const { auth } = usePage<SharedData>().props;
@@ -399,7 +400,7 @@ export default function Contact() {
                     </div>
                 </section>
 
-                <MainFooter />
+                <Footer />
             </div>
         </>
     );

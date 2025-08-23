@@ -34,10 +34,10 @@ export default function FolderShow(props: FolderShowProps) {
     const { folder, files } = props;
     const [search, setSearch] = useState('');
 
+    // Create breadcrumbs for the header component
     const headerBreadcrumbs = [
         { title: "Dashboard", href: "/dashboard" },
-        { title: "Médiathèque", href: "/media" },
-        { title: `Dossier : ${folder}`, isActive: true },
+        { title: "Galerie Médias", isActive: true },
     ];
 
     const filteredFiles = files.filter(file =>
@@ -52,7 +52,8 @@ export default function FolderShow(props: FolderShowProps) {
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
             </Head>
-
+            
+            {/* Custom Dashboard Header */}
             <DashboardHeader breadcrumbs={headerBreadcrumbs} />
             
             <AppShell variant="sidebar">
@@ -60,8 +61,14 @@ export default function FolderShow(props: FolderShowProps) {
                     <AppSidebar />
                     <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
                         <div className="px-6 py-6 space-y-6">
+                            {/* Header */}
+                            <div className="mb-8">
+                                <h1 className="text-3xl font-bold text-gray-900 mb-2">Dossier : {folder}</h1>
+                                <p className="text-gray-600">Retrouvez tous les médias de ce dossier</p>
+                            </div>
+
                             {/* Navigation */}
-                            <div className="flex justify-between items-center">
+                            <div className="mb-8 flex justify-between items-center">
                                 <Link
                                     href="/media"
                                     className="text-blue-600 hover:underline font-medium text-base"
@@ -74,7 +81,7 @@ export default function FolderShow(props: FolderShowProps) {
                             </div>
 
                             {/* Search */}
-                            <div className="flex items-center gap-3">
+                            <div className="mb-8 flex items-center gap-3">
                                 <div className="relative w-full max-w-md">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                                     <input
@@ -189,6 +196,7 @@ export default function FolderShow(props: FolderShowProps) {
                 </div>
             </AppShell>
             
+            {/* Footer */}
             <Footer />
         </>
     );

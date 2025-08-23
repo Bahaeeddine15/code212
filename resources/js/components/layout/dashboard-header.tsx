@@ -14,7 +14,7 @@ interface DashboardHeaderProps {
 
 export default function DashboardHeader({ breadcrumbs = [], subtitle }: DashboardHeaderProps) {
   return (
-    <header className="w-full bg-[#0c152e] px-6 sm:px-12 py-4 sm:py-6 shadow-2xl relative overflow-hidden">
+    <header className="w-full bg-[#0c152e] px-6 sm:px-12 py-4 sm:py-6 relative overflow-hidden">
       {/* Grid Background Effect */}
       <div className="absolute inset-0 opacity-25 pointer-events-none select-none">
         <div 

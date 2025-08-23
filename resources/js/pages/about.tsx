@@ -18,6 +18,7 @@ import {
     Compass,
     ArrowRight
 } from 'lucide-react';
+import Footer from '@/components/layout/footer';
 
 export default function About() {
     const { auth } = usePage<SharedData>().props;
@@ -123,7 +124,7 @@ export default function About() {
                             </h1>
 
                             <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
-                                Le centre d'autonomisation numérique de l'Université Ibn Zohr, 
+                                Le centre d'autonomisation numérique de l'Université CADI AYYAD, 
                                 où l'innovation rencontre la formation pour façonner l'avenir du digital.
                             </p>
                         </div>
@@ -386,7 +387,7 @@ export default function About() {
                 </section>
 
                 {/* Footer */}
-                <MainFooter />
+                <Footer />
             </div>
         </>
     );

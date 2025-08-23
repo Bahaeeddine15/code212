@@ -61,7 +61,7 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <div className="bg-card rounded-xl shadow-lg border border-border overflow-hidden h-full flex flex-col">
+        <div className="bg-card rounded-xl border border-border overflow-hidden h-full flex flex-col">
             <div className="p-6 flex-1 flex flex-col">
                 <div className="text-center mb-8">
                     <h1 className="text-xl font-bold text-foreground">CODE212-UCA</h1>

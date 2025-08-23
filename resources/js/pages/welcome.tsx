@@ -457,13 +457,14 @@ export default function Welcome() {
                 </section>
 
                 {/* Footer */}
-                <MainFooter />
+                <Footer />
             </div>
         </>
     );
 }
 
 import type React from 'react';
+import Footer from '@/components/layout/footer';
 function useInView(ref: React.RefObject<Element>, options = {}) {
     const [inView, setInView] = useState(false);
     useEffect(() => {

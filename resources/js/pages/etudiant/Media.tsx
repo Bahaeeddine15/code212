@@ -8,6 +8,7 @@ import Footer from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Folder, Image as ImageIcon, Video, RefreshCw, Images, ArrowRight, Play } from 'lucide-react';
 
 interface MediaFile {
@@ -28,7 +29,7 @@ interface PageProps {
 
 const headerBreadcrumbs = [
   { title: "Dashboard", href: "/dashboard" },
-  { title: "Media", isActive: true },
+  { title: "Galerie Médias", isActive: true },
 ];
 
 export default function Media({ mediaByFolder }: PageProps) {
@@ -161,16 +162,9 @@ export default function Media({ mediaByFolder }: PageProps) {
           <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
             <div className="px-6 py-6 space-y-6">
               {/* Header */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
-                <div className="flex items-center space-x-4">
-                  <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                    <Images className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Galerie Médias</h1>
-                    <p className="text-gray-600 mt-2 text-lg">Images et vidéos accessibles</p>
-                  </div>
-                </div>
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Galerie Médias</h1>
+                <p className="text-gray-600">Images et vidéos accessibles</p>
               </div>
 
               {/* Search and Filter Controls */}
@@ -197,14 +191,15 @@ export default function Media({ mediaByFolder }: PageProps) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Trier par</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'date' | 'name')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="date">Date (plus récent d'abord)</option>
-                    <option value="name">Nom (A-Z)</option>
-                  </select>
+                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'date' | 'name')}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Trier par" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="date">Date (plus récent d'abord)</SelectItem>
+                      <SelectItem value="name">Nom (A-Z)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
