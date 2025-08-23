@@ -44,6 +44,18 @@ export default function MediaShow() {
     { title: "Galerie Médias", isActive: true },
   ];
 
+  function getQualityLabel(currentQuality: string): React.ReactNode {
+    throw new Error('Function not implemented.');
+  }
+
+  function getQualityColor(currentQuality: string) {
+    throw new Error('Function not implemented.');
+  }
+
+  function changeVideoQuality(arg0: string): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <>
       <Head>
