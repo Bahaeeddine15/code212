@@ -3,8 +3,24 @@ import { Mail, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1a2332] text-white py-12 px-8">
-      <div className="max-w-7xl mx-auto">
+    <footer className="bg-[#1a2332] text-white py-12 px-8 relative overflow-hidden">
+      {/* Grid Background Effect */}
+      <div className="absolute inset-0 opacity-25 pointer-events-none select-none">
+        <div 
+          className="w-full h-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '36px 36px'
+          }}
+        />
+      </div>
+      
+      {/* Content overlay */}
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Social Media */}
           <div className="space-y-6">
@@ -103,6 +119,7 @@ export default function Footer() {
           <p className="text-gray-400 text-sm">
             Copyright © 2025 <span className="text-purple-400 font-medium">Code212</span>
           </p>
+        </div>
         </div>
       </div>
     </footer>

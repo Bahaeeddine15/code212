@@ -122,16 +122,9 @@ export default function Media({ mediaByFolder }: PageProps) {
           <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
             <div className="px-6 py-6 space-y-6">
               {/* Header */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-2 border-blue-200 p-8">
-                <div className="flex items-center space-x-4">
-                  <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                    <Images className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Galerie Médias</h1>
-                    <p className="text-gray-600 mt-2 text-lg">Images et vidéos accessibles</p>
-                  </div>
-                </div>
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Galerie Médias</h1>
+                <p className="text-gray-600">Images et vidéos accessibles</p>
               </div>
 
               {/* Search and Filter Controls */}
