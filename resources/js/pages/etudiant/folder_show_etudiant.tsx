@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppContent } from '@/components/layout/app-content';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 
 interface MediaFile {
     id: number;
@@ -34,29 +35,33 @@ export default function FolderShow(props: FolderShowProps) {
     const [search, setSearch] = useState('');
 
     const headerBreadcrumbs = [
-        { title: "Dashboard Étudiant", href: "/dashboard" },
+        { title: "Dashboard", href: "/dashboard" },
         { title: "Médiathèque", href: "/media" },
         { title: `Dossier : ${folder}`, isActive: true },
     ];
-    const subtitle = "Retrouvez tous les médias de ce dossier.";
 
     const filteredFiles = files.filter(file =>
         file.title.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
-        <AppShell variant="sidebar">
-            <Head title={`Médiathèque - Dossier : ${folder}`} />
-            <div className="flex w-full min-h-screen">
-                <AppSidebar />
-                <div className="flex-1 flex flex-col min-h-screen bg-white">
-                    <div className="pt-8">
-                      <DashboardHeader breadcrumbs={headerBreadcrumbs} subtitle={subtitle} />
-                    </div>
-                    <AppContent variant="sidebar" className="bg-white">
-                        <div className="max-w-6xl mx-auto px-4 py-10 mt-4">
+        <>
+            <Head>
+                <title>{`Médiathèque - Dossier : ${folder}`}</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+            </Head>
+
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+                        <div className="px-6 py-6 space-y-6">
                             {/* Navigation */}
-                            <div className="mb-8 flex justify-between items-center">
+                            <div className="flex justify-between items-center">
                                 <Link
                                     href="/media"
                                     className="text-blue-600 hover:underline font-medium text-base"
@@ -69,7 +74,7 @@ export default function FolderShow(props: FolderShowProps) {
                             </div>
 
                             {/* Search */}
-                            <div className="mb-8 flex items-center gap-3">
+                            <div className="flex items-center gap-3">
                                 <div className="relative w-full max-w-md">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                                     <input
@@ -182,7 +187,9 @@ export default function FolderShow(props: FolderShowProps) {
                         </div>
                     </AppContent>
                 </div>
-            </div>
-        </AppShell>
+            </AppShell>
+            
+            <Footer />
+        </>
     );
 }
