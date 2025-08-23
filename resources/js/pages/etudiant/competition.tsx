@@ -241,7 +241,7 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                                         : 'Inscription refusée'}
                                                 </Badge>
                                             ) : competition.status === 'Ouvert' ? (
-                                                <Button className="flex-1" asChild>
+                                                <Button className="flex-1 bg-[#4f39f6] hover:bg-[#41e296] hover:text-[#3a2b75] text-white" asChild>
                                                     <Link href={`/competition/${competition.id}/register`}>
                                                         S'inscrire
                                                     </Link>

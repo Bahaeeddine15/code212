@@ -8,6 +8,7 @@ import Footer from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Folder, Image as ImageIcon, Video, RefreshCw, Images, ArrowRight } from 'lucide-react';
 
 interface MediaFile {
@@ -27,7 +28,7 @@ interface PageProps {
 
 const headerBreadcrumbs = [
   { title: "Dashboard", href: "/dashboard" },
-  { title: "Media", isActive: true },
+  { title: "Galerie Médias", isActive: true },
 ];
 
 export default function Media({ mediaByFolder }: PageProps) {
@@ -151,14 +152,15 @@ export default function Media({ mediaByFolder }: PageProps) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Trier par</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'date' | 'name')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="date">Date (plus récent d'abord)</option>
-                    <option value="name">Nom (A-Z)</option>
-                  </select>
+                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'date' | 'name')}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Trier par" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="date">Date (plus récent d'abord)</SelectItem>
+                      <SelectItem value="name">Nom (A-Z)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

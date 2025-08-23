@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppContent } from '@/components/layout/app-content';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 
 interface MediaFile {
     id: number;
@@ -31,29 +32,39 @@ export default function FolderShow(props: FolderShowProps) {
     const { folder, files } = props;
     const [search, setSearch] = useState('');
 
+    // Create breadcrumbs for the header component
     const headerBreadcrumbs = [
-        { title: "Dashboard Étudiant", href: "/dashboard" },
-        { title: "Médiathèque", href: "/media" }, // Fixed: was "Galerie Media"
-        { title: `Dossier : ${folder}`, isActive: true },
+        { title: "Dashboard", href: "/dashboard" },
+        { title: "Galerie Médias", isActive: true },
     ];
-    const subtitle = "Retrouvez tous les médias de ce dossier.";
 
     const filteredFiles = files.filter(file =>
         file.title.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
-        <AppShell variant="sidebar">
-            <Head title={`Médiathèque - Dossier : ${folder}`} />
-            <div className="flex w-full min-h-screen">
-                <AppSidebar />
-                <div className="flex-1 flex flex-col min-h-screen bg-white">
-                    {/* Header is outside the scrollable content */}
-                    <div className="pt-8">
-                      <DashboardHeader breadcrumbs={headerBreadcrumbs} subtitle={subtitle} />
-                    </div>
-                    <AppContent variant="sidebar" className="bg-white">
-                        <div className="max-w-6xl mx-auto px-4 py-10 mt-4">
+        <>
+            <Head>
+                <title>{`Médiathèque - Dossier : ${folder}`}</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+            </Head>
+            
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    <AppSidebar />
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+                        <div className="px-6 py-6 space-y-6">
+                            {/* Header */}
+                            <div className="mb-8">
+                                <h1 className="text-3xl font-bold text-gray-900 mb-2">Dossier : {folder}</h1>
+                                <p className="text-gray-600">Retrouvez tous les médias de ce dossier</p>
+                            </div>
+
                             {/* Navigation */}
                             <div className="mb-8 flex justify-between items-center">
                                 <Link
@@ -122,7 +133,10 @@ export default function FolderShow(props: FolderShowProps) {
                         </div>
                     </AppContent>
                 </div>
-            </div>
-        </AppShell>
+            </AppShell>
+            
+            {/* Footer */}
+            <Footer />
+        </>
     );
 }

@@ -17,6 +17,7 @@ import {
     Heart,
     Star
 } from 'lucide-react';
+import Footer from '@/components/layout/footer';
 
 export default function ClubsPartners() {
     const { auth } = usePage<SharedData>().props;
@@ -688,7 +689,7 @@ export default function ClubsPartners() {
                     </div>
                 </section>
 
-                <MainFooter />
+                <Footer />
             </div>
         </>
     );

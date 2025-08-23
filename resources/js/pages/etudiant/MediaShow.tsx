@@ -2,7 +2,8 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppContent } from '@/components/layout/app-content';
-import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -25,22 +26,38 @@ export default function MediaShow() {
   const { media } = props;
   const isVideo = media.file_extension ? ['mp4','mov','avi','wmv','flv','webm'].includes(media.file_extension.toLowerCase()) : false;
 
+  // Create breadcrumbs for the header component
+  const headerBreadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Galerie Médias", isActive: true },
+  ];
+
   return (
-    <AppShell variant="sidebar">
-      <Head title={media.title} />
-      <div className="flex w-full min-h-screen">
-        <AppSidebar />
-        <AppContent variant="sidebar" className="flex-1 bg-white">
-          <AppSidebarHeader breadcrumbs={[
-            { title: 'Dashboard Étudiant', href: '/dashboard' }, 
-            { title: 'Médiathèque', href: '/media' }, 
-            { title: media.folder || 'Média', href: media.folder ? `/media/folder/${media.folder}` : '/media' },
-            { title: media.title, href: `/media/${media.id}` }
-          ]} />
-          <div className="container mx-auto px-4 py-6 space-y-6 max-w-5xl">
-            <div className="flex justify-between items-center flex-wrap gap-4">
-              <h1 className="text-2xl font-bold">{media.title}</h1>
-              <div className="flex gap-2">
+    <>
+      <Head>
+        <title>{media.title}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </Head>
+      
+      {/* Custom Dashboard Header */}
+      <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+      
+      <AppShell variant="sidebar">
+        <div className="flex w-full min-h-screen">
+          <AppSidebar />
+          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+            <div className="px-6 py-6 space-y-6">
+              {/* Header */}
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{media.title}</h1>
+                <p className="text-gray-600">{media.detail || 'Détails du média'}</p>
+              </div>
+
+              <div className="flex justify-between items-center flex-wrap gap-4">
+                <div></div>
+                <div className="flex gap-2">
                 {media.folder && (
                   <Button variant="outline" asChild>
                     <Link href={`/media/folder/${media.folder}`}>
@@ -103,5 +120,9 @@ export default function MediaShow() {
         </AppContent>
       </div>
     </AppShell>
+    
+    {/* Footer */}
+    <Footer />
+  </>
   );
 }

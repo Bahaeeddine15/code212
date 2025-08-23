@@ -43,9 +43,10 @@ export default function CompetitionRegistrationPage({ competition }: Competition
         group_members: '',
     });
 
-    const breadcrumbs: BreadcrumbItem[] = [
-        { href: '/dashboard', title: 'Dashboard' },
-        { href: '/competition', title: 'Compétitions' },
+    // Create breadcrumbs for the header component
+    const headerBreadcrumbs = [
+        { title: "Dashboard", href: "/dashboard" },
+        { title: "Compétitions", isActive: true },
     ];
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -64,7 +65,7 @@ export default function CompetitionRegistrationPage({ competition }: Competition
             <Head title={`Inscription - ${competition.title}`} />
             
             {/* Custom Dashboard Header */}
-            <DashboardHeader breadcrumbs={breadcrumbs} />
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
             
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
