@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Calendar, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Search, ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import { useState } from "react";
 import { type BreadcrumbItem } from "@/types";
 
@@ -69,6 +69,7 @@ export default function Articles({ articles, categories, filters }: Props) {
   const [categoryFilter, setCategoryFilter] = useState(
     filters.category || "all"
   );
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const handleSearch = () => {
     router.get(
@@ -134,15 +135,42 @@ export default function Articles({ articles, categories, filters }: Props) {
       
       <AppShell variant="sidebar">
         <div className="flex w-full min-h-screen">
-          <AppSidebar />
+          {/* Mobile Backdrop */}
+          {isMobileOpen && (
+            <div 
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+              onClick={() => setIsMobileOpen(false)}
+            />
+          )}
+          
+          {/* Sidebar with mobile state */}
+          <div className={`
+            fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+            transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+            lg:translate-x-0 transition-transform duration-300 ease-in-out
+          `}>
+            <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+          </div>
+          
           <AppContent
             variant="sidebar"
-            className="flex-1 bg-gray-50 font-[Poppins]"
+            className="flex-1 bg-gray-50 font-[Poppins] lg:ml-0"
           >
 
           <div className="max-w-7xl mx-auto px-4 py-5">
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden mb-4">
+              <button
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+              >
+                <Menu className="w-5 h-5" />
+                <span className="text-sm font-medium">Menu</span>
+              </button>
+            </div>
+            
             <div className="mb-4">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
                 Articles
               </h1>
               <p className="text-gray-600">

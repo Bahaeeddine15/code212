@@ -12,7 +12,7 @@ export function MainHeader({ breadcrumbs = [] }: MainHeaderProps) {
                 <div className="flex items-center justify-between">
                     {/* Section gauche - Dashboard et breadcrumbs */}
                     <div className="flex items-center space-x-4">
-                        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
                         
                         {breadcrumbs.length > 0 && (
                             <nav className="flex items-center space-x-2 text-sm">
@@ -35,8 +35,30 @@ export function MainHeader({ breadcrumbs = [] }: MainHeaderProps) {
                         )}
                     </div>
 
-                    {/* Section centrale - Logo CODE212 */}
-                    <div className="flex items-center justify-center">
+                    {/* Section centrale - Logo CODE212 (Mobile and Small screens) */}
+                    <div className="flex items-center justify-center md:hidden">
+                        <div className="text-center">
+                            <img 
+                                src="/logo/Logo.png" 
+                                alt="CODE212 Logo" 
+                                className="h-12 sm:h-14 w-auto object-contain filter brightness-110 drop-shadow-lg"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Section droite - Logo for iPad/Tablet mode (replaces robot) */}
+                    <div className="hidden md:flex lg:hidden items-center justify-end">
+                        <div className="text-center">
+                            <img 
+                                src="/logo/Logo.png" 
+                                alt="CODE212 Logo" 
+                                className="h-14 md:h-16 w-auto object-contain filter brightness-110 drop-shadow-lg"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Section centrale - Logo CODE212 (Desktop lg+) */}
+                    <div className="hidden lg:flex items-center justify-center">
                         <div className="text-center">
                             <img 
                                 src="/logo/Logo.png" 
@@ -46,8 +68,8 @@ export function MainHeader({ breadcrumbs = [] }: MainHeaderProps) {
                         </div>
                     </div>
 
-                    {/* Section droite - Robot */}
-                    <div className="flex items-center">
+                    {/* Section droite - Robot (Desktop only, hidden on iPad) */}
+                    <div className="hidden lg:flex items-center">
                         <div className="relative">
                             <div className="w-16 h-16 flex items-center justify-center">
                                 <img 

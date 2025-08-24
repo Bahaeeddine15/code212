@@ -6,7 +6,8 @@ import { Head, Link, router } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar as CalendarIcon, MapPin, Users, ArrowLeft, Clock } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, Users, ArrowLeft, Clock, Menu } from 'lucide-react';
+import { useState } from 'react';
 
 interface Event {
   id: number;
@@ -30,6 +31,8 @@ interface Event {
 interface Props { event: Event }
 
 export default function EventDetail({ event }: Props) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  
   // Dates uniquement, sans heures
   function fmt(d?: string | null){ return d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '' }
   const badgeColors: Record<string,string> = {
@@ -41,8 +44,24 @@ export default function EventDetail({ event }: Props) {
   return (
     <AppShell variant="sidebar">
       <Head title={`${event.title} - Événements`} />
-      <AppSidebar />
-      <AppContent variant="sidebar" className="overflow-x-hidden bg-white">
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar with mobile state */}
+      <div className={`
+        fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+        transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+        lg:translate-x-0 transition-transform duration-300 ease-in-out
+      `}>
+        <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+      </div>
+      
+      <AppContent variant="sidebar" className="overflow-x-hidden bg-white lg:ml-0">
         <AppSidebarHeader 
           breadcrumbs={[
             { title: 'Dashboard Étudiant', href: '/dashboard' },
@@ -51,7 +70,18 @@ export default function EventDetail({ event }: Props) {
           ]}
         />
 
-        <div className="p-6 space-y-6 max-w-5xl mx-auto">
+        <div className="p-4 lg:p-6 space-y-6 max-w-5xl mx-auto">
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden mb-4">
+            <button
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+            >
+              <Menu className="w-5 h-5" />
+              <span className="text-sm font-medium">Menu</span>
+            </button>
+          </div>
+          
           <Link href="/events">
             <Button variant="outline" className="mb-2">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -77,7 +107,7 @@ export default function EventDetail({ event }: Props) {
                       </Badge>
                     )}
                   </div>
-                  <CardTitle className="text-3xl">{event.title}</CardTitle>
+                  <CardTitle className="text-2xl lg:text-3xl">{event.title}</CardTitle>
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600 mt-3">
                     <div className="flex items-center gap-2"><CalendarIcon className="w-4 h-4" /> {fmt(event.start_date)} → {fmt(event.end_date)}</div>
                     <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {event.location}</div>

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
+import { Menu } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -52,6 +53,7 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
     const { flash } = usePage().props as { flash?: { success?: string } };
     const [showSuccess, setShowSuccess] = useState(false);
     const [notificationDismissed, setNotificationDismissed] = useState(!showNotification);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
     
     const { data, setData, post, processing, errors } = useForm({
         nom: '',
@@ -127,9 +129,35 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
             
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
-                    <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
-                        <div className="p-6">
+                    {/* Mobile Backdrop */}
+                    {isMobileOpen && (
+                        <div 
+                            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+                            onClick={() => setIsMobileOpen(false)}
+                        />
+                    )}
+                    
+                    {/* Sidebar with mobile state */}
+                    <div className={`
+                        fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+                        transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+                        lg:translate-x-0 transition-transform duration-300 ease-in-out
+                    `}>
+                        <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+                    </div>
+                    
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                        <div className="p-4 lg:p-6 pt-6">
+                            {/* Mobile Menu Button */}
+                            <div className="lg:hidden mb-4">
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                                >
+                                    <Menu className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Menu</span>
+                                </button>
+                            </div>
                 {/* Message de succès */}
                 {showSuccess && (
                     <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
@@ -220,7 +248,7 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                         </div>
                     </div>
                 )}                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
                         {existingReservation ? 'Votre Réservation en Cours' : 'Nouvelle Réservation'}
                     </h1>
                     <p className="text-gray-600">

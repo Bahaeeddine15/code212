@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Folder, Image as ImageIcon, Video, RefreshCw, Images, ArrowRight, Play } from 'lucide-react';
+import { Folder, Image as ImageIcon, Video, RefreshCw, Images, ArrowRight, Play, Menu } from 'lucide-react';
 
 interface MediaFile {
   id: number;
@@ -36,6 +36,7 @@ export default function Media({ mediaByFolder }: PageProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [folderSearch, setFolderSearch] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const getImageUrl = (filePath: string) => `/storage/${filePath.replace(/^\/+/, '')}`;
   const getStreamUrl = (mediaId: number) => `/media/${mediaId}/stream`;
@@ -158,12 +159,39 @@ export default function Media({ mediaByFolder }: PageProps) {
       <DashboardHeader breadcrumbs={headerBreadcrumbs} />
       <AppShell variant="sidebar">
         <div className="flex w-full min-h-screen">
-          <AppSidebar />
-          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
-            <div className="px-6 py-6 space-y-6">
+          {/* Mobile Backdrop */}
+          {isMobileOpen && (
+            <div 
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+              onClick={() => setIsMobileOpen(false)}
+            />
+          )}
+          
+          {/* Sidebar with mobile state */}
+          <div className={`
+            fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+            transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+            lg:translate-x-0 transition-transform duration-300 ease-in-out
+          `}>
+            <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+          </div>
+          
+          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+            <div className="px-4 lg:px-6 py-6 space-y-6">
+              {/* Mobile Menu Button */}
+              <div className="lg:hidden mb-4">
+                <button
+                  onClick={() => setIsMobileOpen(!isMobileOpen)}
+                  className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                >
+                  <Menu className="w-5 h-5" />
+                  <span className="text-sm font-medium">Menu</span>
+                </button>
+              </div>
+              
               {/* Header */}
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Galerie Médias</h1>
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Galerie Médias</h1>
                 <p className="text-gray-600">Images et vidéos accessibles</p>
               </div>
 

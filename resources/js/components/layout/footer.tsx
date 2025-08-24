@@ -21,8 +21,8 @@ export default function Footer() {
       {/* Content overlay */}
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and Social Media */}
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-12">
+          {/* Logo and Description */}
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
               <img 
@@ -32,32 +32,12 @@ export default function Footer() {
               />
             </div>
             
-            {/* Social Media Icons */}
-            <div className="flex space-x-3">
-              <a 
-                href="https://www.facebook.com/share/176u4P2dHd/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
-              >
-                <Facebook className="w-5 h-5 text-white" />
-              </a>
-              <a 
-                href="https://www.instagram.com/code212uca/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity"
-              >
-                <Instagram className="w-5 h-5 text-white" />
-              </a>
-              <a 
-                href="https://www.linkedin.com/company/code212-uca/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors"
-              >
-                <Linkedin className="w-5 h-5 text-white" />
-              </a>
+            {/* Platform Description */}
+            <div className="max-w-sm">
+              <p className="text-gray-300 text-base leading-relaxed">
+                Empowering students with advanced digital skills and cutting-edge technology training 
+                to shape the future of innovation and excellence.
+              </p>
             </div>
           </div>
 
@@ -83,33 +63,42 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Programs */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Programs</h3>
-            <ul className="space-y-2">
-              <li>
-                <span className="text-gray-300 text-sm">CODEUR & DÉVELOPPEUR</span>
-              </li>
-              <li>
-                <span className="text-gray-300 text-sm">DATA SPECIALISTS</span>
-              </li>
-              <li>
-                <span className="text-gray-300 text-sm">IOT DEVELOPER/ARCHITECT</span>
-              </li>
-              <li>
-                <span className="text-gray-300 text-sm">SYSTÈMES ET SÉCURITÉ</span>
-              </li>
-            </ul>
-          </div>
-
           {/* Contact */}
-          <div>
+          <div className="space-y-4">
             <h3 className="text-lg font-semibold mb-4 text-white">Contact</h3>
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                 <Mail className="w-4 h-4 text-white" />
               </div>
               <span className="text-gray-300 text-sm">code212@uca.ac.ma</span>
+            </div>
+            
+            {/* Social Media Icons */}
+            <div className="flex space-x-3 pt-2">
+              <a 
+                href="https://www.facebook.com/share/176u4P2dHd/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+              >
+                <Facebook className="w-5 h-5 text-white" />
+              </a>
+              <a 
+                href="https://www.instagram.com/code212uca/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity"
+              >
+                <Instagram className="w-5 h-5 text-white" />
+              </a>
+              <a 
+                href="https://www.linkedin.com/company/code212-uca/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors"
+              >
+                <Linkedin className="w-5 h-5 text-white" />
+              </a>
             </div>
           </div>
         </div>
