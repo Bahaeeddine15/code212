@@ -35,7 +35,8 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'), {
+        // ✅ Fix: Use admin profile route instead of student route
+        patch(route('admin.settings.profile.update'), {
             preserveScroll: true,
         });
     };

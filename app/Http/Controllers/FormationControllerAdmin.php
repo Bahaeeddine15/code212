@@ -58,7 +58,7 @@ class FormationControllerAdmin extends Controller
 
         Formation::create($validated);
 
-        return redirect()->route('formations.index');
+        return redirect()->route('admin.formations.index');
     }
 
     /**
@@ -106,7 +106,7 @@ class FormationControllerAdmin extends Controller
 
         $formation->update($validated);
 
-        return redirect()->route('formations.index');
+        return redirect()->route('admin.formations.index');
     }
 
     /**
@@ -115,6 +115,6 @@ class FormationControllerAdmin extends Controller
     public function destroy(Formation $formation)
     {
         $formation->delete();
-        return redirect()->route('formations.index');
+        return redirect()->route('admin.formations.index');
     }
 }

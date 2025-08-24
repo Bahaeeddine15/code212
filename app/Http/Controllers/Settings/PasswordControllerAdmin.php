@@ -26,14 +26,17 @@ class PasswordControllerAdmin extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
+            'current_password' => ['required', 'current_password:admin'], // ✅ Specify admin guard
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
+        // ✅ Use admin guard instead of default user()
+        $admin = auth('admin')->user();
+
+        $admin->update([
             'password' => Hash::make($validated['password']),
         ]);
 
-        return back();
+        return back()->with('status', 'password-updated');
     }
 }

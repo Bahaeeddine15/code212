@@ -24,4 +24,5 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
 Route::middleware('auth:admin')->prefix('admin/settings')->group(function () {
     Route::get('etudiants', [EtudiantControllerAdmin::class, 'index'])->name('admin.settings.etudiants');
     Route::post('etudiants/{id}/reset-password', [EtudiantControllerAdmin::class, 'resetPassword'])->name('admin.settings.etudiants.reset');
+    Route::patch('/etudiants/{etudiant}/update-school', [EtudiantControllerAdmin::class, 'updateSchool'])->name('etudiants.updateSchool');
 });

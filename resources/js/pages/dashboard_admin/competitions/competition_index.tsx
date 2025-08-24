@@ -59,8 +59,8 @@ interface Competition {
 interface Registration {
     id: number;
     competitionId: number;
-    competitionTitle: string; // Add this line
-    competitionType: 'individual' | 'group'; // Add this line
+    competitionTitle: string;
+    competitionType: 'individual' | 'group';
     participantName: string;
     email: string;
     phone: string;
@@ -212,7 +212,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
             reg.participantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.club.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            reg.competitionTitle.toLowerCase().includes(searchTerm.toLowerCase()); // Add this line
+            reg.competitionTitle.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || reg.status === statusFilter;
         return matchesCompetition && matchesSearch && matchesStatus;
     });
@@ -247,7 +247,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <Input
-                                placeholder="Rechercher par participant, email, club ou compétition..." // Update this
+                                placeholder="Rechercher par participant, email, club ou compétition..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full px-4 py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200"
@@ -483,12 +483,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                             </h2>
                             <p className="text-muted-foreground mt-2">Liste des dernières inscriptions aux compétitions</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className="border-blue-600 text-primary hover:bg-blue-50 dark:bg-blue-900/20">
-                                <Download className="h-4 w-4 mr-1" />
-                                Exporter
-                            </Button>
-                        </div>
+                        {/* ✅ Removed export button */}
                     </div>
 
                     {filteredRegistrations.length === 0 ? (
@@ -502,13 +497,13 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Participant</TableHead>
-                                    <TableHead>Compétition</TableHead> {/* Add this line */}
-                                    <TableHead>Type</TableHead> {/* Add this line */}
+                                    <TableHead>Compétition</TableHead>
+                                    <TableHead>Type</TableHead>
                                     <TableHead>Contact</TableHead>
                                     <TableHead>Club</TableHead>
                                     <TableHead>Catégorie</TableHead>
                                     <TableHead>Statut</TableHead>
-                                    <TableHead>Paiement</TableHead>
+                                    {/* ✅ Removed Paiement column */}
                                     <TableHead>Date d'inscription</TableHead>
                                     <TableHead>Actions</TableHead>
                                 </TableRow>
@@ -538,7 +533,6 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                 </div>
                                             </div>
                                         </TableCell>
-                                        {/* Add this new Type cell */}
                                         <TableCell>
                                             <Badge variant="outline" className={getTypeColor(registration.competitionType)}>
                                                 {(() => {
@@ -567,11 +561,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                 {registration.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline">
-                                                {registration.paymentStatus}
-                                            </Badge>
-                                        </TableCell>
+                                        {/* ✅ Removed payment status cell */}
                                         <TableCell>{formatDate(registration.registrationDate)}</TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2">

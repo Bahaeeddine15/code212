@@ -26,4 +26,25 @@ class EtudiantControllerAdmin extends Controller
 
         return back()->with('success', 'Password reset to code212 for ' . $etudiant->name);
     }
+
+    /**
+     * Update student's school
+     */
+    public function updateSchool(Request $request, $etudiantId)
+    {
+        $request->validate([
+            'ecole' => 'required|string|max:255',
+        ]);
+
+        try {
+            $etudiant = \App\Models\Etudiant::findOrFail($etudiantId);
+            $etudiant->update([
+                'ecole' => $request->ecole
+            ]);
+
+            return back()->with('success', 'École mise à jour avec succès pour ' . $etudiant->name);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Erreur lors de la mise à jour de l\'école.');
+        }
+    }
 }
