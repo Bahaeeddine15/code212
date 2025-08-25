@@ -25,7 +25,7 @@ import {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: '/admin/dashboard',
     },
 ];
 
@@ -199,7 +199,7 @@ export default function Dashboard({name}: DashboardProps) {
                             { label: "Vues totales", value: "1,245" },
                             { label: "Articles ce mois", value: "8" }
                         ]}
-                        href="/articles"
+                        href="/admin/articles"
                     />
 
                     <DataCompartment
@@ -213,7 +213,7 @@ export default function Dashboard({name}: DashboardProps) {
                             { label: "Événements à venir", value: "12" },
                             { label: "Participants totaux", value: "456" }
                         ]}
-                        href="/events"
+                        href="/admin/events"
                     />
 
                     <DataCompartment
@@ -269,7 +269,7 @@ export default function Dashboard({name}: DashboardProps) {
                             { label: "Nouvelles inscriptions", value: "23" },
                             { label: "Taux d'engagement", value: "87%" }
                         ]}
-                        href="/dashboard"
+                        href="/admin/dashboard"
                         showReadMore={false}
                     />
                 </div>
