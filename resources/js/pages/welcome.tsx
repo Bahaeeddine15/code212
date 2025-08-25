@@ -40,11 +40,14 @@ import {
     Play,
     Calendar,
     MapPin,
-    ArrowRight
+    ArrowRight,
+    Menu,
+    X
 } from 'lucide-react';
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <>
@@ -58,44 +61,54 @@ export default function Welcome() {
                 {/* Header/Navigation */}
                 <header className="bg-gray-900 fixed top-0 left-0 w-full z-50 shadow-lg">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between items-center h-20">
+                        <div className="flex justify-between items-center h-16 sm:h-20">
                             {/* Logo */}
                             <div className="flex items-center space-x-3">
-                                <div className="text-white text-2xl font-bold">
+                                <div className="text-white text-xl sm:text-2xl font-bold">
                                     C<span className="text-pink-500">O</span>DE<span className="text-pink-500">'212'</span>
                                 </div>
                             </div>
 
-                            {/* Navigation Menu */}
-                            <nav className="hidden md:flex items-center space-x-8">
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">HOME</a>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">OUR PROGRAMS</a>
-                                <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium">À PROPOS</Link>
-                                <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
-                                <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT</Link>
+                            {/* Desktop Navigation Menu */}
+                            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">HOME</a>
+                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">OUR PROGRAMS</a>
+                                <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">À PROPOS</Link>
+                                <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">CLUBS ET PARTENAIRES</Link>
+                                <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">CONTACT</Link>
                             </nav>
 
+                            {/* Mobile menu button */}
+                            <div className="lg:hidden">
+                                <button
+                                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                    className="text-white hover:text-pink-400 transition-colors p-2"
+                                >
+                                    {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                </button>
+                            </div>
+
                             {/* Auth Buttons */}
-                            <div className="flex items-center space-x-4">
+                            <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
-                                        className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors font-medium"
+                                        className="bg-pink-600 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-lg hover:bg-pink-700 transition-colors font-medium text-sm xl:text-base"
                                     >
                                         Dashboard
                                     </Link>
                                 ) : (
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-2 xl:space-x-3">
                                         <Link
                                             href={route('register')}
-                                            className="text-white px-6 py-3 rounded-lg hover:bg-opacity-80 transition-colors font-medium"
+                                            className="text-white px-4 py-2 xl:px-6 xl:py-3 rounded-lg hover:bg-opacity-80 transition-colors font-medium text-sm xl:text-base"
                                             style={{ backgroundColor: '#A927B7' }}
                                         >
                                             SIGN UP
                                         </Link>
                                         <Link
                                             href={route('login')}
-                                            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                                            className="bg-blue-600 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm xl:text-base"
                                         >
                                             LOGIN
                                         </Link>
@@ -103,22 +116,63 @@ export default function Welcome() {
                                 )}
                             </div>
                         </div>
+                        
+                        {/* Mobile Navigation Menu */}
+                        {mobileMenuOpen && (
+                            <div className="lg:hidden bg-gray-800 border-t border-gray-700">
+                                <div className="px-2 pt-2 pb-3 space-y-1">
+                                    <a href="#" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">HOME</a>
+                                    <a href="#" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">OUR PROGRAMS</a>
+                                    <Link href="/about" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">À PROPOS</Link>
+                                    <Link href="/clubs-partners" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
+                                    <Link href="/contact" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">CONTACT</Link>
+                                    
+                                    {/* Mobile Auth Buttons */}
+                                    <div className="pt-4 border-t border-gray-600">
+                                        {auth.user ? (
+                                            <Link
+                                                href={route('dashboard')}
+                                                className="block w-full bg-pink-600 text-white px-3 py-2 rounded-lg hover:bg-pink-700 transition-colors font-medium text-center"
+                                            >
+                                                Dashboard
+                                            </Link>
+                                        ) : (
+                                            <div className="space-y-2">
+                                                <Link
+                                                    href={route('register')}
+                                                    className="block w-full text-white px-3 py-2 rounded-lg hover:bg-opacity-80 transition-colors font-medium text-center"
+                                                    style={{ backgroundColor: '#A927B7' }}
+                                                >
+                                                    SIGN UP
+                                                </Link>
+                                                <Link
+                                                    href={route('login')}
+                                                    className="block w-full bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium text-center"
+                                                >
+                                                    LOGIN
+                                                </Link>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </header>
 
                 {/* Hero Section */}
-                <section className="bg-gray-900 relative overflow-hidden min-h-screen flex items-center">
+                <section className="bg-gray-900 relative overflow-hidden min-h-screen flex items-center pt-16 sm:pt-20">
                     {/* Background Geometric Elements */}
                     <div className="absolute inset-0">
                         {/* Gradient circles and shapes */}
-                        <div className="absolute top-20 right-20 w-32 h-32 bg-purple-500 rounded-full opacity-20 blur-xl"></div>
-                        <div className="absolute top-40 right-40 w-24 h-24 bg-pink-500 rounded-full opacity-30"></div>
-                        <div className="absolute bottom-32 right-32 w-20 h-20 bg-blue-500 rounded-full opacity-25"></div>
-                        <div className="absolute bottom-20 right-60 w-16 h-16 bg-green-500 rounded-full opacity-30"></div>
-                        <div className="absolute top-60 right-80 w-12 h-12 bg-yellow-500 rounded-full opacity-40"></div>
+                        <div className="absolute top-20 right-20 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-purple-500 rounded-full opacity-20 blur-xl"></div>
+                        <div className="absolute top-40 right-40 w-12 h-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 bg-pink-500 rounded-full opacity-30"></div>
+                        <div className="absolute bottom-32 right-32 w-10 h-10 sm:w-14 sm:h-14 lg:w-20 lg:h-20 bg-blue-500 rounded-full opacity-25"></div>
+                        <div className="absolute bottom-20 right-60 w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-green-500 rounded-full opacity-30"></div>
+                        <div className="absolute top-60 right-80 w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 bg-yellow-500 rounded-full opacity-40"></div>
 
                         {/* Geometric lines/polygons */}
-                        <div className="absolute top-32 right-0 w-96 h-96 opacity-20">
+                        <div className="absolute top-32 right-0 w-48 h-48 sm:w-64 sm:h-64 lg:w-96 lg:h-96 opacity-20">
                             <svg viewBox="0 0 400 400" className="w-full h-full">
                                 <polygon points="100,50 300,80 250,200 150,180" fill="url(#gradient1)" stroke="#ec4899" strokeWidth="2"/>
                                 <polygon points="200,150 350,180 300,300 200,280" fill="url(#gradient2)" stroke="#8b5cf6" strokeWidth="2"/>
@@ -137,14 +191,14 @@ export default function Welcome() {
                     </div>
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                        <div className="grid lg:grid-cols-2 gap-12 items-center">
+                        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                             {/* Left Side - Content */}
-                            <div>
-                                <div className="mb-6">
-                                    <span className="text-pink-400 text-lg font-mono">&gt; Hello World_</span>
+                            <div className="text-center lg:text-left">
+                                <div className="mb-4 sm:mb-6">
+                                    <span className="text-pink-400 text-base sm:text-lg font-mono">&gt; Hello World_</span>
                                 </div>
 
-                                <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-7xl font-bold text-white mb-6 sm:mb-8 leading-tight">
                                     <span className="animated-gradient">CENTER OF</span>
                                     <br />
                                     <span className="animated-gradient">DIGITAL</span>
@@ -152,17 +206,18 @@ export default function Welcome() {
                                     <span className="animated-gradient">EMPOWERMENT</span>
                                 </h1>
 
-                                <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 justify-center lg:justify-start">
                                     {!auth.user && (
                                         <Link
                                             href={route('login')}
-                                            className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all duration-300 inline-flex items-center justify-center"
+                                            className="bg-blue-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-blue-700 transition-all duration-300 inline-flex items-center justify-center"
                                         >
                                             LOGIN
                                         </Link>
                                     )}
-                                    <button className="border border-gray-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-all duration-300 inline-flex items-center justify-center">
-                                        <Play className="mr-2 w-5 h-5" />
+                                    <button className="border border-gray-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 transition-all duration-300 inline-flex items-center justify-center">
+                                        <Play className="mr-2 w-4 h-4 sm:w-5 sm:h-5" />
+                                        Watch Demo
                                     </button>
                                 </div>
                             </div>
@@ -241,28 +296,28 @@ export default function Welcome() {
                 </section>
 
                 {/* Statistics Section */}
-                <section className="py-16 bg-gray-800 text-white">
+                <section className="py-12 sm:py-16 bg-gray-800 text-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                            <div>
-                                <div className="text-4xl font-bold text-pink-400 mb-2">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center">
+                            <div className="p-4">
+                                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-400 mb-2">
                                     <CountUp end={176} duration={2} className="text-pink-400" />
                                 </div>
-                                <div className="text-gray-300">Total Institutions</div>
+                                <div className="text-sm sm:text-base text-gray-300">Total Institutions</div>
                             </div>
-                            <div>
-                                <div className="text-4xl font-bold text-purple-400 mb-2">
+                            <div className="p-4">
+                                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-400 mb-2">
                                     <CountUp end={123320} duration={2.5} className="text-purple-400" />
                                 </div>
-                                <div className="text-gray-300">Total Students</div>
+                                <div className="text-sm sm:text-base text-gray-300">Total Students</div>
                             </div>
-                            <div>
-                                <div className="text-4xl font-bold text-blue-400 mb-2">
+                            <div className="p-4">
+                                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-400 mb-2">
                                     <CountUp end={46} duration={1.5} className="text-blue-400" />
                                 </div>
-                                <div className="text-gray-300">Total Trackers</div>
+                                <div className="text-sm sm:text-base text-gray-300">Total Trackers</div>
                             </div>
-                            <div>
+                            <div className="p-4">
                                 <div className="text-4xl font-bold text-green-400 mb-2">
                                     <CountUp end={104} duration={2} className="text-green-400" />
                                 </div>
@@ -357,48 +412,48 @@ export default function Welcome() {
                 </section>
 
                 {/* Programs Section */}
-                <section className="py-20 bg-gray-50 w-full">
-                    <div className="w-full px-4 sm:px-8 lg:px-16">
-                        <div className="text-center mb-16">
-                            <h2 className="text-5xl md:text-6xl font-extrabold mb-8 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent drop-shadow-lg tracking-tight animate-pulse">
+                <section className="py-16 sm:py-20 bg-gray-50 w-full">
+                    <div className="w-full px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-12 sm:mb-16">
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold mb-6 sm:mb-8 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent drop-shadow-lg tracking-tight animate-pulse">
                                 🚀 Des formations certifiantes pour façonner les métiers du numérique de demain !
                             </h2>
                         </div>
 
-                        <div className="w-full">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 w-full">
-                                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                        <Code2 className="w-6 h-6 text-blue-600" />
+                        <div className="max-w-7xl mx-auto">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                                        <Code2 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">
                                         CODEUR & DÉVELOPPEUR
                                     </h3>
-                                    <p className="text-gray-600 text-sm">
+                                    <p className="text-gray-600 text-xs sm:text-sm">
                                         Formation complète en développement web et logiciel
                                     </p>
                                 </div>
 
-                                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                                        <Globe className="w-6 h-6 text-purple-600" />
+                                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                                        <Globe className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">
                                         DATA SPECIALISTS
                                     </h3>
-                                    <p className="text-gray-600 text-sm">
+                                    <p className="text-gray-600 text-xs sm:text-sm">
                                         Spécialisation en analyse et science des données
                                     </p>
                                 </div>
 
-                                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                                        <Cpu className="w-6 h-6 text-green-600" />
+                                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                                        <Cpu className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">
                                         IOT DEVELOPER/ARCHITECT
                                     </h3>
-                                    <p className="text-gray-600 text-sm">
+                                    <p className="text-gray-600 text-xs sm:text-sm">
                                         Développement d'objets connectés et systèmes IoT
                                     </p>
                                 </div>

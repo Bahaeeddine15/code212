@@ -135,58 +135,59 @@ export default function MediaUpload() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Upload médias" />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
+            <div className="flex h-full flex-1 flex-col gap-4 sm:gap-6 lg:gap-8 p-3 sm:p-4 lg:p-6 bg-background">
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-8">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                                <Camera className="w-8 h-8 text-white" />
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-4 sm:p-6 lg:p-8">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="flex items-center space-x-3 sm:space-x-4">
+                            <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+                                <Camera className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-foreground">Upload Médias</h1>
-                                <p className="text-muted-foreground mt-2 text-lg">Ajoutez une nouvelle image ou vidéo à la galerie</p>
+                                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Upload Médias</h1>
+                                <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg">Ajoutez une nouvelle image ou vidéo à la galerie</p>
                             </div>
                         </div>
                         <Link
                             href="/admin/media"
-                            className="bg-card dark:bg-card text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200 dark:border-blue-700"
+                            className="bg-card dark:bg-card text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200 dark:border-blue-700 text-sm sm:text-base"
                         >
-                            <ArrowLeft className="w-5 h-5" />
-                            <span>Retour à la galerie</span>
+                            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Retour à la galerie</span>
+                            <span className="sm:hidden">Retour</span>
                         </Link>
                     </div>
                 </div>
 
                 {/* Layout organisé avec sidebar */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {/* Section principale - Formulaire */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
-                            <div className="flex items-center space-x-3 mb-6">
+                    <div className="xl:col-span-2 space-y-6 sm:space-y-8">
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6 lg:p-8">
+                            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
                                 <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
-                                    <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                    <Upload className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
                                 </div>
-                                <h2 className="text-xl font-bold text-foreground">Informations du média</h2>
+                                <h2 className="text-lg sm:text-xl font-bold text-foreground">Informations du média</h2>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-foreground mb-2">Titre du fichier *</label>
+                                        <label className="block text-xs sm:text-sm font-medium text-foreground mb-2">Titre du fichier *</label>
                                         <input
                                             name="title"
                                             value={formData.title}
                                             onChange={handleInputChange}
                                             placeholder="Ex: Photo événement 2024"
                                             disabled={isUploading}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            className="w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
                                         />
                                         {errors.title && <ErrorMessage error={errors.title} />}
                                     </div>
                                     
                                     <div>
-                                        <label className="block text-sm font-medium text-foreground mb-2">Dossier *</label>
+                                        <label className="block text-xs sm:text-sm font-medium text-foreground mb-2">Dossier *</label>
                                         <input
                                             type="text"
                                             name="folder"
@@ -194,7 +195,7 @@ export default function MediaUpload() {
                                             onChange={handleInputChange}
                                             placeholder="Ex: evenements-2024"
                                             disabled={isUploading}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            className="w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
                                             required
                                         />
                                         {errors.folder && <ErrorMessage error={errors.folder} />}
@@ -202,14 +203,14 @@ export default function MediaUpload() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-foreground mb-2">Description *</label>
+                                    <label className="block text-xs sm:text-sm font-medium text-foreground mb-2">Description *</label>
                                     <textarea
                                         name="detail"
                                         value={formData.detail}
                                         onChange={handleInputChange}
                                         placeholder="Décrivez le contenu de ce fichier..."
                                         disabled={isUploading}
-                                        className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                                        className="w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors resize-none"
                                         rows={4}
                                     />
                                     {errors.detail && <ErrorMessage error={errors.detail} />}
@@ -217,8 +218,8 @@ export default function MediaUpload() {
 
                                 {/* Zone d'upload */}
                                 <div>
-                                    <label className="block text-sm font-medium text-foreground mb-2">Fichier à uploader *</label>
-                                    <div className={`border-2 border-dashed rounded-xl p-8 transition-all duration-200 ${
+                                    <label className="block text-xs sm:text-sm font-medium text-foreground mb-2">Fichier à uploader *</label>
+                                    <div className={`border-2 border-dashed rounded-xl p-4 sm:p-6 lg:p-8 transition-all duration-200 ${
                                         errors.file ? 'border-red-500 bg-red-50 dark:bg-red-900/10' : 'border-border hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10'
                                     }`}>
                                         <input
@@ -235,14 +236,14 @@ export default function MediaUpload() {
                                             ) : (
                                                 <div className="text-center">
                                                     <FileIcon />
-                                                    <p className="text-lg font-semibold text-foreground mb-2">
+                                                    <p className="text-base sm:text-lg font-semibold text-foreground mb-2">
                                                         Glissez votre fichier ici
                                                     </p>
-                                                    <p className="text-sm text-muted-foreground mb-4">ou cliquez pour sélectionner</p>
-                                                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold pointer-events-none">
+                                                    <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">ou cliquez pour sélectionner</p>
+                                                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold pointer-events-none text-sm sm:text-base">
                                                         Choisir un fichier
                                                     </div>
-                                                    <p className="text-xs text-muted-foreground mt-4">
+                                                    <p className="text-xs text-muted-foreground mt-3 sm:mt-4">
                                                         JPG, JPEG, PNG, GIF, MP4, AVI, MOV, WMV • Max 50MB
                                                     </p>
                                                 </div>
@@ -253,29 +254,30 @@ export default function MediaUpload() {
                                 </div>
 
                                 {/* Boutons d'action */}
-                                <div className="flex gap-4 pt-6">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6">
                                     <button
                                         type="submit"
                                         disabled={isUploading}
-                                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+                                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 sm:px-6 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base min-h-[44px] sm:min-h-[48px]"
                                     >
                                         {isUploading ? (
                                             <>
-                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                                <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white"></div>
                                                 <span>Upload en cours...</span>
                                             </>
                                         ) : (
                                             <>
-                                                <CheckCircle className="w-5 h-5" />
+                                                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                                                 <span>Uploader le fichier</span>
                                             </>
                                         )}
                                     </button>
                                     <Link
                                         href="/admin/media"
-                                        className="px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+                                        className="px-4 sm:px-6 py-3 border border-border rounded-lg text-foreground hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm sm:text-base min-h-[44px] sm:min-h-[48px] sm:flex-none sm:w-auto"
                                     >
-                                        Annuler
+                                        <span className="hidden sm:inline">Annuler</span>
+                                        <span className="sm:hidden">Annuler</span>
                                     </Link>
                                 </div>
                             </form>
@@ -283,28 +285,29 @@ export default function MediaUpload() {
                     </div>
 
                     {/* Sidebar - Conseils et actions */}
-                    <div className="space-y-6">
+                    <div className="xl:col-span-1 space-y-4 sm:space-y-6">
                         {/* Actions rapides */}
-                        <div className="bg-card rounded-2xl shadow-lg border border-border p-6">
-                            <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-                                <Plus className="w-5 h-5 text-blue-600" />
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6">
+                            <h3 className="font-bold text-foreground mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
+                                <Plus className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                                 Actions rapides
                             </h3>
-                            <div className="space-y-3">
+                            <div className="space-y-2 sm:space-y-3">
                                 <Link
                                     href="/admin/media"
-                                    className="w-full bg-muted hover:bg-muted/80 text-foreground py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                                    className="w-full bg-muted hover:bg-muted/80 text-foreground py-2 sm:py-3 px-3 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-2 justify-center"
                                 >
-                                    <ArrowLeft className="w-4 h-4" />
-                                    Retour à la galerie
+                                    <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                                    <span className="hidden sm:inline">Retour à la galerie</span>
+                                    <span className="sm:hidden">Galerie</span>
                                 </Link>
                             </div>
                         </div>
 
                         {/* Conseils pour l'upload */}
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 rounded-2xl shadow-lg border border-green-200 dark:border-green-800 p-6">
-                            <h3 className="font-bold text-green-800 dark:text-green-400 mb-4">💡 Conseils pour vos médias</h3>
-                            <ul className="space-y-2 text-sm text-green-700 dark:text-green-300">
+                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 rounded-2xl shadow-lg border border-green-200 dark:border-green-800 p-4 sm:p-6">
+                            <h3 className="font-bold text-green-800 dark:text-green-400 mb-3 sm:mb-4 text-sm sm:text-base">💡 Conseils pour vos médias</h3>
+                            <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-green-700 dark:text-green-300">
                                 <li>• Utilisez des noms explicites</li>
                                 <li>• Organisez par dossiers thématiques</li>
                                 <li>• Optimisez la taille des images</li>
@@ -314,12 +317,12 @@ export default function MediaUpload() {
                         </div>
 
                         {/* Formats supportés */}
-                        <div className="bg-card rounded-2xl shadow-lg border border-border p-6">
-                            <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-                                <ImageIcon className="w-5 h-5 text-blue-600" />
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6">
+                            <h3 className="font-bold text-foreground mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
+                                <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                                 Formats supportés
                             </h3>
-                            <div className="space-y-3 text-sm">
+                            <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">Images</span>
                                     <span className="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 px-2 py-1 rounded">JPG, PNG, GIF</span>

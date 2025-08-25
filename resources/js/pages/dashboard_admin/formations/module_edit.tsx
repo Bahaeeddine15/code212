@@ -102,13 +102,13 @@ export default function ModuleEdit({ module, formation, formationId }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Modifier le module" />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
+            <div className="flex h-full flex-1 flex-col gap-6 sm:gap-8 p-4 sm:p-6 bg-background">
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-8">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                                <Edit className="w-8 h-8 text-white" />
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-4 sm:p-8">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                            <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg self-start">
+                                <Edit className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold text-foreground">Modifier le module</h1>
@@ -126,9 +126,9 @@ export default function ModuleEdit({ module, formation, formationId }: Props) {
                 </div>
 
                 {/* Layout organisé avec sidebar */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
                     {/* Section principale - Formulaire */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="xl:col-span-2 space-y-6 sm:space-y-8">
                         {/* Informations principales */}
                         <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
                             <div className="flex items-center space-x-3 mb-6">

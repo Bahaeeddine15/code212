@@ -51,70 +51,127 @@ export default function ReservationShow() {
     return (
         <AppLayout>
             <Head title={`Détails réservation #${reservation.id}`} />
-            <div className="max-w-2xl mx-auto py-10 px-4">
-                <Link href="/admin/reservations" className="flex items-center gap-2 text-muted-foreground hover:text-purple-600 mb-6">
-                    <ArrowLeft className="w-4 h-4" />
+            <div className="max-w-4xl mx-auto py-6 sm:py-8 lg:py-10 px-3 sm:px-4 lg:px-6">
+                <Link href="/admin/reservations" className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-purple-600 mb-4 sm:mb-6 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                     Retour à la liste
                 </Link>
-                <div className="bg-card dark:bg-card rounded-lg shadow p-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold text-foreground">Détails de la réservation</h1>
-                        {getStatus()}
+                <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6 lg:p-8">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4 mb-6 sm:mb-8">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Détails de la réservation</h1>
+                        <div className="self-start">
+                            {getStatus()}
+                        </div>
                     </div>
-                    <div className="space-y-4">
-                        <div>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">Informations étudiant</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><User className="inline w-4 h-4 mr-1" />{reservation.studentName}</div>
-                                <div><Mail className="inline w-4 h-4 mr-1" />{reservation.studentEmail}</div>
-                                <div><Phone className="inline w-4 h-4 mr-1" />{reservation.studentPhone || '--'}</div>
-                                <div>ID Étudiant: {reservation.studentId || '--'}</div>
+                    <div className="space-y-6 sm:space-y-8">
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
+                                <User className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-600" />
+                                Informations étudiant
+                            </h2>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
+                                    <span className="font-medium">Nom:</span>
+                                    <span className="truncate">{reservation.studentName}</span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
+                                    <span className="font-medium">Email:</span>
+                                    <span className="truncate">{reservation.studentEmail}</span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
+                                    <span className="font-medium">Téléphone:</span>
+                                    <span>{reservation.studentPhone || '--'}</span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <span className="font-medium">ID Étudiant:</span>
+                                    <span>{reservation.studentId || '--'}</span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">Détails réservation</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>Salle: {reservation.roomName || '--'}</div>
-                                <div>Capacité: {reservation.capacity ?? '--'} personnes</div>
-                                <div><Calendar className="inline w-4 h-4 mr-1" />{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : '--'}</div>
+
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
+                                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
+                                Détails réservation
+                            </h2>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <span className="font-medium">Salle:</span>
+                                    <span className="truncate">{reservation.roomName || '--'}</span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <span className="font-medium">Capacité:</span>
+                                    <span>{reservation.capacity ?? '--'} personnes</span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground col-span-1 lg:col-span-2">
+                                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
+                                    <span className="font-medium">Date:</span>
+                                    <span>{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : '--'}</span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">Description</h2>
-                            <div>{reservation.description || '--'}</div>
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">Soumise le</h2>
-                            <div>{reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleString('fr-FR') : '--'}</div>
-                        </div>
-                        {reservation.processedAt && (
-                            <div>
-                                <h2 className="text-lg font-semibold text-foreground mb-2">Traitée le</h2>
-                                <div>{new Date(reservation.processedAt).toLocaleString('fr-FR')} par {reservation.processedBy || '--'}</div>
-                            </div>
-                        )}
-                        <div>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">Informations techniques</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>Ressource: {reservation.resource_type ?? '--'}</div>
-                                <div>Lieu: {reservation.location_type ?? '--'}</div>
-                                <div>Détails salle: {reservation.room_details ?? '--'}</div>
+
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Description</h2>
+                            <div className="text-sm sm:text-base text-foreground bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border">
+                                {reservation.description || 'Aucune description fournie'}
                             </div>
                         </div>
+
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
+                                <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />
+                                Historique
+                            </h2>
+                            <div className="space-y-3">
+                                <div className="text-sm sm:text-base text-foreground">
+                                    <span className="font-medium text-muted-foreground">Soumise le:</span>
+                                    <span className="ml-2">{reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleString('fr-FR') : '--'}</span>
+                                </div>
+                                {reservation.processedAt && (
+                                    <div className="text-sm sm:text-base text-foreground">
+                                        <span className="font-medium text-muted-foreground">Traitée le:</span>
+                                        <span className="ml-2">{new Date(reservation.processedAt).toLocaleString('fr-FR')} par {reservation.processedBy || '--'}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Informations techniques</h2>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                                <div className="text-sm sm:text-base text-foreground">
+                                    <span className="font-medium text-muted-foreground">Ressource:</span>
+                                    <span className="ml-2">{reservation.resource_type ?? '--'}</span>
+                                </div>
+                                <div className="text-sm sm:text-base text-foreground">
+                                    <span className="font-medium text-muted-foreground">Lieu:</span>
+                                    <span className="ml-2">{reservation.location_type ?? '--'}</span>
+                                </div>
+                                <div className="text-sm sm:text-base text-foreground col-span-1 lg:col-span-2">
+                                    <span className="font-medium text-muted-foreground">Détails salle:</span>
+                                    <span className="ml-2">{reservation.room_details ?? '--'}</span>
+                                </div>
+                            </div>
+                        </div>
+
                         {reservation.status === 'pending' && (
-                            <div className="flex justify-end space-x-3 pt-4 border-t">
+                            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 sm:pt-6 border-t border-border">
                                 <button
                                     onClick={handleReject}
-                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
+                                    className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm sm:text-base font-medium min-h-[44px] order-2 sm:order-1"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
                                     <span>Rejeter</span>
                                 </button>
                                 <button
                                     onClick={handleApprove}
-                                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+                                    className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors text-sm sm:text-base font-medium min-h-[44px] order-1 sm:order-2"
                                 >
-                                    <Check className="w-4 h-4" />
+                                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                                     <span>Approuver</span>
                                 </button>
                             </div>
