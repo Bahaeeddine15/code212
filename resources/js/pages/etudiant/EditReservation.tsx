@@ -24,7 +24,7 @@ interface Reservation {
     date_reservation: string;
     status: string;
     resource_type?: string;
-    location_type?: string;
+    location_type?: string | string[];
     room_details?: string;
 }
 
@@ -51,7 +51,11 @@ export default function EditReservation({ reservation }: Props) {
         description: reservation.description,
         date_reservation: reservation.date_reservation,
         resource_type: reservation.resource_type || '',
-        location_type: reservation.location_type || '',
+        location_type: Array.isArray(reservation.location_type) 
+            ? reservation.location_type 
+            : reservation.location_type 
+                ? [reservation.location_type] 
+                : [] as string[],
         room_details: reservation.room_details || '',
     });
 
@@ -210,7 +214,7 @@ export default function EditReservation({ reservation }: Props) {
                                         onChange={(e) => {
                                             setData('resource_type', e.target.value);
                                             if (e.target.value !== 'local') {
-                                                setData('location_type', '');
+                                                setData('location_type', [] as string[]);
                                                 setData('room_details', '');
                                             }
                                         }}
@@ -218,7 +222,7 @@ export default function EditReservation({ reservation }: Props) {
                                         required
                                     >
                                         <option value="">Sélectionnez le type de ressource</option>
-                                        <option value="pc">Poste (PC)</option>
+                                        <option value="pc">Post PC (2ème étage zone coding)</option>
                                         <option value="local">Local</option>
                                     </select>
                                     {errors.resource_type && <p className="text-red-500 text-sm">{errors.resource_type}</p>}
@@ -226,45 +230,39 @@ export default function EditReservation({ reservation }: Props) {
 
                                 {/* Options pour local */}
                                 {data.resource_type === 'local' && (
-                                    <>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="location_type">Type de local *</Label>
-                                            <select
-                                                id="location_type"
-                                                value={data.location_type}
-                                                onChange={(e) => {
-                                                    setData('location_type', e.target.value);
-                                                    setData('room_details', '');
-                                                }}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.location_type ? 'border-red-500' : 'border-gray-300'}`}
-                                                required
-                                            >
-                                                <option value="">Sélectionnez le type de local</option>
-                                                <option value="salle_conference">Salle de conférence</option>
-                                                <option value="salle_reunion">Salle de réunion</option>
-                                            </select>
-                                            {errors.location_type && <p className="text-red-500 text-sm">{errors.location_type}</p>}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="location_type">Type de local * (Sélections multiples possibles)</Label>
+                                        <div className="space-y-3 mt-2">
+                                            {[
+                                                { value: 'salle_concentration_3e', label: 'Salle de concentration (3ème étage)' },
+                                                { value: 'salle_formation_ja_rdc', label: 'Salle de formation IA' },
+                                                { value: 'salle_conference_rdc', label: 'Salle de conférence (RDC)' },
+                                                { value: 'zone_coding', label: 'Zone coding' }
+                                            ].map((option) => (
+                                                <label key={option.value} className="flex items-center space-x-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={data.location_type.includes(option.value)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setData('location_type', [...data.location_type, option.value]);
+                                                            } else {
+                                                                setData('location_type', data.location_type.filter(item => item !== option.value));
+                                                            }
+                                                        }}
+                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                    />
+                                                    <span className="text-sm font-medium text-gray-900">{option.label}</span>
+                                                </label>
+                                            ))}
                                         </div>
-
-                                        {data.location_type === 'salle_reunion' && (
-                                            <div className="space-y-2">
-                                                <Label htmlFor="room_details">Étage *</Label>
-                                                <select
-                                                    id="room_details"
-                                                    value={data.room_details}
-                                                    onChange={(e) => setData('room_details', e.target.value)}
-                                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.room_details ? 'border-red-500' : 'border-gray-300'}`}
-                                                    required
-                                                >
-                                                    <option value="">Sélectionnez l'étage</option>
-                                                    <option value="1er_etage">1er étage</option>
-                                                    <option value="2eme_etage">2ème étage</option>
-                                                    <option value="3eme_etage">3ème étage</option>
-                                                </select>
-                                                {errors.room_details && <p className="text-red-500 text-sm">{errors.room_details}</p>}
-                                            </div>
-                                        )}
-                                    </>
+                                        {errors.location_type && <p className="text-red-500 text-sm">{errors.location_type}</p>}
+                                        <div className="mt-2">
+                                            <p className="text-xs text-gray-500 italic">
+                                                <strong>Note :</strong> RDC signifie "Rez-de-chaussée"
+                                            </p>
+                                        </div>
+                                    </div>
                                 )}
 
                                 <div className="space-y-2">
