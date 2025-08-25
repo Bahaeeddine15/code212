@@ -41,8 +41,12 @@ export default function About() {
                         <div className="flex justify-between items-center h-16 sm:h-20">
                             {/* Logo */}
                             <div className="flex items-center space-x-3">
-                                <Link href="/" className="text-white text-xl sm:text-2xl font-bold">
-                                    C<span className="text-pink-500">O</span>DE<span className="text-pink-500">'212'</span>
+                                <Link href="/" className="flex items-center">
+                                    <img 
+                                        src="/cd212.png" 
+                                        alt="CODE212 Logo" 
+                                        className="h-12 w-auto object-contain"
+                                    />
                                 </Link>
                             </div>
 

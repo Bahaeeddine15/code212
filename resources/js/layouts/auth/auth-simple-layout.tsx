@@ -57,15 +57,17 @@ export default function AuthSimpleLayout({ children, title, description }: Props
             </div>
 
             {/* Main Content */}
-            <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-6 md:p-10 relative z-10">
-                <div className="w-full max-w-md">
+            <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-10 md:p-10 relative z-10">
+                <div className="w-full max-w-lg">
                     <div className="bg-gray-800 bg-opacity-90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-gray-700">
                         <div className="flex flex-col gap-8">
                             <div className="flex flex-col items-center gap-6">
                                 <Link href={route('home')} className="flex flex-col items-center gap-3 font-medium">
-                                    <div className="text-white text-3xl font-bold">
-                                        C<span style={{ color: '#A927B7' }}>O</span>DE<span style={{ color: '#A927B7' }}>'212'</span>
-                                    </div>
+                                    <img 
+                                        src="/cd212.png" 
+                                        alt="CODE'212 Logo" 
+                                        className="h-16 w-100 object-contain"
+                                    />
                                     <span className="sr-only">{title}</span>
                                 </Link>
 

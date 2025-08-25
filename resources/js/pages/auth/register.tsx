@@ -44,7 +44,7 @@ export default function Register() {
         <div className="grid gap-6 rounded-xl shadow-md p-8" style={{ background: 'transparent' }}>
           {/* Name Field */}
           <div>
-            <Label htmlFor="name" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Nom complet</Label>
+            <Label htmlFor="name" className="text-white text-sm tracking-wide mb-4">Nom complet</Label>
             <Input
               id="name"
               type="text"
@@ -60,7 +60,7 @@ export default function Register() {
           </div>
           {/* Email Field */}
           <div>
-            <Label htmlFor="email" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Adresse E-mail Académique</Label>
+            <Label htmlFor="email" className="text-white text-sm tracking-wide mb-4">Adresse E-mail Académique</Label>
             <Input
               id="email"
               type="email"
@@ -76,7 +76,7 @@ export default function Register() {
           </div>
           {/* Ecole Field */}
           <div>
-            <Label htmlFor="ecole" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Nom d’établissement:</Label>
+            <Label htmlFor="ecole" className="text-white text-sm tracking-wide mb-4">Nom d’établissement:</Label>
             <select
               id="ecole"
               required
@@ -84,10 +84,10 @@ export default function Register() {
               value={data.ecole}
               onChange={(e) => setData("ecole", e.target.value)}
               disabled={processing}
-              className="border border-gray-300 rounded-md p-2 text-base font-semibold bg-gray-900 text-white focus:ring-2 focus:ring-[#A927B7] focus:border-[#A927B7] placeholder-gray-400"
+              className="border border-gray-300 rounded-md p-2 text-base bg-gray-900 text-white focus:ring-2 focus:ring-gray-500 focus:border-gray-500 placeholder-gray-400"
             >
-              <option value="" className="font-bold text-gray-700">-- Sélectionnez votre établissement --</option>
-              <optgroup label="Marrakech" className="font-bold text-purple-700">
+              <option value="">-- Sélectionnez votre établissement --</option>
+              <optgroup label="Marrakech">
                 <option value="FSSM">Faculté des Sciences Semlalia</option>
                 <option value="FSJES Marrakech">FSJES Marrakech</option>
                 <option value="FLSH Marrakech">FLSH Marrakech</option>
@@ -99,15 +99,15 @@ export default function Register() {
                 <option value="ENS">ENS Marrakech</option>
                 <option value="PED">Pôle Études Doctorales</option>
               </optgroup>
-              <optgroup label="Safi" className="font-bold text-blue-700">
+              <optgroup label="Safi">
                 <option value="FPS">Faculté Polydisciplinaire de Safi</option>
                 <option value="ENSA Safi">ENSA Safi</option>
                 <option value="EST Safi">EST Safi</option>
               </optgroup>
-              <optgroup label="Essaouira" className="font-bold text-green-700">
+              <optgroup label="Essaouira">
                 <option value="EST Essaouira">EST Essaouira</option>
               </optgroup>
-              <optgroup label="El Kelaâ" className="font-bold text-pink-700">
+              <optgroup label="El Kelaâ">
                 <option value="FSJESK">FSJES El Kelaâ</option>
                 <option value="ESTK">EST El Kelaâ</option>
               </optgroup>
@@ -116,7 +116,7 @@ export default function Register() {
           </div>
           {/* Password Field */}
           <div>
-            <Label htmlFor="password" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Mot de passe</Label>
+            <Label htmlFor="password" className="text-white text-sm tracking-wide mb-4">Mot de passe</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -150,7 +150,7 @@ export default function Register() {
           </div>
           {/* Password Confirmation Field */}
           <div>
-            <Label htmlFor="password_confirmation" className="text-[#A927B7] font-bold text-lg tracking-wide mb-2">Confirmer le mot de passe</Label>
+            <Label htmlFor="password_confirmation" className="text-white text-sm tracking-wide mb-4">Confirmer le mot de passe</Label>
             <div className="relative">
               <Input
                 id="password_confirmation"

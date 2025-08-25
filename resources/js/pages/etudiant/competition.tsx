@@ -8,7 +8,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Eye, CheckCircle, XCircle, X } from 'lucide-react';
+import { Calendar, MapPin, Users, Eye, CheckCircle, XCircle, X, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 // Create breadcrumbs for the header component
@@ -100,6 +100,7 @@ export default function CompetitionPage({ competitions, registrations, statistic
     const { props } = usePage();
     const flash = props.flash as FlashMessages;
     const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     useEffect(() => {
         if (flash?.success) {
@@ -136,9 +137,36 @@ export default function CompetitionPage({ competitions, registrations, statistic
             
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
-                    <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
-                        <div className="p-6">
+                    {/* Mobile Backdrop */}
+                    {isMobileOpen && (
+                        <div 
+                            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+                            onClick={() => setIsMobileOpen(false)}
+                        />
+                    )}
+                    
+                    {/* Sidebar with mobile state */}
+                    <div className={`
+                        fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+                        transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+                        lg:translate-x-0 transition-transform duration-300 ease-in-out
+                    `}>
+                        <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+                    </div>
+                    
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                        <div className="p-4 lg:p-6 pt-6">
+                            {/* Mobile Menu Button */}
+                            <div className="lg:hidden mb-4">
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                                >
+                                    <Menu className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Menu</span>
+                                </button>
+                            </div>
+                            
                             {/* Notification */}
                             {notification && (
                                 <Notification
@@ -148,7 +176,7 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                 />
                             )}
                         <div className="mb-8">
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Compétitions</h1>
+                            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Compétitions</h1>
                             <p className="text-gray-600">Découvrez et participez aux compétitions de programmation</p>
                         </div>
 

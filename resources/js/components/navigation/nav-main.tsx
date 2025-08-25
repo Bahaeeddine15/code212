@@ -3,7 +3,13 @@ import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { cn } from '@/lib/utils';
 
-export function NavMain({ items = [] }: { items: NavItem[] }) {
+export function NavMain({ 
+    items = [], 
+    onItemClick 
+}: { 
+    items: NavItem[]; 
+    onItemClick?: () => void; 
+}) {
     const page = usePage();
     
     // Fonction pour déterminer si un élément est actif
@@ -25,6 +31,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                 <Link
                     key={item.title}
                     href={item.href}
+                    onClick={onItemClick}
                     className={cn(
                         "flex items-center gap-4 w-full px-6 py-4 rounded-xl font-semibold text-sm transition-all duration-200 border-0",
                         // Couleur par défaut : #4f39f6 avec du texte blanc

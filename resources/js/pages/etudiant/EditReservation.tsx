@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
+import { AppContent } from '@/components/layout/app-content';
+import { AppShell } from '@/components/layout/app-shell';
+import { AppSidebar } from '@/components/layout/app-sidebar';
+import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Menu } from 'lucide-react';
+import { type BreadcrumbItem } from '@/types';
 
 interface Reservation {
     id: number;
@@ -27,6 +34,14 @@ interface Props {
 }
 
 export default function EditReservation({ reservation }: Props) {
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    
+    // Create breadcrumbs for the header component
+    const headerBreadcrumbs: BreadcrumbItem[] = [
+        { title: "Dashboard", href: "/dashboard" },
+        { title: "Réservations", href: "/reservations" },
+    ];
+    
     const { data, setData, put, processing, errors } = useForm({
         nom: reservation.nom,
         prenom: reservation.prenom,
@@ -47,14 +62,52 @@ export default function EditReservation({ reservation }: Props) {
 
     return (
         <>
-            <Head title="Modifier la réservation" />
+            <Head title="Modifier la réservation">
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+            </Head>
             
-            <div className="container mx-auto p-6">
-                <div className="max-w-2xl mx-auto">
-                    <div className="mb-6">
-                        <h1 className="text-3xl font-bold">Modifier votre réservation</h1>
-                        <p className="text-gray-600 mt-2">Modifiez les détails de votre demande de réservation</p>
+            {/* Custom Dashboard Header */}
+            <DashboardHeader breadcrumbs={headerBreadcrumbs} />
+            
+            <AppShell variant="sidebar">
+                <div className="flex w-full min-h-screen">
+                    {/* Mobile Backdrop */}
+                    {isMobileOpen && (
+                        <div 
+                            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+                            onClick={() => setIsMobileOpen(false)}
+                        />
+                    )}
+                    
+                    {/* Sidebar with mobile state */}
+                    <div className={`
+                        fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+                        transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+                        lg:translate-x-0 transition-transform duration-300 ease-in-out
+                    `}>
+                        <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
                     </div>
+                    
+                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                        <div className="p-4 lg:p-6 pt-6">
+                            {/* Mobile Menu Button */}
+                            <div className="lg:hidden mb-4">
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                                >
+                                    <Menu className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Menu</span>
+                                </button>
+                            </div>
+                            
+                            <div className="max-w-2xl mx-auto">
+                                <div className="mb-6">
+                                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Modifier votre réservation</h1>
+                                    <p className="text-gray-600">Modifiez les détails de votre demande de réservation</p>
+                                </div>
 
                     <Card>
                         <CardHeader>
@@ -256,8 +309,14 @@ export default function EditReservation({ reservation }: Props) {
                             Une fois approuvée ou rejetée, elle ne peut plus être modifiée.
                         </p>
                     </div>
+                            </div>
+                        </div>
+                    </AppContent>
                 </div>
-            </div>
+            </AppShell>
+            
+            {/* Footer */}
+            <Footer />
         </>
     );
 }

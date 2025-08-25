@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar, MapPin, Users, Trophy } from 'lucide-react';
+import { Calendar, MapPin, Users, Trophy, Menu } from 'lucide-react';
+import { useState } from 'react';
 
 interface Competition {
     id: number;
@@ -32,6 +33,8 @@ interface CompetitionRegistrationPageProps {
 }
 
 export default function CompetitionRegistrationPage({ competition }: CompetitionRegistrationPageProps) {
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    
     const { data, setData, post, processing, errors } = useForm({
         participant_name: '',
         email: '',
@@ -69,12 +72,39 @@ export default function CompetitionRegistrationPage({ competition }: Competition
             
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
-                    <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white">
-                        <div className="p-6 font-sans">
+                    {/* Mobile Backdrop */}
+                    {isMobileOpen && (
+                        <div 
+                            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+                            onClick={() => setIsMobileOpen(false)}
+                        />
+                    )}
+                    
+                    {/* Sidebar with mobile state */}
+                    <div className={`
+                        fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+                        transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+                        lg:translate-x-0 transition-transform duration-300 ease-in-out
+                    `}>
+                        <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+                    </div>
+                    
+                    <AppContent variant="sidebar" className="flex-1 bg-white lg:ml-0">
+                        <div className="p-4 lg:p-6 font-sans">
+                            {/* Mobile Menu Button */}
+                            <div className="lg:hidden mb-4">
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                                >
+                                    <Menu className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Menu</span>
+                                </button>
+                            </div>
+                            
                             <div className="container mx-auto max-w-4xl">
                                 <div className="mb-8">
-                                    <h1 className="text-3xl font-bold text-gray-900 mb-2 font-sans">
+                                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 font-sans">
                                         Inscription - {competition.title}
                                     </h1>
                                     <div className="flex items-center justify-center gap-2 mb-4">
