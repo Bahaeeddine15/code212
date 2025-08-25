@@ -65,7 +65,6 @@ interface Registration {
     email: string;
     phone: string;
     category: string;
-    club: string;
     registrationDate: string;
     status: 'Confirmé' | 'En attente' | 'Refusé';
     paymentStatus: 'Payé' | 'En attente' | 'Refusé';
@@ -211,7 +210,6 @@ export default function CompetitionsPage({ competitions, registrations, statisti
         const matchesSearch = searchTerm === '' ||
             reg.participantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            reg.club.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.competitionTitle.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || reg.status === statusFilter;
         return matchesCompetition && matchesSearch && matchesStatus;
@@ -248,7 +246,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                     <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
                         <div className="flex-1">
                             <Input
-                                placeholder="Rechercher par participant, email, club ou compétition..."
+                                placeholder="Rechercher par participant, email ou compétition..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-border rounded-lg sm:rounded-xl bg-card dark:bg-card text-foreground placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
@@ -515,7 +513,6 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                             <TableHead className="text-xs sm:text-sm hidden lg:table-cell">Compétition</TableHead>
                                             <TableHead className="text-xs sm:text-sm hidden md:table-cell">Type</TableHead>
                                             <TableHead className="text-xs sm:text-sm">Contact</TableHead>
-                                            <TableHead className="text-xs sm:text-sm hidden lg:table-cell">Club</TableHead>
                                             <TableHead className="text-xs sm:text-sm hidden lg:table-cell">Catégorie</TableHead>
                                             <TableHead className="text-xs sm:text-sm">Statut</TableHead>
                                             <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Date d'inscription</TableHead>
@@ -568,7 +565,6 @@ export default function CompetitionsPage({ competitions, registrations, statisti
                                                 </div>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="hidden lg:table-cell text-xs sm:text-sm">{registration.club}</TableCell>
                                         <TableCell className="hidden lg:table-cell text-xs sm:text-sm">{registration.category}</TableCell>
                                         <TableCell>
                                             <Badge className={`text-xs ${getParticipantStatusColor(registration.status)}`}>

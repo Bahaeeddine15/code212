@@ -36,6 +36,7 @@ interface Competition {
     closed_by?: string;
     type: 'individual' | 'group'; // Ajout du type de compétition
     my_registration?: {
+        id: number;
         status: 'En attente' | 'Confirmé' | 'Refusé';
         [key: string]: any;
     }; // Ajout de la propriété my_registration
@@ -251,23 +252,42 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                             </div>
                                         </div>
                                         
+                                        {/* Bouton Détails à l'intérieur de la carte */}
+                                        <div className="mb-4">
+                                            <Button variant="outline" size="sm" className="w-full" asChild>
+                                                <Link href={`/competition/${competition.id}`}>
+                                                    <Eye className="w-4 h-4 mr-2" />
+                                                    Voir les détails
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                        
                                         <div className="flex gap-2">
                                             {competition.my_registration ? (
-                                                <Badge
-                                                    className={
-                                                        competition.my_registration.status === 'En attente'
-                                                            ? 'bg-yellow-500 text-white'
+                                                <>
+                                                    <Badge
+                                                        className={
+                                                            competition.my_registration.status === 'En attente'
+                                                                ? 'bg-yellow-500 text-white'
+                                                                : competition.my_registration.status === 'Confirmé'
+                                                                ? 'bg-green-600 text-white'
+                                                                : 'bg-red-600 text-white'
+                                                        }
+                                                    >
+                                                        {competition.my_registration.status === 'En attente'
+                                                            ? 'En attente de validation'
                                                             : competition.my_registration.status === 'Confirmé'
-                                                            ? 'bg-green-600 text-white'
-                                                            : 'bg-red-600 text-white'
-                                                    }
-                                                >
-                                                    {competition.my_registration.status === 'En attente'
-                                                        ? 'En attente de validation'
-                                                        : competition.my_registration.status === 'Confirmé'
-                                                        ? 'Inscription acceptée'
-                                                        : 'Inscription refusée'}
-                                                </Badge>
+                                                            ? 'Inscription acceptée'
+                                                            : 'Inscription refusée'}
+                                                    </Badge>
+                                                    {competition.my_registration.status !== 'Confirmé' && (
+                                                        <Button variant="outline" size="sm" asChild>
+                                                            <Link href={`/competition/${competition.id}/registration/${competition.my_registration.id}/edit`}>
+                                                                ✏️ Modifier
+                                                            </Link>
+                                                        </Button>
+                                                    )}
+                                                </>
                                             ) : competition.status === 'Ouvert' ? (
                                                 <Button className="flex-1 bg-[#4f39f6] hover:bg-[#41e296] hover:text-[#3a2b75] text-white" asChild>
                                                     <Link href={`/competition/${competition.id}/register`}>
@@ -279,9 +299,6 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                                     Fermé
                                                 </Button>
                                             )}
-                                            <Button variant="outline" size="sm" asChild>
-                                                <Link href={`/competition/${competition.id}`}>Détails</Link>
-                                            </Button>
                                         </div>
                                     </CardContent>
                                 </Card>
