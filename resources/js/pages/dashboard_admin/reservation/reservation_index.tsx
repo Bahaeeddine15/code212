@@ -25,19 +25,16 @@ import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 // Types
 interface Reservation {
     id: number;
-    studentName: string;
-    studentEmail: string;
-    studentPhone?: string;
-    studentId?: string;
-    roomName?: string;
-    roomId?: number;
-    capacity?: number;
-    date?: string;
-    description?: string;
+    nom: string;
+    prenom: string;
+    num_apogee: string;
+    email: string;
+    telephone?: string;
+    description: string;
+    date_reservation: string;
     status: 'pending' | 'approved' | 'rejected';
-    submittedAt: string;
-    processedAt?: string;
-    processedBy?: string;
+    created_at: string;
+    updated_at: string;
     resource_type?: string;
     location_type?: string;
     room_details?: string;
@@ -94,7 +91,6 @@ const ReservationCard = ({
         }
     };
 
-    // Make the whole card clickable
     return (
         <Link
             href={`/admin/reservations/${reservation.id}`}
@@ -104,8 +100,8 @@ const ReservationCard = ({
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-0">
                     {getStatusIcon()}
                     <div className="min-w-0 flex-1">
-                        <h3 className="text-base sm:text-lg font-semibold text-foreground truncate">{reservation.roomName || 'Salle inconnue'}</h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground truncate">Par {reservation.studentName || 'Inconnu'}</p>
+                        <h3 className="text-base sm:text-lg font-semibold text-foreground truncate">{reservation.room_details || 'Salle inconnue'}</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">Par {reservation.nom} {reservation.prenom}</p>
                     </div>
                 </div>
                 <div className="self-start">
@@ -116,15 +112,19 @@ const ReservationCard = ({
             <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
                 <div className="flex items-center space-x-2 text-xs sm:text-sm text-muted-foreground">
                     <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span className="truncate">{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : 'Date inconnue'}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-xs sm:text-sm text-muted-foreground">
-                    <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span>Capacité: {reservation.capacity ?? '--'} personnes</span>
+                    <span className="truncate">{reservation.date_reservation ? new Date(reservation.date_reservation).toLocaleDateString('fr-FR') : 'Date inconnue'}</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs sm:text-sm text-muted-foreground">
                     <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span>ID Étudiant: {reservation.studentId || '--'}</span>
+                    <span>ID Étudiant: {reservation.num_apogee || '--'}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs sm:text-sm text-muted-foreground">
+                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span>Email: {reservation.email || '--'}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs sm:text-sm text-muted-foreground">
+                    <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span>Téléphone: {reservation.telephone || '--'}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
                     <div className="truncate">Ressource: {reservation.resource_type ?? '--'}</div>
@@ -140,7 +140,7 @@ const ReservationCard = ({
 
             <div className="mb-3 sm:mb-4">
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                    Soumise le {reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleDateString('fr-FR') : '--'} à {reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleTimeString('fr-FR') : '--'}
+                    Soumise le {reservation.created_at ? new Date(reservation.created_at).toLocaleDateString('fr-FR') : '--'} à {reservation.created_at ? new Date(reservation.created_at).toLocaleTimeString('fr-FR') : '--'}
                 </p>
             </div>
 
@@ -216,11 +216,13 @@ export default function Reservations() {
 
     // Filtrage des réservations
     const filteredReservations = localReservations.filter(reservation => {
-        const matchesSearch = (reservation.studentName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             (reservation.roomName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             (reservation.description || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch =
+            (reservation.nom?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+            (reservation.prenom?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+            (reservation.room_details?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+            (reservation.description?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'all' || reservation.status === filterStatus;
-        const matchesRoom = filterRoom === 'all' || (reservation.roomId && reservation.roomId.toString() === filterRoom);
+        const matchesRoom = filterRoom === 'all' || (reservation.room_details && reservation.room_details === rooms.find(r => r.id.toString() === filterRoom)?.name);
 
         return matchesSearch && matchesStatus && matchesRoom;
     });

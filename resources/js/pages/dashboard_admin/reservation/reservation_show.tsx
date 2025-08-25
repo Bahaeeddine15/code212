@@ -4,19 +4,16 @@ import { ArrowLeft, Calendar, Clock, User, Mail, Phone, CheckCircle, XCircle, Al
 
 interface Reservation {
     id: number;
-    studentName: string;
-    studentEmail: string;
-    studentPhone?: string;
-    studentId?: string;
-    roomName?: string;
-    roomId?: number;
-    capacity?: number;
-    date?: string;
-    description?: string;
+    nom: string;
+    prenom: string;
+    num_apogee: string;
+    email: string;
+    telephone?: string;
+    description: string;
+    date_reservation: string;
     status: 'pending' | 'approved' | 'rejected';
-    submittedAt: string;
-    processedAt?: string;
-    processedBy?: string;
+    created_at: string;
+    updated_at: string;
     resource_type?: string;
     location_type?: string;
     room_details?: string;
@@ -73,21 +70,25 @@ export default function ReservationShow() {
                                 <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
                                     <User className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
                                     <span className="font-medium">Nom:</span>
-                                    <span className="truncate">{reservation.studentName}</span>
+                                    <span className="truncate">{reservation.nom}</span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <span className="font-medium">Prénom:</span>
+                                    <span className="truncate">{reservation.prenom}</span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                    <span className="font-medium">Numéro Apogée:</span>
+                                    <span>{reservation.num_apogee}</span>
                                 </div>
                                 <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
                                     <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
                                     <span className="font-medium">Email:</span>
-                                    <span className="truncate">{reservation.studentEmail}</span>
+                                    <span className="truncate">{reservation.email}</span>
                                 </div>
                                 <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
                                     <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
                                     <span className="font-medium">Téléphone:</span>
-                                    <span>{reservation.studentPhone || '--'}</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
-                                    <span className="font-medium">ID Étudiant:</span>
-                                    <span>{reservation.studentId || '--'}</span>
+                                    <span>{reservation.telephone || '--'}</span>
                                 </div>
                             </div>
                         </div>
@@ -98,18 +99,10 @@ export default function ReservationShow() {
                                 Détails réservation
                             </h2>
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
-                                    <span className="font-medium">Salle:</span>
-                                    <span className="truncate">{reservation.roomName || '--'}</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
-                                    <span className="font-medium">Capacité:</span>
-                                    <span>{reservation.capacity ?? '--'} personnes</span>
-                                </div>
                                 <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground col-span-1 lg:col-span-2">
                                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
-                                    <span className="font-medium">Date:</span>
-                                    <span>{reservation.date ? new Date(reservation.date).toLocaleDateString('fr-FR') : '--'}</span>
+                                    <span className="font-medium">Date de réservation:</span>
+                                    <span>{reservation.date_reservation ? new Date(reservation.date_reservation).toLocaleDateString('fr-FR') : '--'}</span>
                                 </div>
                             </div>
                         </div>
@@ -118,25 +111,6 @@ export default function ReservationShow() {
                             <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Description</h2>
                             <div className="text-sm sm:text-base text-foreground bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border">
                                 {reservation.description || 'Aucune description fournie'}
-                            </div>
-                        </div>
-
-                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
-                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
-                                <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />
-                                Historique
-                            </h2>
-                            <div className="space-y-3">
-                                <div className="text-sm sm:text-base text-foreground">
-                                    <span className="font-medium text-muted-foreground">Soumise le:</span>
-                                    <span className="ml-2">{reservation.submittedAt ? new Date(reservation.submittedAt).toLocaleString('fr-FR') : '--'}</span>
-                                </div>
-                                {reservation.processedAt && (
-                                    <div className="text-sm sm:text-base text-foreground">
-                                        <span className="font-medium text-muted-foreground">Traitée le:</span>
-                                        <span className="ml-2">{new Date(reservation.processedAt).toLocaleString('fr-FR')} par {reservation.processedBy || '--'}</span>
-                                    </div>
-                                )}
                             </div>
                         </div>
 
@@ -154,6 +128,23 @@ export default function ReservationShow() {
                                 <div className="text-sm sm:text-base text-foreground col-span-1 lg:col-span-2">
                                     <span className="font-medium text-muted-foreground">Détails salle:</span>
                                     <span className="ml-2">{reservation.room_details ?? '--'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
+                                <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />
+                                Historique
+                            </h2>
+                            <div className="space-y-3">
+                                <div className="text-sm sm:text-base text-foreground">
+                                    <span className="font-medium text-muted-foreground">Soumise le:</span>
+                                    <span className="ml-2">{reservation.created_at ? new Date(reservation.created_at).toLocaleString('fr-FR') : '--'}</span>
+                                </div>
+                                <div className="text-sm sm:text-base text-foreground">
+                                    <span className="font-medium text-muted-foreground">Mise à jour le:</span>
+                                    <span className="ml-2">{reservation.updated_at ? new Date(reservation.updated_at).toLocaleString('fr-FR') : '--'}</span>
                                 </div>
                             </div>
                         </div>

@@ -17,7 +17,7 @@ interface Event {
     location: string;
     maxAttendees: number;
     category: string;
-    type?: string;  // Add type field
+    type?: string;
     status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 }
 
@@ -33,8 +33,40 @@ export default function EventEdit({ event }: Props) {
         end_date: event.end_date ?? '',
         location: event.location ?? '',
         maxAttendees: event.maxAttendees?.toString() ?? '',
-        category: event.category ?? 'Développement Web',
-        type: event.type ?? 'Conférence',  // Add type field
+        category: event.category && [
+            "Développement Web",
+            "Design & UX",
+            "Événement Spécial",
+            "DevOps & Cloud",
+            "Data Science",
+            "Mobile Development",
+            "Intelligence Artificielle",
+            "Entrepreneuriat Tech",
+            "Cybersécurité"
+        ].includes(event.category)
+            ? event.category
+            : event.category === "Hackathon"
+                ? "Hackathon"
+                : event.category === "Autre"
+                    ? "Autre"
+                    : event.category
+                        ? "Autre"
+                        : 'Développement Web',
+        type: event.type === "Hackathon" ? "Hackathon" : event.type ?? 'Conférence',
+        customCategory: event.category && ![
+            "Développement Web",
+            "Design & UX",
+            "Événement Spécial",
+            "DevOps & Cloud",
+            "Data Science",
+            "Mobile Development",
+            "Intelligence Artificielle",
+            "Entrepreneuriat Tech",
+            "Cybersécurité",
+            "Hackathon"
+        ].includes(event.category)
+            ? event.category
+            : '',
         status: event.status ?? 'upcoming',
     });
 
@@ -55,7 +87,12 @@ export default function EventEdit({ event }: Props) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        router.put(`/admin/events/${event.id}`, { ...form, max_attendees: parseInt(form.maxAttendees) }, {
+        const submitData = {
+            ...form,
+            category: form.category === 'Autre' ? form.customCategory : form.category,
+            max_attendees: parseInt(form.maxAttendees),
+        };
+        router.put(`/admin/events/${event.id}`, submitData, {
             onError: (err) => {
                 setErrors(err);
                 setIsSubmitting(false);
@@ -140,9 +177,22 @@ export default function EventEdit({ event }: Props) {
                                             <option value="Intelligence Artificielle" className="bg-card text-foreground">Intelligence Artificielle</option>
                                             <option value="Entrepreneuriat Tech" className="bg-card text-foreground">Entrepreneuriat Tech</option>
                                             <option value="Cybersécurité" className="bg-card text-foreground">Cybersécurité</option>
-                                            <option value="Hackathon" className="bg-card text-foreground">Hackathon</option>
+                                            <option value="Autre" className="bg-card text-foreground">Autre</option>
                                         </select>
+                                        {form.category === 'Autre' && (
+                                            <input
+                                                type="text"
+                                                value={form.customCategory}
+                                                onChange={e => handleChange('customCategory', e.target.value)}
+                                                className="mt-2 w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors text-sm sm:text-base"
+                                                placeholder="Entrez la catégorie"
+                                                required
+                                            />
+                                        )}
                                         {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                                        {form.category === 'Autre' && errors.customCategory && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.customCategory}</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -162,6 +212,7 @@ export default function EventEdit({ event }: Props) {
                                         <option value="Webinaire" className="bg-card text-foreground">Webinaire</option>
                                         <option value="Table Ronde" className="bg-card text-foreground">Table Ronde</option>
                                         <option value="Présentation" className="bg-card text-foreground">Présentation</option>
+                                        <option value="Hackathon" className="bg-card text-foreground">Hackathon</option>
                                     </select>
                                     {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type}</p>}
                                 </div>
