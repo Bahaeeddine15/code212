@@ -2,6 +2,21 @@ import AppLayout from '@/layouts/app-layout-admin';
 import { Head, usePage, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Calendar, Clock, User, Mail, Phone, CheckCircle, XCircle, AlertCircle, Check, X } from 'lucide-react';
 
+// Fonction pour traduire les codes de localisation
+const getLocationLabel = (locationCode: string): string => {
+    const locationLabels: Record<string, string> = {
+        'salle_concentration_3e': 'Salle de concentration (3ème étage)',
+        'salle_formation_ja_rdc': 'Salle de formation IA',
+        'salle_conference_rdc': 'Salle de conférence (RDC)',
+        'zone_coding': 'Zone coding'
+    };
+    return locationLabels[locationCode] || locationCode;
+};
+
+const getResourceTypeLabel = (resourceType: string): string => {
+    return resourceType === 'pc' ? 'Post PC (2ème étage zone coding)' : 'Local';
+};
+
 interface Reservation {
     id: number;
     nom: string;
@@ -15,7 +30,7 @@ interface Reservation {
     created_at: string;
     updated_at: string;
     resource_type?: string;
-    location_type?: string;
+    location_type?: string | string[];
     room_details?: string;
 }
 
@@ -60,8 +75,11 @@ export default function ReservationShow() {
                             {getStatus()}
                         </div>
                     </div>
-                    <div className="space-y-6 sm:space-y-8">
-                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                    
+                    {/* Toutes les informations dans un seul div */}
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6 space-y-6">
+                        {/* Informations étudiant */}
+                        <div>
                             <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
                                 <User className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-600" />
                                 Informations étudiant
@@ -93,46 +111,64 @@ export default function ReservationShow() {
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                        {/* Détails réservation */}
+                        <div>
                             <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
                                 <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
                                 Détails réservation
                             </h2>
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-                                <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground col-span-1 lg:col-span-2">
-                                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
-                                    <span className="font-medium">Date de réservation:</span>
-                                    <span>{reservation.date_reservation ? new Date(reservation.date_reservation).toLocaleDateString('fr-FR') : '--'}</span>
-                                </div>
+                            <div className="flex items-center space-x-2 text-sm sm:text-base text-foreground">
+                                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
+                                <span className="font-medium">Date de réservation:</span>
+                                <span>{reservation.date_reservation ? new Date(reservation.date_reservation).toLocaleDateString('fr-FR') : '--'}</span>
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                        {/* Informations techniques */}
+                        <div>
+                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Informations techniques</h2>
+                            <div className="space-y-3">
+                                <div className="text-sm sm:text-base text-foreground">
+                                    <span className="font-medium text-muted-foreground">Ressource:</span>
+                                    <span className="ml-2">
+                                        {reservation.resource_type 
+                                            ? getResourceTypeLabel(reservation.resource_type)
+                                            : '--'
+                                        }
+                                    </span>
+                                </div>
+                                {reservation.resource_type === 'local' && (
+                                    <div className="text-sm sm:text-base text-foreground">
+                                        <span className="font-medium text-muted-foreground">Types de locaux:</span>
+                                        <div className="ml-2 mt-1 flex flex-wrap gap-2">
+                                            {Array.isArray(reservation.location_type)
+                                                ? reservation.location_type.map((loc, index) => (
+                                                    <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                        {getLocationLabel(loc)}
+                                                    </span>
+                                                ))
+                                                : typeof reservation.location_type === 'string'
+                                                    ? <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                        {getLocationLabel(reservation.location_type)}
+                                                    </span>
+                                                    : <span className="text-gray-500">--</span>
+                                            }
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Description */}
+                        <div>
                             <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Description</h2>
                             <div className="text-sm sm:text-base text-foreground bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border">
                                 {reservation.description || 'Aucune description fournie'}
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
-                            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Informations techniques</h2>
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-                                <div className="text-sm sm:text-base text-foreground">
-                                    <span className="font-medium text-muted-foreground">Ressource:</span>
-                                    <span className="ml-2">{reservation.resource_type ?? '--'}</span>
-                                </div>
-                                <div className="text-sm sm:text-base text-foreground">
-                                    <span className="font-medium text-muted-foreground">Lieu:</span>
-                                    <span className="ml-2">{reservation.location_type ?? '--'}</span>
-                                </div>
-                                <div className="text-sm sm:text-base text-foreground col-span-1 lg:col-span-2">
-                                    <span className="font-medium text-muted-foreground">Détails salle:</span>
-                                    <span className="ml-2">{reservation.room_details ?? '--'}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 sm:p-6">
+                        {/* Historique */}
+                        <div>
                             <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center">
                                 <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-600" />
                                 Historique
@@ -142,32 +178,36 @@ export default function ReservationShow() {
                                     <span className="font-medium text-muted-foreground">Soumise le:</span>
                                     <span className="ml-2">{reservation.created_at ? new Date(reservation.created_at).toLocaleString('fr-FR') : '--'}</span>
                                 </div>
-                                <div className="text-sm sm:text-base text-foreground">
-                                    <span className="font-medium text-muted-foreground">Mise à jour le:</span>
-                                    <span className="ml-2">{reservation.updated_at ? new Date(reservation.updated_at).toLocaleString('fr-FR') : '--'}</span>
-                                </div>
+                                {reservation.updated_at && reservation.created_at && 
+                                 new Date(reservation.updated_at).getTime() !== new Date(reservation.created_at).getTime() && (
+                                    <div className="text-sm sm:text-base text-foreground">
+                                        <span className="font-medium text-muted-foreground">Modifiée le:</span>
+                                        <span className="ml-2">{new Date(reservation.updated_at).toLocaleString('fr-FR')}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
-
-                        {reservation.status === 'pending' && (
-                            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 sm:pt-6 border-t border-border">
-                                <button
-                                    onClick={handleReject}
-                                    className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm sm:text-base font-medium min-h-[44px] order-2 sm:order-1"
-                                >
-                                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    <span>Rejeter</span>
-                                </button>
-                                <button
-                                    onClick={handleApprove}
-                                    className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors text-sm sm:text-base font-medium min-h-[44px] order-1 sm:order-2"
-                                >
-                                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    <span>Approuver</span>
-                                </button>
-                            </div>
-                        )}
                     </div>
+
+                    {/* Boutons d'action */}
+                    {reservation.status === 'pending' && (
+                        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 sm:pt-6 border-t border-border">
+                            <button
+                                onClick={handleReject}
+                                className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm sm:text-base font-medium min-h-[44px] order-2 sm:order-1"
+                            >
+                                <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <span>Rejeter</span>
+                            </button>
+                            <button
+                                onClick={handleApprove}
+                                className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors text-sm sm:text-base font-medium min-h-[44px] order-1 sm:order-2"
+                            >
+                                <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <span>Approuver</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </AppLayout>

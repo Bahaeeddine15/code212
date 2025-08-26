@@ -66,7 +66,7 @@ export default function Show({ formation }: ShowProps) {
                         <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
                     </div>
                     
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
                         <div className="p-4 lg:p-6 pt-6">
                             {/* Mobile Menu Button */}
                             <div className="lg:hidden mb-4">
@@ -83,13 +83,13 @@ export default function Show({ formation }: ShowProps) {
                             <div className="mb-6">
                                 <Link
                                     href="/formations"
-                                    className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                                    className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-[#1e2939] text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-[#364153] transition-colors"
                                 >
                                     ← Retour aux formations
                                 </Link>
                             </div>
                             
-                            <div className="bg-white rounded-lg shadow-lg overflow-hidden dark:bg-[#1a1a1c]">
+                            <div className="bg-white dark:bg-[#1e2939] rounded-lg shadow-lg overflow-hidden">
                                 {/* Image de la formation */}
                                 <div className="w-full h-64 md:h-80">
                                     <img 
@@ -104,13 +104,13 @@ export default function Show({ formation }: ShowProps) {
                                 <div className="p-6 md:p-8">
                                     {/* Badges */}
                                     <div className="flex flex-wrap items-center gap-3 mb-6">
-                                        <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
+                                        <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-4 py-2 rounded-full text-sm font-medium">
                                             {formation.category}
                                         </span>
-                                        <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
+                                        <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-4 py-2 rounded-full text-sm font-medium">
                                             🏆 Certification
                                         </span>
-                                        <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium">
+                                        <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-4 py-2 rounded-full text-sm font-medium">
                                             📊 Niveau {formation.niveau}
                                         </span>
                                     </div>
@@ -129,18 +129,18 @@ export default function Show({ formation }: ShowProps) {
                                     
                                     {/* Informations supplémentaires */}
                                     <div className="grid md:grid-cols-2 gap-6 mb-8">
-                                        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                        <div className="bg-gray-50 dark:bg-[#364153] p-4 rounded-lg">
                                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">🎯 Objectifs</h3>
-                                            <ul className="text-gray-600 dark:text-gray-400 space-y-1">
+                                            <ul className="text-gray-600 dark:text-gray-300 space-y-1">
                                                 <li>• Maîtriser les concepts fondamentaux</li>
                                                 <li>• Acquérir des compétences pratiques</li>
                                                 <li>• Obtenir une certification reconnue</li>
                                             </ul>
                                         </div>
                                         
-                                        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                        <div className="bg-gray-50 dark:bg-[#364153] p-4 rounded-lg">
                                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">📋 Prérequis</h3>
-                                            <ul className="text-gray-600 dark:text-gray-400 space-y-1">
+                                            <ul className="text-gray-600 dark:text-gray-300 space-y-1">
                                                 <li>• Motivation et engagement</li>
                                                 <li>• Accès à un ordinateur</li>
                                                 <li>• Connexion internet stable</li>
@@ -155,15 +155,15 @@ export default function Show({ formation }: ShowProps) {
                                         </button>
                                         <Link
                                             href="/formations"
-                                            className="flex-1 px-8 py-3 bg-gray-200 text-center text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                                            className="flex-1 px-8 py-3 bg-gray-200 dark:bg-[#1e2939] text-center text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-[#364153] transition-colors font-medium"
                                         >
                                             ← Retour à la liste
                                         </Link>
                                     </div>
                                     
                                     {/* Informations de formation */}
-                                    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500 dark:text-gray-300">
                                             <div>
                                                 <span className="font-medium">Durée:</span> 40h
                                             </div>

@@ -2,6 +2,7 @@ import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import InputError from '@/components/forms/input-error';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
@@ -65,26 +66,26 @@ export default function Password() {
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
                     <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins]">
                         <div className="p-6">
                             <div className="space-y-6">
                                 <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
 
                                 {/* Settings Navigation */}
-                                <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex flex-wrap gap-3 p-4 bg-gray-50 dark:bg-[#1e2939] rounded-lg border border-gray-200 dark:border-[#364153]">
                                     <Link href="/settings/profile">
-                                        <Button variant="outline" className="flex items-center gap-2">
+                                        <Button variant="outline" className="flex items-center gap-2 bg-white dark:bg-[#364153] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1e2939]">
                                             <User className="w-4 h-4" />
                                             Profile
                                         </Button>
                                     </Link>
                                     <Link href="/settings/appearance">
-                                        <Button variant="outline" className="flex items-center gap-2">
+                                        <Button variant="outline" className="flex items-center gap-2 bg-white dark:bg-[#364153] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1e2939]">
                                             <Palette className="w-4 h-4" />
                                             Appearance
                                         </Button>
                                     </Link>
-                                    <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+                                    <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
                                         <Lock className="w-4 h-4" />
                                         Password
                                     </Button>
@@ -92,7 +93,7 @@ export default function Password() {
 
                                 <form onSubmit={updatePassword} className="space-y-6">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="current_password">Current password</Label>
+                                        <Label htmlFor="current_password" className="text-gray-900 dark:text-white">Current password</Label>
 
                                         <Input
                                             id="current_password"
@@ -100,7 +101,7 @@ export default function Password() {
                                             value={data.current_password}
                                             onChange={(e) => setData('current_password', e.target.value)}
                                             type="password"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                                             autoComplete="current-password"
                                             placeholder="Current password"
                                         />
@@ -109,7 +110,7 @@ export default function Password() {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="password">New password</Label>
+                                        <Label htmlFor="password" className="text-gray-900 dark:text-white">New password</Label>
 
                                         <Input
                                             id="password"
@@ -117,7 +118,7 @@ export default function Password() {
                                             value={data.password}
                                             onChange={(e) => setData('password', e.target.value)}
                                             type="password"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                                             autoComplete="new-password"
                                             placeholder="New password"
                                         />
@@ -126,14 +127,14 @@ export default function Password() {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="password_confirmation">Confirm password</Label>
+                                        <Label htmlFor="password_confirmation" className="text-gray-900 dark:text-white">Confirm password</Label>
 
                                         <Input
                                             id="password_confirmation"
                                             value={data.password_confirmation}
                                             onChange={(e) => setData('password_confirmation', e.target.value)}
                                             type="password"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                                             autoComplete="new-password"
                                             placeholder="Confirm password"
                                         />
@@ -142,7 +143,7 @@ export default function Password() {
                                     </div>
 
                                     <div className="flex items-center gap-4">
-                                        <Button disabled={processing}>Save password</Button>
+                                        <Button disabled={processing} className="bg-blue-600 hover:bg-blue-700 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">Save password</Button>
 
                                         <Transition
                                             show={recentlySuccessful}
@@ -151,7 +152,7 @@ export default function Password() {
                                             leave="transition ease-in-out"
                                             leaveTo="opacity-0"
                                         >
-                                            <p className="text-sm text-neutral-600">Saved</p>
+                                            <p className="text-sm text-neutral-600 dark:text-gray-300">Saved</p>
                                         </Transition>
                                     </div>
                                 </form>
@@ -160,6 +161,8 @@ export default function Password() {
                     </AppContent>
                 </div>
             </AppShell>
+            
+            <Footer />
         </>
     );
 }

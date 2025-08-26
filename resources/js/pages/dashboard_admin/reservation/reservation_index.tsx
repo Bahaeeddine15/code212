@@ -22,6 +22,17 @@ import {
 } from 'lucide-react';
 import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 
+// Fonction pour traduire les codes de localisation
+const getLocationLabel = (locationCode: string): string => {
+    const locationLabels: Record<string, string> = {
+        'salle_concentration_3e': 'Salle de concentration (3ème étage)',
+        'salle_formation_ja_rdc': 'Salle de formation IA',
+        'salle_conference_rdc': 'Salle de conférence (RDC)',
+        'zone_coding': 'Zone coding'
+    };
+    return locationLabels[locationCode] || locationCode;
+};
+
 // Types
 interface Reservation {
     id: number;
@@ -36,16 +47,8 @@ interface Reservation {
     created_at: string;
     updated_at: string;
     resource_type?: string;
-    location_type?: string;
+    location_type?: string | string[];
     room_details?: string;
-}
-
-interface Room {
-    id: number;
-    name: string;
-    capacity: number;
-    type: string;
-    equipment: string[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -100,7 +103,14 @@ const ReservationCard = ({
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-0">
                     {getStatusIcon()}
                     <div className="min-w-0 flex-1">
-                        <h3 className="text-base sm:text-lg font-semibold text-foreground truncate">{reservation.room_details || 'Salle inconnue'}</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-foreground truncate">
+                            {reservation.resource_type === 'pc' 
+                                ? 'Post PC (2ème étage zone coding)' 
+                                : reservation.resource_type === 'local'
+                                    ? 'Réservation Local'
+                                    : 'Réservation'
+                            }
+                        </h3>
                         <p className="text-xs sm:text-sm text-muted-foreground truncate">Par {reservation.nom} {reservation.prenom}</p>
                     </div>
                 </div>
@@ -126,10 +136,27 @@ const ReservationCard = ({
                     <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                     <span>Téléphone: {reservation.telephone || '--'}</span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
-                    <div className="truncate">Ressource: {reservation.resource_type ?? '--'}</div>
-                    <div className="truncate">Lieu: {reservation.location_type ?? '--'}</div>
-                    <div className="truncate">Détails: {reservation.room_details ?? '--'}</div>
+                <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm text-muted-foreground">
+                    <div className="truncate">
+                        <strong>Ressource:</strong> {
+                            reservation.resource_type === 'pc' 
+                                ? 'Post PC (2ème étage zone coding)' 
+                                : reservation.resource_type === 'local'
+                                    ? 'Local'
+                                    : reservation.resource_type || '--'
+                        }
+                    </div>
+                    {reservation.resource_type === 'local' && reservation.location_type && (
+                        <div>
+                            <strong>Lieu:</strong> {
+                                Array.isArray(reservation.location_type)
+                                    ? reservation.location_type.map(loc => getLocationLabel(loc)).join(', ')
+                                    : typeof reservation.location_type === 'string' 
+                                        ? getLocationLabel(reservation.location_type)
+                                        : '--'
+                            }
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -179,21 +206,13 @@ const ReservationCard = ({
 };
 
 export default function Reservations() {
-    // Données des salles disponibles (exemples)
-    const [rooms] = useState<Room[]>([
-        { id: 1, name: 'Salle A101', capacity: 30, type: 'Cours', equipment: ['Projecteur', 'Tableau blanc'] },
-        { id: 2, name: 'Salle B205', capacity: 50, type: 'Amphithéâtre', equipment: ['Projecteur', 'Micro', 'Système audio'] },
-        { id: 3, name: 'Lab Informatique C301', capacity: 25, type: 'Laboratoire', equipment: ['PC', 'Projecteur', 'Réseau'] },
-        { id: 4, name: 'Salle Réunion D102', capacity: 15, type: 'Réunion', equipment: ['Écran TV', 'Visioconférence'] }
-    ]);
-
     const { reservations = [] } = usePage().props as any;
     const [localReservations, setLocalReservations] = useState<Reservation[]>(reservations);
 
     // États pour les filtres
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
-    const [filterRoom, setFilterRoom] = useState('all');
+    const [filterResourceType, setFilterResourceType] = useState('all');
 
     // Fonctions de gestion
     const handleApprove = (id: number) => {
@@ -219,12 +238,12 @@ export default function Reservations() {
         const matchesSearch =
             (reservation.nom?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
             (reservation.prenom?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
-            (reservation.room_details?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+            (reservation.resource_type?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
             (reservation.description?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'all' || reservation.status === filterStatus;
-        const matchesRoom = filterRoom === 'all' || (reservation.room_details && reservation.room_details === rooms.find(r => r.id.toString() === filterRoom)?.name);
+        const matchesResourceType = filterResourceType === 'all' || reservation.resource_type === filterResourceType;
 
-        return matchesSearch && matchesStatus && matchesRoom;
+        return matchesSearch && matchesStatus && matchesResourceType;
     });
 
     // Calcul des statistiques
@@ -324,14 +343,13 @@ export default function Reservations() {
                                 <option value="rejected">Rejetée</option>
                             </select>
                             <select
-                                value={filterRoom}
-                                onChange={(e) => setFilterRoom(e.target.value)}
+                                value={filterResourceType}
+                                onChange={(e) => setFilterResourceType(e.target.value)}
                                 className="px-3 sm:px-4 py-2 sm:py-3 border-2 border-border rounded-xl bg-card dark:bg-card text-sm sm:text-base text-foreground focus:outline-none focus:border-blue-500 transition-all duration-200 w-full sm:w-40"
                             >
-                                <option value="all">Toutes les salles</option>
-                                {rooms.map(room => (
-                                    <option key={room.id} value={room.id.toString()}>{room.name}</option>
-                                ))}
+                                <option value="all">Toutes les ressources</option>
+                                <option value="pc">Post PC</option>
+                                <option value="local">Local</option>
                             </select>
                         </div>
                     </div>

@@ -29,7 +29,7 @@ export default function FormationCard({
   return (
     <Link
       href={`/formations/${id}`}
-      className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:bg-[#1a1a1c]"
+      className="block bg-white dark:bg-[#1e2939] rounded-lg shadow-md overflow-hidden hover:shadow-lg dark:hover:bg-[#364153] transition-all duration-300"
     >
       <div className="w-full h-48">
         <img
@@ -51,25 +51,25 @@ export default function FormationCard({
 
       <div className="p-4">
         <div className="flex items-center justify-between gap-4 mb-2">
-          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+          <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full text-xs font-medium">
             {category}
           </span>
-          <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">
+          <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded-full text-xs font-medium">
             Niveau: {niveau}
           </span>
         </div>
 
         <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">{titre}</h3>
-        <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">{description}</p>
+        <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">{description}</p>
 
         <div className="mt-4 flex justify-between items-center">
-          <div className="flex items-center gap-1 text-green-600 font-medium">
+          <div className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
         
             <span>Formation Certifiante</span>
           </div>
 
      
-          <span className="text-sm font-medium text-blue-600 hover:underline">Voir détails →</span>
+          <span className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">Voir détails →</span>
         </div>
       </div>
     </Link>

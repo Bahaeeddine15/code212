@@ -39,7 +39,6 @@ export default function CompetitionRegistrationPage({ competition }: Competition
         participant_name: '',
         email: '',
         phone: '',
-        club: '',
         category: competition.category,
         notes: '',
         group_name: '',
@@ -89,7 +88,7 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                         <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
                     </div>
                     
-                    <AppContent variant="sidebar" className="flex-1 bg-white lg:ml-0">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] lg:ml-0">
                         <div className="p-4 lg:p-6 font-sans">
                             {/* Mobile Menu Button */}
                             <div className="lg:hidden mb-4">
@@ -104,18 +103,18 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                             
                             <div className="container mx-auto max-w-4xl">
                                 <div className="mb-8">
-                                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 font-sans">
+                                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2 font-sans">
                                         Inscription - {competition.title}
                                     </h1>
                                     <div className="flex items-center justify-center gap-2 mb-4">
-                                        <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                                        <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 dark:border-[#364153]">
                                             {competition.type === 'group' ? 'Compétition en équipe' : 'Compétition individuelle'}
                                         </Badge>
-                                        <Badge variant="outline">
+                                        <Badge variant="outline" className="dark:border-[#364153] dark:text-gray-300">
                                             {competition.category}
                                         </Badge>
                                     </div>
-                                    <p className="text-gray-600">
+                                    <p className="text-gray-600 dark:text-gray-300">
                                         {competition.type === 'group' 
                                             ? 'Inscrivez votre équipe à cette compétition' 
                                             : 'Inscrivez-vous à cette compétition'
@@ -126,40 +125,40 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Informations de la compétition */}
                         <div className="lg:col-span-1">
-                            <Card className="sticky top-6">
+                            <Card className="sticky top-6 dark:bg-[#1e2939] dark:border-[#364153]">
                                 <CardHeader>
                                     <div className="flex items-center gap-2 mb-2">
-                                        <Trophy className="w-5 h-5 text-yellow-500" />
+                                        <Trophy className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
                                         <Badge className="bg-green-500 text-white">
                                             {competition.status}
                                         </Badge>
                                     </div>
-                                    <CardTitle className="text-xl">{competition.title}</CardTitle>
-                                    <CardDescription className="line-clamp-3">
+                                    <CardTitle className="text-xl dark:text-white">{competition.title}</CardTitle>
+                                    <CardDescription className="line-clamp-3 dark:text-gray-300">
                                         {competition.description}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                             <Calendar className="w-4 h-4 mr-2" />
                                             <span>Date: {new Date(competition.date).toLocaleDateString('fr-FR')}</span>
                                         </div>
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                             <Calendar className="w-4 h-4 mr-2" />
                                             <span>Limite: {new Date(competition.deadline).toLocaleDateString('fr-FR')}</span>
                                         </div>
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                             <MapPin className="w-4 h-4 mr-2" />
                                             <span>{competition.location}</span>
                                         </div>
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                             <Users className="w-4 h-4 mr-2" />
                                             <span>{competition.registrations}/{competition.maxParticipants} participants</span>
                                         </div>
                                         {remainingSpots > 0 && (
-                                            <div className="bg-green-50 p-3 rounded-lg">
-                                                <p className="text-sm text-green-700 font-medium">
+                                            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                                                <p className="text-sm text-green-700 dark:text-green-300 font-medium">
                                                     {remainingSpots} place{remainingSpots > 1 ? 's' : ''} restante{remainingSpots > 1 ? 's' : ''}
                                                 </p>
                                             </div>
@@ -171,10 +170,10 @@ export default function CompetitionRegistrationPage({ competition }: Competition
 
                         {/* Formulaire d'inscription */}
                         <div className="lg:col-span-2">
-                            <Card>
+                            <Card className="dark:bg-[#1e2939] dark:border-[#364153]">
                                 <CardHeader>
-                                    <CardTitle>Formulaire d'inscription</CardTitle>
-                                    <CardDescription>
+                                    <CardTitle className="dark:text-white">Formulaire d'inscription</CardTitle>
+                                    <CardDescription className="dark:text-gray-300">
                                         Toutes les informations marquées d'un * sont obligatoires
                                     </CardDescription>
                                 </CardHeader>
@@ -182,7 +181,7 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                     <form onSubmit={handleSubmit} className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <Label htmlFor="participant_name">
+                                                <Label htmlFor="participant_name" className="dark:text-gray-300">
                                                     {competition.type === 'individual' ? 'Nom complet *' : 'Nom du capitaine/contact *'}
                                                 </Label>
                                                 <Input
@@ -191,82 +190,68 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                                     value={data.participant_name}
                                                     onChange={(e) => setData('participant_name', e.target.value)}
                                                     required
-                                                    className="mt-1"
+                                                    className="mt-1 dark:bg-[#364153] dark:border-[#364153] dark:text-white dark:placeholder-gray-400"
                                                 />
                                                 {errors.participant_name && (
-                                                    <p className="text-red-500 text-sm mt-1">{errors.participant_name}</p>
+                                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.participant_name}</p>
                                                 )}
                                             </div>
 
                                             <div>
-                                                <Label htmlFor="email">Email *</Label>
+                                                <Label htmlFor="email" className="dark:text-gray-300">Email *</Label>
                                                 <Input
                                                     id="email"
                                                     type="email"
                                                     value={data.email}
                                                     onChange={(e) => setData('email', e.target.value)}
                                                     required
-                                                    className="mt-1"
+                                                    className="mt-1 dark:bg-[#364153] dark:border-[#364153] dark:text-white dark:placeholder-gray-400"
                                                 />
                                                 {errors.email && (
-                                                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.email}</p>
                                                 )}
                                             </div>
 
                                             <div>
-                                                <Label htmlFor="phone">Téléphone *</Label>
+                                                <Label htmlFor="phone" className="dark:text-gray-300">Téléphone *</Label>
                                                 <Input
                                                     id="phone"
                                                     type="tel"
                                                     value={data.phone}
                                                     onChange={(e) => setData('phone', e.target.value)}
                                                     required
-                                                    className="mt-1"
+                                                    className="mt-1 dark:bg-[#364153] dark:border-[#364153] dark:text-white dark:placeholder-gray-400"
                                                 />
                                                 {errors.phone && (
-                                                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                                                )}
-                                            </div>
-
-                                            <div>
-                                                <Label htmlFor="club">Club/Organisation</Label>
-                                                <Input
-                                                    id="club"
-                                                    type="text"
-                                                    value={data.club}
-                                                    onChange={(e) => setData('club', e.target.value)}
-                                                    className="mt-1"
-                                                />
-                                                {errors.club && (
-                                                    <p className="text-red-500 text-sm mt-1">{errors.club}</p>
+                                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.phone}</p>
                                                 )}
                                             </div>
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="category">Catégorie</Label>
+                                            <Label htmlFor="category" className="dark:text-gray-300">Catégorie</Label>
                                             <Input
                                                 id="category"
                                                 type="text"
                                                 value={data.category}
                                                 onChange={(e) => setData('category', e.target.value)}
-                                                className="mt-1"
+                                                className="mt-1 dark:bg-[#364153] dark:border-[#364153] dark:text-white dark:placeholder-gray-400"
                                                 readOnly
                                             />
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="notes">Notes supplémentaires</Label>
+                                            <Label htmlFor="notes" className="dark:text-gray-300">Notes supplémentaires</Label>
                                             <Textarea
                                                 id="notes"
                                                 value={data.notes}
                                                 onChange={(e) => setData('notes', e.target.value)}
                                                 placeholder="Informations supplémentaires, niveau d'expérience, etc."
-                                                className="mt-1"
+                                                className="mt-1 dark:bg-[#364153] dark:border-[#364153] dark:text-white dark:placeholder-gray-400"
                                                 rows={3}
                                             />
                                             {errors.notes && (
-                                                <p className="text-red-500 text-sm mt-1">{errors.notes}</p>
+                                                <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.notes}</p>
                                             )}
                                         </div>
 
@@ -318,11 +303,11 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                                     value={data.participant_name}
                                                     onChange={(e) => setData('participant_name', e.target.value)}
                                                     placeholder="Votre nom et prénom"
-                                                    className="mt-1"
+                                                    className="mt-1 dark:bg-[#364153] dark:border-[#364153] dark:text-white dark:placeholder-gray-400"
                                                     required
                                                 />
                                                 {errors.participant_name && (
-                                                    <p className="text-red-500 text-sm mt-1">{errors.participant_name}</p>
+                                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.participant_name}</p>
                                                 )}
                                             </div>
                                         )}
@@ -331,13 +316,14 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                             <Button
                                                 type="submit"
                                                 disabled={processing || remainingSpots <= 0}
-                                                className="flex-1"
+                                                className="flex-1 dark:bg-[#4f39f6] dark:hover:bg-[#41e296] dark:hover:text-[#3a2b75]"
                                             >
                                                 {processing ? 'Inscription en cours...' : 'S\'inscrire'}
                                             </Button>
                                             <Button
                                                 type="button"
                                                 variant="outline"
+                                                className="dark:border-[#364153] dark:text-gray-300 dark:hover:bg-[#364153]"
                                                 onClick={() => window.history.back()}
                                             >
                                                 Annuler
@@ -345,8 +331,8 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                         </div>
 
                                         {remainingSpots <= 0 && (
-                                            <div className="bg-red-50 p-3 rounded-lg">
-                                                <p className="text-sm text-red-700">
+                                            <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                                                <p className="text-sm text-red-700 dark:text-red-300">
                                                     Cette compétition est complète. Aucune place disponible.
                                                 </p>
                                             </div>

@@ -24,7 +24,7 @@ interface Reservation {
     date_reservation: string;
     status: string;
     resource_type?: string;
-    location_type?: string;
+    location_type?: string | string[];
     room_details?: string;
 }
 
@@ -51,7 +51,11 @@ export default function EditReservation({ reservation }: Props) {
         description: reservation.description,
         date_reservation: reservation.date_reservation,
         resource_type: reservation.resource_type || '',
-        location_type: reservation.location_type || '',
+        location_type: Array.isArray(reservation.location_type) 
+            ? reservation.location_type 
+            : reservation.location_type 
+                ? [reservation.location_type] 
+                : [] as string[],
         room_details: reservation.room_details || '',
     });
 
@@ -90,7 +94,7 @@ export default function EditReservation({ reservation }: Props) {
                         <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
                     </div>
                     
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
                         <div className="p-4 lg:p-6 pt-6">
                             {/* Mobile Menu Button */}
                             <div className="lg:hidden mb-4">
@@ -105,14 +109,14 @@ export default function EditReservation({ reservation }: Props) {
                             
                             <div className="max-w-2xl mx-auto">
                                 <div className="mb-6">
-                                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Modifier votre réservation</h1>
-                                    <p className="text-gray-600">Modifiez les détails de votre demande de réservation</p>
+                                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">Modifier votre réservation</h1>
+                                    <p className="text-gray-600 dark:text-gray-300">Modifiez les détails de votre demande de réservation</p>
                                 </div>
 
-                    <Card>
+                    <Card className="bg-white dark:bg-[#1e2939] border-gray-200 dark:border-gray-600">
                         <CardHeader>
-                            <CardTitle>Informations de la réservation</CardTitle>
-                            <CardDescription>
+                            <CardTitle className="text-gray-900 dark:text-white">Informations de la réservation</CardTitle>
+                            <CardDescription className="text-gray-600 dark:text-gray-300">
                                 Réservation #{reservation.id} - Statut: {reservation.status === 'pending' ? 'En attente' : reservation.status}
                             </CardDescription>
                         </CardHeader>
@@ -120,26 +124,26 @@ export default function EditReservation({ reservation }: Props) {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="nom">Nom *</Label>
+                                        <Label htmlFor="nom" className="text-gray-900 dark:text-white">Nom *</Label>
                                         <Input
                                             id="nom"
                                             type="text"
                                             value={data.nom}
                                             onChange={(e) => setData('nom', e.target.value)}
-                                            className={errors.nom ? 'border-red-500' : ''}
+                                            className={`bg-white dark:bg-[#364153] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${errors.nom ? 'border-red-500' : ''}`}
                                             required
                                         />
                                         {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="prenom">Prénom *</Label>
+                                        <Label htmlFor="prenom" className="text-gray-900 dark:text-white">Prénom *</Label>
                                         <Input
                                             id="prenom"
                                             type="text"
                                             value={data.prenom}
                                             onChange={(e) => setData('prenom', e.target.value)}
-                                            className={errors.prenom ? 'border-red-500' : ''}
+                                            className={`bg-white dark:bg-[#364153] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${errors.prenom ? 'border-red-500' : ''}`}
                                             required
                                         />
                                         {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
@@ -148,26 +152,26 @@ export default function EditReservation({ reservation }: Props) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="num_apogee">Numéro Apogée *</Label>
+                                        <Label htmlFor="num_apogee" className="text-gray-900 dark:text-white">Numéro Apogée *</Label>
                                         <Input
                                             id="num_apogee"
                                             type="text"
                                             value={data.num_apogee}
                                             onChange={(e) => setData('num_apogee', e.target.value)}
-                                            className={errors.num_apogee ? 'border-red-500' : ''}
+                                            className={`bg-white dark:bg-[#364153] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${errors.num_apogee ? 'border-red-500' : ''}`}
                                             required
                                         />
                                         {errors.num_apogee && <p className="text-red-500 text-sm">{errors.num_apogee}</p>}
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="email">Email *</Label>
+                                        <Label htmlFor="email" className="text-gray-900 dark:text-white">Email *</Label>
                                         <Input
                                             id="email"
                                             type="email"
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
-                                            className={errors.email ? 'border-red-500' : ''}
+                                            className={`bg-white dark:bg-[#364153] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${errors.email ? 'border-red-500' : ''}`}
                                             required
                                         />
                                         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
@@ -175,26 +179,26 @@ export default function EditReservation({ reservation }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="telephone">Numéro de téléphone</Label>
+                                    <Label htmlFor="telephone" className="text-gray-900 dark:text-white">Numéro de téléphone</Label>
                                     <Input
                                         id="telephone"
                                         type="tel"
                                         value={data.telephone}
                                         onChange={(e) => setData('telephone', e.target.value)}
-                                        className={errors.telephone ? 'border-red-500' : ''}
+                                        className={`bg-white dark:bg-[#364153] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${errors.telephone ? 'border-red-500' : ''}`}
                                         placeholder="Ex: 06 12 34 56 78"
                                     />
                                     {errors.telephone && <p className="text-red-500 text-sm">{errors.telephone}</p>}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="date_reservation">Date de réservation souhaitée *</Label>
+                                    <Label htmlFor="date_reservation" className="text-gray-900 dark:text-white">Date de réservation souhaitée *</Label>
                                     <Input
                                         id="date_reservation"
                                         type="date"
                                         value={data.date_reservation}
                                         onChange={(e) => setData('date_reservation', e.target.value)}
-                                        className={errors.date_reservation ? 'border-red-500' : ''}
+                                        className={`bg-white dark:bg-[#364153] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${errors.date_reservation ? 'border-red-500' : ''}`}
                                         min={new Date().toISOString().split('T')[0]}
                                         required
                                     />
@@ -203,22 +207,22 @@ export default function EditReservation({ reservation }: Props) {
 
                                 {/* Type de ressource */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="resource_type">Type de ressource *</Label>
+                                    <Label htmlFor="resource_type" className="text-gray-900 dark:text-white">Type de ressource *</Label>
                                     <select
                                         id="resource_type"
                                         value={data.resource_type}
                                         onChange={(e) => {
                                             setData('resource_type', e.target.value);
                                             if (e.target.value !== 'local') {
-                                                setData('location_type', '');
+                                                setData('location_type', [] as string[]);
                                                 setData('room_details', '');
                                             }
                                         }}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.resource_type ? 'border-red-500' : 'border-gray-300'}`}
+                                        className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-[#364153] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.resource_type ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                                         required
                                     >
                                         <option value="">Sélectionnez le type de ressource</option>
-                                        <option value="pc">Poste (PC)</option>
+                                        <option value="pc">Post PC (2ème étage zone coding)</option>
                                         <option value="local">Local</option>
                                     </select>
                                     {errors.resource_type && <p className="text-red-500 text-sm">{errors.resource_type}</p>}
@@ -228,7 +232,7 @@ export default function EditReservation({ reservation }: Props) {
                                 {data.resource_type === 'local' && (
                                     <>
                                         <div className="space-y-2">
-                                            <Label htmlFor="location_type">Type de local *</Label>
+                                            <Label htmlFor="location_type" className="text-gray-900 dark:text-white">Type de local *</Label>
                                             <select
                                                 id="location_type"
                                                 value={data.location_type}
@@ -236,7 +240,7 @@ export default function EditReservation({ reservation }: Props) {
                                                     setData('location_type', e.target.value);
                                                     setData('room_details', '');
                                                 }}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.location_type ? 'border-red-500' : 'border-gray-300'}`}
+                                                className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-[#364153] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.location_type ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                                                 required
                                             >
                                                 <option value="">Sélectionnez le type de local</option>
@@ -248,12 +252,12 @@ export default function EditReservation({ reservation }: Props) {
 
                                         {data.location_type === 'salle_reunion' && (
                                             <div className="space-y-2">
-                                                <Label htmlFor="room_details">Étage *</Label>
+                                                <Label htmlFor="room_details" className="text-gray-900 dark:text-white">Étage *</Label>
                                                 <select
                                                     id="room_details"
                                                     value={data.room_details}
                                                     onChange={(e) => setData('room_details', e.target.value)}
-                                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.room_details ? 'border-red-500' : 'border-gray-300'}`}
+                                                    className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-[#364153] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.room_details ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                                                     required
                                                 >
                                                     <option value="">Sélectionnez l'étage</option>
@@ -268,12 +272,12 @@ export default function EditReservation({ reservation }: Props) {
                                 )}
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="description">Description de votre demande *</Label>
+                                    <Label htmlFor="description" className="text-gray-900 dark:text-white">Description de votre demande *</Label>
                                     <Textarea
                                         id="description"
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
-                                        className={errors.description ? 'border-red-500' : ''}
+                                        className={`bg-white dark:bg-[#364153] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${errors.description ? 'border-red-500' : ''}`}
                                         placeholder="Décrivez votre demande de réservation..."
                                         rows={4}
                                         required
@@ -287,7 +291,7 @@ export default function EditReservation({ reservation }: Props) {
                                         disabled={processing}
                                         className="bg-blue-600 hover:bg-blue-700"
                                     >
-                                        {processing ? 'Mise à jour...' : '✏️ Mettre à jour'}
+                                        {processing ? 'Mise à jour...' : ' Mettre à jour'}
                                     </Button>
                                     
                                     <Button 
@@ -295,16 +299,16 @@ export default function EditReservation({ reservation }: Props) {
                                         variant="outline"
                                         onClick={() => window.history.back()}
                                     >
-                                        🔙 Annuler
+                                        Annuler
                                     </Button>
                                 </div>
                             </form>
                         </CardContent>
                     </Card>
 
-                    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <h3 className="font-semibold text-blue-800 mb-2">💡 Information importante</h3>
-                        <p className="text-blue-700 text-sm">
+                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">💡 Information importante</h3>
+                        <p className="text-blue-700 dark:text-blue-300 text-sm">
                             Vous ne pouvez modifier votre réservation que si elle est encore en attente. 
                             Une fois approuvée ou rejetée, elle ne peut plus être modifiée.
                         </p>
