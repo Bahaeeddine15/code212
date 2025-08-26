@@ -2,6 +2,7 @@ import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Head, Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import AppearanceTabs from '@/components/common/appearance-tabs';
@@ -31,25 +32,25 @@ export default function Appearance() {
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
                     <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins]">
                         <div className="p-6">
                             <div className="space-y-6">
                                 <HeadingSmall title="Appearance settings" description="Update your account's appearance settings" />
                                 
                                 {/* Settings Navigation */}
-                                <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex flex-wrap gap-3 p-4 bg-gray-50 dark:bg-[#1e2939] rounded-lg border border-gray-200 dark:border-[#364153]">
                                     <Link href="/settings/profile">
-                                        <Button variant="outline" className="flex items-center gap-2">
+                                        <Button variant="outline" className="flex items-center gap-2 bg-white dark:bg-[#364153] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1e2939]">
                                             <User className="w-4 h-4" />
                                             Profile
                                         </Button>
                                     </Link>
-                                    <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+                                    <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
                                         <Palette className="w-4 h-4" />
                                         Appearance
                                     </Button>
                                     <Link href="/settings/password">
-                                        <Button variant="outline" className="flex items-center gap-2">
+                                        <Button variant="outline" className="flex items-center gap-2 bg-white dark:bg-[#364153] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1e2939]">
                                             <Lock className="w-4 h-4" />
                                             Password
                                         </Button>
@@ -62,6 +63,8 @@ export default function Appearance() {
                     </AppContent>
                 </div>
             </AppShell>
+            
+            <Footer />
         </>
     );
 }

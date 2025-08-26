@@ -26,7 +26,7 @@ export function NavMain({
     };
     
     return (
-        <nav className="space-y-4">
+        <nav className="space-y-3">
             {items.map((item, index) => (
                 <Link
                     key={item.title}
@@ -34,10 +34,12 @@ export function NavMain({
                     onClick={onItemClick}
                     className={cn(
                         "flex items-center gap-4 w-full px-6 py-4 rounded-xl font-semibold text-sm transition-all duration-200 border-0",
-                        // Couleur par défaut : #4f39f6 avec du texte blanc
-                        "bg-[#4f39f6] hover:bg-[#41e296] text-white hover:text-[#3a2b75]",
-                        // Couleur active : #41e296 avec du texte #3a2b75
-                        isActive(item.href) && "bg-[#41e296] text-[#3a2b75] hover:bg-[#41e296]"
+                        // Dark mode: Default purple/blue for non-active items
+                        "bg-[#4f39f6] hover:bg-[#5a47f7] text-white",
+                        "dark:bg-[#4f39f6] dark:hover:bg-[#5a47f7] dark:text-white",
+                        // Dark mode: Green for active item (Dashboard)
+                        isActive(item.href) && "bg-[#41e296] text-[#1a1a1a] hover:bg-[#41e296]",
+                        isActive(item.href) && "dark:bg-[#41e296] dark:text-[#1a1a1a] dark:hover:bg-[#41e296]"
                     )}
                 >
                     {item.icon && <item.icon className="w-5 h-5 flex-shrink-0" />}

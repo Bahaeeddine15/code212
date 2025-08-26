@@ -76,13 +76,13 @@ export default function FolderShow(props: FolderShowProps) {
                         <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
                     </div>
                     
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
                         <div className="px-4 lg:px-6 py-6 space-y-6">
                             {/* Mobile Menu Button */}
                             <div className="lg:hidden mb-4">
                                 <button
                                     onClick={() => setIsMobileOpen(!isMobileOpen)}
-                                    className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                                    className="p-3 bg-blue-600 dark:bg-blue-700 text-white rounded-lg shadow-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors flex items-center gap-2"
                                 >
                                     <Menu className="w-5 h-5" />
                                     <span className="text-sm font-medium">Menu</span>
@@ -91,19 +91,19 @@ export default function FolderShow(props: FolderShowProps) {
                             
                             {/* Header */}
                             <div className="mb-8">
-                                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Dossier : {folder}</h1>
-                                <p className="text-gray-600">Retrouvez tous les médias de ce dossier</p>
+                                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">Dossier : {folder}</h1>
+                                <p className="text-gray-600 dark:text-gray-300">Retrouvez tous les médias de ce dossier</p>
                             </div>
 
                             {/* Navigation */}
                             <div className="mb-8 flex justify-between items-center">
                                 <Link
                                     href="/media"
-                                    className="text-blue-600 hover:underline font-medium text-base"
+                                    className="text-blue-600 dark:text-blue-400 hover:underline font-medium text-base"
                                 >
                                     ← Retour à la médiathèque
                                 </Link>
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-gray-500 dark:text-gray-400">
                                     {filteredFiles.length} média{filteredFiles.length > 1 ? 's' : ''} dans ce dossier
                                 </div>
                             </div>
@@ -117,7 +117,7 @@ export default function FolderShow(props: FolderShowProps) {
                                         placeholder="Rechercher un média dans ce dossier..."
                                         value={search}
                                         onChange={e => setSearch(e.target.value)}
-                                        className="w-full border rounded-lg pl-10 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                                        className="w-full border rounded-lg pl-10 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 transition bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                                     />
                                 </div>
                             </div>
@@ -129,7 +129,7 @@ export default function FolderShow(props: FolderShowProps) {
                                     
                                     return (
                                         <Link key={file.id} href={`/media/${file.id}`}>
-                                            <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer">
+                                            <div className="bg-white dark:bg-[#1e2939] rounded-2xl shadow-md border border-gray-200 dark:border-[#364153] overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer">
                                                 {/* Media Preview */}
                                                 <div className="aspect-video bg-gray-100 flex items-center justify-center relative overflow-hidden">
                                                     {isVideo ? (
@@ -168,7 +168,7 @@ export default function FolderShow(props: FolderShowProps) {
 
                                                 {/* Media Info */}
                                                 <div className="p-4">
-                                                    <h3 className="font-semibold text-sm line-clamp-2 mb-2 hover:text-blue-600 transition-colors" title={file.title}>
+                                                    <h3 className="font-semibold text-sm line-clamp-2 mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-gray-900 dark:text-white" title={file.title}>
                                                         {file.title}
                                                     </h3>
                                                     
@@ -181,7 +181,7 @@ export default function FolderShow(props: FolderShowProps) {
                                                             {isVideo ? <Video className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
                                                             {getMediaType(file.file_path)}
                                                         </span>
-                                                        <span className="text-xs text-gray-500">
+                                                        <span className="text-xs text-gray-500 dark:text-gray-400">
                                                             {new Date(file.created_at).toLocaleDateString('fr-FR')}
                                                         </span>
                                                     </div>
@@ -205,13 +205,13 @@ export default function FolderShow(props: FolderShowProps) {
                             </div>
                             
                             {filteredFiles.length === 0 && (
-                                <div className="text-center text-gray-500 py-12">
+                                <div className="text-center text-gray-500 dark:text-gray-400 py-12">
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <div className="w-16 h-16 bg-gray-100 dark:bg-[#364153] rounded-full flex items-center justify-center">
                                             <Search className="w-8 h-8 text-gray-400" />
                                         </div>
                                         <div>
-                                            <p className="text-lg font-medium mb-2">Aucun média trouvé</p>
+                                            <p className="text-lg font-medium mb-2 text-gray-900 dark:text-white">Aucun média trouvé</p>
                                             <p className="text-sm">
                                                 {search ? 'Essayez de modifier votre recherche.' : 'Ce dossier est vide.'}
                                             </p>

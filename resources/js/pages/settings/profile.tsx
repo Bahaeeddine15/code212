@@ -2,6 +2,7 @@ import { AppContent } from '@/components/layout/app-content';
 import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
@@ -69,7 +70,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
                     <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins]">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins]">
                         <div className="p-6">
                             <div className="space-y-6">
                                 <HeadingSmall 
@@ -78,19 +79,19 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 />
 
                                 {/* Settings Navigation */}
-                                <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-lg border">
-                                    <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+                                <div className="flex flex-wrap gap-3 p-4 bg-gray-50 dark:bg-[#1e2939] rounded-lg border border-gray-200 dark:border-[#364153]">
+                                    <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
                                         <User className="w-4 h-4" />
                                         Profil
                                     </Button>
                                     <Link href="/settings/appearance">
-                                        <Button variant="outline" className="flex items-center gap-2">
+                                        <Button variant="outline" className="flex items-center gap-2 bg-white dark:bg-[#364153] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1e2939]">
                                             <Palette className="w-4 h-4" />
                                             Apparence
                                         </Button>
                                     </Link>
                                     <Link href="/settings/password">
-                                        <Button variant="outline" className="flex items-center gap-2">
+                                        <Button variant="outline" className="flex items-center gap-2 bg-white dark:bg-[#364153] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1e2939]">
                                             <Lock className="w-4 h-4" />
                                             Mot de passe
                                         </Button>
@@ -99,10 +100,10 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                                 <form onSubmit={submit} className="space-y-6">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">Nom complet</Label>
+                                        <Label htmlFor="name" className="text-gray-900 dark:text-white">Nom complet</Label>
                                         <Input
                                             id="name"
-                                            className="mt-1 block w-full"
+                                            className="mt-1 block w-full bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
                                             required
@@ -114,28 +115,28 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                                     {/* Display email as read-only */}
                                     <div className="grid gap-2">
-                                        <Label className="flex items-center gap-2 text-muted-foreground">
+                                        <Label className="flex items-center gap-2 text-muted-foreground dark:text-gray-400">
                                             <Mail className="w-4 h-4" />
                                             Adresse email
                                         </Label>
-                                        <div className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-700">
+                                        <div className="mt-1 block w-full px-3 py-2 bg-gray-50 dark:bg-[#364153] border border-gray-200 dark:border-[#364153] rounded-md text-sm text-gray-700 dark:text-gray-300">
                                             {etudiant.email || 'Non spécifiée'}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-xs text-muted-foreground dark:text-gray-400">
                                             L'adresse email ne peut pas être modifiée. Contactez l'administration si nécessaire.
                                         </p>
                                     </div>
 
                                     {/* Display école as read-only */}
                                     <div className="grid gap-2">
-                                        <Label className="flex items-center gap-2 text-muted-foreground">
+                                        <Label className="flex items-center gap-2 text-muted-foreground dark:text-gray-400">
                                             <GraduationCap className="w-4 h-4" />
                                             École
                                         </Label>
-                                        <div className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-700">
+                                        <div className="mt-1 block w-full px-3 py-2 bg-gray-50 dark:bg-[#364153] border border-gray-200 dark:border-[#364153] rounded-md text-sm text-gray-700 dark:text-gray-300">
                                             {etudiant.ecole || 'Non spécifiée'}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-xs text-muted-foreground dark:text-gray-400">
                                             L'école ne peut pas être modifiée. Contactez l'administration si nécessaire.
                                         </p>
                                     </div>
@@ -163,7 +164,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                     )}
 
                                     <div className="flex items-center gap-4">
-                                        <Button disabled={processing}>
+                                        <Button disabled={processing} className="bg-blue-600 hover:bg-blue-700 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
                                             {processing ? 'Enregistrement...' : 'Enregistrer'}
                                         </Button>
 
@@ -183,6 +184,8 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     </AppContent>
                 </div>
             </AppShell>
+            
+            <Footer />
         </>
     );
 }

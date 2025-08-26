@@ -70,14 +70,14 @@ const Notification = ({ type, message, onClose }: { type: 'success' | 'error', m
     return (
         <div className={`fixed top-4 right-4 z-50 max-w-md p-4 rounded-lg shadow-lg transition-all duration-300 ${
             type === 'success' 
-                ? 'bg-green-50 border border-green-200 text-green-800' 
-                : 'bg-red-50 border border-red-200 text-red-800'
+                ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-200' 
+                : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-200'
         }`}>
             <div className="flex items-start gap-3">
                 {type === 'success' ? (
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
                 ) : (
-                    <XCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                    <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5" />
                 )}
                 <div className="flex-1">
                     <p className="font-medium">
@@ -87,7 +87,7 @@ const Notification = ({ type, message, onClose }: { type: 'success' | 'error', m
                 </div>
                 <button
                     onClick={onClose}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                 >
                     <X className="w-4 h-4" />
                 </button>
@@ -154,7 +154,7 @@ export default function CompetitionPage({ competitions, registrations, statistic
                         <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
                     </div>
                     
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
                         <div className="p-4 lg:p-6 pt-6">
                             {/* Mobile Menu Button */}
                             <div className="lg:hidden mb-4">
@@ -176,34 +176,34 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                 />
                             )}
                         <div className="mb-8">
-                            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Compétitions</h1>
-                            <p className="text-gray-600">Découvrez et participez aux compétitions de programmation</p>
+                            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">Compétitions</h1>
+                            <p className="text-gray-600 dark:text-gray-300">Découvrez et participez aux compétitions de programmation</p>
                         </div>
 
                         {/* Statistiques */}
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                            <Card>
+                            <Card className="dark:bg-[#1e2939] dark:border-[#364153]">
                                 <CardHeader className="pb-2">
-                                    <CardDescription>Total Compétitions</CardDescription>
-                                    <CardTitle className="text-2xl">{statistics.totalCompetitions}</CardTitle>
+                                    <CardDescription className="dark:text-gray-300">Total Compétitions</CardDescription>
+                                    <CardTitle className="text-2xl dark:text-white">{statistics.totalCompetitions}</CardTitle>
                                 </CardHeader>
                             </Card>
-                            <Card>
+                            <Card className="dark:bg-[#1e2939] dark:border-[#364153]">
                                 <CardHeader className="pb-2">
-                                    <CardDescription>Compétitions Ouvertes</CardDescription>
-                                    <CardTitle className="text-2xl text-green-600">{statistics.activeCompetitions}</CardTitle>
+                                    <CardDescription className="dark:text-gray-300">Compétitions Ouvertes</CardDescription>
+                                    <CardTitle className="text-2xl text-green-600 dark:text-green-400">{statistics.activeCompetitions}</CardTitle>
                                 </CardHeader>
                             </Card>
-                            <Card>
+                            <Card className="dark:bg-[#1e2939] dark:border-[#364153]">
                                 <CardHeader className="pb-2">
-                                    <CardDescription>Total Inscriptions</CardDescription>
-                                    <CardTitle className="text-2xl">{statistics.totalRegistrations}</CardTitle>
+                                    <CardDescription className="dark:text-gray-300">Total Inscriptions</CardDescription>
+                                    <CardTitle className="text-2xl dark:text-white">{statistics.totalRegistrations}</CardTitle>
                                 </CardHeader>
                             </Card>
-                            <Card>
+                            <Card className="dark:bg-[#1e2939] dark:border-[#364153]">
                                 <CardHeader className="pb-2">
-                                    <CardDescription>Inscriptions Confirmées</CardDescription>
-                                    <CardTitle className="text-2xl text-blue-600">{statistics.confirmedRegistrations}</CardTitle>
+                                    <CardDescription className="dark:text-gray-300">Inscriptions Confirmées</CardDescription>
+                                    <CardTitle className="text-2xl text-blue-600 dark:text-blue-400">{statistics.confirmedRegistrations}</CardTitle>
                                 </CardHeader>
                             </Card>
                         </div>
@@ -211,41 +211,41 @@ export default function CompetitionPage({ competitions, registrations, statistic
                         {/* Liste des compétitions */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {competitions.map((competition) => (
-                                <Card key={competition.id} className="hover:shadow-lg transition-shadow">
+                                <Card key={competition.id} className="hover:shadow-lg transition-shadow dark:bg-[#1e2939] dark:border-[#364153]">
                                     <CardHeader>
                                         <div className="flex justify-between items-start mb-2">
                                             <Badge className={`${getStatusColor(competition.status)} text-white`}>
                                                 {competition.status}
                                             </Badge>
-                                            <Badge variant="outline">{competition.category}</Badge>
-                                            <Badge variant="outline" className="ml-2">
+                                            <Badge variant="outline" className="dark:border-[#364153] dark:text-gray-300">{competition.category}</Badge>
+                                            <Badge variant="outline" className="ml-2 dark:border-[#364153] dark:text-gray-300">
                                               {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
                                             </Badge>
                                         </div>
-                                        <CardTitle className="text-xl">{competition.title}</CardTitle>
-                                        <CardDescription className="line-clamp-3">
+                                        <CardTitle className="text-xl dark:text-white">{competition.title}</CardTitle>
+                                        <CardDescription className="line-clamp-3 dark:text-gray-300">
                                             {competition.description}
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-2 mb-4">
-                                            <div className="flex items-center text-sm text-gray-600">
+                                            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                                 <Calendar className="w-4 h-4 mr-2" />
                                                 <span>Date: {new Date(competition.date).toLocaleDateString('fr-FR')}</span>
                                             </div>
-                                            <div className="flex items-center text-sm text-gray-600">
+                                            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                                 <Calendar className="w-4 h-4 mr-2" />
                                                 <span>Limite: {new Date(competition.deadline).toLocaleDateString('fr-FR')}</span>
                                             </div>
-                                            <div className="flex items-center text-sm text-gray-600">
+                                            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                                 <MapPin className="w-4 h-4 mr-2" />
                                                 <span>{competition.location}</span>
                                             </div>
-                                            <div className="flex items-center text-sm text-gray-600">
+                                            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                                 <Users className="w-4 h-4 mr-2" />
                                                 <span>{competition.registrations}/{competition.maxParticipants} participants</span>
                                             </div>
-                                            <div className="flex items-center text-sm text-gray-600">
+                                            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                                 <Eye className="w-4 h-4 mr-2" />
                                                 <span>{competition.views} vues</span>
                                             </div>
@@ -279,7 +279,7 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                                     Fermé
                                                 </Button>
                                             )}
-                                            <Button variant="outline" size="sm" asChild>
+                                            <Button variant="outline" size="sm" asChild className="dark:border-[#364153] dark:text-gray-300 dark:hover:bg-[#364153]">
                                                 <Link href={`/competition/${competition.id}`}>Détails</Link>
                                             </Button>
                                         </div>
@@ -290,7 +290,7 @@ export default function CompetitionPage({ competitions, registrations, statistic
 
                         {competitions.length === 0 && (
                             <div className="text-center py-12">
-                                <p className="text-gray-500 text-lg">Aucune compétition disponible pour le moment.</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-lg">Aucune compétition disponible pour le moment.</p>
                             </div>
                         )}
                         </div>
