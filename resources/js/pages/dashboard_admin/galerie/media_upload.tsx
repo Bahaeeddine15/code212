@@ -263,7 +263,13 @@ export default function MediaUpload() {
                                         {isUploading ? (
                                             <>
                                                 <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white"></div>
-                                                <span>Upload en cours...</span>
+                                                <span>
+                                                  Upload et traitement en cours...
+                                                  <br />
+                                                  <span className="text-xs text-muted-foreground">
+                                                    Cela peut prendre plusieurs minutes pour les vidéos.
+                                                  </span>
+                                                </span>
                                             </>
                                         ) : (
                                             <>
