@@ -24,7 +24,7 @@ interface Reservation {
     date_reservation: string;
     status: string;
     resource_type?: string;
-    location_type?: string;
+    location_type?: string | string[];
     room_details?: string;
 }
 
@@ -51,7 +51,11 @@ export default function EditReservation({ reservation }: Props) {
         description: reservation.description,
         date_reservation: reservation.date_reservation,
         resource_type: reservation.resource_type || '',
-        location_type: reservation.location_type || '',
+        location_type: Array.isArray(reservation.location_type) 
+            ? reservation.location_type 
+            : reservation.location_type 
+                ? [reservation.location_type] 
+                : [] as string[],
         room_details: reservation.room_details || '',
     });
 
@@ -210,7 +214,7 @@ export default function EditReservation({ reservation }: Props) {
                                         onChange={(e) => {
                                             setData('resource_type', e.target.value);
                                             if (e.target.value !== 'local') {
-                                                setData('location_type', '');
+                                                setData('location_type', [] as string[]);
                                                 setData('room_details', '');
                                             }
                                         }}
@@ -218,7 +222,7 @@ export default function EditReservation({ reservation }: Props) {
                                         required
                                     >
                                         <option value="">Sélectionnez le type de ressource</option>
-                                        <option value="pc">Poste (PC)</option>
+                                        <option value="pc">Post PC (2ème étage zone coding)</option>
                                         <option value="local">Local</option>
                                     </select>
                                     {errors.resource_type && <p className="text-red-500 text-sm">{errors.resource_type}</p>}

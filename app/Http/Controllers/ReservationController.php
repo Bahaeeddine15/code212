@@ -64,8 +64,9 @@ class ReservationController extends Controller
             'description' => 'required|string',
             'date_reservation' => 'required|date|after_or_equal:today',
             'resource_type' => 'required|in:pc,local',
-            'location_type' => 'nullable|required_if:resource_type,local|in:salle_conference,salle_reunion',
-            'room_details' => 'nullable|required_if:location_type,salle_reunion|in:1er_etage,2eme_etage,3eme_etage',
+            'location_type' => 'nullable|required_if:resource_type,local|array',
+            'location_type.*' => 'in:salle_concentration_3e,salle_formation_ja_rdc,salle_conference_rdc,zone_coding',
+            'room_details' => 'nullable|string',
         ]);
 
         Reservation::create([
@@ -139,8 +140,9 @@ class ReservationController extends Controller
             'description' => 'required|string',
             'date_reservation' => 'required|date|after_or_equal:today',
             'resource_type' => 'required|in:pc,local',
-            'location_type' => 'nullable|required_if:resource_type,local|in:salle_conference,salle_reunion',
-            'room_details' => 'nullable|required_if:location_type,salle_reunion|in:1er_etage,2eme_etage,3eme_etage',
+            'location_type' => 'nullable|required_if:resource_type,local|array',
+            'location_type.*' => 'in:salle_concentration_3e,salle_formation_ja_rdc,salle_conference_rdc,zone_coding',
+            'room_details' => 'nullable|string',
         ]);
 
         $reservation->update([

@@ -80,51 +80,52 @@ export default function FormationEdit({ formation }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Modifier la formation" />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 bg-background">
+            <div className="flex h-full flex-1 flex-col gap-6 sm:gap-8 p-4 sm:p-6 bg-background">
                 {/* Header moderne */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-8">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg">
-                                <Edit className="w-8 h-8 text-white" />
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-4 sm:p-8">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                            <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg self-start">
+                                <Edit className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-foreground">Modifier la formation</h1>
-                                <p className="text-muted-foreground mt-2 text-lg">Modifiez "{formation.title}"</p>
+                                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Modifier la formation</h1>
+                                <p className="text-muted-foreground mt-1 sm:mt-2 text-base sm:text-lg line-clamp-1">Modifiez "{formation.title}"</p>
                             </div>
                         </div>
                         <Link
                             href="/admin/formations"
-                            className="bg-card dark:bg-card text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 px-6 py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200 dark:border-blue-700"
+                            className="bg-card dark:bg-card text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center space-x-2 font-semibold transition-all duration-200 shadow-md hover:shadow-lg border border-blue-200 dark:border-blue-700 self-start lg:self-auto text-sm sm:text-base"
                         >
-                            <ArrowLeft className="w-5 h-5" />
-                            <span>Retour aux formations</span>
+                            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Retour aux formations</span>
+                            <span className="sm:hidden">Retour</span>
                         </Link>
                     </div>
                 </div>
 
                 {/* Layout organisé avec sidebar */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
                     {/* Section principale - Formulaire */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="xl:col-span-2 space-y-6 sm:space-y-8">
                         {/* Informations principales */}
-                        <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
-                            <div className="flex items-center space-x-3 mb-6">
+                        <div className="bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-8">
+                            <div className="flex items-center space-x-3 mb-4 sm:mb-6">
                                 <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
-                                    <GraduationCap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                    <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
                                 </div>
-                                <h2 className="text-xl font-bold text-foreground">Détails de la formation</h2>
+                                <h2 className="text-lg sm:text-xl font-bold text-foreground">Détails de la formation</h2>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Titre de la formation *</label>
                                         <input
                                             type="text"
                                             value={form.title}
                                             onChange={e => handleChange('title', e.target.value)}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            className="w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
                                             placeholder="Ex: Certification Cisco CCNA"
                                             required
                                         />
@@ -136,7 +137,7 @@ export default function FormationEdit({ formation }: Props) {
                                         <select
                                             value={form.level}
                                             onChange={e => handleChange('level', e.target.value)}
-                                            className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                            className="w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-foreground focus:border-blue-500 focus:outline-none transition-colors"
                                             required
                                         >
                                             <option value="">Sélectionner un niveau</option>

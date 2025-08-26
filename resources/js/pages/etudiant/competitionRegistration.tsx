@@ -39,7 +39,6 @@ export default function CompetitionRegistrationPage({ competition }: Competition
         participant_name: '',
         email: '',
         phone: '',
-        club: '',
         category: competition.category,
         notes: '',
         group_name: '',
@@ -225,20 +224,6 @@ export default function CompetitionRegistrationPage({ competition }: Competition
                                                 />
                                                 {errors.phone && (
                                                     <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.phone}</p>
-                                                )}
-                                            </div>
-
-                                            <div>
-                                                <Label htmlFor="club" className="dark:text-gray-300">Club/Organisation</Label>
-                                                <Input
-                                                    id="club"
-                                                    type="text"
-                                                    value={data.club}
-                                                    onChange={(e) => setData('club', e.target.value)}
-                                                    className="mt-1 dark:bg-[#364153] dark:border-[#364153] dark:text-white dark:placeholder-gray-400"
-                                                />
-                                                {errors.club && (
-                                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.club}</p>
                                                 )}
                                             </div>
                                         </div>

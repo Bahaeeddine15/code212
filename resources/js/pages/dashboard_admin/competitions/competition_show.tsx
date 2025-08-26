@@ -266,20 +266,21 @@ export default function CompetitionShow({ competition, registrations }: Competit
             <Head title={`Compétition: ${competition.title}`} />
 
             {/* Fixed Header with Actions */}
-            <div className="sticky top-0 z-10 bg-card dark:bg-card/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-border dark:border-gray-700 px-6 py-4">
-                <div className="flex justify-between items-center max-w-6xl mx-auto">
+            <div className="sticky top-0 z-10 bg-card dark:bg-card/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-border dark:border-gray-700 px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 max-w-6xl mx-auto">
                     <Link
                         href="/admin/competitions"
-                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium text-sm sm:text-base"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        Retour aux compétitions
+                        <span className="hidden sm:inline">Retour aux compétitions</span>
+                        <span className="sm:hidden">Retour</span>
                     </Link>
 
-                    <div className="flex gap-3">
-                        <Link href={`/admin/competitions/${competition.id}/edit`}>
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                                <Edit className="w-4 h-4 mr-2" />
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <Link href={`/admin/competitions/${competition.id}/edit`} className="w-full sm:w-auto">
+                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto text-sm">
+                                <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                                 Modifier
                             </Button>
                         </Link>
@@ -287,9 +288,9 @@ export default function CompetitionShow({ competition, registrations }: Competit
                             size="sm"
                             variant="outline"
                             onClick={handleDelete}
-                            className="text-red-600 dark:text-red-400 hover:text-red-700 border-red-200"
+                            className="text-red-600 dark:text-red-400 hover:text-red-700 border-red-200 w-full sm:w-auto text-sm"
                         >
-                            <Trash2 className="w-4 h-4 mr-2" />
+                            <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                             Supprimer
                         </Button>
                     </div>
@@ -297,17 +298,17 @@ export default function CompetitionShow({ competition, registrations }: Competit
             </div>
 
             {/* Competition Content */}
-            <div className="min-h-screen bg-background dark:bg-gray-900 py-8">
-                <div className="max-w-6xl mx-auto px-6">
+            <div className="min-h-screen bg-background dark:bg-gray-900 py-4 sm:py-6 lg:py-8">
+                <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6">
                     {/* Competition Header */}
-                    <div className="bg-card dark:bg-card dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden mb-8">
-                        <header className="px-8 pt-8 pb-6 border-b border-border dark:border-gray-700">
+                    <div className="bg-card dark:bg-card dark:bg-gray-800 shadow-xl rounded-xl lg:rounded-2xl overflow-hidden mb-6 sm:mb-8">
+                        <header className="px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-4 sm:pb-6 border-b border-border dark:border-gray-700">
                             {/* Status & Category */}
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                                     <Badge
                                         variant="outline"
-                                        className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 border-blue-200 text-sm px-3 py-1"
+                                        className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 border-blue-200 text-xs sm:text-sm px-2 sm:px-3 py-1"
                                     >
                                         {competition.category}
                                     </Badge>
@@ -315,10 +316,10 @@ export default function CompetitionShow({ competition, registrations }: Competit
                                     {/* Add competition type badge */}
                                     <Badge
                                         variant="outline"
-                                        className={competition.type === 'group' 
-                                            ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 border-purple-200 text-sm px-3 py-1"
-                                            : "bg-green-50 dark:bg-green-900/20 text-green-700 border-green-200 text-sm px-3 py-1"
-                                        }
+                                        className={`text-xs sm:text-sm px-2 sm:px-3 py-1 ${competition.type === 'group' 
+                                            ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 border-purple-200"
+                                            : "bg-green-50 dark:bg-green-900/20 text-green-700 border-green-200"
+                                        }`}
                                     >
                                         {competition.type === 'group' ? (
                                             <>
@@ -336,15 +337,15 @@ export default function CompetitionShow({ competition, registrations }: Competit
                             </div>
 
                             {/* Title */}
-                            <h1 className="text-4xl md:text-5xl font-bold text-foreground dark:text-white leading-tight mb-6">
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground dark:text-white leading-tight mb-4 sm:mb-6">
                                 {competition.title}
                             </h1>
 
                             {/* Competition Meta */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-muted-foreground dark:text-gray-400">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
-                                        <Calendar className="w-5 h-5 text-white" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-muted-foreground dark:text-gray-400">
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+                                        <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                     </div>
                                     <div>
                                         <p className="text-sm text-muted-foreground">Date de la compétition</p>

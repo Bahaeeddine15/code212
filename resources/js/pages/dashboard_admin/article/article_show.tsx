@@ -47,7 +47,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
         const statusConfig = {
             published: { label: 'Publié', variant: 'default' as const, className: 'bg-green-500 text-white' },
             draft: { label: 'Brouillon', variant: 'secondary' as const, className: 'bg-yellow-500 text-white' },
-            archived: { label: 'Archivé', variant: 'outline' as const, className: 'bg-background0 text-white' }
+            archived: { label: 'Archivé', variant: 'outline' as const, className: 'bg-gray-500 text-white' }
         };
 
         const config = statusConfig[article.status];
@@ -69,19 +69,20 @@ export default function ArticleShow({ article }: ArticleShowProps) {
             <Head title={`Article: ${article.title}`} />
 
             {/* Fixed Header with Actions */}
-            <div className="sticky top-0 z-10 bg-card dark:bg-card/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-border dark:border-gray-700 px-6 py-4">
-                <div className="flex justify-between items-center max-w-6xl mx-auto">
+            <div className="sticky top-0 z-10 bg-card dark:bg-card/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-border dark:border-gray-700 px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 max-w-6xl mx-auto">
                     <Link
                         href="/admin/articles"
-                        className="flex items-center gap-2 text-muted-foreground hover:text-purple-600 transition-colors font-medium"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-purple-600 transition-colors font-medium text-sm sm:text-base"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        Retour aux articles
+                        <span className="hidden sm:inline">Retour aux articles</span>
+                        <span className="sm:hidden">Retour</span>
                     </Link>
 
-                    <div className="flex gap-3">
-                        <Link href={`/admin/articles/${article.id}/edit`}>
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <Link href={`/admin/articles/${article.id}/edit`} className="w-full sm:w-auto">
+                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto text-sm">
                                 <Edit className="w-4 h-4 mr-2" />
                                 Modifier
                             </Button>
@@ -90,7 +91,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                             size="sm"
                             variant="outline"
                             onClick={handleDelete}
-                            className="text-red-600 dark:text-red-400 hover:text-red-700 border-red-200"
+                            className="text-red-600 dark:text-red-400 hover:text-red-700 border-red-200 w-full sm:w-auto text-sm"
                         >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Supprimer
@@ -100,17 +101,17 @@ export default function ArticleShow({ article }: ArticleShowProps) {
             </div>
 
             {/* Article Content */}
-            <div className="min-h-screen bg-background dark:bg-gray-900 py-8">
-                <div className="max-w-4xl mx-auto px-6">
-                    <article className="bg-card dark:bg-card dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
+            <div className="min-h-screen bg-background dark:bg-gray-900 py-4 sm:py-6 lg:py-8">
+                <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
+                    <article className="bg-card dark:bg-card dark:bg-gray-800 shadow-xl rounded-xl lg:rounded-2xl overflow-hidden">
                         {/* Article Header */}
-                        <header className="px-8 pt-8 pb-6 border-b border-border dark:border-gray-700">
+                        <header className="px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b border-border dark:border-gray-700">
                             {/* Category & Status */}
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+                                <div className="flex items-center gap-2 sm:gap-3">
                                     <Badge
                                         variant="outline"
-                                        className="bg-purple-50 text-purple-700 border-purple-200 text-sm px-3 py-1"
+                                        className="bg-purple-50 text-purple-700 border-purple-200 text-xs sm:text-sm px-2 sm:px-3 py-1"
                                     >
                                         {article.category}
                                     </Badge>
@@ -119,27 +120,27 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                             </div>
 
                             {/* Title */}
-                            <h1 className="text-4xl md:text-5xl font-bold text-foreground dark:text-white leading-tight mb-6">
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground dark:text-white leading-tight mb-4 sm:mb-6">
                                 {article.title}
                             </h1>
 
                             {/* Excerpt */}
-                            <p className="text-xl text-muted-foreground dark:text-gray-300 leading-relaxed mb-6 font-light">
+                            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground dark:text-gray-300 leading-relaxed mb-4 sm:mb-6 font-light">
                                 {article.excerpt}
                             </p>
 
                             {/* Article Meta */}
-                            <div className="flex flex-wrap items-center gap-6 text-muted-foreground dark:text-gray-400">
+                            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 lg:gap-6 text-sm sm:text-base text-muted-foreground dark:text-gray-400">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                                        <User className="w-4 h-4 text-white" />
+                                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                        <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                                     </div>
                                     <span className="font-medium">{article.author}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Calendar className="w-4 h-4" />
-                                    <span>{new Date(article.date).toLocaleDateString('fr-FR', {
+                                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                                    <span className="text-xs sm:text-sm lg:text-base">{new Date(article.date).toLocaleDateString('fr-FR', {
                                         year: 'numeric',
                                         month: 'long',
                                         day: 'numeric'
@@ -147,20 +148,20 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Eye className="w-4 h-4" />
-                                    <span>{article.views} lectures</span>
+                                    <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                                    <span className="text-xs sm:text-sm lg:text-base">{article.views} lectures</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4" />
-                                    <span>5 min de lecture</span>
+                                    <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                                    <span className="text-xs sm:text-sm lg:text-base">5 min de lecture</span>
                                 </div>
                             </div>
                         </header>
 
                         {/* Featured Image (show first image if exists) */}
                         {article.images && article.images.length > 0 && (
-                            <div className="relative h-96 md:h-[500px] overflow-hidden">
+                            <div className="relative h-48 sm:h-64 lg:h-96 xl:h-[500px] overflow-hidden">
                                 <img
                                     src={`/storage/${article.images[0]}`}
                                     alt={article.title}
@@ -171,10 +172,10 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                         )}
 
                         {/* Article Body */}
-                        <div className="px-8 py-8">
-                            <div className="prose prose-lg prose-gray dark:prose-invert max-w-none">
+                        <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                            <div className="prose prose-sm sm:prose-base lg:prose-lg prose-gray dark:prose-invert max-w-none">
                                 <div
-                                    className="text-foreground dark:text-gray-200 leading-relaxed text-lg break-words whitespace-pre-wrap overflow-wrap-anywhere"
+                                    className="text-foreground dark:text-gray-200 leading-relaxed text-sm sm:text-base lg:text-lg break-words whitespace-pre-wrap overflow-wrap-anywhere"
                                     style={{
                                         lineHeight: '1.8',
                                         wordBreak: 'break-word',
@@ -184,7 +185,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                                     dangerouslySetInnerHTML={{
                                         __html: article.content
                                             .split('\n\n')
-                                            .map(paragraph => `<p class="mb-6 break-words">${paragraph.replace(/\n/g, '<br />')}</p>`)
+                                            .map(paragraph => `<p class="mb-4 sm:mb-6 break-words">${paragraph.replace(/\n/g, '<br />')}</p>`)
                                             .join('')
                                     }}
                                 />
@@ -192,9 +193,9 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                         </div>
 
                         {/* Article Footer */}
-                        <footer className="px-8 py-6 bg-background dark:bg-gray-700 border-t border-border dark:border-gray-600">
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                <div className="text-sm text-muted-foreground dark:text-gray-400">
+                        <footer className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 bg-background dark:bg-gray-700 border-t border-border dark:border-gray-600">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
+                                <div className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400">
                                     <p>Publié le {new Date(article.created_at).toLocaleDateString('fr-FR')}</p>
                                     {article.updated_at !== article.created_at && (
                                         <p>Dernière modification le {new Date(article.updated_at).toLocaleDateString('fr-FR')}</p>
@@ -202,8 +203,8 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <Link href={`/admin/articles/${article.id}/edit`}>
-                                        <Button size="sm" variant="outline">
+                                    <Link href={`/admin/articles/${article.id}/edit`} className="w-full sm:w-auto">
+                                        <Button size="sm" variant="outline" className="w-full sm:w-auto text-sm">
                                             <Edit className="w-4 h-4 mr-2" />
                                             Modifier
                                         </Button>
@@ -214,16 +215,17 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                     </article>
 
                     {/* Admin Info Sidebar - Floating Card */}
-                    <div className="mt-8">
-                        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-700">
-                            <CardHeader>
-                                <CardTitle className="text-lg text-purple-800 dark:text-purple-200 flex items-center gap-2">
-                                    <Tag className="w-5 h-5" />
-                                    Informations administratives
+                    <div className="mt-6 sm:mt-8">
+                        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-700 rounded-xl lg:rounded-2xl">
+                            <CardHeader className="p-4 sm:p-6">
+                                <CardTitle className="text-base sm:text-lg text-purple-800 dark:text-purple-200 flex items-center gap-2">
+                                    <Tag className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <span className="hidden sm:inline">Informations administratives</span>
+                                    <span className="sm:hidden">Infos admin</span>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <CardContent className="p-4 sm:p-6 pt-0">
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
                                     <div>
                                         <p className="font-medium text-muted-foreground dark:text-gray-300">ID</p>
                                         <p className="text-foreground dark:text-gray-100">#{article.id}</p>
@@ -234,7 +236,7 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                                     </div>
                                     <div>
                                         <p className="font-medium text-muted-foreground dark:text-gray-300">Catégorie</p>
-                                        <p className="text-foreground dark:text-gray-100">{article.category}</p>
+                                        <p className="text-foreground dark:text-gray-100 truncate">{article.category}</p>
                                     </div>
                                     <div>
                                         <p className="font-medium text-muted-foreground dark:text-gray-300">Vues</p>
@@ -248,21 +250,21 @@ export default function ArticleShow({ article }: ArticleShowProps) {
                     {/* Show all images as a gallery */}
                     {article.images && article.images.length > 1 && (
                         <>
-                            <div className="flex gap-4 overflow-x-auto py-4">
+                            <div className="flex gap-2 sm:gap-4 overflow-x-auto py-3 sm:py-4 mt-6 sm:mt-8">
                                 {article.images.map((img: string, idx: number) => (
                                     <img
                                         key={idx}
                                         src={`/storage/${img}`}
                                         alt={`${article.title} - image ${idx + 1}`}
-                                        className="h-48 rounded shadow"
+                                        className="h-32 sm:h-40 lg:h-48 rounded shadow flex-shrink-0"
                                     />
                                 ))}
                             </div>
                             <div className="mt-2 text-center">
-                                <span className="text-muted-foreground dark:text-gray-300 text-sm">
+                                <span className="text-muted-foreground dark:text-gray-300 text-xs sm:text-sm">
                                     Pour voir plus d'images, rendez-vous dans la{' '}
                                     <Link href="/admin/media" className="text-purple-600 hover:underline font-medium">
-                                        galerie d’images
+                                        galerie d'images
                                     </Link>
                                     .
                                 </span>

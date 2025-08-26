@@ -8,6 +8,7 @@ use App\Models\NotifiableUser;
 use App\Notifications\CompetitionRegistrationStatusNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -48,6 +49,7 @@ class CompetitionController extends Controller
                     'closed_by' => $competition->closedBy ? $competition->closedBy->name : null,
                     'type' => $competition->type,
                     'my_registration' => $registration ? [
+                        'id' => $registration->id,
                         'status' => $registration->status,
                     ] : null,
                 ];
@@ -68,7 +70,6 @@ class CompetitionController extends Controller
                     'email' => $registration->email,
                     'phone' => $registration->phone,
                     'category' => $registration->category,
-                    'club' => $registration->club,
                     'registrationDate' => $registration->registered_at?->format('Y-m-d'),
                     'status' => $registration->status,
                     'paymentStatus' => $registration->payment_status,
@@ -171,7 +172,6 @@ class CompetitionController extends Controller
             'participant_name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
-            'club' => 'nullable|string|max:255',
             'category' => 'required|string|max:255',
             'notes' => 'nullable|string|max:1000',
         ];
@@ -202,7 +202,6 @@ class CompetitionController extends Controller
             'participant_name' => $validated['participant_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'club' => $validated['club'] ?? null,
             'category' => $validated['category'],
             'notes' => $validated['notes'],
             // Store both group name and members for group competitions
@@ -324,7 +323,6 @@ class CompetitionController extends Controller
                 'email' => $registration->email,
                 'phone' => $registration->phone,
                 'category' => $registration->category,
-                'club' => $registration->club,
                 'status' => $registration->status,
                 'registered_at' => $registration->registered_at->format('d-m-Y'),
                 'groupMembers' => $registration->group_members,
@@ -412,5 +410,71 @@ class CompetitionController extends Controller
         ]);
 
         return back()->with('success', 'Compétition fermée avec succès.');
+    }
+
+    /**
+     * Show the form for editing a competition registration.
+     */
+    public function editRegistration($competitionId, $registrationId)
+    {
+        $competition = Competition::findOrFail($competitionId);
+        $registration = CompetitionRegistration::where('id', $registrationId)
+            ->where('competition_id', $competitionId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        return Inertia::render('etudiant/competitionRegistrationEdit', [
+            'competition' => [
+                'id' => $competition->id,
+                'title' => $competition->title,
+                'description' => $competition->description,
+                'date' => $competition->date,
+                'deadline' => $competition->deadline,
+                'location' => $competition->location,
+                'category' => $competition->category,
+                'maxParticipants' => $competition->max_participants,
+                'registrations' => $competition->registrations->count(),
+                'status' => $competition->status,
+            ],
+            'registration' => [
+                'id' => $registration->id,
+                'participant_name' => $registration->participant_name,
+                'email' => $registration->email,
+                'phone' => $registration->phone,
+                'category' => $registration->category,
+                'notes' => $registration->notes,
+                'status' => $registration->status,
+            ]
+        ]);
+    }
+
+    /**
+     * Update the specified competition registration.
+     */
+    public function updateRegistration(Request $request, $competitionId, $registrationId)
+    {
+        $competition = Competition::findOrFail($competitionId);
+        $registration = CompetitionRegistration::where('id', $registrationId)
+            ->where('competition_id', $competitionId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Vérifier si l'inscription peut encore être modifiée
+        if ($registration->status === 'Confirmé') {
+            return back()->with('error', 'Impossible de modifier une inscription confirmée.');
+        }
+
+        $validated = $request->validate([
+            'participant_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'category' => 'required|string|max:255',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $registration->update($validated);
+
+        return redirect()->route('etudiant.competition')
+            ->with('success', 'Votre inscription a été mise à jour avec succès.');
     }
 }

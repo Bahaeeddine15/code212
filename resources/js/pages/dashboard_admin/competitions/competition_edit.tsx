@@ -91,51 +91,52 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Modifier: ${competition.title}`} />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6">
+            <div className="flex h-full flex-1 flex-col gap-4 sm:gap-6 rounded-xl p-3 sm:p-4 lg:p-6">
                 {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-4">
+                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4 order-2 lg:order-1">
                         <Link
                             href={`/admin/competitions/${competition.id}`}
-                            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium"
+                            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium text-sm sm:text-base"
                         >
                             <ArrowLeft className="w-4 h-4" />
-                            Retour à la compétition
+                            <span className="hidden sm:inline">Retour à la compétition</span>
+                            <span className="sm:hidden">Retour</span>
                         </Link>
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">
+                    <div className="order-1 lg:order-2">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground dark:text-gray-100">
                             Modifier la compétition
                         </h1>
-                        <p className="text-muted-foreground dark:text-gray-400 mt-1">
+                        <p className="text-muted-foreground dark:text-gray-400 mt-1 text-sm sm:text-base">
                             Modifiez les informations de votre compétition
                         </p>
                     </div>
                 </div>
 
                 {/* Edit Form */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
                     {/* Main Form */}
-                    <div className="lg:col-span-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Trophy className="w-5 h-5" />
+                    <div className="xl:col-span-2">
+                        <Card className="rounded-xl lg:rounded-2xl">
+                            <CardHeader className="p-4 sm:p-6">
+                                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl lg:text-2xl">
+                                    <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
                                     Modifier la compétition
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                            <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                                     {/* Title */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="title">Titre de la compétition *</Label>
+                                        <Label htmlFor="title" className="text-sm font-medium">Titre de la compétition *</Label>
                                         <Input
                                             id="title"
                                             value={formData.title}
                                             onChange={(e) => handleInputChange('title', e.target.value)}
                                             placeholder="Championnat National 2024"
                                             required
-                                            className={errors.title ? 'border-red-500' : ''}
+                                            className={`text-sm sm:text-base ${errors.title ? 'border-red-500' : ''}`}
                                         />
                                         {errors.title && (
                                             <p className="text-sm text-red-600 dark:text-red-400">{errors.title}</p>
@@ -143,9 +144,9 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                     </div>
 
                                     {/* Date and Deadline */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                         <div className="space-y-2">
-                                            <Label htmlFor="date">Date de la compétition *</Label>
+                                            <Label htmlFor="date" className="text-sm font-medium">Date de la compétition *</Label>
                                             <Input
                                                 id="date"
                                                 type="date"
@@ -155,14 +156,14 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                                 style={{
                                                     colorScheme: 'light'
                                                 }}
-                                                className={errors.date ? 'border-red-500' : ''}
+                                                className={`text-sm sm:text-base ${errors.date ? 'border-red-500' : ''}`}
                                             />
                                             {errors.date && (
                                                 <p className="text-sm text-red-600 dark:text-red-400">{errors.date}</p>
                                             )}
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="deadline">Date limite d'inscription *</Label>
+                                            <Label htmlFor="deadline" className="text-sm font-medium">Date limite d'inscription *</Label>
                                             <Input
                                                 id="deadline"
                                                 type="date"
@@ -172,7 +173,7 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                                                 style={{
                                                     colorScheme: 'light'
                                                 }}
-                                                className={errors.deadline ? 'border-red-500' : ''}
+                                                className={`text-sm sm:text-base ${errors.deadline ? 'border-red-500' : ''}`}
                                             />
                                             {errors.deadline && (
                                                 <p className="text-sm text-red-600 dark:text-red-400">{errors.deadline}</p>
@@ -182,14 +183,14 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
 
                                     {/* Location */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="location">Lieu de la compétition *</Label>
+                                        <Label htmlFor="location" className="text-sm font-medium">Lieu de la compétition *</Label>
                                         <Input
                                             id="location"
                                             value={formData.location}
                                             onChange={(e) => handleInputChange('location', e.target.value)}
                                             placeholder="Stade Olympique, Paris"
                                             required
-                                            className={errors.location ? 'border-red-500' : ''}
+                                            className={`text-sm sm:text-base ${errors.location ? 'border-red-500' : ''}`}
                                         />
                                         {errors.location && (
                                             <p className="text-sm text-red-600 dark:text-red-400">{errors.location}</p>
@@ -198,35 +199,35 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
 
                                     {/* Description */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="description">Description</Label>
+                                        <Label htmlFor="description" className="text-sm font-medium">Description</Label>
                                         <Textarea
                                             id="description"
                                             value={formData.description}
                                             onChange={(e) => handleInputChange('description', e.target.value)}
                                             placeholder="Description détaillée de la compétition, règlement, prix..."
                                             rows={6}
-                                            className={errors.description ? 'border-red-500' : ''}
+                                            className={`text-sm sm:text-base resize-none ${errors.description ? 'border-red-500' : ''}`}
                                         />
                                         {errors.description && (
                                             <p className="text-sm text-red-600 dark:text-red-400">{errors.description}</p>
                                         )}
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-xs sm:text-sm text-muted-foreground">
                                             Décrivez les détails de la compétition, le règlement et les prix.
                                         </p>
                                     </div>
 
                                     {/* Form Actions */}
-                                    <div className="flex gap-4 pt-6 border-t">
+                                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6 border-t">
                                         <Button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 w-full sm:w-auto text-sm sm:text-base"
                                         >
                                             <Save className="w-4 h-4 mr-2" />
                                             {isSubmitting ? 'Mise à jour...' : 'Enregistrer les modifications'}
                                         </Button>
-                                        <Link href={`/admin/competitions/${competition.id}`}>
-                                            <Button type="button" variant="outline">
+                                        <Link href={`/admin/competitions/${competition.id}`} className="w-full sm:w-auto">
+                                            <Button type="button" variant="outline" className="w-full text-sm sm:text-base">
                                                 Annuler
                                             </Button>
                                         </Link>
@@ -237,22 +238,22 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
                     </div>
 
                     {/* Sidebar with Settings */}
-                    <div className="lg:col-span-1">
-                        <div className="space-y-6">
+                    <div className="xl:col-span-1">
+                        <div className="space-y-4 sm:space-y-6">
                             {/* Competition Settings */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-lg">Paramètres de la compétition</CardTitle>
+                            <Card className="rounded-xl lg:rounded-2xl">
+                                <CardHeader className="p-4 sm:p-6">
+                                    <CardTitle className="text-base sm:text-lg">Paramètres de la compétition</CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
+                                <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0 sm:pt-0">
                                     {/* Category */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="category">Catégorie *</Label>
+                                        <Label htmlFor="category" className="text-sm font-medium">Catégorie *</Label>
                                         <Select
                                             value={formData.category}
                                             onValueChange={(value) => handleInputChange('category', value)}
                                         >
-                                            <SelectTrigger className={errors.category ? 'border-red-500' : ''}>
+                                            <SelectTrigger className={`text-sm sm:text-base ${errors.category ? 'border-red-500' : ''}`}>
                                                 <SelectValue placeholder="Choisir une catégorie" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -270,12 +271,12 @@ export default function CompetitionEdit({ competition }: CompetitionEditProps) {
 
                                     {/* Type de compétition */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="type">Type de compétition *</Label>
+                                        <Label htmlFor="type" className="text-sm font-medium">Type de compétition *</Label>
                                         <Select
                                             value={formData.type}
                                             onValueChange={(value) => handleInputChange('type', value)}
                                         >
-                                            <SelectTrigger className={errors.type ? 'border-red-500' : ''}>
+                                            <SelectTrigger className={`text-sm sm:text-base ${errors.type ? 'border-red-500' : ''}`}>
                                                 <SelectValue placeholder="Choisir un type" />
                                             </SelectTrigger>
                                             <SelectContent>

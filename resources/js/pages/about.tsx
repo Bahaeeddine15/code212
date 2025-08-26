@@ -1,6 +1,7 @@
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { MainFooter } from '@/components/main-footer';
+import { useState } from 'react';
 import {
     Target,
     Heart,
@@ -16,12 +17,15 @@ import {
     ChevronRight,
     Eye,
     Compass,
-    ArrowRight
+    ArrowRight,
+    Menu,
+    X
 } from 'lucide-react';
 import Footer from '@/components/layout/footer';
 
 export default function About() {
     const { auth } = usePage<SharedData>().props;
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <>
@@ -32,9 +36,9 @@ export default function About() {
 
             <div className="min-h-screen bg-gray-900">
                 {/* Header/Navigation */}
-                <header className="bg-gray-900 relative z-50">
+                <header className="bg-gray-900 fixed top-0 left-0 w-full z-50 shadow-lg">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between items-center h-20">
+                        <div className="flex justify-between items-center h-16 sm:h-20">
                             {/* Logo */}
                             <div className="flex items-center space-x-3">
                                 <Link href="/" className="flex items-center">
@@ -46,36 +50,46 @@ export default function About() {
                                 </Link>
                             </div>
 
-                            {/* Navigation Menu */}
-                            <nav className="hidden md:flex items-center space-x-8">
-                                <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium">HOME</Link>
-                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium">OUR PROGRAMS</a>
-                                <a href="#" className="text-pink-400 font-medium">À PROPOS</a>
-                                <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
-                                <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium">CONTACT</Link>
+                            {/* Desktop Navigation Menu */}
+                            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+                                <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">HOME</Link>
+                                <a href="#" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">OUR PROGRAMS</a>
+                                <a href="#" className="text-pink-400 font-medium text-sm xl:text-base">À PROPOS</a>
+                                <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">CLUBS ET PARTENAIRES</Link>
+                                <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">CONTACT</Link>
                             </nav>
 
+                            {/* Mobile menu button */}
+                            <div className="lg:hidden">
+                                <button
+                                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                    className="text-white hover:text-pink-400 transition-colors p-2"
+                                >
+                                    {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                </button>
+                            </div>
+
                             {/* Auth Buttons */}
-                            <div className="flex items-center space-x-4">
+                            <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
-                                        className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors font-medium"
+                                        className="bg-pink-600 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-lg hover:bg-pink-700 transition-colors font-medium text-sm xl:text-base"
                                     >
                                         Dashboard
                                     </Link>
                                 ) : (
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-2 xl:space-x-3">
                                         <Link
                                             href={route('register')}
-                                            className="text-white px-6 py-3 rounded-lg hover:bg-opacity-80 transition-colors font-medium"
+                                            className="text-white px-4 py-2 xl:px-6 xl:py-3 rounded-lg hover:bg-opacity-80 transition-colors font-medium text-sm xl:text-base"
                                             style={{ backgroundColor: '#A927B7' }}
                                         >
                                             SIGN UP
                                         </Link>
                                         <Link
                                             href={route('login')}
-                                            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                                            className="bg-blue-600 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm xl:text-base"
                                         >
                                             LOGIN
                                         </Link>
@@ -83,11 +97,52 @@ export default function About() {
                                 )}
                             </div>
                         </div>
+                        
+                        {/* Mobile Navigation Menu */}
+                        {mobileMenuOpen && (
+                            <div className="lg:hidden bg-gray-800 border-t border-gray-700">
+                                <div className="px-2 pt-2 pb-3 space-y-1">
+                                    <Link href="/" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">HOME</Link>
+                                    <a href="#" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">OUR PROGRAMS</a>
+                                    <a href="#" className="block px-3 py-2 text-pink-400 bg-gray-700 rounded-md font-medium">À PROPOS</a>
+                                    <Link href="/clubs-partners" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
+                                    <Link href="/contact" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">CONTACT</Link>
+                                    
+                                    {/* Mobile Auth Buttons */}
+                                    <div className="pt-4 border-t border-gray-600">
+                                        {auth.user ? (
+                                            <Link
+                                                href={route('dashboard')}
+                                                className="block w-full bg-pink-600 text-white px-3 py-2 rounded-lg hover:bg-pink-700 transition-colors font-medium text-center"
+                                            >
+                                                Dashboard
+                                            </Link>
+                                        ) : (
+                                            <div className="space-y-2">
+                                                <Link
+                                                    href={route('register')}
+                                                    className="block w-full text-white px-3 py-2 rounded-lg hover:bg-opacity-80 transition-colors font-medium text-center"
+                                                    style={{ backgroundColor: '#A927B7' }}
+                                                >
+                                                    SIGN UP
+                                                </Link>
+                                                <Link
+                                                    href={route('login')}
+                                                    className="block w-full bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium text-center"
+                                                >
+                                                    LOGIN
+                                                </Link>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </header>
 
                 {/* Hero Section */}
-                <section className="bg-gray-900 relative overflow-hidden py-20">
+                <section className="bg-gray-900 relative overflow-hidden py-16 sm:py-20 pt-16 sm:pt-20">
                     {/* Background Geometric Elements */}
                     <div className="absolute inset-0">
                         <div className="absolute top-20 right-20 w-32 h-32 bg-purple-500 rounded-full opacity-20 blur-xl"></div>

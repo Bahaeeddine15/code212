@@ -23,6 +23,7 @@ class Reservation extends Model
 
     protected $casts = [
         'date_reservation' => 'date',
+        'location_type' => 'array',
     ];
 
     // Constantes pour les statuts

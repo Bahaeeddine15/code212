@@ -115,28 +115,29 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Aperçu: ${media.title}`} />
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 overflow-x-auto">
+            <div className="flex h-full flex-1 flex-col gap-4 sm:gap-6 rounded-xl p-3 sm:p-4 lg:p-6 overflow-x-auto">
 
                 {/* Header */}
                 <Card className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white border-0">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-3xl font-bold mb-2 text-white">{media.title}</CardTitle>
-                                <p className="text-blue-100">Aperçu détaillé du média</p>
+                    <CardContent className="p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="min-w-0 flex-1">
+                                <CardTitle className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 text-white break-words">{media.title}</CardTitle>
+                                <p className="text-blue-100 text-sm sm:text-base">Aperçu détaillé du média</p>
                             </div>
-                            <div className="flex space-x-3">
-                                <Button variant="secondary" onClick={handleViewFull}>
-                                    <Eye className="w-4 h-4 mr-2" />
-                                    Voir en grand
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                                <Button variant="secondary" onClick={handleViewFull} className="w-full sm:w-auto text-xs sm:text-sm">
+                                    <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                                    <span className="hidden sm:inline">Voir en grand</span>
+                                    <span className="sm:hidden">Voir</span>
                                 </Button>
-                                <Button variant="secondary" onClick={handleDownload}>
-                                    <Download className="w-4 h-4 mr-2" />
+                                <Button variant="secondary" onClick={handleDownload} className="w-full sm:w-auto text-xs sm:text-sm">
+                                    <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                                     Télécharger
                                 </Button>
-                                <Button asChild variant="secondary">
+                                <Button asChild variant="secondary" className="w-full sm:w-auto text-xs sm:text-sm">
                                     <Link href="/admin/media">
-                                        <ArrowLeft className="w-4 h-4 mr-2" />
+                                        <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                                         Retour
                                     </Link>
                                 </Button>
@@ -145,38 +146,38 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
                     </CardContent>
                 </Card>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
                     {/* Enhanced Media Preview */}
-                    <div className="lg:col-span-2">
+                    <div className="xl:col-span-2">
                         <Card>
-                            <CardHeader>
-                                <div className="flex items-center justify-between">
-                                    <CardTitle className="flex items-center">
-                                        <Image className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
+                            <CardHeader className="p-4 sm:p-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <CardTitle className="flex items-center text-base sm:text-lg">
+                                        <Image className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-600 dark:text-blue-400" />
                                         Aperçu du média
                                     </CardTitle>
-                                    <div className="flex items-center gap-2">
-                                        <Badge variant="secondary" className="flex items-center">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                        <Badge variant="secondary" className="flex items-center text-xs">
                                             {fileType === 'image' && <Image className="w-3 h-3 mr-1" />}
                                             {fileType === 'video' && <FileText className="w-3 h-3 mr-1" />}
                                             {fileType === 'other' && <FileText className="w-3 h-3 mr-1" />}
                                             {fileType.charAt(0).toUpperCase() + fileType.slice(1)}
                                         </Badge>
                                         {fileType === 'video' && (
-                                            <Badge className={`${getQualityColor(currentQuality)} text-white`}>
+                                            <Badge className={`${getQualityColor(currentQuality)} text-white text-xs`}>
                                                 {getQualityLabel(currentQuality)}
                                             </Badge>
                                         )}
                                     </div>
                                 </div>
                             </CardHeader>
-                            <CardContent>
-                                <div className="bg-background dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center min-h-[400px] relative">
+                            <CardContent className="p-4 sm:p-6">
+                                <div className="bg-background dark:bg-gray-800 rounded-lg p-3 sm:p-4 flex items-center justify-center min-h-[300px] sm:min-h-[400px] relative">
                                     {fileType === 'image' ? (
                                         <img
                                             src={getImageUrl(media.file_path)}
                                             alt={media.title}
-                                            className="max-w-full max-h-[500px] object-contain rounded-lg shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+                                            className="max-w-full max-h-[400px] sm:max-h-[500px] object-contain rounded-lg shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
                                             onClick={handleViewFull}
                                         />
                                     ) : fileType === 'video' ? (
@@ -186,46 +187,48 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
                                                 src={currentQuality === 'original' ? streamUrl : qualities[currentQuality]}
                                                 controls
                                                 controlsList="nodownload"
-                                                className="max-w-full max-h-[500px] rounded-lg shadow-lg"
+                                                className="max-w-full max-h-[400px] sm:max-h-[500px] rounded-lg shadow-lg"
                                                 style={{ background: "#000" }}
                                                 preload="metadata"
                                             />
                                             
                                             {/* Enhanced Status Indicator */}
-                                            <div className="absolute bottom-4 left-4">
-                                                <div className="bg-black/80 backdrop-blur-sm rounded-lg border border-white/20 px-3 py-2 text-white text-xs flex items-center gap-2">
+                                            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4">
+                                                <div className="bg-black/80 backdrop-blur-sm rounded-lg border border-white/20 px-2 sm:px-3 py-1 sm:py-2 text-white text-xs flex items-center gap-1 sm:gap-2">
                                                     <div className="flex items-center gap-1">
-                                                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                                        <span>Streaming actif</span>
+                                                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                        <span className="hidden sm:inline">Streaming actif</span>
+                                                        <span className="sm:hidden">Live</span>
                                                     </div>
-                                                    <div className="w-px h-4 bg-white/20"></div>
-                                                    <span>{Object.keys(qualities).length + 1} qualités</span>
+                                                    <div className="w-px h-3 sm:h-4 bg-white/20"></div>
+                                                    <span className="text-xs">{Object.keys(qualities).length + 1} qualités</span>
                                                 </div>
                                             </div>
 
                                             {/* Quality Info Panel */}
                                             {currentQuality !== 'original' && (
-                                                <div className="absolute top-4 left-4">
-                                                    <div className="bg-black/80 backdrop-blur-sm rounded-lg border border-white/20 px-3 py-2 text-white text-xs">
+                                                <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+                                                    <div className="bg-black/80 backdrop-blur-sm rounded-lg border border-white/20 px-2 sm:px-3 py-1 sm:py-2 text-white text-xs">
                                                         <div className="flex items-center gap-1">
-                                                            <div className={`w-2 h-2 ${getQualityColor(currentQuality)} rounded-full`}></div>
-                                                            <span>Lecture en {getQualityLabel(currentQuality)}</span>
+                                                            <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 ${getQualityColor(currentQuality)} rounded-full`}></div>
+                                                            <span className="hidden sm:inline">Lecture en {getQualityLabel(currentQuality)}</span>
+                                                            <span className="sm:hidden">{currentQuality}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             )}
                                         </>
                                     ) : (
-                                        <div className="text-center p-8">
-                                            <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                                            <p className="text-lg font-medium text-muted-foreground dark:text-gray-400 mb-2">
+                                        <div className="text-center p-6 sm:p-8">
+                                            <FileText className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-gray-400" />
+                                            <p className="text-base sm:text-lg font-medium text-muted-foreground dark:text-gray-400 mb-2">
                                                 Aperçu non disponible
                                             </p>
-                                            <p className="text-sm text-muted-foreground mb-4">
+                                            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                                                 Ce type de fichier ne peut pas être prévisualisé
                                             </p>
-                                            <Button onClick={handleDownload} variant="outline">
-                                                <Download className="w-4 h-4 mr-2" />
+                                            <Button onClick={handleDownload} variant="outline" className="text-xs sm:text-sm">
+                                                <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                                                 Télécharger le fichier
                                             </Button>
                                         </div>
@@ -234,20 +237,21 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
                                 
                                 {/* Quality Grid (below video for videos) */}
                                 {fileType === 'video' && (
-                                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                                        <h4 className="font-medium text-sm mb-3 text-gray-700 dark:text-gray-300">
+                                    <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                                        <h4 className="font-medium text-xs sm:text-sm mb-2 sm:mb-3 text-gray-700 dark:text-gray-300">
                                             Qualités disponibles:
                                         </h4>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1 sm:gap-2">
                                             <button
                                                 onClick={() => changeVideoQuality('original')}
-                                                className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                                className={`px-2 sm:px-3 py-1 sm:py-2 rounded-lg text-xs font-medium transition-all ${
                                                     currentQuality === 'original'
                                                         ? 'bg-purple-600 text-white shadow-lg scale-105'
                                                         : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 border'
                                                 }`}
                                             >
-                                                Originale
+                                                <span className="hidden sm:inline">Originale</span>
+                                                <span className="sm:hidden">Orig</span>
                                             </button>
                                             {/* Show all qualities in proper order with type casting */}
                                             {(['144p', '240p', '360p', '480p', '720p', '1080p'] as QualityType[])
@@ -256,7 +260,7 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
                                                     <button
                                                         key={quality}
                                                         onClick={() => changeVideoQuality(quality)}
-                                                        className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                                        className={`px-2 sm:px-3 py-1 sm:py-2 rounded-lg text-xs font-medium transition-all ${
                                                             currentQuality === quality
                                                                 ? `${getQualityColor(quality)} text-white shadow-lg scale-105`
                                                                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border'
@@ -274,23 +278,23 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
                     </div>
 
                     {/* Enhanced Media Information */}
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-6">
                         {/* Actions */}
                         <Card>
-                            <CardHeader>
-                                <CardTitle>Actions</CardTitle>
+                            <CardHeader className="p-4 sm:p-6">
+                                <CardTitle className="text-base sm:text-lg">Actions</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-3">
-                                <Button onClick={handleEdit} className="w-full bg-blue-600 hover:bg-blue-700">
-                                    <Edit3 className="w-4 h-4 mr-2" />
+                            <CardContent className="p-4 sm:p-6 pt-0 space-y-2 sm:space-y-3">
+                                <Button onClick={handleEdit} className="w-full bg-blue-600 hover:bg-blue-700 text-sm">
+                                    <Edit3 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                                     Modifier
                                 </Button>
-                                <Button onClick={handleDelete} variant="destructive" className="w-full">
-                                    <Trash2 className="w-4 h-4 mr-2" />
+                                <Button onClick={handleDelete} variant="destructive" className="w-full text-sm">
+                                    <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                                     Supprimer
                                 </Button>
-                                <Button onClick={handleDownload} variant="outline" className="w-full">
-                                    <Download className="w-4 h-4 mr-2" />
+                                <Button onClick={handleDownload} variant="outline" className="w-full text-sm">
+                                    <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                                     Télécharger
                                 </Button>
                             </CardContent>
@@ -299,21 +303,21 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
                         {/* Enhanced Video Quality Info */}
                         {fileType === 'video' && (
                             <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center">
-                                        <FileText className="w-4 h-4 mr-2" />
+                                <CardHeader className="p-4 sm:p-6">
+                                    <CardTitle className="flex items-center text-base sm:text-lg">
+                                        <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                                         Informations vidéo
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-3">
+                                <CardContent className="p-4 sm:p-6 pt-0 space-y-2 sm:space-y-3">
                                     <div>
-                                        <label className="text-sm font-medium text-muted-foreground">Qualité actuelle</label>
-                                        <div className={`mt-1 px-3 py-2 rounded-lg ${getQualityColor(currentQuality)} text-white text-sm font-medium`}>
+                                        <label className="text-xs sm:text-sm font-medium text-muted-foreground">Qualité actuelle</label>
+                                        <div className={`mt-1 px-2 sm:px-3 py-1 sm:py-2 rounded-lg ${getQualityColor(currentQuality)} text-white text-xs sm:text-sm font-medium`}>
                                             {getQualityLabel(currentQuality)}
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium text-muted-foreground">Qualités disponibles</label>
+                                        <label className="text-xs sm:text-sm font-medium text-muted-foreground">Qualités disponibles</label>
                                         <div className="mt-1 flex flex-wrap gap-1">
                                             <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded text-xs">
                                                 Originale
@@ -332,10 +336,10 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium text-muted-foreground">Streaming</label>
+                                        <label className="text-xs sm:text-sm font-medium text-muted-foreground">Streaming</label>
                                         <div className="mt-1 flex items-center gap-2">
-                                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                            <span className="text-sm text-green-600 dark:text-green-400">Actif</span>
+                                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                            <span className="text-xs sm:text-sm text-green-600 dark:text-green-400">Actif</span>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -344,25 +348,25 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
 
                         {/* File Information */}
                         <Card>
-                            <CardHeader>
-                                <CardTitle>Informations du fichier</CardTitle>
+                            <CardHeader className="p-4 sm:p-6">
+                                <CardTitle className="text-base sm:text-lg">Informations du fichier</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="p-4 sm:p-6 pt-0 space-y-3 sm:space-y-4">
                                 <div>
-                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Nom original</label>
-                                    <p className="text-sm font-medium bg-background dark:bg-gray-800 p-2 rounded mt-1">
+                                    <label className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-gray-400">Nom original</label>
+                                    <p className="text-xs sm:text-sm font-medium bg-background dark:bg-gray-800 p-2 rounded mt-1 break-all">
                                         {media.original_name}
                                     </p>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Slug</label>
-                                    <p className="text-sm font-medium bg-background dark:bg-gray-800 p-2 rounded mt-1">
+                                    <label className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-gray-400">Slug</label>
+                                    <p className="text-xs sm:text-sm font-medium bg-background dark:bg-gray-800 p-2 rounded mt-1 break-all">
                                         {media.slug}
                                     </p>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Chemin</label>
-                                    <p className="text-sm font-mono bg-background dark:bg-gray-800 p-2 rounded mt-1 break-all">
+                                    <label className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-gray-400">Chemin</label>
+                                    <p className="text-xs font-mono bg-background dark:bg-gray-800 p-2 rounded mt-1 break-all">
                                         {media.file_path}
                                     </p>
                                 </div>
@@ -371,36 +375,36 @@ export default function MediaShow({ media, qualities, streamUrl }: MediaShowProp
 
                         {/* Details */}
                         <Card>
-                            <CardHeader>
-                                <CardTitle>Détails</CardTitle>
+                            <CardHeader className="p-4 sm:p-6">
+                                <CardTitle className="text-base sm:text-lg">Détails</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="p-4 sm:p-6 pt-0 space-y-3 sm:space-y-4">
                                 <div>
-                                    <label className="text-sm font-medium text-muted-foreground dark:text-gray-400">Description</label>
-                                    <p className="text-sm bg-background dark:bg-gray-800 p-3 rounded mt-1 leading-relaxed">
+                                    <label className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-gray-400">Description</label>
+                                    <p className="text-xs sm:text-sm bg-background dark:bg-gray-800 p-3 rounded mt-1 leading-relaxed break-words">
                                         {media.detail}
                                     </p>
                                 </div>
-                                <div className="grid grid-cols-1 gap-4">
+                                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                                     <div className="flex items-center">
-                                        <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                                        <div>
+                                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400 flex-shrink-0" />
+                                        <div className="min-w-0">
                                             <p className="text-xs text-muted-foreground">Créé le</p>
-                                            <p className="text-sm font-medium">{formatDate(media.created_at)}</p>
+                                            <p className="text-xs sm:text-sm font-medium break-words">{formatDate(media.created_at)}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center">
-                                        <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                                        <div>
+                                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400 flex-shrink-0" />
+                                        <div className="min-w-0">
                                             <p className="text-xs text-muted-foreground">Modifié le</p>
-                                            <p className="text-sm font-medium">{formatDate(media.updated_at)}</p>
+                                            <p className="text-xs sm:text-sm font-medium break-words">{formatDate(media.updated_at)}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center">
-                                        <User className="w-4 h-4 mr-2 text-gray-400" />
+                                        <User className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400 flex-shrink-0" />
                                         <div>
                                             <p className="text-xs text-muted-foreground">ID utilisateur</p>
-                                            <p className="text-sm font-medium">{media.user_id}</p>
+                                            <p className="text-xs sm:text-sm font-medium">{media.user_id}</p>
                                         </div>
                                     </div>
                                 </div>

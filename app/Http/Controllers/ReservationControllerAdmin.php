@@ -23,26 +23,20 @@ class ReservationControllerAdmin extends Controller
         // Get all reservations, newest first
         $reservations = Reservation::orderBy('created_at', 'desc')->get();
 
-        // Map to frontend-friendly structure
+        // Map to frontend-friendly structure using student field names
         $data = $reservations->map(function ($reservation) {
             return [
                 'id' => $reservation->id,
-                'studentName' => $reservation->nom . ' ' . $reservation->prenom,
-                'studentEmail' => $reservation->email,
-                'studentPhone' => $reservation->telephone ?: '',
-                'studentId' => $reservation->num_apogee,
-                'roomName' => '', // Add if you have room relation
-                'roomId' => null, // Add if you have room relation
-                'capacity' => null, // Add if you have room relation
-                'date' => $reservation->date_reservation,
-                'timeStart' => '', // Add if you have this field
-                'timeEnd' => '',   // Add if you have this field
-                'purpose' => '',   // Add if you have this field
+                'nom' => $reservation->nom,
+                'prenom' => $reservation->prenom,
+                'num_apogee' => $reservation->num_apogee,
+                'email' => $reservation->email,
+                'telephone' => $reservation->telephone,
                 'description' => $reservation->description,
+                'date_reservation' => $reservation->date_reservation,
                 'status' => $reservation->status,
-                'submittedAt' => $reservation->created_at,
-                'processedAt' => $reservation->updated_at,
-                'processedBy' => '', // Add if you have this field
+                'created_at' => $reservation->created_at,
+                'updated_at' => $reservation->updated_at,
                 'resource_type' => $reservation->resource_type,
                 'location_type' => $reservation->location_type,
                 'room_details' => $reservation->room_details,
@@ -109,22 +103,16 @@ class ReservationControllerAdmin extends Controller
     {
         $data = [
             'id' => $reservation->id,
-            'studentName' => $reservation->nom . ' ' . $reservation->prenom,
-            'studentEmail' => $reservation->email,
-            'studentPhone' => $reservation->telephone ?: '',
-            'studentId' => $reservation->num_apogee,
-            'roomName' => '', // Add if you have room relation
-            'roomId' => null, // Add if you have room relation
-            'capacity' => null, // Add if you have room relation
-            'date' => $reservation->date_reservation,
-            'timeStart' => '', // Add if you have this field
-            'timeEnd' => '',   // Add if you have this field
-            'purpose' => '',   // Add if you have this field
+            'nom' => $reservation->nom,
+            'prenom' => $reservation->prenom,
+            'num_apogee' => $reservation->num_apogee,
+            'email' => $reservation->email,
+            'telephone' => $reservation->telephone,
             'description' => $reservation->description,
+            'date_reservation' => $reservation->date_reservation,
             'status' => $reservation->status,
-            'submittedAt' => $reservation->created_at,
-            'processedAt' => $reservation->updated_at,
-            'processedBy' => '', // Add if you have this field
+            'created_at' => $reservation->created_at,
+            'updated_at' => $reservation->updated_at,
             'resource_type' => $reservation->resource_type,
             'location_type' => $reservation->location_type,
             'room_details' => $reservation->room_details,

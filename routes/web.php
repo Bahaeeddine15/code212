@@ -47,6 +47,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('competition', [App\Http\Controllers\CompetitionController::class, 'index'])->name('etudiant.competition');
     Route::get('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'showRegistration'])->name('competition.register');
     Route::post('competition/{id}/register', [App\Http\Controllers\CompetitionController::class, 'storeRegistration'])->name('competition.store');
+    // Routes pour modifier une inscription
+    Route::get('competition/{competitionId}/registration/{registrationId}/edit', [App\Http\Controllers\CompetitionController::class, 'editRegistration'])->name('competition.registration.edit');
+    Route::put('competition/{competitionId}/registration/{registrationId}', [App\Http\Controllers\CompetitionController::class, 'updateRegistration'])->name('competition.registration.update');
     // Détails public d'une compétition
     Route::get('competition/{id}', [App\Http\Controllers\CompetitionController::class, 'showDetails'])->name('competition.show');
     Route::get('articles', [App\Http\Controllers\ArticleController::class, 'index'])->name('etudiant.article');

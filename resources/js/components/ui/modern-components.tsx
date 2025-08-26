@@ -49,22 +49,22 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const colors = getThemeColors(theme);
 
   return (
-    <div className={`rounded-2xl p-8 mb-8 border-2 ${colors.card} ${colors.border}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+    <div className={`rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 border-2 ${colors.card} ${colors.border}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center space-x-3 sm:space-x-4">
           {Icon && (
-            <div className={`p-4 rounded-2xl ${colors.button} shadow-lg`}>
-              <Icon className="w-8 h-8" />
+            <div className={`p-2 sm:p-3 lg:p-4 rounded-xl lg:rounded-2xl ${colors.button} shadow-lg`}>
+              <Icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
             </div>
           )}
           <div>
-            <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">{title}</h1>
             {description && (
-              <p className="text-muted-foreground mt-2 text-lg">{description}</p>
+              <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg">{description}</p>
             )}
           </div>
         </div>
-        {actions && <div className="flex space-x-3">{actions}</div>}
+        {actions && <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">{actions}</div>}
       </div>
     </div>
   );
@@ -95,9 +95,9 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   const colors = getThemeColors(theme);
   
   const sizeClasses = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base',
-    lg: 'px-8 py-4 text-lg'
+    sm: 'px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm',
+    md: 'px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base',
+    lg: 'px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg'
   };
 
   return (
@@ -106,15 +106,16 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={`
-        inline-flex items-center justify-center rounded-xl font-semibold
+        inline-flex items-center justify-center rounded-lg sm:rounded-xl font-semibold
         transition-all duration-200 shadow-md hover:shadow-lg
         disabled:opacity-50 disabled:cursor-not-allowed
+        w-full sm:w-auto
         ${colors.button}
         ${sizeClasses[size]}
         ${className}
       `}
     >
-      {Icon && <Icon className="w-5 h-5 mr-2" />}
+      {Icon && <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />}
       {children}
     </button>
   );
