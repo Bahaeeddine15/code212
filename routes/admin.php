@@ -66,6 +66,8 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
         ->name('admin.modules.files.open');
     Route::get('module-files/{file}/download', [ModuleControllerAdmin::class, 'downloadFile'])
         ->name('admin.modules.files.download');
+    Route::get('module-files/{file}/video', [ModuleFileController::class, 'showVideoAdmin'])
+        ->name('modules.files.video');
 
     Route::resource('competitions', CompetitionControllerAdmin::class);
     Route::patch('/competitions/{competition}/close', [CompetitionControllerAdmin::class, 'close'])->name('competitions.close');
@@ -79,6 +81,5 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::patch('/reservations/{reservation}/approve', [ReservationControllerAdmin::class, 'approve'])->name('reservations.approve');
     Route::patch('/reservations/{reservation}/reject', [ReservationControllerAdmin::class, 'reject'])->name('reservations.reject');
 
-    Route::get('modules/files/{file}/video', [ModuleFileController::class, 'showVideoAdmin'])
-        ->name('modules.files.video');
+    
 });

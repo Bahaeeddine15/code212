@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import AppLayout from '@/layouts/app-layout-admin';
 import { Head, router, Link } from '@inertiajs/react';
-import {
-  Plus, FileText, Trash2, Edit3, GraduationCap, ArrowLeft, Download
-} from 'lucide-react';
+import { Plus, FileText, Trash2, Edit3, GraduationCap, ArrowLeft, Download, PlayCircle } from 'lucide-react';
 import { ModernButton, PageHeader } from '@/components/ui/modern-components';
 
 type FileType = 'pdf' | 'video' | 'other';
@@ -11,9 +9,9 @@ type FileType = 'pdf' | 'video' | 'other';
 interface ModuleFile {
   id: number;
   original_name?: string;
-  name?: string;          // optional; use original_name if absent
-  type?: FileType;        // optional; inferred if absent
-  // (optional) mime_type, disk, etc. can exist server-side
+  name?: string;       // optional; use original_name if absent
+  type?: FileType;     // optional; inferred if absent
+  // (server may also send mime_type, disk, etc.)
 }
 
 interface Module {
@@ -22,8 +20,7 @@ interface Module {
   description: string;
   duration: string;
   order: number;
-  file_path?: string;
-  files?: { id: number; [key: string]: any }[];
+  files: ModuleFile[]; // ✅ single source of truth
 }
 
 interface Formation {
@@ -36,91 +33,57 @@ interface Props {
   modules: Module[];
 }
 
-const getExt = (filename?: string) =>
-  (filename?.split('.').pop() || '').toLowerCase();
-
-function renderModuleFile(filePath?: string, onOpenVideo?: () => void, fileId?: number) {
-  if (!filePath) return null;
-  const extension = filePath.split('.').pop()?.toLowerCase();
-  if (extension === 'pdf') {
-    return (
-      <div className="mt-4">
-        <p className="text-sm text-muted-foreground font-medium mb-1">Fichier attaché :</p>
-        <a href={`/storage/${filePath}`} target="_blank" className="text-indigo-600 hover:underline text-sm flex items-center gap-1">
-          <FileText className="w-4 h-4" /> Voir le PDF
-        </a>
-      </div>
-    );
-  }
-  if (["mp4", "avi", "mov"].includes(extension || '')) {
-    return (
-      <div className="mt-4">
-        <p className="text-sm text-muted-foreground font-medium mb-1">Vidéo attachée :</p>
-        <Link
-          href={route('admin.modules.files.video', { file: fileId })}
-          className="text-primary hover:underline text-sm"
-        >
-          📹 Lire la vidéo
-        </Link>
-      </div>
-    );
-  }
-  return null;
-}
+/* Helpers */
+const getExt = (filename?: string) => (filename?.split('.').pop() || '').toLowerCase();
 
 const inferType = (name?: string): FileType => {
   const ext = getExt(name);
   if (ext === 'pdf') return 'pdf';
-  if (['mp4','mov','avi','webm'].includes(ext)) return 'video';
+  if (['mp4','mov','avi','webm','mkv','m3u8'].includes(ext)) return 'video';
   return 'other';
 };
 
-// Only used to hint the browser when playing by URL with extension;
-// the admin stream route will already set Content-Type, so it's optional.
-const guessVideoMime = (urlOrName?: string) => {
-  const ext = getExt(urlOrName);
-  if (ext === 'mp4') return 'video/mp4';
-  if (ext === 'mov') return 'video/quicktime';
-  if (ext === 'avi') return 'video/x-msvideo';
-  if (ext === 'webm') return 'video/webm';
-  return undefined;
-};
+const openHref = (id: number) => `/admin/module-files/${id}`;             // stream inline (pdf/other)
+const downloadHref = (id: number) => `/admin/module-files/${id}/download`; // download any
+const videoHref = (id: number) => `/admin/module-files/${id}/video`;       // Inertia page with qualities
 
 /* Card */
 const ModuleCard = ({
   module,
   onEdit,
   onDelete,
-  onShowVideo,
 }: {
   module: Module;
   onEdit: (module: Module) => void;
   onDelete: (module: Module) => void;
-  onShowVideo: (href: string, displayName?: string) => void;
 }) => {
   const files = module.files ?? [];
 
   return (
-    <div className="bg-card dark:bg-card dark:bg-gray-700 rounded-2xl shadow-lg border border-border p-4 sm:p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+    <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6 flex flex-col hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 sm:mb-3 gap-2 sm:gap-0">
-        <h2 className="text-base sm:text-lg font-bold text-foreground dark:text-white line-clamp-2">{module.title}</h2>
-        <span className="text-xs text-muted-foreground self-start sm:self-auto whitespace-nowrap">Durée : {module.duration}</span>
+        <h2 className="text-base sm:text-lg font-bold text-foreground dark:text-white line-clamp-2">
+          {module.title}
+        </h2>
+        <span className="text-xs text-muted-foreground self-start sm:self-auto whitespace-nowrap">
+          Durée : {module.duration}
+        </span>
       </div>
 
-      <p className="text-xs sm:text-sm text-muted-foreground dark:text-gray-300 mb-3 sm:mb-4 line-clamp-3">{module.description}</p>
+      <p className="text-xs sm:text-sm text-muted-foreground dark:text-gray-300 mb-3 sm:mb-4 line-clamp-3">
+        {module.description}
+      </p>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-auto gap-3 sm:gap-2">
         <div className="flex-1">
-          {/* Show files if present, else fallback to file_path */}
-          {files.length > 0 ? (
-            <div className="mt-2 space-y-2">
-              <p className="text-sm text-muted-foreground font-medium">Fichiers :</p>
+          <div className="mt-2 space-y-2">
+            <p className="text-sm text-muted-foreground font-medium">Fichiers :</p>
+
+            {files.length > 0 ? (
               <ul className="space-y-1">
                 {files.map((f) => {
                   const displayName = f.name || f.original_name || `file-${f.id}`;
                   const t: FileType = f.type || inferType(displayName);
-                  const openHref = `/admin/module-files/${f.id}`;
-                  const downloadHref = `/admin/module-files/${f.id}/download`;
 
                   return (
                     <li key={f.id} className="flex items-center justify-between gap-3">
@@ -128,78 +91,41 @@ const ModuleCard = ({
                         <span className="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-800">
                           {t === 'pdf' ? '📄 PDF' : t === 'video' ? '🎬 Vidéo' : '📎 Fichier'}
                         </span>
+                        
                       </div>
+
                       <div className="flex items-center gap-2">
                         {t === 'video' ? (
-                          <button
-                            onClick={() => onShowVideo(openHref, displayName)}
-                            className="px-2.5 py-1.5 text-xs rounded bg-blue-600 text-white hover:bg-blue-700"
+                          <Link
+                            href={videoHref(f.id)}
+                            className="px-2.5 py-1.5 text-xs rounded bg-blue-600 text-white hover:bg-blue-700 inline-flex items-center gap-1"
+                            title="Lire (qualités)"
                           >
+                            <PlayCircle className="w-3.5 h-3.5" />
                             Lire
-                          </button>
+                          </Link>
                         ) : (
                           <a
-                            href={openHref}
+                            href={openHref(f.id)}
                             target="_blank"
                             rel="noreferrer"
                             className="px-2.5 py-1.5 text-xs rounded bg-blue-600 text-white hover:bg-blue-700"
+                            title="Ouvrir"
                           >
                             Ouvrir
                           </a>
                         )}
+
+                        
                       </div>
                     </li>
                   );
                 })}
               </ul>
-            </div>
-          ) : (
-            module.file_path ? (
-              <div className="mt-4">
-                {(() => {
-                  const extension = module.file_path.split('.').pop()?.toLowerCase();
-                  if (extension === 'pdf') {
-                    return (
-                      <>
-                        <p className="text-sm text-muted-foreground font-medium mb-1">Fichier attaché :</p>
-                        <a href={`/storage/${module.file_path}`} target="_blank" className="text-indigo-600 hover:underline text-sm flex items-center gap-1">
-                          <FileText className="w-4 h-4" /> Voir le PDF
-                        </a>
-                      </>
-                    );
-                  }
-                  if (["mp4", "avi", "mov"].includes(extension || '')) {
-                    return (
-                      <>
-                        <p className="text-sm text-muted-foreground font-medium mb-1">Vidéo attachée :</p>
-                        <a
-                          href={`/storage/${module.file_path}`}
-                          target="_blank"
-                          className="text-primary hover:underline text-sm"
-                        >
-                          📹 Lire la vidéo
-                        </a>
-                      </>
-                    );
-                  }
-                  return (
-                    <>
-                      <p className="text-sm text-muted-foreground font-medium mb-1">Fichier attaché :</p>
-                      <a
-                        href={`/storage/${module.file_path}`}
-                        target="_blank"
-                        className="text-primary hover:underline text-sm"
-                      >
-                        📎 Ouvrir le fichier
-                      </a>
-                    </>
-                  );
-                })()}
-              </div>
             ) : (
               <div className="text-sm text-muted-foreground">Aucun fichier pour ce module.</div>
-            )
-          )}
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -225,9 +151,6 @@ const ModuleCard = ({
 
 export default function ModulesList({ formation, modules }: Props) {
   const [moduleList, setModuleList] = useState(modules);
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoSrc, setVideoSrc] = useState<string | null>(null);
-  const [videoName, setVideoName] = useState<string | undefined>(undefined);
 
   const handleDelete = (id: number) => {
     if (!confirm('Voulez-vous vraiment supprimer ce module ?')) return;
@@ -244,7 +167,6 @@ export default function ModulesList({ formation, modules }: Props) {
     <AppLayout>
       <Head title="Modules" />
       <div className="flex h-full flex-1 flex-col gap-6 sm:gap-8 p-4 sm:p-6 overflow-x-auto bg-background">
-
         {/* Back */}
         <div className="flex items-center mb-2 sm:mb-4">
           <Link
@@ -287,41 +209,11 @@ export default function ModulesList({ formation, modules }: Props) {
                   module={module}
                   onEdit={handleModuleEdit}
                   onDelete={() => handleDelete(module.id)}
-                  onShowVideo={(href, name) => {
-                    setVideoSrc(href);   // admin stream route (inline)
-                    setVideoName(name);
-                    setShowVideo(true);
-                  }}
                 />
               ))}
             </div>
           )}
         </div>
-
-        {/* Video modal */}
-        {showVideo && videoSrc && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-            <div className="bg-card dark:bg-card rounded-lg shadow-lg p-4 sm:p-6 max-w-4xl w-full relative max-h-[90vh] overflow-auto">
-              <button
-                onClick={() => setShowVideo(false)}
-                className="absolute top-2 right-2 sm:top-4 sm:right-4 text-muted-foreground hover:text-red-500 text-lg sm:text-xl font-bold z-10 bg-background rounded-full w-8 h-8 sm:w-10 h-10 flex items-center justify-center"
-                aria-label="Fermer"
-              >
-                ×
-              </button>
-              <div className="text-sm font-medium text-foreground">{videoName}</div>
-              <div className="relative w-full pt-[56.25%] rounded overflow-hidden mt-4 sm:mt-3">
-                <video controls className="absolute top-0 left-0 w-full h-full object-contain rounded">
-                  {(() => {
-                    const mime = guessVideoMime(videoName);
-                    return <source src={videoSrc} {...(mime ? { type: mime } : {})} />;
-                  })()}
-                  Votre navigateur ne prend pas en charge cette vidéo.
-                </video>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </AppLayout>
   );

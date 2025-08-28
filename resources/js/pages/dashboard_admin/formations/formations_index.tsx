@@ -14,9 +14,8 @@ import {
   BookOpen,
   PlayCircle,
   FileText,
-  CheckCircle
 } from 'lucide-react';
-import { ModernButton, PageHeader } from '@/components/ui/modern-components';
+import { PageHeader, ModernButton } from '@/components/ui/modern-components';
 
 /* ---------------- Types ---------------- */
 
@@ -26,11 +25,10 @@ interface Module {
   description: string;
   duration: string;
   order: number;
-  file_path?: string; // (unused if you’ve fully migrated)
+  file_path?: string; // legacy (unused if fully migrated)
 }
 
 interface Formation {
-
   id: number;
   title: string;
   description: string;
@@ -42,9 +40,8 @@ interface Formation {
   enrolledStudents?: number;
   maxStudents?: number;
   thumbnail?: string;
-  status?: 'published' | 'draft';   // 👈 NEW
-  language?: string;
-
+  language?: string; // teammate’s field
+  status?: 'published' | 'draft'; // status support
 }
 
 type Counts = { published: number; draft: number; all: number };
@@ -53,8 +50,8 @@ type Counts = { published: number; draft: number; all: number };
 type Paginator<T> = { data: T[]; [k: string]: any };
 type Props = {
   formations: Formation[] | Paginator<Formation> | Record<string, Formation>;
-  activeStatus?: 'published' | 'draft' | 'all'; // 👈 NEW
-  counts?: Counts;                               // 👈 NEW
+  activeStatus?: 'published' | 'draft' | 'all';
+  counts?: Counts;
 };
 
 /* ---------------- UI Helpers ---------------- */
@@ -64,7 +61,6 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Formations/Certifications', href: '/admin/formations' },
 ];
 
-/* ---------------- Status Tabs ---------------- */
 const StatusTabs = ({
   active = 'published',
   counts = { published: 0, draft: 0, all: 0 },
@@ -121,18 +117,21 @@ const ModuleCard = ({
           <button
             className="p-1.5 sm:p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors"
             onClick={() => onEdit(module)}
+            title="Modifier"
           >
             <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
           <button
             className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-50 rounded-lg transition-colors"
             onClick={() => onDelete(module)}
+            title="Supprimer"
           >
             <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
           <button
             className="p-1.5 sm:p-2 text-green-600 dark:text-green-400 hover:bg-green-50 rounded-lg transition-colors"
             onClick={() => onPlay(module)}
+            title="Lire"
           >
             <PlayCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
@@ -162,13 +161,14 @@ const FormationCard = ({
   formation,
   onDelete,
   onViewModules,
+  onToggleStatus,
 }: {
   formation: Formation;
   onDelete: (formation: Formation) => void;
   onViewModules: (formation: Formation) => void;
+  onToggleStatus: (formation: Formation) => void;
 }) => {
-  const { title, description, level, duration, category, enrolledStudents = 0, maxStudents = 0, link, status = 'published' } = formation;
-  const modules = Array.isArray(formation.modules) ? formation.modules : [];
+  const { title, description, level, duration, modules, category, enrolledStudents = 0, maxStudents = 0, link, status = 'published' } = formation;
 
   const getLevelColor = () => {
     switch (level) {
@@ -189,13 +189,16 @@ const FormationCard = ({
     }
   };
 
+  const published = status === 'published';
+
   return (
     <div
-      className={`bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer`}
+      className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
       onClick={handleCardClick}
-      title={link ? "Voir la formation externe" : undefined}
+      title={link ? 'Voir la formation externe' : undefined}
     >
-      <div className="h-36 sm:h-48 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center -m-4 sm:-m-6 mb-4 sm:mb-6">
+      <div className="relative h-36 sm:h-48 -m-4 sm:-m-6 mb-4 sm:mb-6">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-t-2xl" />
         {formation.thumbnail ? (
           <img
             src={`/storage/${formation.thumbnail}`}
@@ -203,8 +206,19 @@ const FormationCard = ({
             className="w-full h-full object-cover rounded-t-2xl"
           />
         ) : (
-          <GraduationCap className="w-12 h-12 sm:w-16 sm:h-16 text-white opacity-90 drop-shadow-lg" />
+          <div className="w-full h-full grid place-items-center">
+            <GraduationCap className="w-12 h-12 sm:w-16 sm:h-16 text-white opacity-90 drop-shadow-lg" />
+          </div>
         )}
+
+        {/* Status badge */}
+        <span
+          className={`absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-semibold ${
+            published ? 'bg-green-600 text-white' : 'bg-amber-600 text-white'
+          }`}
+        >
+          {published ? 'Publié' : 'Brouillon'}
+        </span>
       </div>
 
       <div className="flex items-start justify-between mb-3 sm:mb-4">
@@ -216,17 +230,16 @@ const FormationCard = ({
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm mb-4 sm:mb-6 gap-3 sm:gap-0">
         <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-          <span className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-full self-start ${getLevelColor()}`}>
-            {level}
-          </span>
+          <span className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-full self-start ${getLevelColor()}`}>{level}</span>
           <div className="flex items-center space-x-2 text-muted-foreground">
             <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="text-xs sm:text-sm">{duration}</span>
           </div>
-          {formation.language && (
+          {/* optional language display */}
+          {(formation as any).language && (
             <div className="flex items-center space-x-2 text-muted-foreground">
               <span className="text-xs sm:text-sm">
-                <span className="font-semibold">Langue:</span> {formation.language}
+                <span className="font-semibold">Langue:</span> {(formation as any).language}
               </span>
             </div>
           )}
@@ -240,18 +253,22 @@ const FormationCard = ({
         </div>
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground font-medium text-sm">Inscrits</span>
-          <span className="font-bold text-green-600 dark:text-green-400 text-sm">{enrolledStudents}/{maxStudents}</span>
+          <span className="font-bold text-green-600 dark:text-green-400 text-sm">
+            {enrolledStudents}/{maxStudents}
+          </span>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 sm:h-3">
           <div
             className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 sm:h-3 rounded-full transition-all duration-500 shadow-sm"
             style={{ width: `${maxStudents ? (enrolledStudents / maxStudents) * 100 : 0}%` }}
-          ></div>
+          />
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
-        <span className="px-2 sm:px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full self-start">{category}</span>
+        <span className="px-2 sm:px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full self-start">
+          {category}
+        </span>
         <div className="flex space-x-2">
           <Link
             href={`/admin/formations/${formation.id}/edit`}
@@ -261,24 +278,35 @@ const FormationCard = ({
             <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Link>
           <button
-            onClick={e => { e.stopPropagation(); onDelete(formation); }}
+            onClick={e => {
+              e.stopPropagation();
+              onDelete(formation);
+            }}
             className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
           >
             <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
+
+          {/* Toggle publish/draft */}
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              onToggleStatus(formation);
+            }}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold ${
+              published ? 'bg-amber-600 text-white' : 'bg-green-600 text-white'
+            }`}
+          >
+            {published ? 'Mettre en brouillon' : 'Publier'}
+          </button>
+
           {!link && (
-            <ModernButton
-              size="sm"
-              theme="primary"
-              onClick={() => onViewModules(formation)}
-            >
+            <ModernButton size="sm" theme="primary" onClick={() => onViewModules(formation)}>
               <span className="hidden sm:inline">Voir modules</span>
               <span className="sm:hidden">Modules</span>
             </ModernButton>
           )}
-          {link && (
-            <span className="text-primary text-xs font-semibold ml-2">Lien externe</span>
-          )}
+          {link && <span className="text-primary text-xs font-semibold ml-2">Lien externe</span>}
         </div>
       </div>
     </div>
@@ -295,21 +323,10 @@ export default function Formations({
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const [showModules, setShowModules] = useState(false);
 
-  // 👇 Normalize formations to an array in all cases
-  let list: Formation[] = [];
-  if (Array.isArray(formations)) {
-    list = formations;
-  } else if (formations && typeof formations === 'object') {
-    if ('data' in formations && Array.isArray(formations.data)) {
-      list = formations.data;
-    } else {
-      list = Object.values(formations);
-    }
-  }
-  if (!Array.isArray(list)) {
-    console.warn('formations prop is not an array:', formations);
-    list = [];
-  }
+  // Normalize formations to an array in all cases
+  const list: Formation[] = Array.isArray(formations)
+    ? formations
+    : (formations as Paginator<Formation>)?.data ?? Object.values(formations ?? {});
 
   const handleFormationDelete = (formation: Formation) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette formation ?')) {
@@ -346,7 +363,6 @@ export default function Formations({
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Formations/Certifications" />
       <div className="flex h-full flex-1 flex-col gap-6 sm:gap-8 p-4 sm:p-6 overflow-x-auto bg-background">
-
         <PageHeader
           title="Formations & Certifications"
           description="Créez et gérez vos formations professionnelles"
@@ -457,7 +473,11 @@ export default function Formations({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-3 sm:gap-0">
             <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center">
               <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 text-blue-600 dark:text-blue-400" />
-              {activeStatus === 'draft' ? 'Brouillons' : activeStatus === 'all' ? 'Toutes les formations' : 'Formations publiées'}
+              {activeStatus === 'draft'
+                ? 'Brouillons'
+                : activeStatus === 'all'
+                ? 'Toutes les formations'
+                : 'Formations publiées'}
             </h2>
           </div>
 
@@ -468,12 +488,13 @@ export default function Formations({
                 formation={formation}
                 onDelete={handleFormationDelete}
                 onViewModules={handleViewModules}
+                onToggleStatus={handleToggleStatus}
               />
             ))}
           </div>
         </div>
 
-        {/* Optional preview section */}
+        {/* Optional preview section (kept for future use) */}
         {showModules && selectedFormation && (
           <div className="bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-3 sm:gap-0">
@@ -505,11 +526,3 @@ export default function Formations({
     </AppLayout>
   );
 }
-
-
-
-
-
-
-
-
