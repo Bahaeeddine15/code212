@@ -15,8 +15,18 @@ class Formation extends Model
         'duration',
         'category',
         'link',
-        'thumbnail'
+        'thumbnail',
+        'status',
+        'published_at',
     ];
+
+    protected $casts = ['published_at' => 'datetime'];
+    
+    public function isPublished(): bool { return $this->status === 'published'; }
+
+    public function scopePublished($q) { return $q->where('status','published'); }
+    
+    public function scopeDrafts($q)    { return $q->where('status','draft'); }
 
     public function modules()
     {

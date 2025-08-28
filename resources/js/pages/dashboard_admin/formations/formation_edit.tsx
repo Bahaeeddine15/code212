@@ -31,6 +31,7 @@ export default function FormationEdit({ formation }: Props) {
         duration: formation.duration,
         category: formation.category,
         link: formation.link || '',
+        status: 'published' as 'published' | 'draft',
         thumbnail: null as File | null,
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -61,6 +62,7 @@ export default function FormationEdit({ formation }: Props) {
         formData.append('duration', form.duration);
         formData.append('category', form.category);
         formData.append('link', form.link);
+        formData.append('status', form.status);
         if (form.thumbnail) {
             formData.append('thumbnail', form.thumbnail);
         }
@@ -188,6 +190,18 @@ export default function FormationEdit({ formation }: Props) {
                                             required
                                         />
                                         {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Statut de publication</label>
+                                        <select
+                                        value={form.status}
+                                        onChange={e => handleChange('status', e.target.value as 'published' | 'draft')}
+                                        className="w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-foreground focus:border-blue-500 focus:outline-none transition-colors [color-scheme:dark]"
+                                        >
+                                        <option value="published" className="bg-card text-foreground">Publié</option>
+                                        <option value="draft" className="bg-card text-foreground">Brouillon</option>
+                                        </select>
+                                        {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status}</p>}
                                     </div>
                                 </div>
 

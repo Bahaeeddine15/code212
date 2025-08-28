@@ -51,6 +51,7 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
 
     // Formation routes
     Route::resource('formations', FormationControllerAdmin::class);
+    Route::patch('/formations/{formation}/status', [FormationControllerAdmin::class, 'updateStatus'])->name('formations.updateStatus');
 
     // ✅ Module routes - explicit definition for better control
     Route::get('formations/{formation}/modules', [ModuleControllerAdmin::class, 'index'])->name('formations.modules.index');
@@ -60,6 +61,10 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::get('modules/{module}/edit', [ModuleControllerAdmin::class, 'edit'])->name('modules.edit');
     Route::put('modules/{module}', [ModuleControllerAdmin::class, 'update'])->name('modules.update');
     Route::delete('modules/{module}', [ModuleControllerAdmin::class, 'destroy'])->name('modules.destroy');
+    Route::get('module-files/{file}', [ModuleControllerAdmin::class, 'openFile'])
+        ->name('admin.modules.files.open');
+    Route::get('module-files/{file}/download', [ModuleControllerAdmin::class, 'downloadFile'])
+        ->name('admin.modules.files.download');
 
     Route::resource('competitions', CompetitionControllerAdmin::class);
     Route::patch('/competitions/{competition}/close', [CompetitionControllerAdmin::class, 'close'])->name('competitions.close');

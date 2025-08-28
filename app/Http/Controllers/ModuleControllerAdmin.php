@@ -25,7 +25,7 @@ class ModuleControllerAdmin extends Controller
     {
         $modules = $formation->modules()
             ->orderBy('order')
-            ->withCount('files') // 👈 show how many files each module has
+            ->with(['files' => fn($q) => $q->orderBy('position')])
             ->get();
 
         return Inertia::render('dashboard_admin/formations/modules_list', [
@@ -200,6 +200,90 @@ class ModuleControllerAdmin extends Controller
             ->route('admin.formations.modules.index', ['formation' => $formationId])
             ->with('success', 'Module supprimé avec succès.');
     }
+    // Stream or redirect to the file, with access control
+    public function openFile(ModuleFile $file)
+    {
+        abort_unless(auth('admin')->check(), 403);
+
+        $disk   = Storage::disk($file->disk);
+        $driver = config("filesystems.disks.{$file->disk}.driver");
+        $mime   = $file->mime_type ?: 'application/octet-stream';
+
+        // Public disk: just redirect to the public URL
+        if ($file->disk === 'public') {
+            return redirect($disk->url($file->path));
+        }
+
+        // Local/private: stream inline
+        $headers = [
+            'Content-Type'        => $mime,
+            'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
+        ];
+
+        if ($driver === 'local') {
+            return response()->file($disk->path($file->path), $headers);
+        }
+
+        // S3-like: try temporary URL
+        if (method_exists($disk, 'temporaryUrl')) {
+            try {
+                $url = $disk->temporaryUrl($file->path, now()->addMinutes(5), [
+                    'ResponseContentType'        => $mime,
+                    'ResponseContentDisposition' => 'inline; filename="'.$file->original_name.'"',
+                ]);
+                return redirect($url);
+            } catch (\Throwable $e) {
+                // fall through to streaming
+            }
+        }
+
+        // Fallback: stream
+        $stream = $disk->readStream($file->path);
+        abort_if($stream === false, 404);
+
+        return response()->stream(function () use ($stream) {
+            fpassthru($stream);
+            is_resource($stream) && fclose($stream);
+        }, 200, $headers);
+    }
+    public function downloadFile(ModuleFile $file)
+    {
+        abort_unless(auth('admin')->check(), 403);
+
+        $disk     = Storage::disk($file->disk);
+        $driver   = config("filesystems.disks.{$file->disk}.driver");
+        $filename = $file->original_name ?? basename($file->path);
+        $mime     = $file->mime_type ?: 'application/octet-stream';
+        $headers  = ['Content-Type' => $mime];
+
+        if (method_exists($disk, 'download')) {
+            return $disk->download($file->path, $filename, $headers);
+        }
+
+        if ($driver === 'local') {
+            return response()->download($disk->path($file->path), $filename, $headers);
+        }
+
+        if (method_exists($disk, 'temporaryUrl')) {
+            try {
+                $url = $disk->temporaryUrl($file->path, now()->addMinutes(5), [
+                    'ResponseContentType'        => $mime,
+                    'ResponseContentDisposition' => 'attachment; filename="'.$filename.'"',
+                ]);
+                return redirect($url);
+            } catch (\Throwable $e) {
+                // fall through
+            }
+        }
+
+        $stream = $disk->readStream($file->path);
+        abort_if($stream === false, 404);
+
+        return response()->streamDownload(function () use ($stream) {
+            fpassthru($stream);
+            is_resource($stream) && fclose($stream);
+        }, $filename, $headers);
+    }
 
     /**
      * Store uploaded files for a module and create ModuleFile rows.
@@ -235,4 +319,5 @@ class ModuleControllerAdmin extends Controller
             ]);
         }
     }
+    
 }
