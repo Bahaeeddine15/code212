@@ -16,6 +16,10 @@ type RegisterForm = {
   password_confirmation: string;
 };
 
+const isUcaEmail = (email: string) => {
+  return /^[a-zA-Z0-9._%+-]+@uca\.ac\.ma$/.test(email);
+};
+
 export default function Register() {
   const { data, setData, post, processing, errors, reset } = useForm<RegisterForm>({
     name: "",
@@ -29,6 +33,10 @@ export default function Register() {
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
+    if (!isUcaEmail(data.email)) {
+      alert("Veuillez utiliser une adresse email académique @uca.ac.ma");
+      return;
+    }
     post(route("register"), {
       onFinish: () => reset("password", "password_confirmation"),
     });
@@ -73,6 +81,11 @@ export default function Register() {
               placeholder="email@uca.ac.ma"
             />
             <InputError message={errors.email} className="mt-1" />
+            {data.email && !isUcaEmail(data.email) && (
+  <div className="text-xs text-red-500 mt-1">
+    Veuillez utiliser une adresse email académique @uca.ac.ma
+  </div>
+)}
           </div>
           {/* Ecole Field */}
           <div>
@@ -187,7 +200,7 @@ export default function Register() {
           type="submit"
           className="mt-2 w-full bg-[#300069] hover:bg-[#2CD3A3] text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           tabIndex={6}
-          disabled={processing}
+          disabled={processing || !isUcaEmail(data.email)}
         >
           Créer un compte
         </Button>

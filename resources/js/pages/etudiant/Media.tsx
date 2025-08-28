@@ -52,7 +52,7 @@ export default function Media({ mediaByFolder }: PageProps) {
     const isVideo = getMediaType(media.file_path) === 'Vidéo';
     
     return (
-      <Card className="hover:shadow-md transition-shadow group">
+      <Card className="hover:shadow-md transition-shadow group bg-white dark:bg-[#1e2939] border-gray-200 dark:border-[#364153]">
         <CardContent className="p-4">
           <Link href={`/media/${media.id}`}>
             <div className="flex flex-col items-center cursor-pointer">
@@ -91,10 +91,10 @@ export default function Media({ mediaByFolder }: PageProps) {
                   />
                 )}
               </div>
-              <h3 className="font-medium text-center truncate w-full" title={media.title}>
+              <h3 className="font-medium text-center truncate w-full text-gray-900 dark:text-white" title={media.title}>
                 {media.title}
               </h3>
-              <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
+              <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground dark:text-gray-400">
                 <span className={`px-2 py-1 rounded-full flex items-center gap-1 ${
                   isVideo ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
                 }`}>
@@ -176,13 +176,13 @@ export default function Media({ mediaByFolder }: PageProps) {
             <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
           </div>
           
-          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+          <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
             <div className="px-4 lg:px-6 py-6 space-y-6">
               {/* Mobile Menu Button */}
               <div className="lg:hidden mb-4">
                 <button
                   onClick={() => setIsMobileOpen(!isMobileOpen)}
-                  className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                  className="p-3 bg-blue-600 dark:bg-blue-700 text-white rounded-lg shadow-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors flex items-center gap-2"
                 >
                   <Menu className="w-5 h-5" />
                   <span className="text-sm font-medium">Menu</span>
@@ -191,41 +191,41 @@ export default function Media({ mediaByFolder }: PageProps) {
               
               {/* Header */}
               <div className="mb-8">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Galerie Médias</h1>
-                <p className="text-gray-600">Images et vidéos accessibles</p>
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">Galerie Médias</h1>
+                <p className="text-gray-600 dark:text-gray-300">Images et vidéos accessibles</p>
               </div>
 
               {/* Search and Filter Controls */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Rechercher dans les fichiers</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Rechercher dans les fichiers</label>
                   <Input
                     type="text"
                     placeholder="Rechercher un fichier..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full"
+                    className="w-full bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Rechercher un dossier</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Rechercher un dossier</label>
                   <Input
                     type="text"
                     placeholder="Rechercher un dossier..."
                     value={folderSearch}
                     onChange={(e) => setFolderSearch(e.target.value)}
-                    className="w-full"
+                    className="w-full bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Trier par</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Trier par</label>
                   <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'date' | 'name')}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white">
                       <SelectValue placeholder="Trier par" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="date">Date (plus récent d'abord)</SelectItem>
-                      <SelectItem value="name">Nom (A-Z)</SelectItem>
+                    <SelectContent className="bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153]">
+                      <SelectItem value="date" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-[#364153]">Date (plus récent d'abord)</SelectItem>
+                      <SelectItem value="name" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-[#364153]">Nom (A-Z)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -240,13 +240,14 @@ export default function Media({ mediaByFolder }: PageProps) {
                     setFolderSearch('');
                     setSortBy('date');
                   }}
+                  className="bg-white dark:bg-[#1e2939] border-gray-300 dark:border-[#364153] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#364153]"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" /> Réinitialiser
                 </Button>
               </div>
 
               {/* Stats */}
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
                 {totalFiltered} médias affichés sur {totalMedia}
               </div>
 
@@ -254,8 +255,8 @@ export default function Media({ mediaByFolder }: PageProps) {
               {filteredFolders.length === 0 ? (
                 <div className="text-center py-12">
                   <Folder className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun dossier trouvé</h3>
-                  <p className="text-gray-500">Aucun dossier ne correspond à votre recherche.</p>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Aucun dossier trouvé</h3>
+                  <p className="text-gray-500 dark:text-gray-400">Aucun dossier ne correspond à votre recherche.</p>
                 </div>
               ) : (
                 <div className="space-y-8">
@@ -267,24 +268,24 @@ export default function Media({ mediaByFolder }: PageProps) {
                     if (filteredMedia.length === 0 && searchTerm) return null;
 
                     return (
-                      <Card key={folderName}>
+                      <Card key={folderName} className="bg-white dark:bg-[#1e2939] border-gray-200 dark:border-[#364153]">
                         <CardHeader>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <Folder className="w-5 h-5 text-blue-600" />
                               <div>
                                 <Link href={`/media/folder/${folderName}`}>
-                                  <CardTitle className="text-lg hover:text-blue-600 cursor-pointer">
+                                  <CardTitle className="text-lg hover:text-blue-600 cursor-pointer text-gray-900 dark:text-white">
                                     {folderName}
                                   </CardTitle>
                                 </Link>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
                                   {filteredMedia.length} fichier{filteredMedia.length > 1 ? 's' : ''}
                                 </p>
                               </div>
                             </div>
                             <Link href={`/media/folder/${folderName}`}>
-                              <Button variant="outline" size="sm">
+                              <Button variant="outline" size="sm" className="bg-white dark:bg-blue-600 border-gray-300 dark:border-blue-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-blue-700">
                                 Voir tout
                               </Button>
                             </Link>
@@ -294,7 +295,7 @@ export default function Media({ mediaByFolder }: PageProps) {
                           {filteredMedia.length === 0 ? (
                             <div className="text-center py-8">
                               <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                              <p className="text-gray-500">Aucun fichier dans ce dossier</p>
+                              <p className="text-gray-500 dark:text-gray-400">Aucun fichier dans ce dossier</p>
                             </div>
                           ) : (
                             <>
@@ -307,7 +308,7 @@ export default function Media({ mediaByFolder }: PageProps) {
                               {hasMoreMedia && (
                                 <div className="mt-4 text-center">
                                   <Link href={`/media/folder/${folderName}`}>
-                                    <Button variant="ghost" className="text-blue-600 hover:text-blue-800">
+                                    <Button variant="ghost" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20">
                                       Voir {filteredMedia.length - 4} autres médias
                                       <ArrowRight className="w-4 h-4 ml-2" />
                                     </Button>

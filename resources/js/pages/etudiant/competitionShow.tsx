@@ -74,7 +74,7 @@ export default function CompetitionShow({ competition }: Props) {
             <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
           </div>
           
-          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+          <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
             <div className="p-4 lg:p-6 pt-6">
               {/* Mobile Menu Button */}
               <div className="lg:hidden mb-4">
@@ -88,8 +88,8 @@ export default function CompetitionShow({ competition }: Props) {
               </div>
               
               <div className="mb-8">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{competition.title}</h1>
-                <p className="text-gray-600">{competition.description}</p>
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">{competition.title}</h1>
+                <p className="text-gray-600 dark:text-gray-300">{competition.description}</p>
               </div>
 
               <div className="space-y-6">
@@ -97,29 +97,29 @@ export default function CompetitionShow({ competition }: Props) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div className="flex items-center gap-3">
                     <Badge className={`${statusColors[competition.status] || 'bg-gray-500'} text-white`}>{competition.status}</Badge>
-                    <Badge variant="outline">{competition.category}</Badge>
-                    <Badge variant="outline" className="ml-2">
+                    <Badge variant="outline" className="dark:border-[#364153] dark:text-gray-300">{competition.category}</Badge>
+                    <Badge variant="outline" className="ml-2 dark:border-[#364153] dark:text-gray-300">
                       {competition.type === 'individual' ? 'Individuelle' : 'Par groupe'}
                     </Badge>
                   </div>
-                  <div className="text-sm text-gray-500 flex items-center gap-1"><Eye className="w-4 h-4" /> {competition.views} vues</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1"><Eye className="w-4 h-4" /> {competition.views} vues</div>
                 </div>
 
-                <Card>
+                <Card className="dark:bg-[#1e2939] dark:border-[#364153]">
                   <CardHeader>
-                    <CardTitle>Informations</CardTitle>
-                    <CardDescription>Détails clés de la compétition</CardDescription>
+                    <CardTitle className="dark:text-white">Informations</CardTitle>
+                    <CardDescription className="dark:text-gray-300">Détails clés de la compétition</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center text-gray-700"><Calendar className="w-4 h-4 mr-2" /> Date: {new Date(competition.date).toLocaleDateString('fr-FR')}</div>
-                      <div className="flex items-center text-gray-700"><Calendar className="w-4 h-4 mr-2" /> Limite: {new Date(competition.deadline).toLocaleDateString('fr-FR')}</div>
-                      <div className="flex items-center text-gray-700"><MapPin className="w-4 h-4 mr-2" /> {competition.location}</div>
-                      <div className="flex items-center text-gray-700"><Users className="w-4 h-4 mr-2" /> {competition.registrations}/{competition.maxParticipants} participants</div>
-                      <div className="flex items-center text-gray-700 sm:col-span-2"><Eye className="w-4 h-4 mr-2" /> {competition.views} vues</div>
+                      <div className="flex items-center text-gray-700 dark:text-gray-300"><Calendar className="w-4 h-4 mr-2" /> Date: {new Date(competition.date).toLocaleDateString('fr-FR')}</div>
+                      <div className="flex items-center text-gray-700 dark:text-gray-300"><Calendar className="w-4 h-4 mr-2" /> Limite: {new Date(competition.deadline).toLocaleDateString('fr-FR')}</div>
+                      <div className="flex items-center text-gray-700 dark:text-gray-300"><MapPin className="w-4 h-4 mr-2" /> {competition.location}</div>
+                      <div className="flex items-center text-gray-700 dark:text-gray-300"><Users className="w-4 h-4 mr-2" /> {competition.registrations}/{competition.maxParticipants} participants</div>
+                      <div className="flex items-center text-gray-700 dark:text-gray-300 sm:col-span-2"><Eye className="w-4 h-4 mr-2" /> {competition.views} vues</div>
                     </div>
                     {remainingSpots > 0 && competition.status === 'Ouvert' && (
-                      <div className="mt-4 p-3 rounded-lg bg-green-50 text-green-700 text-sm font-medium">
+                      <div className="mt-4 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 text-sm font-medium">
                         {remainingSpots} place{remainingSpots>1?'s':''} restante{remainingSpots>1?'s':''}
                       </div>
                     )}
@@ -150,13 +150,13 @@ export default function CompetitionShow({ competition }: Props) {
                       <Link href={`/competition/${competition.id}/register`}>S'inscrire</Link>
                     </Button>
                   ) : (
-                    <Button disabled className="flex-1">
+                    <Button disabled className="flex-1 dark:bg-gray-600 dark:text-gray-400">
                       {competition.status === 'Ouvert'
                         ? "Vous avez déjà fait une demande"
                         : "Inscriptions fermées"}
                     </Button>
                   )}
-                  <Button variant="outline" asChild className="flex-1 bg-white hover:bg-[#41e296] hover:text-[#3a2b75] border-gray-300">
+                  <Button variant="outline" asChild className="flex-1 bg-white dark:bg-[#1e2939] hover:bg-[#41e296] hover:text-[#3a2b75] border-gray-300 dark:border-[#364153] dark:text-gray-300 dark:hover:bg-[#364153]">
                     <Link href="/competition">← Retour</Link>
                   </Button>
                 </div>

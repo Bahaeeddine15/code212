@@ -14,6 +14,7 @@ import { NavUser } from '@/components/navigation/nav-user';
 import { useState } from 'react';
 
 interface Formation {
+  title: string;
   id: number;
   titre: string;
   description: string;
@@ -148,7 +149,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
             transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
             lg:translate-x-0 transition-transform duration-300 ease-in-out
           `}>
-            <div className="bg-card rounded-xl border border-border overflow-hidden h-full flex flex-col">
+            <div className="bg-card dark:bg-[#101828] border border-border overflow-hidden h-full flex flex-col">
               <div className="p-6 flex-1 flex flex-col">
                 {/* Mobile Close Button */}
                 <div className="lg:hidden flex justify-between items-center mb-6">
@@ -180,7 +181,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
             </div>
           </div>
           
-          <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#140C2C] font-[Poppins] lg:ml-0">
+          <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
             <div className="p-4 lg:p-6 pt-6">
               {/* Mobile Menu Button */}
               <div className="lg:hidden mb-4">
@@ -198,7 +199,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                   {/* Profile Section */}
                   <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
                     {/* Avatar Card */}
-                    <div className="bg-white dark:bg-[#0c142c] rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-[#140C2C] flex-shrink-0">
+                    <div className="bg-white dark:bg-[#1e2939] rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-[#1e2939] flex-shrink-0">
                       <div className="text-center">
                         <div className="w-20 h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-[#c5027f] to-[#8b5cf6] rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
                           <span className="text-white font-bold text-lg lg:text-xl">
@@ -209,7 +210,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </div>
                     </div>
                     {/* Info Card */}
-                    <div className="bg-white dark:bg-[#0c142c] rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-[#140C2C] flex-1">
+                    <div className="bg-white dark:bg-[#1e2939] rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-[#1e2939] flex-1">
                       <div className="space-y-4 lg:space-y-6">
                         <div className="flex flex-col sm:flex-row sm:items-center">
                           <div className="w-full sm:w-24 text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 sm:mb-0">
@@ -248,7 +249,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                   {/* Stat Cards */}
                   <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-3">
                     {/* Certificats (mocked for now) */}
-                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#c5027f] dark:border-l-[#c5027f] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#1e2939] border border-gray-100 dark:border-[#1e2939] border-l-4 border-l-[#c5027f] dark:border-l-[#c5027f] shadow hover:shadow-lg dark:hover:bg-[#364153] transition-all duration-300">
                       <CardContent className="px-2 lg:px-3 py-2 lg:py-1 pt-2">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
                           <div className="flex-1 text-center lg:text-left">
@@ -262,7 +263,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Formations */}
-                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#6366f1] dark:border-l-[#6366f1] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#1e2939] border border-gray-100 dark:border-[#1e2939] border-l-4 border-l-[#6366f1] dark:border-l-[#6366f1] shadow hover:shadow-lg dark:hover:bg-[#364153] transition-all duration-300">
                       <CardContent className="px-2 lg:px-3 py-2 lg:py-1">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
                           <div className="flex-1 text-center lg:text-left">
@@ -276,7 +277,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Mes réservations */}
-                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#ff8500] dark:border-l-[#ff8500] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#1e2939] border border-gray-100 dark:border-[#1e2939] border-l-4 border-l-[#ff8500] dark:border-l-[#ff8500] shadow hover:shadow-lg dark:hover:bg-[#364153] transition-all duration-300">
                       <CardContent className="px-2 lg:px-3 py-2 lg:py-1">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
                           <div className="flex-1 text-center lg:text-left">
@@ -290,7 +291,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Compétitions */}
-                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#e11d48] dark:border-l-[#e11d48] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#1e2939] border border-gray-100 dark:border-[#1e2939] border-l-4 border-l-[#e11d48] dark:border-l-[#e11d48] shadow hover:shadow-lg dark:hover:bg-[#364153] transition-all duration-300">
                       <CardContent className="px-2 lg:px-3 py-2 lg:py-1">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
                           <div className="flex-1 text-center lg:text-left">
@@ -304,7 +305,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       </CardContent>
                     </Card>
                     {/* Événements */}
-                    <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] border-l-4 border-l-[#2cd3a3] dark:border-l-[#2cd3a3] shadow hover:shadow-lg transition-all duration-300">
+                    <Card className="bg-white dark:bg-[#1e2939] border border-gray-100 dark:border-[#1e2939] border-l-4 border-l-[#2cd3a3] dark:border-l-[#2cd3a3] shadow hover:shadow-lg dark:hover:bg-[#364153] transition-all duration-300">
                       <CardContent className="px-2 lg:px-3 py-2 lg:py-1">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
                           <div className="flex-1 text-center lg:text-left">
@@ -322,7 +323,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
 
                 {/* Formations en cours */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] transition-all duration-300">
+                  <Card className="bg-white dark:bg-[#1e2939] border border-gray-100 dark:border-[#1e2939] transition-all duration-300">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-[#081f44] dark:text-white text-lg font-semibold">
                         Formations en cours
@@ -332,13 +333,13 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       {formations.length > 0 ? formations.slice(0, 5).map((formation) => (
                         <div
                           key={formation.id}
-                          className="p-3 bg-[#f8f9fa] dark:bg-[#061020] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#0a1628] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#ff8500]"
+                          className="p-3 bg-[#f8f9fa] dark:bg-[#101828] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#364153] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#ff8500]"
                         >
                           <div className="flex justify-between items-start mb-2">
                             <h3 className="font-medium text-[#081f44] dark:text-white text-sm group-hover:text-[#ff8500] transition-colors">
-                              {formation.titre}
+                              {formation.title || formation.titre}
                             </h3>
-                            <span className="text-xs text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-[#140C2C] px-2 py-1 rounded">
+                            <span className="text-xs text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-[#364153] px-2 py-1 rounded">
                               {formation.niveau}
                             </span>
                           </div>
@@ -359,7 +360,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                   </Card>
 
                   {/* Événements */}
-                  <Card className="bg-white dark:bg-[#0c142c] border border-gray-100 dark:border-[#140C2C] transition-all duration-300">
+                  <Card className="bg-white dark:bg-[#1e2939] border border-gray-100 dark:border-[#1e2939] transition-all duration-300">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-[#081f44] dark:text-white text-lg font-semibold">
                         Événements à venir
@@ -369,7 +370,7 @@ export default function Dashboard({ stats, formations, events, student }: Props)
                       {events.length > 0 ? events.map((event) => (
                         <div
                           key={event.id}
-                          className="p-3 bg-[#f8f9fa] dark:bg-[#061020] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#0a1628] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#6366f1]"
+                          className="p-3 bg-[#f8f9fa] dark:bg-[#101828] rounded-lg hover:bg-[#f1f3f4] dark:hover:bg-[#364153] transition-all duration-200 cursor-pointer group border-r-4 border-r-[#6366f1]"
                         >
                           <div className="flex items-start gap-2 mb-2">
                             <div className="w-1.5 h-1.5 bg-[#6366f1] rounded-full mt-2"></div>

@@ -108,16 +108,16 @@ export default function Articles({ articles, categories, filters }: Props) {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      actualite: "bg-red-50 text-red-700 border-red-200",
-      information: "bg-blue-50 text-blue-700 border-blue-200",
-      guide: "bg-green-50 text-green-700 border-green-200",
-      evenement: "bg-purple-50 text-purple-700 border-purple-200",
-      annonce: "bg-orange-50 text-orange-700 border-orange-200",
-      ressource: "bg-teal-50 text-teal-700 border-teal-200",
+      actualite: "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700",
+      information: "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700",
+      guide: "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700",
+      evenement: "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700",
+      annonce: "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700",
+      ressource: "bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-700",
     };
     return (
       colors[category as keyof typeof colors] ||
-      "bg-gray-50 text-gray-700 border-gray-200"
+      "bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700"
     );
   };
 
@@ -154,7 +154,7 @@ export default function Articles({ articles, categories, filters }: Props) {
           
           <AppContent
             variant="sidebar"
-            className="flex-1 bg-gray-50 font-[Poppins] lg:ml-0"
+            className="flex-1 bg-gray-50 dark:bg-[#101828] font-[Poppins] lg:ml-0"
           >
 
           <div className="max-w-7xl mx-auto px-4 py-5">
@@ -170,24 +170,24 @@ export default function Articles({ articles, categories, filters }: Props) {
             </div>
             
             <div className="mb-4">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 Articles
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Découvrez nos derniers articles et actualités
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-5">
+            <div className="bg-white dark:bg-[#1e2939] rounded-lg shadow-sm border border-gray-200 dark:border-[#364153] p-3 mb-5">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                   <Input
                     placeholder="Rechercher des articles..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                    className="pl-12 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="pl-12 h-12 border-gray-300 dark:border-[#364153] dark:bg-[#364153] dark:text-white dark:placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
                 <div className="flex gap-3">
@@ -195,13 +195,13 @@ export default function Articles({ articles, categories, filters }: Props) {
                     value={categoryFilter}
                     onValueChange={handleCategoryChange}
                   >
-                    <SelectTrigger className="w-48 h-12">
+                    <SelectTrigger className="w-48 h-12 dark:bg-[#364153] dark:border-[#364153] dark:text-white">
                       <SelectValue placeholder="Catégorie" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Toutes les catégories</SelectItem>
+                    <SelectContent className="dark:bg-[#1e2939] dark:border-[#364153]">
+                      <SelectItem value="all" className="dark:text-white dark:hover:bg-[#364153]">Toutes les catégories</SelectItem>
                       {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
+                        <SelectItem key={category} value={category} className="dark:text-white dark:hover:bg-[#364153]">
                           {category.charAt(0).toUpperCase() + category.slice(1)}
                         </SelectItem>
                       ))}
@@ -209,7 +209,7 @@ export default function Articles({ articles, categories, filters }: Props) {
                   </Select>
                   <Button
                     onClick={handleSearch}
-                    className="h-12 px-6 bg-blue-600 hover:bg-blue-700"
+                    className="h-12 px-6 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
                   >
                     Rechercher
                   </Button>
@@ -223,9 +223,9 @@ export default function Articles({ articles, categories, filters }: Props) {
                   {articles.data.map((article) => (
                     <Card
                       key={article.id}
-                      className="group hover:shadow-lg transition-all duration-300 border-gray-200 overflow-hidden flex flex-col"
+                      className="group hover:shadow-lg transition-all duration-300 border-gray-200 dark:border-[#364153] dark:bg-[#1e2939] overflow-hidden flex flex-col"
                     >
-                      <div className="aspect-video bg-gray-100 overflow-hidden">
+                      <div className="aspect-video bg-gray-100 dark:bg-[#364153] overflow-hidden">
                         {article.images && article.images.length > 0 ? (
                           <img
                             src={`/storage/${article.images[0]}`}
@@ -251,18 +251,18 @@ export default function Articles({ articles, categories, filters }: Props) {
                           </Badge>
                         </div>
 
-                        <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {article.title}
                         </h3>
 
-                        <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed whitespace-pre-line">
+                        <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 leading-relaxed whitespace-pre-line">
                           {article.excerpt.length > 150
                             ? article.excerpt.substring(0, 150) + "..."
                             : article.excerpt}
                         </p>
 
                         <div className="flex items-center justify-between pt-5 mt-auto">
-                          <div className="flex items-center text-sm text-gray-500">
+                          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                             <Calendar className="w-4 h-4 mr-2" />
                             <span>
                               {new Date(
@@ -272,7 +272,7 @@ export default function Articles({ articles, categories, filters }: Props) {
                           </div>
 
                           <Link href={`/articles/${article.id}`}>
-                            <Button className="bg-[#2c64d3] text-white hover:bg-[#0087e8] dark:bg-[#2CD3A3] dark:hover:bg-[#00e87e]">
+                            <Button className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700">
                               Voir Plus
                             </Button>
                           </Link>
@@ -283,9 +283,9 @@ export default function Articles({ articles, categories, filters }: Props) {
                 </div>
 
                 {articles.last_page > 1 && (
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="bg-white dark:bg-[#1e2939] rounded-lg shadow-sm border border-gray-200 dark:border-[#364153] p-6">
                     <div className="flex items-center justify-between">
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         Affichage de {articles.from} à {articles.to} sur{" "}
                         {articles.total} articles
                       </div>
@@ -294,8 +294,8 @@ export default function Articles({ articles, categories, filters }: Props) {
                           href={articles.prev_page_url || "#"}
                           className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
                             articles.prev_page_url
-                              ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                              : "bg-gray-50 text-gray-400 cursor-not-allowed"
+                              ? "bg-gray-100 dark:bg-[#364153] hover:bg-gray-200 dark:hover:bg-[#4a556b] text-gray-700 dark:text-gray-300"
+                              : "bg-gray-50 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                           }`}
                           onClick={(e) =>
                             !articles.prev_page_url && e.preventDefault()
@@ -320,8 +320,8 @@ export default function Articles({ articles, categories, filters }: Props) {
                                   link.active
                                     ? "bg-blue-600 text-white"
                                     : link.url
-                                      ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                                      : "text-gray-400 cursor-not-allowed"
+                                      ? "bg-gray-100 dark:bg-[#364153] hover:bg-gray-200 dark:hover:bg-[#4a556b] text-gray-700 dark:text-gray-300"
+                                      : "text-gray-400 dark:text-gray-500 cursor-not-allowed"
                                 }`}
                                 onClick={(e) => !link.url && e.preventDefault()}
                                 dangerouslySetInnerHTML={{ __html: link.label }}
@@ -333,8 +333,8 @@ export default function Articles({ articles, categories, filters }: Props) {
                           href={articles.next_page_url || "#"}
                           className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
                             articles.next_page_url
-                              ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                              : "bg-gray-50 text-gray-400 cursor-not-allowed"
+                              ? "bg-gray-100 dark:bg-[#364153] hover:bg-gray-200 dark:hover:bg-[#4a556b] text-gray-700 dark:text-gray-300"
+                              : "bg-gray-50 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                           }`}
                           onClick={(e) =>
                             !articles.next_page_url && e.preventDefault()
@@ -349,10 +349,10 @@ export default function Articles({ articles, categories, filters }: Props) {
                 )}
               </>
             ) : (
-              <div className="text-center py-16 w-full bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <div className="text-center py-16 w-full bg-white dark:bg-[#1e2939] rounded-lg shadow-sm border border-gray-200 dark:border-[#364153]">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-[#364153] rounded-full flex items-center justify-center">
                   <svg
-                    className="w-8 h-8 text-gray-400"
+                    className="w-8 h-8 text-gray-400 dark:text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -365,18 +365,18 @@ export default function Articles({ articles, categories, filters }: Props) {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                   {searchTerm || categoryFilter !== "all"
                     ? "Aucun résultat trouvé"
                     : "Aucun article disponible"}
                 </h3>
-                <p className="text-gray-500 mb-6">
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
                   {searchTerm || categoryFilter !== "all"
                     ? "Essayez de modifier vos critères de recherche."
                     : "Il n'y a pas encore d'articles publiés."}
                 </p>
                 {(searchTerm || categoryFilter !== "all") && (
-                  <Button onClick={clearFilters} variant="outline">
+                  <Button onClick={clearFilters} variant="outline" className="dark:border-[#364153] dark:text-gray-300 dark:hover:bg-[#364153]">
                     Effacer les filtres
                   </Button>
                 )}

@@ -32,7 +32,16 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.Etudiant::class,
+            // Add regex rule for @uca.ac.ma emails
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'regex:/^[a-zA-Z0-9._%+-]+@uca\.ac\.ma$/',
+                'unique:' . Etudiant::class,
+            ],
             'ecole' => 'required|string|max:255',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);

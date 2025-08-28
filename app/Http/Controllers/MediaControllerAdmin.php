@@ -34,6 +34,8 @@ class MediaControllerAdmin extends Controller
 
     public function store(Request $request)
     {
+        set_time_limit(0); // ⏳ Allow unlimited execution time for this request
+
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'detail' => 'required|string',

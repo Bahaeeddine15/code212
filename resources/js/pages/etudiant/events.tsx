@@ -3,6 +3,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppSidebarHeader } from '@/components/layout/app-sidebar-header';
 import DashboardHeader from "@/components/layout/dashboard-header";
+import Footer from "@/components/layout/footer";
 import { Head, Link } from '@inertiajs/react';
 import { MapPin, Calendar as CalendarIcon, Users, Tag, ChevronLeft, ChevronRight, Clock, Calendar as CalendarEmptyIcon, Menu } from 'lucide-react';
 import React, { useState } from 'react';
@@ -137,7 +138,7 @@ export default function Events({ events }: Props) {
                         <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
                     </div>
                     
-                    <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
                         <div className="p-4 lg:p-6 pt-6">
                             {/* Mobile Menu Button */}
                             <div className="lg:hidden mb-4">
@@ -154,8 +155,8 @@ export default function Events({ events }: Props) {
                                 {/* LEFT PANEL */}
                                 <div className="lg:w-1/3 space-y-4">
                                     <div>
-                                        <h2 className="text-xl lg:text-2xl font-bold text-gray-900">Événements à venir</h2>
-                                        <p className="text-sm text-gray-500 mt-1">Ne manquez pas les événements programmés</p>
+                                        <h2 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">Événements à venir</h2>
+                                        <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">Ne manquez pas les événements programmés</p>
                                     </div>
                                     
                                     {/* Events List */}
@@ -163,20 +164,20 @@ export default function Events({ events }: Props) {
                                         <div className="space-y-3">
                                             {normalized.sort((a,b)=>a.start.getTime()-b.start.getTime()).map(ev => (
                                                 <Link href={`/events/${ev.id}`} key={ev.id} className="block">
-                                                    <div className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-100 cursor-pointer">
+                                                    <div className="flex items-start gap-3 bg-white dark:bg-[#1e2939] rounded-xl p-4 shadow-sm hover:shadow-md dark:hover:bg-[#364153] transition-all border border-gray-100 dark:border-gray-600 cursor-pointer">
                                                         <div className={`flex flex-col items-center justify-center w-14 rounded-md bg-gradient-to-br ${getCategoryStyle(ev.category).badge} text-white py-2`}>
                                                             <span className="text-lg font-semibold leading-none">{ev.start.getDate()}</span>
                                                             <span className="text-[11px] font-medium mt-1 uppercase tracking-wide">{ev.start.toLocaleDateString('en-US',{month:'short'})}</span>
                                                         </div>
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center gap-2 mb-1">
-                                                                <h3 className="font-semibold text-gray-900 leading-tight line-clamp-1">{ev.title}</h3>
-                                                                <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
+                                                                <h3 className="font-semibold text-gray-900 dark:text-white leading-tight line-clamp-1">{ev.title}</h3>
+                                                                <span className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 font-medium">
                                                                     {ev.type}
                                                                 </span>
                                                             </div>
-                                                            <p className="text-sm text-gray-600 line-clamp-2 mt-1">{ev.description}</p>
-                                                            <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500">
+                                                            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mt-1">{ev.description}</p>
+                                                            <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
                                                                 <span className="flex items-center gap-1">
                                                                     <Clock className="w-3.5 h-3.5" />
                                                                     {formatTimeRange(ev.start_date, ev.end_date)}
@@ -193,25 +194,25 @@ export default function Events({ events }: Props) {
                                     ) : (
                                         /* Empty State */
                                         <div className="text-center py-12">
-                                            <CalendarEmptyIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                                            <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun événement programmé</h3>
-                                            <p className="text-gray-500">Il n'y a actuellement aucun événement à venir.</p>
+                                            <CalendarEmptyIcon className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                                            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Aucun événement programmé</h3>
+                                            <p className="text-gray-500 dark:text-gray-400">Il n'y a actuellement aucun événement à venir.</p>
                                         </div>
                                     )}
                                 </div>
                                 
                                 {/* RIGHT PANEL - CALENDAR */}
                                 <div className="lg:flex-1 hidden lg:block">
-                                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                                    <div className="bg-white dark:bg-[#1e2939] rounded-2xl border border-gray-100 dark:border-gray-600 shadow-sm p-4">
                                         {/* Header */}
                                         <div className="flex items-center justify-between mb-4">
-                                            <button onClick={prevMonth} className="p-2 rounded-md hover:bg-gray-100 text-gray-600"><ChevronLeft className="w-5 h-5" /></button>
-                                            <h3 className="text-lg font-semibold text-gray-800">{monthLabel(currentYear, currentMonth)}</h3>
-                                            <button onClick={nextMonth} className="p-2 rounded-md hover:bg-gray-100 text-gray-600"><ChevronRight className="w-5 h-5" /></button>
+                                            <button onClick={prevMonth} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-[#364153] text-gray-600 dark:text-gray-300"><ChevronLeft className="w-5 h-5" /></button>
+                                            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{monthLabel(currentYear, currentMonth)}</h3>
+                                            <button onClick={nextMonth} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-[#364153] text-gray-600 dark:text-gray-300"><ChevronRight className="w-5 h-5" /></button>
                                         </div>
                                         
                                         {/* Weekday headers */}
-                                        <div className="grid grid-cols-7 text-xs font-medium text-gray-500 mb-2">
+                                        <div className="grid grid-cols-7 text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
                                             {['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(d => <div key={d} className="text-center py-1">{d}</div>)}
                                         </div>
                                         
@@ -221,11 +222,11 @@ export default function Events({ events }: Props) {
                                                     {/* Day cells */}
                                                     <div className="grid grid-cols-7 gap-px">
                                                         {week.map((d, di) => {
-                                                            if(!d) return <div key={di} className="h-16 bg-gray-50 rounded-md" />;
+                                                            if(!d) return <div key={di} className="h-16 bg-gray-50 dark:bg-[#364153] rounded-md" />;
                                                             const isToday = sameDay(d, today);
                                                             return (
-                                                                <div key={di} className={`relative h-16 rounded-md p-1 text-right text-[11px] font-medium ${isToday ? 'bg-indigo-50 ring-2 ring-indigo-400' : 'bg-gray-50 hover:bg-gray-100'} transition-colors`}>
-                                                                    <span className={`absolute top-1 right-1 ${isToday ? 'text-indigo-700' : 'text-gray-600'}`}>{d.getDate()}</span>
+                                                                <div key={di} className={`relative h-16 rounded-md p-1 text-right text-[11px] font-medium ${isToday ? 'bg-indigo-50 dark:bg-indigo-900/30 ring-2 ring-indigo-400 dark:ring-indigo-500' : 'bg-gray-50 dark:bg-[#364153] hover:bg-gray-100 dark:hover:bg-[#4a556b]'} transition-colors`}>
+                                                                    <span className={`absolute top-1 right-1 ${isToday ? 'text-indigo-700 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300'}`}>{d.getDate()}</span>
                                                                 </div>
                                                             );
                                                         })}
@@ -253,14 +254,14 @@ export default function Events({ events }: Props) {
                                                     return (
                                                         <div key={cat} className="flex items-center gap-1">
                                                             <span style={{backgroundColor:style.bar}} className="w-3 h-3 rounded-sm" /> 
-                                                            <span className="text-gray-600">{cat}</span>
+                                                            <span className="text-gray-600 dark:text-gray-300">{cat}</span>
                                                         </div>
                                                     );
                                                 })}
                                             </div>
                                         )}
                                         
-                                        <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                                        <div className="mt-4 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                             <CalendarIcon className="w-4 h-4" /> 
                                             Jour actuel surligné
                                         </div>
@@ -271,6 +272,9 @@ export default function Events({ events }: Props) {
                     </AppContent>
                 </div>
             </AppShell>
+            
+            {/* Footer */}
+            <Footer />
         </>
     );
 }

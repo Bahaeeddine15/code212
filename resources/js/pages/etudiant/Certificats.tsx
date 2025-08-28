@@ -74,7 +74,7 @@ export default function Certificats() {
             <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
           </div>
           
-          <AppContent variant="sidebar" className="flex-1 bg-white font-[Poppins] lg:ml-0">
+          <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
             <div className="p-4 lg:p-6 pt-6">
               {/* Mobile Menu Button */}
               <div className="lg:hidden mb-4">
@@ -98,7 +98,7 @@ export default function Certificats() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {mockCertificates.map((cert) => (
-                  <Card key={cert.id} className="overflow-hidden dark:bg-[#1a1a1c]">
+                  <Card key={cert.id} className="overflow-hidden dark:bg-[#1e2939]">
                     {cert.previewImage && (
                       <img src={cert.previewImage} alt="Certificat" className="w-full h-40 object-cover" />
                     )}
@@ -106,7 +106,7 @@ export default function Certificats() {
                     <CardContent className="p-4 space-y-3">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{cert.formation}</h3>
 
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
                         <p><span className="font-medium">Code :</span> {cert.code}</p>
                         <p><span className="font-medium">Délivré le :</span> {cert.date}</p>
                       </div>
