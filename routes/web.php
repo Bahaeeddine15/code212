@@ -26,6 +26,12 @@ require __DIR__ . '/admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/settings_admin.php';
+
+// Place this BEFORE or AFTER the student middleware group, but NOT inside it:
+Route::get('module-files/{file}/quality/{quality}', [App\Http\Controllers\ModuleFileController::class, 'openQuality'])
+    ->middleware('auth:admin,web')
+    ->name('student.module_files.open_quality');
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard', [App\Http\Controllers\DashboardEtudiantController::class, 'index'])->name('dashboard');
@@ -42,11 +48,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('formations/{formation}/register', [App\Http\Controllers\FormationRegistrationController::class, 'destroy'])
         ->whereNumber('formation')
         ->name('formations.unregister');
-        // Access module files (with permission check)
+    // Access module files (with permission check)
     Route::get('module-files/{file}', [App\Http\Controllers\ModuleFileController::class, 'open'])->name('student.module_files.open');
     Route::get('module-files/{file}/download', [App\Http\Controllers\ModuleFileController::class, 'download'])
-    ->middleware(['auth','verified'])
-    ->name('student.module_files.download');
+        ->middleware(['auth', 'verified'])
+        ->name('student.module_files.download');
 
     Route::get('certificats', function () {
         return Inertia::render('etudiant/Certificats');

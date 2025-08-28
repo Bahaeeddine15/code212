@@ -18,6 +18,7 @@ interface Module {
   duration: string;
   order: number;
   file_path?: string;
+  files?: { id: number; [key: string]: any }[];
 }
 
 interface Formation {
@@ -30,7 +31,7 @@ interface Props {
   modules: Module[];
 }
 
-function renderModuleFile(filePath?: string, onOpenVideo?: () => void) {
+function renderModuleFile(filePath?: string, onOpenVideo?: () => void, fileId?: number) {
   if (!filePath) return null;
   const extension = filePath.split('.').pop()?.toLowerCase();
   if (extension === 'pdf') {
@@ -47,9 +48,12 @@ function renderModuleFile(filePath?: string, onOpenVideo?: () => void) {
     return (
       <div className="mt-4">
         <p className="text-sm text-muted-foreground font-medium mb-1">Vidéo attachée :</p>
-        <button onClick={onOpenVideo} className="text-primary hover:underline text-sm">
-          📹 Voir la vidéo
-        </button>
+        <Link
+          href={route('admin.modules.files.video', { file: fileId })}
+          className="text-primary hover:underline text-sm"
+        >
+          📹 Lire la vidéo
+        </Link>
       </div>
     );
   }
@@ -73,7 +77,7 @@ const ModuleCard = ({ module, onEdit, onDelete, onShowVideo }: {
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-auto gap-3 sm:gap-2">
         <div className="flex-1">
-          {renderModuleFile(module.file_path, () => onShowVideo(`/storage/${module.file_path}`))}
+          {renderModuleFile(module.file_path, undefined, module.files?.[0]?.id)}
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button 

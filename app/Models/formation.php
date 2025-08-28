@@ -15,7 +15,8 @@ class Formation extends Model
         'duration',
         'category',
         'link',
-        'thumbnail'
+        'thumbnail',
+        'language',
     ];
 
     public function modules()

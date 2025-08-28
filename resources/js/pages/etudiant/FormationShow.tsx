@@ -33,6 +33,9 @@ interface Formation {
   updated_at?: string;
   isSignedUp?: boolean;
   modules?: ModuleItem[];
+  duration?: string | null; // <-- add this
+  status?: string | null;   // <-- add this if you want to show status
+  language?: string | null;
 }
 
 interface ShowProps {
@@ -239,13 +242,15 @@ export default function Show({ formation }: ShowProps) {
                   <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500 dark:text-gray-400">
                       <div>
-                        <span className="font-medium">Durée:</span> 40h
+                        <span className="font-medium">Durée:</span>{" "}
+                        {formation.duration ? formation.duration : "Non spécifiée"}
                       </div>
                       <div>
                         <span className="font-medium">Format:</span> En ligne
                       </div>
                       <div>
-                        <span className="font-medium">Langue:</span> Français
+                        <span className="font-medium">Langue:</span> {" "}
+                        {formation.language ? formation.language : "Non spécifiée"}
                       </div>
                       <div>
                         <span className="font-medium">Support:</span> 24/7

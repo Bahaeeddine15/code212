@@ -17,6 +17,7 @@ interface Formation {
     category: string;
     link?: string;
     thumbnail?: string;
+    language?: string; // <-- add this
 }
 
 interface Props {
@@ -32,6 +33,7 @@ export default function FormationEdit({ formation }: Props) {
         category: formation.category,
         link: formation.link || '',
         thumbnail: null as File | null,
+        language: formation.language || '', // <-- add this
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,6 +66,7 @@ export default function FormationEdit({ formation }: Props) {
         if (form.thumbnail) {
             formData.append('thumbnail', form.thumbnail);
         }
+        formData.append('language', form.language);
         router.post(`/admin/formations/${formation.id}?_method=PUT`, formData, {
             forceFormData: true,
             onError: (err) => {
@@ -219,6 +222,19 @@ export default function FormationEdit({ formation }: Props) {
                                     />
                                     <p className="text-xs text-muted-foreground mt-2">Formats acceptés: JPG, PNG, WebP • Taille recommandée: 400x250px</p>
                                     {errors.thumbnail && <p className="text-red-500 text-sm mt-1">{errors.thumbnail}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Langue</label>
+                                    <input
+                                        type="text"
+                                        value={form.language}
+                                        onChange={e => handleChange('language', e.target.value)}
+                                        className="w-full bg-card border border-border rounded-lg px-4 py-3 text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                        placeholder="Ex: Français, Anglais"
+                                        required
+                                    />
+                                    {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
                                 </div>
 
                                 <div className="flex gap-4 pt-6">

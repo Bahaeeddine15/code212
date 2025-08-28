@@ -46,6 +46,8 @@ class FormationControllerAdmin extends Controller
             'category' => 'nullable|string|max:100',
             'link' => 'nullable|url|max:255',
             'thumbnail' => 'nullable|image|max:2048',
+            'language' => 'nullable|string|max:100',
+            'pre_requis' => 'nullable|string',
         ]);
 
         if ($request->hasFile('thumbnail')) {
@@ -94,6 +96,7 @@ class FormationControllerAdmin extends Controller
             'category' => 'nullable|string|max:100',
             'link' => 'nullable|url|max:255',
             'thumbnail' => 'nullable|image|max:2048',
+            'language' => 'nullable|string|max:100',
         ]);
 
         if ($request->hasFile('thumbnail')) {

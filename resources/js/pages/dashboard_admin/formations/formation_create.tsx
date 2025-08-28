@@ -27,7 +27,8 @@ export default function FormationCreate() {
         duration: '',
         category: '',
         link: '',
-        thumbnail: null as File | null, // <-- add this
+        thumbnail: null as File | null,
+        language: '', // <-- add this
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,6 +50,7 @@ export default function FormationCreate() {
         if (form.thumbnail) {
             formData.append('thumbnail', form.thumbnail);
         }
+        formData.append('language', form.language);
         router.post('/admin/formations', formData, {
             forceFormData: true,
             onError: err => setErrors(err),
@@ -192,6 +194,19 @@ export default function FormationCreate() {
                                     {errors.thumbnail && <p className="text-red-500 text-sm mt-1">{errors.thumbnail}</p>}
                                 </div>
 
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Langue</label>
+                                    <input
+                                        type="text"
+                                        value={form.language}
+                                        onChange={e => handleChange('language', e.target.value)}
+                                        className="w-full bg-card border border-border rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                        placeholder="Ex: Français, Anglais"
+                                        required
+                                    />
+                                    {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                                </div>
+
                                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6">
                                     <button
                                         type="submit"
@@ -241,25 +256,6 @@ export default function FormationCreate() {
                                 <li>• Ajoutez une image attrayante</li>
                                 <li>• Mentionnez les certifications obtenues</li>
                             </ul>
-                        </div>
-
-                        {/* Statistiques */}
-                        <div className="bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6">
-                            <h3 className="font-bold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">📊 Formations populaires</h3>
-                            <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Réseaux</span>
-                                    <span className="font-medium text-foreground">35%</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Cybersécurité</span>
-                                    <span className="font-medium text-foreground">28%</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Cloud</span>
-                                    <span className="font-medium text-foreground">23%</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

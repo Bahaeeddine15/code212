@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Formation;
@@ -18,17 +19,17 @@ class FormationController extends Controller
 
         $query = Formation::query()
             // Optional: only published for students
-            ->when(\Schema::hasColumn('formations','status'), fn($q) => $q->where('status','published'))
+            ->when(\Schema::hasColumn('formations', 'status'), fn($q) => $q->where('status', 'published'))
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($w) use ($search) {
                     $w->where('title', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%")
-                      ->orWhere('category', 'like', "%{$search}%");
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhere('category', 'like', "%{$search}%");
                 });
             });
 
         // Prefer published_at if present, else created_at
-        $query = \Schema::hasColumn('formations','published_at')
+        $query = \Schema::hasColumn('formations', 'published_at')
             ? $query->latest('published_at')
             : $query->latest();
 
@@ -39,7 +40,7 @@ class FormationController extends Controller
                 'description' => $f->description,
                 'category'    => (string) ($f->category ?? ''),
                 'niveau'      => (string) ($f->level ?? ''),
-                'photo'       => $f->thumbnail ? url('/storage/'.$f->thumbnail) : '/images/default-formation.jpg',
+                'photo'       => $f->thumbnail ? url('/storage/' . $f->thumbnail) : '/images/default-formation.jpg',
             ];
         });
 
@@ -62,8 +63,8 @@ class FormationController extends Controller
         $user = Auth::user();
         $isSignedUp = $user
             ? FormationRegistration::where('user_id', $user->id)
-                ->where('formation_id', $formation->id)
-                ->exists()
+            ->where('formation_id', $formation->id)
+            ->exists()
             : false;
 
         // Load modules + files relation: Module::files()
@@ -93,16 +94,19 @@ class FormationController extends Controller
             ];
         })->values();
 
-        return Inertia::render('formations/Show', [
+        return Inertia::render('etudiant/FormationShow', [
             'formation' => [
                 'id'          => $formation->id,
                 'titre'       => $formation->title,
                 'description' => $formation->description,
                 'category'    => (string) ($formation->category ?? ''),
                 'niveau'      => (string) ($formation->level ?? ''),
-                'photo'       => $formation->thumbnail ? url('/storage/'.$formation->thumbnail) : '/images/default-formation.jpg',
+                'photo'       => $formation->thumbnail ? url('/storage/' . $formation->thumbnail) : '/images/default-formation.jpg',
                 'isSignedUp'  => $isSignedUp,
                 'modules'     => $modules,
+                'duration'    => $formation->duration ?? null,
+                'status'      => $formation->status ?? null,
+                'language'    => $formation->language ?? null,
             ],
         ]);
     }
@@ -114,7 +118,7 @@ class FormationController extends Controller
         // Prevent duplicates; set initial status if your table has it
         FormationRegistration::firstOrCreate(
             ['user_id' => $user->id, 'formation_id' => $formation->id],
-            ['status'  => \Schema::hasColumn('formation_registrations','status') ? 'pending' : null]
+            ['status'  => \Schema::hasColumn('formation_registrations', 'status') ? 'pending' : null]
         );
 
         // Redirect back so the Show page can re-render with modules unlocked
@@ -134,17 +138,5 @@ class FormationController extends Controller
             ->delete();
 
         return back()->with('success', 'Désinscription effectuée.');
-    }
-
-    /**
-     * (Optional) Simple dashboard view.
-     */
-    public function dashboard()
-    {
-        $formations = Formation::orderBy('created_at', 'desc')->get();
-
-        return Inertia::render('formations/Dashboard', [
-            'formations' => $formations
-        ]);
     }
 }

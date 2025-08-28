@@ -113,6 +113,7 @@ interface Formation {
     enrolledStudents?: number;
     maxStudents?: number;
     thumbnail?: string;
+    language?: string;
 }
 
 type Props = {
@@ -186,6 +187,14 @@ const FormationCard = ({
                         <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="text-xs sm:text-sm">{duration}</span>
                     </div>
+                    {/* Add language info here */}
+                    {formation.language && (
+                        <div className="flex items-center space-x-2 text-muted-foreground">
+                            <span className="text-xs sm:text-sm">
+                                <span className="font-semibold">Langue:</span> {formation.language}
+                            </span>
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('etudiant_formation', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('module_files', function (Blueprint $table) {
+            $table->json('qualities')->nullable();
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('etudiant_formation');
+        Schema::table('module_files', function (Blueprint $table) {
+            $table->dropColumn('qualities');
+        });
     }
 };
