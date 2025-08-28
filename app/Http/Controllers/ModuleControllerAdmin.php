@@ -25,11 +25,11 @@ class ModuleControllerAdmin extends Controller
     {
         $modules = $formation->modules()
             ->orderBy('order')
-<<<<<<< HEAD
+
             ->with(['files' => fn($q) => $q->orderBy('position')])
-=======
+
             ->with(['files']) // <-- eager load files
->>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
+
             ->get();
 
         return Inertia::render('dashboard_admin/formations/modules_list', [
@@ -327,9 +327,9 @@ class ModuleControllerAdmin extends Controller
             ]);
         }
     }
-<<<<<<< HEAD
+ 
     
-=======
+
 
     /**
      * Generate multiple video qualities using FFmpeg.
@@ -369,5 +369,5 @@ class ModuleControllerAdmin extends Controller
 
         return $result;
     }
->>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
+
 }
