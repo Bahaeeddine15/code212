@@ -34,4 +34,12 @@ class Etudiant extends Authenticatable
     {
         return $this->hasMany(EventRegistration::class, 'user_id');
     }
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class);
+    }
+    public function formationRegistrations()
+    {
+        return $this->hasMany(FormationRegistration::class);
+    }
 }

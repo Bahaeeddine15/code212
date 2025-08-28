@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Module;
+use App\Models\FormationRegistration;
 
 class Formation extends Model
 {
@@ -19,5 +21,10 @@ class Formation extends Model
     public function modules()
     {
         return $this->hasMany(Module::class);
+    }
+
+    public function registrations()
+    {
+        return $this->hasMany(FormationRegistration::class);
     }
 }

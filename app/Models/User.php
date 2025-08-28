@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(CompetitionRegistration::class);
     }
+
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class, 'formation_user');
+    }
 }

@@ -33,6 +33,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('formations', [App\Http\Controllers\FormationController::class, 'index'])->name('etudiant.formations');
     // Route affichage d'une formation (détails)
     Route::get('formations/{formation}', [App\Http\Controllers\FormationController::class, 'show'])->name('formations.show');
+    // Register (ID-based, matches /formations/${id}/register in your React)
+    Route::post('formations/{formation}/register', [App\Http\Controllers\FormationRegistrationController::class, 'store'])
+        ->whereNumber('formation')
+        ->name('formations.register');
+
+    // Optional: Unregister
+    Route::delete('formations/{formation}/register', [App\Http\Controllers\FormationRegistrationController::class, 'destroy'])
+        ->whereNumber('formation')
+        ->name('formations.unregister');
+        // Access module files (with permission check)
+    Route::get('module-files/{file}', [App\Http\Controllers\ModuleFileController::class, 'open'])->name('student.module_files.open');
+    Route::get('module-files/{file}/download', [App\Http\Controllers\ModuleFileController::class, 'download'])
+    ->middleware(['auth','verified'])
+    ->name('student.module_files.download');
 
     Route::get('certificats', function () {
         return Inertia::render('etudiant/Certificats');

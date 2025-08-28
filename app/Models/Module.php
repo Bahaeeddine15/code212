@@ -12,4 +12,7 @@ class Module extends Model
     {
         return $this->belongsTo(Formation::class);
     }
+    public function files() {
+        return $this->hasMany(\App\Models\ModuleFile::class)->orderBy('position');
+    }
 }

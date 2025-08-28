@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Module;
 use App\Models\Formation;
+use App\Models\Module;
+use App\Models\ModuleFile; // 👈 new
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ModuleControllerAdmin extends Controller
 {
@@ -21,10 +23,14 @@ class ModuleControllerAdmin extends Controller
      */
     public function index(Formation $formation)
     {
-        $modules = $formation->modules()->orderBy('order')->get();
+        $modules = $formation->modules()
+            ->orderBy('order')
+            ->withCount('files') // 👈 show how many files each module has
+            ->get();
+
         return Inertia::render('dashboard_admin/formations/modules_list', [
             'formation' => $formation,
-            'modules' => $modules
+            'modules'   => $modules,
         ]);
     }
 
@@ -35,7 +41,7 @@ class ModuleControllerAdmin extends Controller
     {
         return Inertia::render('dashboard_admin/formations/module_create', [
             'formationId' => $formation->id,
-            'formations' => Formation::all(),
+            'formations'  => Formation::all(),
         ]);
     }
 
@@ -45,24 +51,42 @@ class ModuleControllerAdmin extends Controller
     public function store(Request $request, Formation $formation)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'required|string',
-            'duration' => 'required|string',
-            'order' => 'required|integer',
-            'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:102400', // 100MB max
+            'duration'    => 'required|string|max:100',
+            'order'       => 'required|integer',
+            // NEW: multiple files support (keep old "file" for compatibility)
+            'files'       => 'nullable|array',
+            'files.*'     => 'file|mimes:pdf,mp4,avi,mov|max:102400', // 100MB
+            'file'        => 'nullable|file|mimes:pdf,mp4,avi,mov|max:102400', // legacy single file
         ]);
 
-        // ✅ The formation_id comes from the route parameter
-        $validated['formation_id'] = $formation->id;
+        $module = Module::create([
+            'formation_id' => $formation->id,
+            'title'        => $validated['title'],
+            'description'  => $validated['description'],
+            'duration'     => $validated['duration'],
+            'order'        => $validated['order'],
+        ]);
 
-        if ($request->hasFile('file')) {
-            $validated['file_path'] = $request->file('file')->store('modules', 'public');
-            Storage::disk('public')->setVisibility($validated['file_path'], 'public');
+        // Handle new multiple files first
+        if (!empty($validated['files'])) {
+            $this->storeModuleFiles($formation, $module, $validated['files']);
         }
 
-        Module::create($validated);
+        // Backward compatibility: if "file" (single) is still posted
+        if ($request->hasFile('file')) {
+            $this->storeModuleFiles($formation, $module, [$request->file('file')]);
 
-        return redirect()->route('admin.formations.modules.index', ['formation' => $formation->id])
+            // optional: keep legacy modules.file_path updated with first file
+            $first = $module->files()->first();
+            if ($first) {
+                $module->update(['file_path' => $first->path]);
+            }
+        }
+
+        return redirect()
+            ->route('admin.formations.modules.index', ['formation' => $formation->id])
             ->with('success', 'Module créé avec succès.');
     }
 
@@ -73,9 +97,12 @@ class ModuleControllerAdmin extends Controller
     {
         $formation = $module->formation;
 
+        // Load existing files to manage them in the UI
+        $module->load('files');
+
         return Inertia::render('dashboard_admin/formations/module_edit', [
-            'formation' => $formation,
-            'module' => $module,
+            'formation'   => $formation,
+            'module'      => $module,
             'formationId' => $formation->id,
         ]);
     }
@@ -88,26 +115,62 @@ class ModuleControllerAdmin extends Controller
         $formation = $module->formation;
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'required|string',
-            'duration' => 'nullable|string|max:100',
-            'order' => 'nullable|integer',
-            'file' => 'nullable|file|mimes:pdf,mp4,avi,mov|max:51200',
+            'duration'    => 'nullable|string|max:100',
+            'order'       => 'nullable|integer',
+            // NEW
+            'files'       => 'nullable|array',
+            'files.*'     => 'file|mimes:pdf,mp4,avi,mov|max:102400',
+            'delete_file_ids' => 'nullable|array',
+            'delete_file_ids.*' => 'integer|exists:module_files,id',
+            // legacy
+            'file'        => 'nullable|file|mimes:pdf,mp4,avi,mov|max:102400',
         ]);
 
-        if ($request->hasFile('file')) {
-            // Delete old file if exists
-            if ($module->file_path && Storage::disk('public')->exists($module->file_path)) {
-                Storage::disk('public')->delete($module->file_path);
+        $module->update([
+            'title'       => $validated['title'],
+            'description' => $validated['description'],
+            'duration'    => $validated['duration'] ?? $module->duration,
+            'order'       => $validated['order'] ?? $module->order,
+        ]);
+
+        // Delete selected files
+        if (!empty($validated['delete_file_ids'])) {
+            $filesToDelete = ModuleFile::whereIn('id', $validated['delete_file_ids'])->get();
+            foreach ($filesToDelete as $file) {
+                if (Storage::disk($file->disk)->exists($file->path)) {
+                    Storage::disk($file->disk)->delete($file->path);
+                }
+                $file->delete();
             }
-            $filePath = $request->file('file')->store('modules', 'public');
-            Storage::disk('public')->setVisibility($filePath, 'public');
-            $validated['file_path'] = $filePath;
         }
 
-        $module->update($validated);
+        // Add new multiple files
+        if (!empty($validated['files'])) {
+            $this->storeModuleFiles($formation, $module, $validated['files']);
+        }
 
-        return redirect()->route('admin.formations.modules.index', ['formation' => $formation->id])
+        // Legacy single file
+        if ($request->hasFile('file')) {
+            // If you want to replace all existing files with this one, uncomment next block:
+            // foreach ($module->files as $f) {
+            //     if (Storage::disk($f->disk)->exists($f->path)) {
+            //         Storage::disk($f->disk)->delete($f->path);
+            //     }
+            //     $f->delete();
+            // }
+
+            $this->storeModuleFiles($formation, $module, [$request->file('file')]);
+
+            $first = $module->files()->first();
+            if ($first) {
+                $module->update(['file_path' => $first->path]);
+            }
+        }
+
+        return redirect()
+            ->route('admin.formations.modules.index', ['formation' => $formation->id])
             ->with('success', 'Module mis à jour avec succès.');
     }
 
@@ -118,14 +181,58 @@ class ModuleControllerAdmin extends Controller
     {
         $formationId = $module->formation_id;
 
-        // Delete file from storage if exists
+        // Delete all attached files from storage
+        foreach ($module->files as $file) {
+            if (Storage::disk($file->disk)->exists($file->path)) {
+                Storage::disk($file->disk)->delete($file->path);
+            }
+            $file->delete();
+        }
+
+        // Delete legacy single file if exists
         if ($module->file_path && Storage::disk('public')->exists($module->file_path)) {
             Storage::disk('public')->delete($module->file_path);
         }
 
         $module->delete();
 
-        return redirect()->route('admin.formations.modules.index', ['formation' => $formationId])
+        return redirect()
+            ->route('admin.formations.modules.index', ['formation' => $formationId])
             ->with('success', 'Module supprimé avec succès.');
+    }
+
+    /**
+     * Store uploaded files for a module and create ModuleFile rows.
+     * Uses 'private' disk by default (safer). Switch to 'public' if you want open URLs.
+     */
+    private function storeModuleFiles(Formation $formation, Module $module, array $uploadedFiles): void
+    {
+        $disk = 'private'; // 🔒 recommend private; add a student controller to stream with ACL
+        // $disk = 'public'; // 🌐 if you intentionally want public direct URLs
+
+        foreach ($uploadedFiles as $idx => $file) {
+            $ext  = strtolower($file->getClientOriginalExtension());
+            $type = in_array($ext, ['mp4','mov','avi']) ? 'video' : ($ext === 'pdf' ? 'pdf' : 'other');
+
+            $dir  = "formations/{$formation->id}/modules/{$module->id}";
+            $name = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+                  . '-' . Str::random(6) . '.' . $ext;
+
+            $path = $file->storeAs($dir, $name, $disk);
+
+            if ($disk === 'public') {
+                Storage::disk('public')->setVisibility($path, 'public');
+            }
+
+            $module->files()->create([
+                'type'          => $type,
+                'disk'          => $disk,
+                'path'          => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type'     => $file->getClientMimeType(),
+                'size'          => $file->getSize(),
+                'position'      => ($module->files()->max('position') ?? 0) + ($idx + 1),
+            ]);
+        }
     }
 }
