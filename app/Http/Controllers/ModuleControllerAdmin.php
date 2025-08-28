@@ -25,7 +25,11 @@ class ModuleControllerAdmin extends Controller
     {
         $modules = $formation->modules()
             ->orderBy('order')
+<<<<<<< HEAD
             ->with(['files' => fn($q) => $q->orderBy('position')])
+=======
+            ->with(['files']) // <-- eager load files
+>>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
             ->get();
 
         return Inertia::render('dashboard_admin/formations/modules_list', [
@@ -296,16 +300,19 @@ class ModuleControllerAdmin extends Controller
 
         foreach ($uploadedFiles as $idx => $file) {
             $ext  = strtolower($file->getClientOriginalExtension());
-            $type = in_array($ext, ['mp4','mov','avi']) ? 'video' : ($ext === 'pdf' ? 'pdf' : 'other');
+            $type = in_array($ext, ['mp4', 'mov', 'avi']) ? 'video' : ($ext === 'pdf' ? 'pdf' : 'other');
 
             $dir  = "formations/{$formation->id}/modules/{$module->id}";
             $name = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
-                  . '-' . Str::random(6) . '.' . $ext;
+                . '-' . Str::random(6) . '.' . $ext;
 
             $path = $file->storeAs($dir, $name, $disk);
 
-            if ($disk === 'public') {
-                Storage::disk('public')->setVisibility($path, 'public');
+            $qualities = null;
+
+            // If video, generate qualities
+            if ($type === 'video') {
+                $qualities = $this->generateVideoQualities($file, $dir, $disk);
             }
 
             $module->files()->create([
@@ -316,8 +323,51 @@ class ModuleControllerAdmin extends Controller
                 'mime_type'     => $file->getClientMimeType(),
                 'size'          => $file->getSize(),
                 'position'      => ($module->files()->max('position') ?? 0) + ($idx + 1),
+                'qualities'     => $qualities ? json_encode($qualities) : null,
             ]);
         }
     }
+<<<<<<< HEAD
     
+=======
+
+    /**
+     * Generate multiple video qualities using FFmpeg.
+     * Returns an array of quality => path.
+     */
+    private function generateVideoQualities($file, $dir, $disk)
+    {
+        $qualities = [
+            '144p' => ['width' => 256,  'height' => 144,  'bitrate' => '200k'],
+            '240p' => ['width' => 426,  'height' => 240,  'bitrate' => '400k'],
+            '360p' => ['width' => 640,  'height' => 360,  'bitrate' => '800k'],
+            '480p' => ['width' => 854,  'height' => 480,  'bitrate' => '1200k'],
+            '720p' => ['width' => 1280, 'height' => 720,  'bitrate' => '2500k'],
+        ];
+
+        $result = [];
+        $originalPath = Storage::disk($disk)->path($file->store($dir, $disk));
+        $filenameBase = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+        foreach ($qualities as $label => $settings) {
+            $outputName = Str::slug($filenameBase) . "-{$label}-" . Str::random(4) . ".mp4";
+            $outputPath = Storage::disk($disk)->path("$dir/$outputName");
+
+            $cmd = sprintf(
+                'ffmpeg -i "%s" -vf scale=%d:%d -b:v %s -c:v libx264 -c:a aac -preset fast -y "%s"',
+                $originalPath,
+                $settings['width'],
+                $settings['height'],
+                $settings['bitrate'],
+                $outputPath
+            );
+            exec($cmd);
+
+            // Save relative path for later streaming
+            $result[$label] = "$dir/$outputName";
+        }
+
+        return $result;
+    }
+>>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
 }

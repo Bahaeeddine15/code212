@@ -13,6 +13,7 @@ use App\Http\Controllers\ReservationControllerAdmin;
 use App\Http\Controllers\EventRegistrationAdminController;
 use App\Http\Controllers\CompetitionRegistrationControllerAdmin;
 use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\ModuleFileController;
 
 // Admin authentication routes (accessible without authentication) - ADD ADMIN PREFIX
 Route::prefix('admin')->group(function () {
@@ -77,4 +78,7 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::resource('reservations', ReservationControllerAdmin::class);
     Route::patch('/reservations/{reservation}/approve', [ReservationControllerAdmin::class, 'approve'])->name('reservations.approve');
     Route::patch('/reservations/{reservation}/reject', [ReservationControllerAdmin::class, 'reject'])->name('reservations.reject');
+
+    Route::get('modules/files/{file}/video', [ModuleFileController::class, 'showVideoAdmin'])
+        ->name('modules.files.video');
 });

@@ -30,6 +30,7 @@ interface Module {
 }
 
 interface Formation {
+<<<<<<< HEAD
   id: number;
   title: string;
   description: string;
@@ -42,6 +43,20 @@ interface Formation {
   maxStudents?: number;
   thumbnail?: string;
   status?: 'published' | 'draft';   // 👈 NEW
+=======
+    id: number;
+    title: string;
+    description: string;
+    level: string;
+    duration: string;
+    category: string;
+    link?: string;
+    modules: Module[];
+    enrolledStudents?: number;
+    maxStudents?: number;
+    thumbnail?: string;
+    language?: string;
+>>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
 }
 
 type Counts = { published: number; draft: number; all: number };
@@ -71,6 +86,7 @@ const StatusTabs = ({
   const go = (s: 'published' | 'draft' | 'all') =>
     router.get('/admin/formations', { status: s }, { preserveScroll: true, replace: true });
 
+<<<<<<< HEAD
   const base = 'px-3 py-1.5 rounded-md text-sm font-medium transition';
   return (
     <div className="flex gap-2 mb-4">
@@ -94,6 +110,124 @@ const StatusTabs = ({
       </button>
     </div>
   );
+=======
+    const getLevelColor = () => {
+        switch (level) {
+            case 'Débutant':
+                return 'bg-green-100 dark:bg-green-900 text-green-800';
+            case 'Intermédiaire':
+                return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800';
+            case 'Avancé':
+                return 'bg-red-100 dark:bg-red-900 text-red-800';
+            default:
+                return 'bg-gray-100 text-foreground';
+        }
+    };
+
+    // Card is always a <div>, but if link exists, clicking the card (except on buttons) opens the link
+    const handleCardClick = (e: React.MouseEvent) => {
+        // Only trigger if not clicking on a button or link
+        if (link && !(e.target as HTMLElement).closest('button, a')) {
+            window.open(link, '_blank', 'noopener,noreferrer');
+        }
+    };
+
+    return (
+        <div
+            className={`bg-card dark:bg-card rounded-2xl shadow-lg border border-border p-4 sm:p-6 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer`}
+            onClick={handleCardClick}
+            title={link ? "Voir la formation externe" : undefined}
+        >
+            <div className="h-36 sm:h-48 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center -m-4 sm:-m-6 mb-4 sm:mb-6">
+                {formation.thumbnail ? (
+                    <img
+                        src={`/storage/${formation.thumbnail}`}
+                        alt={formation.title}
+                        className="w-full h-full object-cover rounded-t-2xl"
+                    />
+                ) : (
+                    <GraduationCap className="w-12 h-12 sm:w-16 sm:h-16 text-white opacity-90 drop-shadow-lg" />
+                )}
+            </div>
+
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+                <div className="flex-1">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2 sm:mb-3 line-clamp-2">{title}</h3>
+                    <p className="text-muted-foreground mb-3 sm:mb-4 leading-relaxed line-clamp-2 text-sm sm:text-base">{description}</p>
+                </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm mb-4 sm:mb-6 gap-3 sm:gap-0">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                    <span className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-full self-start ${getLevelColor()}`}>
+                        {level}
+                    </span>
+                    <div className="flex items-center space-x-2 text-muted-foreground">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="text-xs sm:text-sm">{duration}</span>
+                    </div>
+                    {/* Add language info here */}
+                    {formation.language && (
+                        <div className="flex items-center space-x-2 text-muted-foreground">
+                            <span className="text-xs sm:text-sm">
+                                <span className="font-semibold">Langue:</span> {formation.language}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground font-medium text-sm">Modules</span>
+                    <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">{modules.length}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground font-medium text-sm">Inscrits</span>
+                    <span className="font-bold text-green-600 dark:text-green-400 text-sm">{enrolledStudents}/{maxStudents}</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 sm:h-3">
+                    <div
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 sm:h-3 rounded-full transition-all duration-500 shadow-sm"
+                        style={{ width: `${(enrolledStudents / maxStudents) * 100}%` }}
+                    ></div>
+                </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
+                <span className="px-2 sm:px-3 py-1 bg-blue-50 dark:bg-blue-900/20 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full self-start">{category}</span>
+                <div className="flex space-x-2">
+                    <Link
+                        href={`/admin/formations/${formation.id}/edit`}
+                        className="p-1.5 sm:p-2 text-primary hover:bg-blue-50 dark:bg-blue-900/20 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </Link>
+                    <button
+                        onClick={e => { e.stopPropagation(); onDelete(formation); }}
+                        className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
+                    >
+                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </button>
+                    {!link && (
+                        <ModernButton
+                            size="sm"
+                            theme="primary"
+                            onClick={() => onViewModules(formation)}
+                        >
+                            <span className="hidden sm:inline">Voir modules</span>
+                            <span className="sm:hidden">Modules</span>
+                        </ModernButton>
+                    )}
+                    {link && (
+                        <span className="text-primary text-xs font-semibold ml-2">Lien externe</span>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+>>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
 };
 
 /* ---------------- Cards ---------------- */

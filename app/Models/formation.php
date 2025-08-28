@@ -18,6 +18,8 @@ class Formation extends Model
         'thumbnail',
         'status',
         'published_at',
+        'language',
+
     ];
 
     protected $casts = ['published_at' => 'datetime'];

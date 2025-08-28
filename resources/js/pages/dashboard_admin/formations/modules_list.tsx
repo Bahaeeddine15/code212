@@ -22,7 +22,12 @@ interface Module {
   description: string;
   duration: string;
   order: number;
+<<<<<<< HEAD
   files?: ModuleFile[];   // ✅ single source of truth
+=======
+  file_path?: string;
+  files?: { id: number; [key: string]: any }[];
+>>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
 }
 
 interface Formation {
@@ -35,9 +40,40 @@ interface Props {
   modules: Module[];
 }
 
+<<<<<<< HEAD
 /* Helpers */
 const getExt = (filename?: string) =>
   (filename?.split('.').pop() || '').toLowerCase();
+=======
+function renderModuleFile(filePath?: string, onOpenVideo?: () => void, fileId?: number) {
+  if (!filePath) return null;
+  const extension = filePath.split('.').pop()?.toLowerCase();
+  if (extension === 'pdf') {
+    return (
+      <div className="mt-4">
+        <p className="text-sm text-muted-foreground font-medium mb-1">Fichier attaché :</p>
+        <a href={`/storage/${filePath}`} target="_blank" className="text-indigo-600 hover:underline text-sm flex items-center gap-1">
+          <FileText className="w-4 h-4" /> Voir le PDF
+        </a>
+      </div>
+    );
+  }
+  if (["mp4", "avi", "mov"].includes(extension || '')) {
+    return (
+      <div className="mt-4">
+        <p className="text-sm text-muted-foreground font-medium mb-1">Vidéo attachée :</p>
+        <Link
+          href={route('admin.modules.files.video', { file: fileId })}
+          className="text-primary hover:underline text-sm"
+        >
+          📹 Lire la vidéo
+        </Link>
+      </div>
+    );
+  }
+  return null;
+}
+>>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
 
 const inferType = (name?: string): FileType => {
   const ext = getExt(name);
@@ -82,6 +118,7 @@ const ModuleCard = ({
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-auto gap-3 sm:gap-2">
         <div className="flex-1">
+<<<<<<< HEAD
           <div className="mt-2 space-y-2">
             <p className="text-sm text-muted-foreground font-medium">Fichiers :</p>
             {files.length > 0 ? (
@@ -130,6 +167,9 @@ const ModuleCard = ({
               <div className="text-sm text-muted-foreground">Aucun fichier pour ce module.</div>
             )}
           </div>
+=======
+          {renderModuleFile(module.file_path, undefined, module.files?.[0]?.id)}
+>>>>>>> fece72d9f673733c1b34c40a9b8304dbf250a6ca
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
