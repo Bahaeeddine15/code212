@@ -68,7 +68,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Détails de la compétition',
-        href: '#',
+        isActive: true,
     },
 ];
 

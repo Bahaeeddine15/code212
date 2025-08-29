@@ -1,117 +1,100 @@
+import React from 'react';
 import { Link } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
 
 interface MainHeaderProps {
-    breadcrumbs?: { title: string; href?: string }[];
+    breadcrumbs?: { title: string; href?: string; isActive?: boolean }[];
 }
 
 export function MainHeader({ breadcrumbs = [] }: MainHeaderProps) {
     return (
-        <header className="w-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl">
-            <div className="px-3 sm:px-6 lg:px-12 py-3 sm:py-4 lg:py-8">
-                <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-4">
-                    {/* Section gauche - Dashboard et breadcrumbs */}
-                    <div className="flex items-center space-x-4">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
-                        
-                        {breadcrumbs.length > 0 && (
-                            <nav className="hidden sm:flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm min-w-0">
-                                {breadcrumbs.map((breadcrumb, index) => (
-                                    <div key={index} className="flex items-center space-x-1 sm:space-x-2 min-w-0">
-                                        <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-                                        {breadcrumb.href ? (
-                                            <Link 
-                                                href={breadcrumb.href}
-                                                className="text-gray-300 hover:text-white transition-colors truncate"
-                                            >
-                                                {breadcrumb.title}
-                                            </Link>
-                                        ) : (
-                                            <span className="text-gray-300 truncate">{breadcrumb.title}</span>
-                                        )}
-                                    </div>
-                                ))}
-                            </nav>
-                        )}
+        <header className="w-full bg-[#0c152e] px-4 sm:px-6 md:px-8 lg:px-12 py-3 sm:py-4 md:py-5 lg:py-6 relative overflow-hidden">
+            {/* Grid Background Effect */}
+            <div className="absolute inset-0 opacity-25 pointer-events-none select-none">
+                <div 
+                    className="w-full h-full"
+                    style={{
+                        backgroundImage: `
+                            linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
+                        `,
+                        backgroundSize: '36px 36px'
+                    }}
+                />
+            </div>
+            
+            {/* Content overlay */}
+            <div className="relative z-10">
+                <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 lg:gap-10">
+                    {/* Left Section - Breadcrumbs */}
+                    <div className="flex items-center flex-wrap space-x-1 sm:space-x-2 text-sm sm:text-base md:text-lg min-w-0 font-semibold">
+                        {breadcrumbs.map((item, index) => (
+                            <React.Fragment key={index}>
+                                {index > 0 && (
+                                    <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-blue-300 flex-shrink-0" />
+                                )}
+                                {item.href && !item.isActive ? (
+                                    <Link
+                                        href={item.href}
+                                        className="text-blue-200 hover:text-white transition-colors duration-200 truncate max-w-[120px] sm:max-w-[160px] md:max-w-[200px] lg:max-w-xs"
+                                    >
+                                        {item.title}
+                                    </Link>
+                                ) : (
+                                    <span
+                                        className={`truncate max-w-[120px] sm:max-w-[160px] md:max-w-[200px] lg:max-w-xs ${
+                                            item.isActive
+                                                ? 'text-white font-extrabold text-lg sm:text-xl md:text-2xl'
+                                                : 'text-blue-200'
+                                        }`}
+                                    >
+                                        {item.title}
+                                    </span>
+                                )}
+                            </React.Fragment>
+                        ))}
                     </div>
 
-                    {/* Section centrale - Logo CODE212 (Mobile and Small screens) */}
-                    <div className="flex items-center justify-center md:hidden">
-                        <div className="text-center">
-                            <img 
-                                src="/logo/Logo.png" 
-                                alt="CODE212 Logo" 
-                                className="h-12 sm:h-14 w-auto object-contain filter brightness-110 drop-shadow-lg"
-                            />
-                        </div>
+                    {/* Center Section - Logo (Mobile and Small screens) */}
+                    <div className="flex justify-center flex-shrink-0 order-2 md:hidden mx-auto">
+                        <img 
+                            src="/cd212.png"
+                            alt="CODE'212 Logo"
+                            className="h-12 sm:h-14 w-auto object-contain"
+                            style={{ maxWidth: '200px' }}
+                        />
                     </div>
 
-                    {/* Section droite - Logo for iPad/Tablet mode (replaces robot) */}
-                    <div className="hidden md:flex lg:hidden items-center justify-end">
-                        <div className="text-center">
-                            <img 
-                                src="/logo/Logo.png" 
-                                alt="CODE212 Logo" 
-                                className="h-14 md:h-16 w-auto object-contain filter brightness-110 drop-shadow-lg"
-                            />
-                        </div>
+                    {/* Right Section - Logo for iPad/Tablet mode (replaces mascot) */}
+                    <div className="hidden md:flex lg:hidden justify-end flex-1">
+                        <img 
+                            src="/cd212.png"
+                            alt="CODE'212 Logo"
+                            className="h-16 md:h-18 w-auto object-contain"
+                            style={{ maxWidth: '200px' }}
+                        />
                     </div>
 
-                    {/* Section centrale - Logo CODE212 (Desktop lg+) */}
-                    <div className="hidden lg:flex items-center justify-center">
-                        <div className="text-center">
-                            <img 
-                                src="/logo/Logo.png" 
-                                alt="CODE212 Logo" 
-                                className="h-10 md:h-12 lg:h-16 w-auto object-contain filter brightness-110 drop-shadow-lg"
-                            />
-                        </div>
+                    {/* Center Section - Logo for Desktop (lg+) */}
+                    <div className="hidden lg:flex justify-center flex-shrink-0 mx-auto lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+                        <img 
+                            src="/cd212.png"
+                            alt="CODE'212 Logo"
+                            className="h-20 xl:h-24 w-auto object-contain"
+                            style={{ maxWidth: '200px' }}
+                        />
                     </div>
 
-                    {/* Section droite - Robot (Desktop only, hidden on iPad) */}
-                    <div className="hidden lg:flex items-center">
-                        <div className="relative">
-                            <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 flex items-center justify-center">
-                                <img 
-                                    src="/logo/robot.png" 
-                                    alt="Robot" 
-                                    className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 object-contain filter brightness-110 drop-shadow-lg"
-                                />
-                            </div>
-                            {/* Petit robot supplémentaire comme dans l'image */}
-                            <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1">
-                                <img 
-                                    src="/logo/robot.png" 
-                                    alt="Small Robot" 
-                                    className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 object-contain opacity-90 filter brightness-110 drop-shadow-md"
-                                />
-                            </div>
-                        </div>
+                    {/* Right Section - Robot Mascot (Desktop only, hidden on iPad) */}
+                    <div className="hidden lg:flex justify-end flex-1">
+                        <img 
+                            src="/all-robots.png"
+                            alt="CODE'212 Robot Mascots"
+                            className="h-20 xl:h-24 w-auto object-contain hover:scale-105 transition-transform duration-200"
+                            style={{ maxWidth: '120px' }}
+                        />
                     </div>
                 </div>
-                
-                {/* Breadcrumbs mobile - en dessous sur mobile */}
-                {breadcrumbs.length > 0 && (
-                    <div className="sm:hidden mt-2 pt-2 border-t border-gray-600">
-                        <nav className="flex items-center space-x-1 text-xs overflow-x-auto">
-                            {breadcrumbs.map((breadcrumb, index) => (
-                                <div key={index} className="flex items-center space-x-1 flex-shrink-0">
-                                    <ChevronRight className="w-3 h-3 text-gray-400" />
-                                    {breadcrumb.href ? (
-                                        <Link 
-                                            href={breadcrumb.href}
-                                            className="text-gray-300 hover:text-white transition-colors whitespace-nowrap"
-                                        >
-                                            {breadcrumb.title}
-                                        </Link>
-                                    ) : (
-                                        <span className="text-gray-300 whitespace-nowrap">{breadcrumb.title}</span>
-                                    )}
-                                </div>
-                            ))}
-                        </nav>
-                    </div>
-                )}
             </div>
         </header>
     );

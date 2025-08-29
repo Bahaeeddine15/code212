@@ -1,6 +1,8 @@
 import AppLayout from '@/layouts/app-layout-admin';
+import { type BreadcrumbItem } from '@/types';
 import { Head, usePage, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Calendar, Clock, User, Mail, Phone, CheckCircle, XCircle, AlertCircle, Check, X } from 'lucide-react';
+import Reservations from './reservation_index';
 
 // Fonction pour traduire les codes de localisation
 const getLocationLabel = (locationCode: string): string => {
@@ -37,6 +39,21 @@ interface Reservation {
 export default function ReservationShow() {
     const { reservation } = usePage<{ reservation: Reservation }>().props;
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/admin/dashboard',
+        },
+        {
+            title: 'Gestion des réservations',
+            href: '/admin/reservations',
+        },
+        {
+            title: `Détails réservation`,
+            isActive: true,
+        },
+    ];
+
     const getStatus = () => {
         switch (reservation.status) {
             case 'pending':
@@ -61,7 +78,7 @@ export default function ReservationShow() {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Détails réservation #${reservation.id}`} />
             <div className="max-w-4xl mx-auto py-6 sm:py-8 lg:py-10 px-3 sm:px-4 lg:px-6">
                 <Link href="/admin/reservations" className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-purple-600 mb-4 sm:mb-6 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { type BreadcrumbItem } from '@/types';
 import {
     Table,
     TableBody,
@@ -84,6 +85,17 @@ interface Props {
     registrations: Registration[];
     statistics: Statistics;
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/admin/dashboard',
+    },
+    {
+        title: 'Compétitions',
+        isActive: true,
+    },
+];
 
 export default function CompetitionsPage({ competitions, registrations, statistics }: Props) {
     // State management
@@ -223,7 +235,7 @@ export default function CompetitionsPage({ competitions, registrations, statisti
     });
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Inscription aux compétitions" />
 
             <div className="flex h-full flex-1 flex-col gap-4 sm:gap-6 lg:gap-8 p-3 sm:p-4 lg:p-6 bg-background">

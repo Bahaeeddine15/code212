@@ -40,7 +40,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Modifier la compétition',
-        href: '#',
+        isActive: true,
     },
 ];
 

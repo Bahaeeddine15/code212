@@ -8,7 +8,7 @@ interface EventInfo { id:number; title:string; start_date?:string; end_date?:str
 export default function EventRegistrations({ event, registrations }:{ event: EventInfo, registrations: Registration[] }){
   const fmt = (d?:string)=> d? new Date(d).toLocaleDateString('fr-FR', { dateStyle:'medium' }): '';
   return (
-    <AppLayout breadcrumbs={[{title:'Dashboard', href:'/admin/dashboard'},{title:'Gestion des événements', href:'/admin/events'},{title:`Inscriptions - ${event.title}`, href:'#'}]}>
+    <AppLayout breadcrumbs={[{title:'Dashboard', href:'/admin/dashboard'},{title:'Gestion des événements', href:'/admin/events'},{title:`Inscriptions`, href:'#'}]}>
       <Head title={`Inscriptions - ${event.title}`} />
       <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         <div className="bg-white dark:bg-card rounded-2xl border shadow p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">

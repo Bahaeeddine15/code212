@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout-admin';
 import { Head, Link, router } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Edit3, Search, Trash2, Play } from 'lucide-react';
+import { BreadcrumbItem } from '@/types';
 
 interface MediaFile {
     id: number;
@@ -31,6 +32,21 @@ export default function FolderShow(props: FolderShowProps) {
     const { folder, files } = props;
     const [search, setSearch] = useState('');
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/admin/dashboard',
+        },
+        {
+            title: 'Galerie média',
+            href: '/admin/media',
+        },
+        {
+            title: `Dossier`,
+            isActive: true,
+        },
+    ];
+
     const filteredFiles = files.filter(file =>
         file.title.toLowerCase().includes(search.toLowerCase())
     );
@@ -48,7 +64,7 @@ export default function FolderShow(props: FolderShowProps) {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Dossier : ${folder}`} />
             <div className="max-w-6xl mx-auto py-6 sm:py-8 lg:py-10 px-3 sm:px-4 lg:px-6">
                 <Link href="/admin/media" className="text-sm sm:text-base text-primary hover:underline mb-4 sm:mb-6 inline-flex items-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">

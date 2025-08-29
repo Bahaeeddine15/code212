@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout-admin';
 import { Head, router, Link } from '@inertiajs/react';
 import { Plus, FileText, Trash2, Edit3, GraduationCap, ArrowLeft, Download, PlayCircle } from 'lucide-react';
 import { ModernButton, PageHeader } from '@/components/ui/modern-components';
+import { BreadcrumbItem } from '@/types';
 
 type FileType = 'pdf' | 'video' | 'other';
 
@@ -152,6 +153,21 @@ const ModuleCard = ({
 export default function ModulesList({ formation, modules }: Props) {
   const [moduleList, setModuleList] = useState(modules);
 
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Dashboard',
+      href: '/admin/dashboard',
+    },
+    {
+      title: 'Formations',
+      href: '/admin/formations',
+    },
+    {
+      title: `Modules`,
+      isActive: true,
+    },
+  ];
+
   const handleDelete = (id: number) => {
     if (!confirm('Voulez-vous vraiment supprimer ce module ?')) return;
     router.delete(`/admin/modules/${id}`, {
@@ -164,7 +180,7 @@ export default function ModulesList({ formation, modules }: Props) {
   };
 
   return (
-    <AppLayout>
+    <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Modules" />
       <div className="flex h-full flex-1 flex-col gap-6 sm:gap-8 p-4 sm:p-6 overflow-x-auto bg-background">
         {/* Back */}

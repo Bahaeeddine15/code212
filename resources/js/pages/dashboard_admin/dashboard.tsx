@@ -27,6 +27,10 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Dashboard',
         href: '/admin/dashboard',
     },
+    {
+        title: 'Dashboard Admin',
+        isActive: true,
+    },
 ];
 
 // Composant pour les cartes de statistiques

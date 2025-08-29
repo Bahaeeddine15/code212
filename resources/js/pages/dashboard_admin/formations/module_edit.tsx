@@ -42,9 +42,8 @@ export default function ModuleEdit({ module, formation, formationId }: Props) {
     const breadcrumbs = [
         { title: 'Dashboard', href: '/admin/dashboard' },
         { title: 'Formations', href: '/admin/formations' },
-        { title: formation.title, href: `/admin/formations/${formationId}/modules` },
         { title: 'Modules', href: `/admin/formations/${formationId}/modules` },
-        { title: `Modifier "${module.title}"`, href: '#' },
+        { title: `Modifier`, href: '#' },
     ];
 
     const handleChange = (field: string, value: string) => {

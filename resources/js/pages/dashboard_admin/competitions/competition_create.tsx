@@ -15,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Nouvelle compétition',
-        href: '#',
+        isActive: true,
     },
 ];
 
