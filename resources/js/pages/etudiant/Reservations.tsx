@@ -330,8 +330,8 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                                 
                                 {existingReservation.resource_type === 'local' && (
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Type de local</label>
-                                        <p className="text-gray-900 bg-gray-50 p-2 rounded">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type de local</label>
+                                        <p className="text-gray-900 dark:text-white bg-gray-50 dark:bg-[#364153] p-2 rounded">
                                             {Array.isArray(existingReservation.location_type) 
                                                 ? existingReservation.location_type.map(loc => {
                                                     switch(loc) {
@@ -539,9 +539,9 @@ export default function Dashboard({ existingReservation, lastProcessedReservatio
                                                         setData('location_type', data.location_type.filter(item => item !== option.value));
                                                     }
                                                 }}
-                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500  focus:ring-2"
                                             />
-                                            <span className="text-sm font-medium text-gray-900">{option.label}</span>
+                                            <span className="text-sm dark:text-white font-medium text-gray-900">{option.label}</span>
                                         </label>
                                     ))}
                                 </div>

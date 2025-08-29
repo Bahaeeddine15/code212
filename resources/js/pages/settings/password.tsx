@@ -7,13 +7,13 @@ import InputError from '@/components/forms/input-error';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef } from 'react';
+import { FormEventHandler, useRef, useState } from 'react';
 
 import HeadingSmall from '@/components/common/heading-small';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Palette, Lock } from 'lucide-react';
+import { User, Palette, Lock, Menu } from 'lucide-react';
 
 // Create breadcrumbs for the header component
 const headerBreadcrumbs = [
@@ -24,6 +24,7 @@ const headerBreadcrumbs = [
 export default function Password() {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
         current_password: '',
@@ -65,9 +66,36 @@ export default function Password() {
             
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
-                    <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins]">
-                        <div className="p-6">
+                    {/* Mobile Backdrop */}
+                    {isMobileOpen && (
+                        <div 
+                            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+                            onClick={() => setIsMobileOpen(false)}
+                        />
+                    )}
+                    
+                    {/* Sidebar with mobile state */}
+                    <div className={`
+                        fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+                        transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+                        lg:translate-x-0 transition-transform duration-300 ease-in-out
+                    `}>
+                        <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+                    </div>
+                    
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
+                        <div className="p-4 lg:p-6">
+                            {/* Mobile Menu Button */}
+                            <div className="lg:hidden mb-4">
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                                >
+                                    <Menu className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Menu</span>
+                                </button>
+                            </div>
+                            
                             <div className="space-y-6">
                                 <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
 

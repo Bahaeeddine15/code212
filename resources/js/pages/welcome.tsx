@@ -14,12 +14,12 @@ function CountUp({ end, duration = 2, className = "" }: CountUpProps) {
     const [count, setCount] = useState(0);
     useEffect(() => {
         let start = 0;
-        const increment = end / (duration * 60);8
+        const increment = end / (duration * 60);
         const interval = setInterval(() => {
             start += increment;
             if (start >= end) {
-                setCount(0);
-                start = 0;
+                setCount(end);
+                clearInterval(interval);
             } else {
                 setCount(Math.floor(start));
             }
@@ -305,25 +305,25 @@ export default function Welcome() {
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center">
                             <div className="p-4">
                                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-400 mb-2">
-                                    <CountUp end={176} duration={2} className="text-pink-400" />
+                                    <CountUp end={176} duration={4} className="text-pink-400" />
                                 </div>
                                 <div className="text-sm sm:text-base text-gray-300">Total Institutions</div>
                             </div>
                             <div className="p-4">
                                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-400 mb-2">
-                                    <CountUp end={123320} duration={2.5} className="text-purple-400" />
+                                    <CountUp end={123320} duration={4} className="text-purple-400" />
                                 </div>
                                 <div className="text-sm sm:text-base text-gray-300">Total Students</div>
                             </div>
                             <div className="p-4">
                                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-400 mb-2">
-                                    <CountUp end={46} duration={1.5} className="text-blue-400" />
+                                    <CountUp end={46} duration={4} className="text-blue-400" />
                                 </div>
                                 <div className="text-sm sm:text-base text-gray-300">Total Trackers</div>
                             </div>
                             <div className="p-4">
                                 <div className="text-4xl font-bold text-green-400 mb-2">
-                                    <CountUp end={104} duration={2} className="text-green-400" />
+                                    <CountUp end={104} duration={4} className="text-green-400" />
                                 </div>
                                 <div className="text-gray-300">Total Certificates</div>
                             </div>

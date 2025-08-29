@@ -299,9 +299,6 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                                     Fermé
                                                 </Button>
                                             )}
-                                            <Button variant="outline" size="sm" asChild className="dark:border-[#364153] dark:text-gray-300 dark:hover:bg-[#364153]">
-                                                <Link href={`/competition/${competition.id}`}>Détails</Link>
-                                            </Button>
                                         </div>
                                     </CardContent>
                                 </Card>

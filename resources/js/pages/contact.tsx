@@ -262,8 +262,8 @@ export default function Contact() {
                                             <h3 className="text-xl font-bold text-gray-900">Notre Adresse</h3>
                                         </div>
                                         <p className="text-gray-600 mb-2">Code212 - Center of Digital Empowerment</p>
-                                        <p className="text-gray-600 mb-2">123 Boulevard Mohammed V</p>
-                                        <p className="text-gray-600">Casablanca 20000, Maroc</p>
+                                        <p className="text-gray-600 mb-2">112 Bd Abdelkrim Al Khattabi</p>
+                                        <p className="text-gray-600">Marrakech 40000, Maroc</p>
                                     </div>
 
                                     {/* Contact Details */}
@@ -277,7 +277,7 @@ export default function Contact() {
                                                 <Mail className="w-4 h-4 text-blue-500 mr-3" />
                                                 <div>
                                                     <p className="text-sm text-gray-500">Email général</p>
-                                                    <p className="text-gray-900 font-medium">contact@code212.ma</p>
+                                                    <p className="text-gray-900 font-medium">code212@uca.ac.ma</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center">
@@ -287,20 +287,7 @@ export default function Contact() {
                                                     <p className="text-gray-900 font-medium">+212 5XX XXX XXX</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center">
-                                                <Users className="w-4 h-4 text-purple-500 mr-3" />
-                                                <div>
-                                                    <p className="text-sm text-gray-500">Admissions</p>
-                                                    <p className="text-gray-900 font-medium">admissions@code212.ma</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center">
-                                                <Building2 className="w-4 h-4 text-orange-500 mr-3" />
-                                                <div>
-                                                    <p className="text-sm text-gray-500">Partenariats</p>
-                                                    <p className="text-gray-900 font-medium">partners@code212.ma</p>
-                                                </div>
-                                            </div>
+                                
                                         </div>
                                     </div>
                                 </div>
@@ -313,13 +300,18 @@ export default function Contact() {
                                             <h3 className="text-xl font-bold text-gray-900">Localisation</h3>
                                         </div>
                                     </div>
-                                    {/* Map Placeholder - In real implementation, you would use Google Maps or Mapbox */}
-                                    <div className="h-64 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                                        <div className="text-center">
-                                            <MapPin className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-                                            <p className="text-gray-600 font-medium">Carte interactive</p>
-                                            <p className="text-sm text-gray-500">Code212 Campus - Casablanca</p>
-                                        </div>
+                                    {/* Google Maps Embed */}
+                                    <div className="h-64 relative">
+                                        <iframe 
+                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3397.2193516744543!2d-8.018739!3d31.646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x960bcc2b1efcdb72!2sBiblioth%C3%A8que%20Universitaire%20de%20l'Universit%C3%A9%20Cadi%20Ayyad%20Marrakech!5e0!3m2!1sen!2sma!4v1693234567890!5m2!1sen!2sma"
+                                            width="100%" 
+                                            height="100%" 
+                                            style={{ border: 0 }}
+                                            allowFullScreen
+                                            loading="lazy" 
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                            title="Bibliothèque Universitaire de l'Université Cadi Ayyad Marrakech"
+                                        ></iframe>
                                     </div>
                                 </div>
                             </div>

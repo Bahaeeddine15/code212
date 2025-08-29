@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import AppearanceTabs from '@/components/common/appearance-tabs';
 import HeadingSmall from '@/components/common/heading-small';
 import { type BreadcrumbItem } from '@/types';
-import { User, Palette, Lock } from 'lucide-react';
+import { User, Palette, Lock, Menu } from 'lucide-react';
+import { useState } from 'react';
 
 // Create breadcrumbs for the header component
 const headerBreadcrumbs = [
@@ -17,6 +18,8 @@ const headerBreadcrumbs = [
 ];
 
 export default function Appearance() {
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    
     return (
         <>
             <Head>
@@ -31,9 +34,36 @@ export default function Appearance() {
             
             <AppShell variant="sidebar">
                 <div className="flex w-full min-h-screen">
-                    <AppSidebar />
-                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins]">
-                        <div className="p-6">
+                    {/* Mobile Backdrop */}
+                    {isMobileOpen && (
+                        <div 
+                            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+                            onClick={() => setIsMobileOpen(false)}
+                        />
+                    )}
+                    
+                    {/* Sidebar with mobile state */}
+                    <div className={`
+                        fixed lg:relative inset-y-0 left-0 z-40 w-64 lg:w-auto
+                        transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} 
+                        lg:translate-x-0 transition-transform duration-300 ease-in-out
+                    `}>
+                        <AppSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
+                    </div>
+                    
+                    <AppContent variant="sidebar" className="flex-1 bg-white dark:bg-[#101828] font-[Poppins] lg:ml-0">
+                        <div className="p-4 lg:p-6">
+                            {/* Mobile Menu Button */}
+                            <div className="lg:hidden mb-4">
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="p-3 bg-[#4f39f6] text-white rounded-lg shadow-lg hover:bg-[#3a2b75] transition-colors flex items-center gap-2"
+                                >
+                                    <Menu className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Menu</span>
+                                </button>
+                            </div>
+                            
                             <div className="space-y-6">
                                 <HeadingSmall title="Appearance settings" description="Update your account's appearance settings" />
                                 
