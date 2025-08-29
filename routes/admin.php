@@ -15,7 +15,7 @@ use App\Http\Controllers\CompetitionRegistrationControllerAdmin;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\ModuleFileController;
 
-// Admin authentication routes (accessible without authentication) - ADD ADMIN PREFIX
+// Admin authentication routes
 Route::prefix('admin')->group(function () {
     Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('login', [AdminAuthController::class, 'login'])->name('admin.login.post');
@@ -30,19 +30,18 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
         return Inertia::render('dashboard_admin/dashboard', [
             'name' => Auth::user()->name,
         ]);
-    })->name('dashboard'); // This will be admin.dashboard
+    })->name('dashboard');
 
     Route::resource('articles', ArticleControllerAdmin::class);
 
-    // Events routes - will automatically be named admin.events.*
+    // Events
     Route::resource('events', EventControllerAdmin::class);
     Route::patch('/events/{id}/status', [EventControllerAdmin::class, 'updateStatus'])->name('events.updateStatus');
-    // Event registrations management
     Route::get('/events/{event}/registrations', [EventRegistrationAdminController::class, 'index'])->name('events.registrations');
     Route::patch('/events/registrations/{registration}/approve', [EventRegistrationAdminController::class, 'approve'])->name('events.registrations.approve');
     Route::patch('/events/registrations/{registration}/reject', [EventRegistrationAdminController::class, 'reject'])->name('events.registrations.reject');
 
-    // Media routes - cleaned up
+    // Media
     Route::resource('media', MediaControllerAdmin::class)->parameters(['media' => 'media']);
     Route::get('/media/{media}/download', [MediaControllerAdmin::class, 'download'])->name('media.download');
     Route::get('/media/folder/{folder}', [MediaControllerAdmin::class, 'showFolder'])->name('media.folder');
@@ -50,11 +49,11 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::get('/media/{media}/stream/{quality?}', [MediaControllerAdmin::class, 'stream'])->name('media.stream');
     Route::get('/media/{media}/stream/quality/{quality}', [MediaControllerAdmin::class, 'stream'])->name('media.stream.quality');
 
-    // Formation routes
+    // Formations
     Route::resource('formations', FormationControllerAdmin::class);
     Route::patch('/formations/{formation}/status', [FormationControllerAdmin::class, 'updateStatus'])->name('formations.updateStatus');
 
-    // ✅ Module routes - explicit definition for better control
+    // Modules
     Route::get('formations/{formation}/modules', [ModuleControllerAdmin::class, 'index'])->name('formations.modules.index');
     Route::get('formations/{formation}/modules/create', [ModuleControllerAdmin::class, 'create'])->name('formations.modules.create');
     Route::post('formations/{formation}/modules', [ModuleControllerAdmin::class, 'store'])->name('formations.modules.store');
@@ -62,24 +61,26 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::get('modules/{module}/edit', [ModuleControllerAdmin::class, 'edit'])->name('modules.edit');
     Route::put('modules/{module}', [ModuleControllerAdmin::class, 'update'])->name('modules.update');
     Route::delete('modules/{module}', [ModuleControllerAdmin::class, 'destroy'])->name('modules.destroy');
-    Route::get('module-files/{file}', [ModuleControllerAdmin::class, 'openFile'])
-        ->name('admin.modules.files.open');
-    Route::get('module-files/{file}/download', [ModuleControllerAdmin::class, 'downloadFile'])
-        ->name('admin.modules.files.download');
+
+    // FIXED: Admin file access routes
+    Route::get('module-files/{file}', [ModuleFileController::class, 'open'])
+        ->name('modules.files.open');
+    Route::get('module-files/{file}/download', [ModuleFileController::class, 'download'])
+        ->name('modules.files.download');
     Route::get('module-files/{file}/video', [ModuleFileController::class, 'showVideoAdmin'])
         ->name('modules.files.video');
+    Route::get('module-files/{file}/quality/{quality}', [ModuleFileController::class, 'openQuality'])
+        ->name('admin.modules.files.quality');
 
+    // Competitions
     Route::resource('competitions', CompetitionControllerAdmin::class);
     Route::patch('/competitions/{competition}/close', [CompetitionControllerAdmin::class, 'close'])->name('competitions.close');
-
-    // Approve/Reject competition registrations
     Route::patch('/competition-registrations/{registration}/approve', [CompetitionRegistrationControllerAdmin::class, 'approve'])->name('competitionRegistrations.approve');
     Route::patch('/competition-registrations/{registration}/reject', [CompetitionRegistrationControllerAdmin::class, 'reject'])->name('competitionRegistrations.reject');
     Route::delete('/competition-registrations/{registration}', [CompetitionRegistrationControllerAdmin::class, 'destroy'])->name('competitionRegistrations.destroy');
 
+    // Reservations
     Route::resource('reservations', ReservationControllerAdmin::class);
     Route::patch('/reservations/{reservation}/approve', [ReservationControllerAdmin::class, 'approve'])->name('reservations.approve');
     Route::patch('/reservations/{reservation}/reject', [ReservationControllerAdmin::class, 'reject'])->name('reservations.reject');
-
-    
 });

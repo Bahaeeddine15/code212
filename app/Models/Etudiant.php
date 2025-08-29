@@ -34,12 +34,33 @@ class Etudiant extends Authenticatable
     {
         return $this->hasMany(EventRegistration::class, 'user_id');
     }
-    public function formations()
-    {
-        return $this->belongsToMany(Formation::class);
-    }
+
+    // Remove this old simple relationship
+    // public function formations()
+    // {
+    //     return $this->belongsToMany(Formation::class);
+    // }
+
+    // Registration records
     public function formationRegistrations()
     {
         return $this->hasMany(FormationRegistration::class);
+    }
+
+    // All enrolled formations (with pivot data)
+    public function enrolledFormations()
+    {
+        return $this->belongsToMany(Formation::class, 'formation_registrations', 'etudiant_id', 'formation_id')
+            ->withPivot('status', 'registered_at')
+            ->withTimestamps();
+    }
+
+    // Only approved formations
+    public function approvedFormations()
+    {
+        return $this->belongsToMany(Formation::class, 'formation_registrations', 'etudiant_id', 'formation_id')
+            ->wherePivot('status', 'approved')
+            ->withPivot('status', 'registered_at')
+            ->withTimestamps();
     }
 }

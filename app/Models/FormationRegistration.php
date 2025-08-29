@@ -3,18 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Etudiant;
+use App\Models\Formation;
 
 class FormationRegistration extends Model
 {
     protected $fillable = [
-        'user_id',
+        'etudiant_id',
         'formation_id',
-        'status',
+        'registered_at',
+        // Remove 'status' from fillable
     ];
 
-    public function user()
+    protected $casts = [
+        'registered_at' => 'datetime',
+    ];
+
+    public function etudiant()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Etudiant::class);
     }
 
     public function formation()

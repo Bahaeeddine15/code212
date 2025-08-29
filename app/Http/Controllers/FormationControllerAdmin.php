@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Routing\Controller;
 
+
 class FormationControllerAdmin extends Controller
 {
     public function __construct()
@@ -17,20 +18,40 @@ class FormationControllerAdmin extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
         $status = $request->get('status', 'published');
 
-        $query = Formation::query()->withCount('modules')->latest();
+        $query = Formation::query()->withCount(['modules', 'registrations'])->latest();
         if ($status === 'draft') $query->drafts();
         elseif ($status !== 'all') $query->published();
 
-        // 👇 ensure a JSON array (not an object) by resetting keys
         $formations = $query->get()->values()->map(function ($formation) {
-            $formation->modules = $formation->modules ?? [];
-            return $formation;
+            $modules = $formation->modules ?? [];
+            return [
+                'id'                => $formation->id,
+                'title'             => $formation->title,
+                'description'       => $formation->description,
+                'level'             => $formation->level,
+                'duration'          => $formation->duration,
+                'category'          => $formation->category,
+                'link'              => $formation->link,
+                'photo'             => $formation->thumbnail ? url('/storage/' . $formation->thumbnail) : '/images/default-formation.jpg',
+                'status'            => $formation->status,
+                'language'          => $formation->language,
+                'modules_count'     => $formation->modules_count,
+                'modules'           => $modules,
+                'enrolledStudents'  => $formation->registrations_count, // Real count from DB
+                'created_at'        => $formation->created_at,
+                'updated_at'        => $formation->updated_at,
+            ];
         });
-        
+
+        // Calculate real statistics
+        $totalEnrolledStudents = \App\Models\FormationRegistration::count();
+        $totalActiveModules = \App\Models\Module::count();
+        $totalCertifications = \App\Models\Formation::where('category', 'Certification')->count();
 
         return Inertia::render('dashboard_admin/formations/formations_index', [
             'formations'    => $formations,
@@ -39,6 +60,12 @@ class FormationControllerAdmin extends Controller
                 'published' => Formation::published()->count(),
                 'draft'     => Formation::drafts()->count(),
                 'all'       => Formation::count(),
+            ],
+            'stats' => [
+                'totalEnrolledStudents' => $totalEnrolledStudents,
+                'totalActiveModules'    => $totalActiveModules,
+                'totalCertifications'   => $totalCertifications,
+                'totalFormations'       => Formation::count(),
             ],
         ]);
     }
@@ -64,7 +91,7 @@ class FormationControllerAdmin extends Controller
             'category' => 'nullable|string|max:100',
             'link' => 'nullable|url|max:255',
             'thumbnail' => 'nullable|image|max:2048',
-            'status' => 'nullable|in:draft,published', 
+            'status' => 'nullable|in:draft,published',
             'language' => 'nullable|string|max:100',
             'pre_requis' => 'nullable|string',
 

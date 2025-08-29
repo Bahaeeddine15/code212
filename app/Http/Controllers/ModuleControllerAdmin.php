@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Formation;
 use App\Models\Module;
-use App\Models\ModuleFile; // 👈 new
+use App\Models\ModuleFile;
+use App\Models\FormationRegistration; // Add this import
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Routing\Controller;
@@ -21,20 +22,92 @@ class ModuleControllerAdmin extends Controller
     /**
      * Display a listing of the modules for a formation.
      */
-    public function index(Formation $formation)
+    public function index(Formation $formation, Request $request)
     {
         $modules = $formation->modules()
             ->orderBy('order')
-
             ->with(['files' => fn($q) => $q->orderBy('position')])
-
-            ->with(['files']) // <-- eager load files
-
             ->get();
 
+        // Get registered students with pagination and search
+        $search = $request->get('search');
+        $totalModules = $modules->count(); // ADD THIS LINE
+
+        $studentsQuery = FormationRegistration::with('etudiant')
+            ->where('formation_id', $formation->id)
+            ->when($search, function ($q) use ($search) {
+                $q->whereHas('etudiant', function ($studentQuery) use ($search) {
+                    $studentQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('ecole', 'like', "%{$search}%")
+                        ->orWhere('ville', 'like', "%{$search}%");
+                });
+            })
+            ->latest('registered_at');
+
+        $registrations = $studentsQuery->paginate(10)->withQueryString();
+
+        // REPLACE the transform section with this updated version:
+        $students = $registrations->through(function ($registration) use ($formation, $totalModules) {
+            $etudiant = $registration->etudiant;
+
+            // Count completed modules for this student
+            $completedModules = \App\Models\ModuleCompletion::where('etudiant_id', $etudiant->id)
+                ->whereHas('module', function ($query) use ($formation) {
+                    $query->where('formation_id', $formation->id);
+                })
+                ->count();
+
+            // Get last activity (most recent completion)
+            $lastActivity = \App\Models\ModuleCompletion::where('etudiant_id', $etudiant->id)
+                ->whereHas('module', function ($query) use ($formation) {
+                    $query->where('formation_id', $formation->id);
+                })
+                ->latest('completed_at')
+                ->first();
+
+            $progressPercentage = $totalModules > 0 ? round(($completedModules / $totalModules) * 100) : 0;
+
+            return [
+                'id' => $etudiant->id,
+                'name' => $etudiant->name,
+                'email' => $etudiant->email,
+                'ecole' => $etudiant->ecole,
+                'ville' => $etudiant->ville,
+                'telephone' => $etudiant->telephone,
+                'student_id' => $etudiant->student_id,
+                'registered_at' => $registration->registered_at->toISOString(),
+                // ADD PROGRESS DATA:
+                'completed_modules' => $completedModules,
+                'total_modules' => $totalModules,
+                'progress_percentage' => $progressPercentage,
+                'last_activity' => $lastActivity ? $lastActivity->completed_at->toISOString() : null,
+            ];
+        });
+
         return Inertia::render('dashboard_admin/formations/modules_list', [
-            'formation' => $formation,
-            'modules'   => $modules,
+            'formation' => [
+                'id' => $formation->id,
+                'title' => $formation->title,
+            ],
+            'modules' => $modules->map(function ($module) {
+                return [
+                    'id' => $module->id,
+                    'title' => $module->title,
+                    'description' => $module->description,
+                    'duration' => $module->duration,
+                    'order' => $module->order,
+                    'files' => $module->files->map(function ($file) {
+                        return [
+                            'id' => $file->id,
+                            'original_name' => $file->original_name,
+                            'type' => $file->type,
+                        ];
+                    }),
+                ];
+            }),
+            'students' => $students,
+            'search' => $search,
         ]);
     }
 
@@ -139,13 +212,28 @@ class ModuleControllerAdmin extends Controller
             'order'       => $validated['order'] ?? $module->order,
         ]);
 
-        // Delete selected files
+        // Delete selected files (improved cleanup)
         if (!empty($validated['delete_file_ids'])) {
             $filesToDelete = ModuleFile::whereIn('id', $validated['delete_file_ids'])->get();
             foreach ($filesToDelete as $file) {
+                // Delete the main file
                 if (Storage::disk($file->disk)->exists($file->path)) {
                     Storage::disk($file->disk)->delete($file->path);
                 }
+
+                // Delete video qualities if they exist
+                if ($file->qualities) {
+                    $qualities = json_decode($file->qualities, true);
+                    if (is_array($qualities)) {
+                        foreach ($qualities as $quality => $path) {
+                            if (Storage::disk($file->disk)->exists($path)) {
+                                Storage::disk($file->disk)->delete($path);
+                            }
+                        }
+                    }
+                }
+
+                // Delete the database record
                 $file->delete();
             }
         }
@@ -157,14 +245,6 @@ class ModuleControllerAdmin extends Controller
 
         // Legacy single file
         if ($request->hasFile('file')) {
-            // If you want to replace all existing files with this one, uncomment next block:
-            // foreach ($module->files as $f) {
-            //     if (Storage::disk($f->disk)->exists($f->path)) {
-            //         Storage::disk($f->disk)->delete($f->path);
-            //     }
-            //     $f->delete();
-            // }
-
             $this->storeModuleFiles($formation, $module, [$request->file('file')]);
 
             $first = $module->files()->first();
@@ -185,108 +265,51 @@ class ModuleControllerAdmin extends Controller
     {
         $formationId = $module->formation_id;
 
-        // Delete all attached files from storage
+        // Delete all attached files from storage (including video qualities)
         foreach ($module->files as $file) {
+            // Delete the main file
             if (Storage::disk($file->disk)->exists($file->path)) {
                 Storage::disk($file->disk)->delete($file->path);
             }
+
+            // Delete video qualities if they exist
+            if ($file->qualities) {
+                $qualities = json_decode($file->qualities, true);
+                if (is_array($qualities)) {
+                    foreach ($qualities as $quality => $path) {
+                        if (Storage::disk($file->disk)->exists($path)) {
+                            Storage::disk($file->disk)->delete($path);
+                        }
+                    }
+                }
+            }
+
+            // Delete the database record
             $file->delete();
         }
 
-        // Delete legacy single file if exists
+        // Delete legacy single file if exists (backward compatibility)
         if ($module->file_path && Storage::disk('public')->exists($module->file_path)) {
             Storage::disk('public')->delete($module->file_path);
         }
 
+        // Optional: Delete the entire module directory if empty
+        $moduleDir = "formations/{$module->formation_id}/modules/{$module->id}";
+        if (Storage::disk('private')->exists($moduleDir)) {
+            // Get all files in the module directory
+            $remainingFiles = Storage::disk('private')->files($moduleDir);
+            if (empty($remainingFiles)) {
+                // Directory is empty, delete it
+                Storage::disk('private')->deleteDirectory($moduleDir);
+            }
+        }
+
+        // Delete the module from database
         $module->delete();
 
         return redirect()
             ->route('admin.formations.modules.index', ['formation' => $formationId])
-            ->with('success', 'Module supprimé avec succès.');
-    }
-    // Stream or redirect to the file, with access control
-    public function openFile(ModuleFile $file)
-    {
-        abort_unless(auth('admin')->check(), 403);
-
-        $disk   = Storage::disk($file->disk);
-        $driver = config("filesystems.disks.{$file->disk}.driver");
-        $mime   = $file->mime_type ?: 'application/octet-stream';
-
-        // Public disk: just redirect to the public URL
-        if ($file->disk === 'public') {
-            return redirect($disk->url($file->path));
-        }
-
-        // Local/private: stream inline
-        $headers = [
-            'Content-Type'        => $mime,
-            'Content-Disposition' => 'inline; filename="'.addslashes($file->original_name).'"',
-        ];
-
-        if ($driver === 'local') {
-            return response()->file($disk->path($file->path), $headers);
-        }
-
-        // S3-like: try temporary URL
-        if (method_exists($disk, 'temporaryUrl')) {
-            try {
-                $url = $disk->temporaryUrl($file->path, now()->addMinutes(5), [
-                    'ResponseContentType'        => $mime,
-                    'ResponseContentDisposition' => 'inline; filename="'.$file->original_name.'"',
-                ]);
-                return redirect($url);
-            } catch (\Throwable $e) {
-                // fall through to streaming
-            }
-        }
-
-        // Fallback: stream
-        $stream = $disk->readStream($file->path);
-        abort_if($stream === false, 404);
-
-        return response()->stream(function () use ($stream) {
-            fpassthru($stream);
-            is_resource($stream) && fclose($stream);
-        }, 200, $headers);
-    }
-    public function downloadFile(ModuleFile $file)
-    {
-        abort_unless(auth('admin')->check(), 403);
-
-        $disk     = Storage::disk($file->disk);
-        $driver   = config("filesystems.disks.{$file->disk}.driver");
-        $filename = $file->original_name ?? basename($file->path);
-        $mime     = $file->mime_type ?: 'application/octet-stream';
-        $headers  = ['Content-Type' => $mime];
-
-        if (method_exists($disk, 'download')) {
-            return $disk->download($file->path, $filename, $headers);
-        }
-
-        if ($driver === 'local') {
-            return response()->download($disk->path($file->path), $filename, $headers);
-        }
-
-        if (method_exists($disk, 'temporaryUrl')) {
-            try {
-                $url = $disk->temporaryUrl($file->path, now()->addMinutes(5), [
-                    'ResponseContentType'        => $mime,
-                    'ResponseContentDisposition' => 'attachment; filename="'.$filename.'"',
-                ]);
-                return redirect($url);
-            } catch (\Throwable $e) {
-                // fall through
-            }
-        }
-
-        $stream = $disk->readStream($file->path);
-        abort_if($stream === false, 404);
-
-        return response()->streamDownload(function () use ($stream) {
-            fpassthru($stream);
-            is_resource($stream) && fclose($stream);
-        }, $filename, $headers);
+            ->with('success', 'Module et tous ses fichiers supprimés définitivement.');
     }
 
     /**
@@ -312,7 +335,7 @@ class ModuleControllerAdmin extends Controller
 
             // If video, generate qualities
             if ($type === 'video') {
-                $qualities = $this->generateVideoQualities($file, $dir, $disk);
+                $qualities = $this->generateVideoQualities($file, $dir, $disk, $path); // Pass the stored path
             }
 
             $module->files()->create([
@@ -327,15 +350,12 @@ class ModuleControllerAdmin extends Controller
             ]);
         }
     }
- 
-    
-
 
     /**
      * Generate multiple video qualities using FFmpeg.
      * Returns an array of quality => path.
      */
-    private function generateVideoQualities($file, $dir, $disk)
+    private function generateVideoQualities($file, $dir, $disk, $originalStoredPath)
     {
         $qualities = [
             '144p' => ['width' => 256,  'height' => 144,  'bitrate' => '200k'],
@@ -346,7 +366,9 @@ class ModuleControllerAdmin extends Controller
         ];
 
         $result = [];
-        $originalPath = Storage::disk($disk)->path($file->store($dir, $disk));
+
+        // Use the already stored original file path instead of storing again
+        $originalPath = Storage::disk($disk)->path($originalStoredPath);
         $filenameBase = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
         foreach ($qualities as $label => $settings) {
@@ -361,13 +383,142 @@ class ModuleControllerAdmin extends Controller
                 $settings['bitrate'],
                 $outputPath
             );
-            exec($cmd);
 
-            // Save relative path for later streaming
-            $result[$label] = "$dir/$outputName";
+            // Execute the command and check if it was successful
+            $output = [];
+            $returnCode = 0;
+            exec($cmd . ' 2>&1', $output, $returnCode);
+
+            if ($returnCode === 0 && file_exists($outputPath)) {
+                // Save relative path for later streaming
+                $result[$label] = "$dir/$outputName";
+            } else {
+                // Log the error for debugging
+                \Log::error("Failed to generate {$label} quality", [
+                    'command' => $cmd,
+                    'output' => implode("\n", $output),
+                    'return_code' => $returnCode
+                ]);
+            }
         }
 
         return $result;
     }
+    /**
+     * Delete a specific file from a module
+     */
+    public function deleteFile(ModuleFile $file)
+    {
+        abort_unless(auth('admin')->check(), 403);
 
+        // Delete the main file
+        if (Storage::disk($file->disk)->exists($file->path)) {
+            Storage::disk($file->disk)->delete($file->path);
+            \Log::info("Deleted main file: " . $file->path);
+        }
+
+        // Delete video qualities if they exist
+        if ($file->qualities) {
+            $qualities = json_decode($file->qualities, true);
+            if (is_array($qualities)) {
+                foreach ($qualities as $quality => $path) {
+                    if (Storage::disk($file->disk)->exists($path)) {
+                        Storage::disk($file->disk)->delete($path);
+                        \Log::info("Deleted quality {$quality}: " . $path);
+                    }
+                }
+            }
+        }
+
+        // Delete the database record
+        $file->delete();
+
+        return back()->with('success', 'Fichier supprimé définitivement du disque.');
+    }
+
+    // Stream or redirect to the file, with access control
+    public function openFile(ModuleFile $file)
+    {
+        abort_unless(auth('admin')->check(), 403);
+
+        $disk   = Storage::disk($file->disk);
+        $driver = config("filesystems.disks.{$file->disk}.driver");
+        $mime   = $file->mime_type ?: 'application/octet-stream';
+
+        // Public disk: just redirect to the public URL
+        if ($file->disk === 'public') {
+            return redirect($disk->url($file->path));
+        }
+
+        // Local/private: stream inline
+        $headers = [
+            'Content-Type'        => $mime,
+            'Content-Disposition' => 'inline; filename="' . addslashes($file->original_name) . '"',
+        ];
+
+        if ($driver === 'local') {
+            return response()->file($disk->path($file->path), $headers);
+        }
+
+        // S3-like: try temporary URL
+        if (method_exists($disk, 'temporaryUrl')) {
+            try {
+                $url = $disk->temporaryUrl($file->path, now()->addMinutes(5), [
+                    'ResponseContentType'        => $mime,
+                    'ResponseContentDisposition' => 'inline; filename="' . $file->original_name . '"',
+                ]);
+                return redirect($url);
+            } catch (\Throwable $e) {
+                // fall through to streaming
+            }
+        }
+
+        // Fallback: stream
+        $stream = $disk->readStream($file->path);
+        abort_if($stream === false, 404);
+
+        return response()->stream(function () use ($stream) {
+            fpassthru($stream);
+            is_resource($stream) && fclose($stream);
+        }, 200, $headers);
+    }
+
+    public function downloadFile(ModuleFile $file)
+    {
+        abort_unless(auth('admin')->check(), 403);
+
+        $disk     = Storage::disk($file->disk);
+        $driver   = config("filesystems.disks.{$file->disk}.driver");
+        $filename = $file->original_name ?? basename($file->path);
+        $mime     = $file->mime_type ?: 'application/octet-stream';
+        $headers  = ['Content-Type' => $mime];
+
+        if (method_exists($disk, 'download')) {
+            return $disk->download($file->path, $filename, $headers);
+        }
+
+        if ($driver === 'local') {
+            return response()->download($disk->path($file->path), $filename, $headers);
+        }
+
+        if (method_exists($disk, 'temporaryUrl')) {
+            try {
+                $url = $disk->temporaryUrl($file->path, now()->addMinutes(5), [
+                    'ResponseContentType'        => $mime,
+                    'ResponseContentDisposition' => 'attachment; filename="' . $filename . '"',
+                ]);
+                return redirect($url);
+            } catch (\Throwable $e) {
+                // fall through
+            }
+        }
+
+        $stream = $disk->readStream($file->path);
+        abort_if($stream === false, 404);
+
+        return response()->streamDownload(function () use ($stream) {
+            fpassthru($stream);
+            is_resource($stream) && fclose($stream);
+        }, $filename, $headers);
+    }
 }

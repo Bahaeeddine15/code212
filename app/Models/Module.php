@@ -12,7 +12,19 @@ class Module extends Model
     {
         return $this->belongsTo(Formation::class);
     }
-    public function files() {
+
+    public function files()
+    {
         return $this->hasMany(\App\Models\ModuleFile::class)->orderBy('position');
+    }
+
+    public function completions()
+    {
+        return $this->hasMany(ModuleCompletion::class);
+    }
+
+    public function isCompletedBy($userId)
+    {
+        return $this->completions()->where('etudiant_id', $userId)->exists();
     }
 }

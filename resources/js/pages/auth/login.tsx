@@ -53,7 +53,7 @@ export default function Register({ status, canResetPassword }: RegisterProps) {
                             autoComplete="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            placeholder="email@example.com"
+                            placeholder="email@uca.ac.ma"
                             className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
                         />
                         <InputError message={errors.email} />

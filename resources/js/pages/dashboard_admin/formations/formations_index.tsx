@@ -37,10 +37,9 @@ interface Formation {
   category: string;
   link?: string;
   modules: Module[];
-  enrolledStudents?: number;
-  maxStudents?: number;
-  thumbnail?: string;
-  language?: string; // teammate’s field
+  enrolledStudents?: number; // Keep this to show current enrollment count
+  photo?: string;
+  language?: string; // teammate's field
   status?: 'published' | 'draft'; // status support
 }
 
@@ -52,6 +51,12 @@ type Props = {
   formations: Formation[] | Paginator<Formation> | Record<string, Formation>;
   activeStatus?: 'published' | 'draft' | 'all';
   counts?: Counts;
+  stats?: {
+    totalEnrolledStudents: number;
+    totalActiveModules: number;
+    totalCertifications: number;
+    totalFormations: number;
+  };
 };
 
 /* ---------------- UI Helpers ---------------- */
@@ -168,7 +173,7 @@ const FormationCard = ({
   onViewModules: (formation: Formation) => void;
   onToggleStatus: (formation: Formation) => void;
 }) => {
-  const { title, description, level, duration, modules, category, enrolledStudents = 0, maxStudents = 0, link, status = 'published' } = formation;
+  const { title, description, level, duration, modules, category, enrolledStudents = 0, link, status = 'published' } = formation;
 
   const getLevelColor = () => {
     switch (level) {
@@ -198,10 +203,9 @@ const FormationCard = ({
       title={link ? 'Voir la formation externe' : undefined}
     >
       <div className="relative h-36 sm:h-48 -m-4 sm:-m-6 mb-4 sm:mb-6">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-t-2xl" />
-        {formation.thumbnail ? (
+        {formation.photo ? (
           <img
-            src={`/storage/${formation.thumbnail}`}
+            src={formation.photo}
             alt={formation.title}
             className="w-full h-full object-cover rounded-t-2xl"
           />
@@ -235,11 +239,11 @@ const FormationCard = ({
             <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="text-xs sm:text-sm">{duration}</span>
           </div>
-          {/* optional language display */}
-          {(formation as any).language && (
+          {/* Fixed language display - removed unnecessary casting */}
+          {formation.language && (
             <div className="flex items-center space-x-2 text-muted-foreground">
               <span className="text-xs sm:text-sm">
-                <span className="font-semibold">Langue:</span> {(formation as any).language}
+                <span className="font-semibold">Langue:</span> {formation.language}
               </span>
             </div>
           )}
@@ -249,19 +253,13 @@ const FormationCard = ({
       <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground font-medium text-sm">Modules</span>
-          <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">{modules.length}</span>
+          <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">{modules?.length || 0}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground font-medium text-sm">Inscrits</span>
+          <span className="text-muted-foreground font-medium text-sm">Étudiants inscrits</span>
           <span className="font-bold text-green-600 dark:text-green-400 text-sm">
-            {enrolledStudents}/{maxStudents}
+            {enrolledStudents}
           </span>
-        </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 sm:h-3">
-          <div
-            className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 sm:h-3 rounded-full transition-all duration-500 shadow-sm"
-            style={{ width: `${maxStudents ? (enrolledStudents / maxStudents) * 100 : 0}%` }}
-          />
         </div>
       </div>
 
@@ -301,7 +299,10 @@ const FormationCard = ({
           </button>
 
           {!link && (
-            <ModernButton size="sm" theme="primary" onClick={() => onViewModules(formation)}>
+            <ModernButton size="sm" theme="primary" onClick={(e) => {
+              e?.stopPropagation();
+              onViewModules(formation);
+            }}>
               <span className="hidden sm:inline">Voir modules</span>
               <span className="sm:hidden">Modules</span>
             </ModernButton>
@@ -319,6 +320,12 @@ export default function Formations({
   formations,
   activeStatus = 'published',
   counts = { published: 0, draft: 0, all: 0 },
+  stats = {
+    totalEnrolledStudents: 0,
+    totalActiveModules: 0,
+    totalCertifications: 0,
+    totalFormations: 0,
+  },
 }: Props) {
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const [showModules, setShowModules] = useState(false);
@@ -394,7 +401,7 @@ export default function Formations({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-semibold text-muted-foreground">Total formations</p>
-                <p className="text-2xl sm:text-3xl font-bold text-primary mt-1 sm:mt-2">{counts.all}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-primary mt-1 sm:mt-2">{stats.totalFormations}</p>
               </div>
               <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
                 <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" />
@@ -406,7 +413,7 @@ export default function Formations({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-semibold text-muted-foreground">Étudiants inscrits</p>
-                <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mt-1 sm:mt-2">—</p>
+                <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mt-1 sm:mt-2">{stats.totalEnrolledStudents}</p>
               </div>
               <div className="p-3 sm:p-4 bg-green-100 dark:bg-green-900 rounded-2xl">
                 <Users className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 dark:text-green-400" />
@@ -418,7 +425,7 @@ export default function Formations({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-semibold text-muted-foreground">Certifications</p>
-                <p className="text-2xl sm:text-3xl font-bold text-purple-600 mt-1 sm:mt-2">—</p>
+                <p className="text-2xl sm:text-3xl font-bold text-purple-600 mt-1 sm:mt-2">{stats.totalCertifications}</p>
               </div>
               <div className="p-3 sm:p-4 bg-purple-100 rounded-2xl">
                 <Award className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
@@ -430,7 +437,7 @@ export default function Formations({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-semibold text-muted-foreground">Modules actifs</p>
-                <p className="text-2xl sm:text-3xl font-bold text-cyan-600 mt-1 sm:mt-2">—</p>
+                <p className="text-2xl sm:text-3xl font-bold text-cyan-600 mt-1 sm:mt-2">{stats.totalActiveModules}</p>
               </div>
               <div className="p-3 sm:p-4 bg-cyan-100 rounded-2xl">
                 <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-600" />
@@ -481,17 +488,28 @@ export default function Formations({
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
-            {list.map((formation) => (
-              <FormationCard
-                key={formation.id}
-                formation={formation}
-                onDelete={handleFormationDelete}
-                onViewModules={handleViewModules}
-                onToggleStatus={handleToggleStatus}
-              />
-            ))}
-          </div>
+          {list.length === 0 ? (
+            <div className="text-center py-12">
+              <GraduationCap className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold text-muted-foreground mb-2">Aucune formation trouvée</h3>
+              <p className="text-muted-foreground mb-6">Commencez par créer votre première formation.</p>
+              <ModernButton theme="primary" onClick={() => router.visit('/admin/formations/create')}>
+                Créer une formation
+              </ModernButton>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
+              {list.map((formation) => (
+                <FormationCard
+                  key={formation.id}
+                  formation={formation}
+                  onDelete={handleFormationDelete}
+                  onViewModules={handleViewModules}
+                  onToggleStatus={handleToggleStatus}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Optional preview section (kept for future use) */}
@@ -510,7 +528,7 @@ export default function Formations({
               </ModernButton>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {selectedFormation?.modules.map((module: Module) => (
+              {selectedFormation?.modules?.map((module: Module) => (
                 <ModuleCard
                   key={module.id}
                   module={module}

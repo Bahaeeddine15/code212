@@ -1,12 +1,12 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ModuleFile;
 use App\Models\FormationRegistration;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ModuleFileController extends Controller
 {
@@ -33,8 +33,8 @@ class ModuleFileController extends Controller
         if ($this->isAdmin()) {
             return true;
         }
-        // Student: must be registered
-        return FormationRegistration::where('user_id', $user->id)
+        // Student: must be registered - FIX: use etudiant_id instead of user_id
+        return FormationRegistration::where('etudiant_id', $user->id) // Changed from user_id
             ->where('formation_id', $formationId)
             ->exists();
     }
@@ -181,10 +181,98 @@ class ModuleFileController extends Controller
         }, 200, $headers);
     }
 
+    // ADMIN VIDEO PLAYER
     public function showVideoAdmin(ModuleFile $file)
     {
+        abort_unless(auth()->guard('admin')->check(), 403);
+
         return inertia('dashboard_admin/formations/module_video_admin', [
             'file' => $file,
         ]);
+    }
+
+    // NEW: STUDENT VIDEO PLAYER
+    public function showVideoStudent(ModuleFile $file)
+    {
+        $user = $this->getCurrentUser();
+        abort_unless($user, 403, 'Non authentifié');
+
+        // Only allow students (not admins) to use this route
+        abort_if($this->isAdmin(), 403, 'Cette route est réservée aux étudiants');
+
+        $module = $file->module;
+        $formation = $module->formation;
+
+        // Check if student is registered for this formation
+        $isRegistered = FormationRegistration::where('etudiant_id', $user->id)
+            ->where('formation_id', $formation->id)
+            ->exists();
+
+        abort_unless($isRegistered, 403, 'Vous devez être inscrit à cette formation pour accéder au contenu.');
+
+        // Only allow video files
+        abort_unless($file->type === 'video', 404, 'Ce fichier n\'est pas une vidéo.');
+
+        // Get qualities if they exist
+        $qualities = [];
+        if ($file->qualities) {
+            $qualitiesData = json_decode($file->qualities, true);
+            if (is_array($qualitiesData)) {
+                foreach ($qualitiesData as $quality => $path) {
+                    if (Storage::disk($file->disk)->exists($path)) {
+                        $qualities[$quality] = $this->getFileUrl($path, $file->disk, $file->id);
+                    }
+                }
+            }
+        }
+
+        return Inertia::render('etudiant/formation_view_video', [
+            'file' => [
+                'id' => $file->id,
+                'original_name' => $file->original_name,
+                'type' => $file->type,
+                'mime_type' => $file->mime_type,
+                'size' => $file->size,
+            ],
+            'qualities' => $qualities,
+            'originalUrl' => $this->getFileUrl($file->path, $file->disk, $file->id),
+            'downloadUrl' => route('student.module_files.download', $file->id),
+            'module' => [
+                'id' => $module->id,
+                'title' => $module->title,
+            ],
+            'formation' => [
+                'id' => $formation->id,
+                'title' => $formation->title,
+            ],
+        ]);
+    }
+
+    /**
+     * Helper to get file URL based on context (admin vs student)
+     */
+    private function getFileUrl(string $path, string $disk, int $fileId): string
+    {
+        $diskInstance = Storage::disk($disk);
+
+        if ($disk === 'public') {
+            return $diskInstance->url($path);
+        }
+
+        // For private disks, use temporary URL if possible
+        if (method_exists($diskInstance, 'temporaryUrl')) {
+            try {
+                return $diskInstance->temporaryUrl($path, now()->addHour());
+            } catch (\Throwable $e) {
+                // fallback to route
+            }
+        }
+
+        // Fallback: determine route based on current context
+        if ($this->isAdmin()) {
+            return route('admin.modules.files.open', $fileId);
+        } else {
+            return route('student.module_files.open', $fileId);
+        }
     }
 }

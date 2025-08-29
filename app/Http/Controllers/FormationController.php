@@ -60,9 +60,9 @@ class FormationController extends Controller
             abort(404);
         }
 
-        $user = Auth::user();
-        $isSignedUp = $user
-            ? FormationRegistration::where('user_id', $user->id)
+        $etudiant = Auth::guard('web')->user(); // Use web guard for students
+        $isSignedUp = $etudiant
+            ? FormationRegistration::where('etudiant_id', $etudiant->id) // Changed from user_id
             ->where('formation_id', $formation->id)
             ->exists()
             : false;
@@ -70,29 +70,34 @@ class FormationController extends Controller
         // Load modules + files relation: Module::files()
         $formation->load(['modules.files']);
 
-        $modules = $formation->modules->map(function ($m) use ($isSignedUp) {
-            return [
-                'id'          => $m->id,
-                'titre'       => $m->title,
-                'description' => $m->description,
-                'assets'      => $m->files->map(function ($f) use ($isSignedUp) {
-                    $mime = (string) ($f->mime_type ?? '');
-                    $type = $f->type
-                        ?? (str_starts_with($mime, 'video') ? 'video'
-                            : (str_contains($mime, 'pdf') ? 'pdf' : 'other'));
+        $modules = $formation->modules
+            ->unique('id') // <-- This removes duplicates!
+            ->values()
+            ->map(function ($m) use ($isSignedUp) {
+                return [
+                    'id'          => $m->id,
+                    'titre'       => $m->title,
+                    'description' => $m->description,
+                    'duration'    => $m->duration,
+                    'order'       => $m->order ?? null,
+                    'created_at'  => $m->created_at,
+                    'assets'      => $m->files->map(function ($f) use ($isSignedUp) {
+                        $mime = (string) ($f->mime_type ?? '');
+                        $type = $f->type
+                            ?? (str_starts_with($mime, 'video') ? 'video'
+                                : (str_contains($mime, 'pdf') ? 'pdf' : 'other'));
 
-                    return [
-                        'id'   => $f->id,
-                        'name' => $f->original_name,
-                        'type' => $type, // 'pdf' | 'video' | 'other'
-                        // Expose a URL only if the student is registered.
-                        // This should point to your secure file controller:
-                        // Route::get('module-files/{file}', ModuleFileController@open)->name('student.module_files.open')
-                        'url'  => $isSignedUp ? route('student.module_files.open', $f->id) : null,
-                    ];
-                })->values(),
-            ];
-        })->values();
+                        return [
+                            'id'   => $f->id,
+                            'name' => $f->original_name,
+                            'type' => $type,
+                            'url'  => $isSignedUp ? route('student.module_files.open', $f->id) : null,
+                            'downloadUrl' => $isSignedUp ? route('student.module_files.download', $f->id) : null, // ADD THIS
+                            'videoUrl' => $isSignedUp && $type === 'video' ? route('student.module_files.video', $f->id) : null, // ADD THIS
+                        ];
+                    })->values(),
+                ];
+            })->values();
 
         return Inertia::render('etudiant/FormationShow', [
             'formation' => [
@@ -110,15 +115,19 @@ class FormationController extends Controller
             ],
         ]);
     }
+
     public function register(Formation $formation)
     {
-        $user = Auth::user();
-        abort_unless($user, 403);
+        $etudiant = Auth::guard('web')->user(); // Use web guard for students
+        abort_unless($etudiant, 403);
 
         // Prevent duplicates; set initial status if your table has it
         FormationRegistration::firstOrCreate(
-            ['user_id' => $user->id, 'formation_id' => $formation->id],
-            ['status'  => \Schema::hasColumn('formation_registrations', 'status') ? 'pending' : null]
+            ['etudiant_id' => $etudiant->id, 'formation_id' => $formation->id], // Changed from user_id
+            [
+                'status' => \Schema::hasColumn('formation_registrations', 'status') ? 'pending' : null,
+                'registered_at' => now(),
+            ]
         );
 
         // Redirect back so the Show page can re-render with modules unlocked
@@ -130,10 +139,10 @@ class FormationController extends Controller
      */
     public function unregister(Formation $formation)
     {
-        $user = Auth::user();
-        abort_unless($user, 403);
+        $etudiant = Auth::guard('web')->user(); // Use web guard for students
+        abort_unless($etudiant, 403);
 
-        FormationRegistration::where('user_id', $user->id)
+        FormationRegistration::where('etudiant_id', $etudiant->id) // Changed from user_id
             ->where('formation_id', $formation->id)
             ->delete();
 
