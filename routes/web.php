@@ -62,9 +62,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('student/module-files/{file}/quality/{quality}', [App\Http\Controllers\ModuleFileController::class, 'openQuality'])
         ->name('student.module_files.quality');
 
-    Route::get('certificats', function () {
-        return Inertia::render('etudiant/Certificats');
-    })->name('etudiant.certificats');
+    Route::get('certificats', [App\Http\Controllers\CertificateController::class, 'index'])
+        ->name('etudiant.certificats');
 
     // Events
     Route::get('events', [App\Http\Controllers\EventController::class, 'index'])->name('etudiant.events');
