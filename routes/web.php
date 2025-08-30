@@ -22,6 +22,8 @@ Route::get('/contact', function () {
     return Inertia::render('contact');
 })->name('contact');
 
+Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+
 Route::get('module-files/{file}/quality/{quality}', [App\Http\Controllers\ModuleFileController::class, 'openQuality'])
     ->middleware('auth:admin,web')
     ->name('student.module_files.open_quality');

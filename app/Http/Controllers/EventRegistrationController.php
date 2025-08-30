@@ -19,13 +19,17 @@ class EventRegistrationController extends Controller
             return back()->withErrors(['registration' => "Les inscriptions ne sont pas ouvertes pour cet événement."]);
         }
 
-        // Check existing request (pending/approved)
+        // Check existing request (pending/approved/rejected - rejected users cannot re-register)
         $existing = EventRegistration::where('event_id', $event->id)
             ->where('user_id', $user->id)
-            ->whereNotIn('status', ['cancelled', 'rejected'])
+            ->whereIn('status', ['pending', 'approved', 'rejected'])  // ✅ Inclure 'rejected' pour bloquer
             ->first();
         if ($existing) {
-            return back()->withErrors(['registration' => 'Votre demande existe déjà (en attente ou approuvée).']);
+            if ($existing->status === 'rejected') {
+                return back()->withErrors(['registration' => 'Votre demande a été rejetée par l\'administration. Vous ne pouvez pas vous réinscrire à cet événement.']);
+            }
+            $statusText = $existing->status === 'pending' ? 'en attente' : 'approuvée';
+            return back()->withErrors(['registration' => "Votre demande existe déjà ($statusText)."]);
         }
 
         // Check capacity
@@ -36,16 +40,33 @@ class EventRegistrationController extends Controller
             return back()->withErrors(['registration' => "Le nombre maximum de places est atteint."]);
         }
 
-        EventRegistration::updateOrCreate(
-            ['event_id' => $event->id, 'user_id' => $user->id],
-            [
-                'participant_name' => $user->name,
-                'email' => $user->email,
+        // Check for previous cancelled registration and allow reactivation (but NOT rejected)
+        $previousRegistration = EventRegistration::where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->where('status', 'cancelled')  // ✅ Seulement 'cancelled', pas 'rejected'
+            ->first();
+
+        if ($previousRegistration) {
+            // Reactivate the previous cancelled registration
+            $previousRegistration->update([
                 'status' => 'approved',
                 'registered_at' => now(),
                 'cancelled_at' => null,
-            ]
-        );
+            ]);
+            
+            return back()->with('success', 'Réinscription confirmée ! Votre participation a été réactivée.');
+        }
+
+        // Create new registration
+        EventRegistration::create([
+            'event_id' => $event->id,
+            'user_id' => $user->id,
+            'participant_name' => $user->name,
+            'email' => $user->email,
+            'status' => 'approved',
+            'registered_at' => now(),
+            'cancelled_at' => null,
+        ]);
 
         return back()->with('success', 'Inscription confirmée.');
     }

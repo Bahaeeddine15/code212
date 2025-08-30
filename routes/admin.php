@@ -40,6 +40,7 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::get('/events/{event}/registrations', [EventRegistrationAdminController::class, 'index'])->name('events.registrations');
     Route::patch('/events/registrations/{registration}/approve', [EventRegistrationAdminController::class, 'approve'])->name('events.registrations.approve');
     Route::patch('/events/registrations/{registration}/reject', [EventRegistrationAdminController::class, 'reject'])->name('events.registrations.reject');
+    Route::patch('/events/registrations/{registration}/cancel', [EventRegistrationAdminController::class, 'cancel'])->name('events.registrations.cancel');
 
     // Media
     Route::resource('media', MediaControllerAdmin::class)->parameters(['media' => 'media']);

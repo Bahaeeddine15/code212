@@ -51,8 +51,19 @@ class EventRegistrationAdminController extends Controller
     {
         $registration->update([
             'status' => 'rejected',
+            'cancelled_at' => now(),
             // 'rejected_by' => auth('admin')->id(), // Uncomment if you have this column
         ]);
-        return back();
+        return back()->with('success', 'Inscription rejetée définitivement. L\'utilisateur ne pourra pas se réinscrire.');
+    }
+
+    public function cancel(EventRegistration $registration)
+    {
+        $registration->update([
+            'status' => 'cancelled',
+            'cancelled_at' => now(),
+            // 'cancelled_by' => auth('admin')->id(), // Uncomment if you have this column
+        ]);
+        return back()->with('success', 'Inscription annulée. L\'utilisateur peut se réinscrire.');
     }
 }

@@ -1,7 +1,7 @@
 import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import { MainFooter } from '@/components/main-footer';
-import { useState } from 'react';
+import { useState, FormEventHandler } from 'react';
 import {
     Mail,
     Phone,
@@ -18,13 +18,42 @@ import {
     Video,
     Globe,
     Menu,
-    X
+    X,
+    CheckCircle,
+    AlertCircle
 } from 'lucide-react';
 import Footer from '@/components/layout/footer';
 
+interface ContactForm {
+    prenom: string;
+    nom: string;
+    email: string;
+    telephone: string;
+    subject: string;
+    message: string;
+}
+
 export default function Contact() {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, flash } = usePage<SharedData & { flash?: { success?: string; error?: string } }>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const { data, setData, post, processing, errors, reset } = useForm<ContactForm>({
+        prenom: '',
+        nom: '',
+        email: '',
+        telephone: '',
+        subject: '',
+        message: '',
+    });
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post(route('contact.store'), {
+            onSuccess: () => {
+                reset();
+            },
+        });
+    };
 
     return (
         <>
@@ -166,6 +195,20 @@ export default function Contact() {
                 {/* Main Content Section */}
                 <section className="py-20 bg-gray-50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        {/* Flash Messages */}
+                        {flash?.success && (
+                            <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center">
+                                <CheckCircle className="w-5 h-5 mr-2" />
+                                {flash.success}
+                            </div>
+                        )}
+                        {flash?.error && (
+                            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
+                                <AlertCircle className="w-5 h-5 mr-2" />
+                                {flash.error}
+                            </div>
+                        )}
+
                         <div className="grid lg:grid-cols-2 gap-12">
                             {/* Contact Form */}
                             <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
@@ -174,25 +217,43 @@ export default function Contact() {
                                     <h2 className="text-2xl font-bold text-gray-900">Formulaire de Contact</h2>
                                 </div>
 
-                                <form className="space-y-6">
+                                <form onSubmit={submit} className="space-y-6">
                                     <div className="grid md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-gray-900 font-medium mb-2">Prénom *</label>
                                             <input
                                                 type="text"
+                                                value={data.prenom}
+                                                onChange={(e) => setData('prenom', e.target.value)}
                                                 required
-                                                className="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                                                className={`w-full px-4 py-3 bg-white text-gray-900 rounded-lg border focus:ring-2 focus:outline-none ${
+                                                    errors.prenom 
+                                                        ? 'border-red-300 focus:ring-red-400 focus:border-red-400' 
+                                                        : 'border-gray-300 focus:ring-blue-400 focus:border-blue-400'
+                                                }`}
                                                 placeholder="Votre prénom"
                                             />
+                                            {errors.prenom && (
+                                                <p className="mt-1 text-sm text-red-600">{errors.prenom}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-gray-900 font-medium mb-2">Nom *</label>
                                             <input
                                                 type="text"
+                                                value={data.nom}
+                                                onChange={(e) => setData('nom', e.target.value)}
                                                 required
-                                                className="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                                                className={`w-full px-4 py-3 bg-white text-gray-900 rounded-lg border focus:ring-2 focus:outline-none ${
+                                                    errors.nom 
+                                                        ? 'border-red-300 focus:ring-red-400 focus:border-red-400' 
+                                                        : 'border-gray-300 focus:ring-blue-400 focus:border-blue-400'
+                                                }`}
                                                 placeholder="Votre nom"
                                             />
+                                            {errors.nom && (
+                                                <p className="mt-1 text-sm text-red-600">{errors.nom}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -200,26 +261,50 @@ export default function Contact() {
                                         <label className="block text-gray-900 font-medium mb-2">Email *</label>
                                         <input
                                             type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
                                             required
-                                            className="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                                            className={`w-full px-4 py-3 bg-white text-gray-900 rounded-lg border focus:ring-2 focus:outline-none ${
+                                                errors.email 
+                                                    ? 'border-red-300 focus:ring-red-400 focus:border-red-400' 
+                                                    : 'border-gray-300 focus:ring-blue-400 focus:border-blue-400'
+                                            }`}
                                             placeholder="votre.email@exemple.com"
                                         />
+                                        {errors.email && (
+                                            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                                        )}
                                     </div>
 
                                     <div>
                                         <label className="block text-gray-900 font-medium mb-2">Téléphone</label>
                                         <input
                                             type="tel"
-                                            className="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                                            value={data.telephone}
+                                            onChange={(e) => setData('telephone', e.target.value)}
+                                            className={`w-full px-4 py-3 bg-white text-gray-900 rounded-lg border focus:ring-2 focus:outline-none ${
+                                                errors.telephone 
+                                                    ? 'border-red-300 focus:ring-red-400 focus:border-red-400' 
+                                                    : 'border-gray-300 focus:ring-blue-400 focus:border-blue-400'
+                                            }`}
                                             placeholder="+212 6XX XXX XXX"
                                         />
+                                        {errors.telephone && (
+                                            <p className="mt-1 text-sm text-red-600">{errors.telephone}</p>
+                                        )}
                                     </div>
 
                                     <div>
                                         <label className="block text-gray-900 font-medium mb-2">Sujet *</label>
                                         <select 
+                                            value={data.subject}
+                                            onChange={(e) => setData('subject', e.target.value)}
                                             required
-                                            className="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                                            className={`w-full px-4 py-3 bg-white text-gray-900 rounded-lg border focus:ring-2 focus:outline-none ${
+                                                errors.subject 
+                                                    ? 'border-red-300 focus:ring-red-400 focus:border-red-400' 
+                                                    : 'border-gray-300 focus:ring-blue-400 focus:border-blue-400'
+                                            }`}
                                         >
                                             <option value="">Choisissez un sujet</option>
                                             <option value="information">Demande d'information</option>
@@ -229,24 +314,41 @@ export default function Contact() {
                                             <option value="technique">Support technique</option>
                                             <option value="autre">Autre</option>
                                         </select>
+                                        {errors.subject && (
+                                            <p className="mt-1 text-sm text-red-600">{errors.subject}</p>
+                                        )}
                                     </div>
 
                                     <div>
                                         <label className="block text-gray-900 font-medium mb-2">Message *</label>
                                         <textarea
+                                            value={data.message}
+                                            onChange={(e) => setData('message', e.target.value)}
                                             required
-                                            className="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                                            className={`w-full px-4 py-3 bg-white text-gray-900 rounded-lg border focus:ring-2 focus:outline-none ${
+                                                errors.message 
+                                                    ? 'border-red-300 focus:ring-red-400 focus:border-red-400' 
+                                                    : 'border-gray-300 focus:ring-blue-400 focus:border-blue-400'
+                                            }`}
                                             rows={6}
                                             placeholder="Décrivez votre demande en détail..."
                                         ></textarea>
+                                        {errors.message && (
+                                            <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+                                        )}
                                     </div>
 
                                     <button
                                         type="submit"
-                                        className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center shadow-lg"
+                                        disabled={processing}
+                                        className={`w-full py-4 rounded-lg font-semibold transition-colors flex items-center justify-center shadow-lg ${
+                                            processing 
+                                                ? 'bg-gray-400 cursor-not-allowed' 
+                                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                        }`}
                                     >
                                         <Send className="w-5 h-5 mr-2" />
-                                        Envoyer le message
+                                        {processing ? 'Envoi en cours...' : 'Envoyer le message'}
                                     </button>
                                 </form>
                             </div>

@@ -110,10 +110,21 @@ class EventController extends Controller
             ->where('status', 'approved')
             ->count();
 
-        $isRegistered = auth('web')->check() ? EventRegistration::where('event_id', $event->id)
-            ->where('user_id', auth('web')->id())
-            ->whereNotIn('status', ['cancelled', 'rejected'])
-            ->exists() : false;
+        // Check user registration status
+        $userRegistration = null;
+        $isRegistered = false;
+        $isRejected = false;
+        
+        if (auth('web')->check()) {
+            $userRegistration = EventRegistration::where('event_id', $event->id)
+                ->where('user_id', auth('web')->id())
+                ->first();
+            
+            if ($userRegistration) {
+                $isRegistered = in_array($userRegistration->status, ['pending', 'approved']);
+                $isRejected = $userRegistration->status === 'rejected';
+            }
+        }
 
         $data = [
             'id' => $event->id,
@@ -123,7 +134,7 @@ class EventController extends Controller
             'end_date' => $event->end_date?->toISOString(),
             'location' => $event->location,
             'category' => $event->category,
-            'type' => $event->type ?? 'Événement', // Add type field
+            'type' => $event->type ?? 'Événement',
             'max_attendees' => $event->max_attendees,
             'status' => method_exists($event, 'computedStatus') ? $event->computedStatus() : ($event->status ?? 'upcoming'),
             'logo' => $event->logo ? Storage::url($event->logo) : null,
@@ -131,6 +142,8 @@ class EventController extends Controller
             'updated_at' => $event->updated_at?->toISOString(),
             'registrations_count' => $registrations,
             'is_registered' => $isRegistered,
+            'is_rejected' => $isRejected,
+            'registration_status' => $userRegistration?->status,
             'seats_left' => $event->max_attendees ? max(0, $event->max_attendees - $registrations) : null,
         ];
 

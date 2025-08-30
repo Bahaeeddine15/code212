@@ -18,7 +18,7 @@ interface Event {
   end_date: string | null;
   location: string;
   category: string;
-  type?: string; // Add type field
+  type?: string;
   max_attendees: number;
   status: string;
   logo?: string | null;
@@ -26,6 +26,8 @@ interface Event {
   updated_at?: string;
   registrations_count?: number;
   is_registered?: boolean;
+  is_rejected?: boolean;
+  registration_status?: string;
   seats_left?: number | null;
 }
 
@@ -151,6 +153,19 @@ export default function EventDetail({ event }: Props) {
                               >
                                 Annuler ma participation
                               </button>
+                            ) : event.is_rejected ? (
+                              <div className="space-y-2">
+                                <button
+                                  disabled
+                                  className="px-4 py-2 rounded-md bg-gray-400 text-white cursor-not-allowed"
+                                  title="Votre demande a été rejetée par l'administration"
+                                >
+                                  Participation rejetée
+                                </button>
+                                <p className="text-sm text-red-600 dark:text-red-400">
+                                  ❌ Votre demande de participation a été rejetée par l'administration.
+                                </p>
+                              </div>
                             ) : (
                               <button
                                 onClick={() => router.post(`/events/${event.id}/register`, {})}
