@@ -9,26 +9,76 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
+    
+
+    private function computeNormalizedStatus(Event $e): string
+    {
+        // If you already store a status column, normalize it
+        $raw = $e->status ? strtolower(trim($e->status)) : null;
+        if (in_array($raw, ['upcoming','ongoing','completed','cancelled'], true)) {
+            return $raw;
+        }
+
+        // Derive from dates if not explicitly set
+        $now = now();
+        if ($e->start_date && $e->end_date) {
+            if ($now->lt($e->start_date))   return 'upcoming';
+            if ($now->between($e->start_date, $e->end_date)) return 'ongoing';
+            return 'completed';
+        }
+
+        return 'upcoming';
+    }
+
+    private function seatsLeft(Event $e, int $registeredCount): ?int
+    {
+        return $e->max_attendees ? max(0, $e->max_attendees - $registeredCount) : null;
+    }
+
+    private function canRegisterForEvent(string $status, ?string $myStatus, Event $e, int $registeredCount): bool
+    {
+        // Only allow new registrations while upcoming (adjust if you want to allow during ongoing)
+        if ($status !== 'upcoming') return false;
+
+        // Student can apply if not already registered/waitlist/rejected
+        // If they cancelled previously, they can re-apply.
+        if (in_array($myStatus, ['registered','waitlist','rejected'], true)) return false;
+
+        // Capacity guard (if you want waitlist when full, flip this to true)
+        $seatsLeft = $this->seatsLeft($e, $registeredCount);
+        if (is_int($seatsLeft) && $seatsLeft <= 0) return false;
+
+        return true;
+    }
+
     public function index()
     {
-        $events = Event::where(function ($q) {
-                $q->whereDate('end_date', '>=', now()->toDateString());
-            })
+        $events = Event::whereDate('end_date', '>=', now()->toDateString())
             ->orderBy('start_date', 'asc')
             ->get()
             ->map(function ($e) {
+                $status = $this->computeNormalizedStatus($e);
+
+                $registeredCount = EventRegistration::where('event_id', $e->id)
+                    ->where('status', 'registered')->count();
+
+                $seatsLeft = $this->seatsLeft($e, $registeredCount);
+
                 return [
-                    'id'             => $e->id,
-                    'title'          => $e->title,
-                    'description'    => $e->description,
-                    'start_date'     => $e->start_date?->toISOString(),
-                    'end_date'       => $e->end_date?->toISOString(),
-                    'location'       => $e->location,
-                    'category'       => $e->category,
-                    'type'           => $e->type ?? 'Événement',
-                    'max_attendees'  => $e->max_attendees,
-                    'status'         => method_exists($e, 'computedStatus') ? $e->computedStatus() : ($e->status ?? 'upcoming'),
-                    'logo'           => $e->logo ? Storage::url($e->logo) : null,
+                    'id' => $e->id,
+                    'title' => $e->title,
+                    'description' => $e->description,
+                    'start_date' => $e->start_date?->toISOString(),
+                    'end_date' => $e->end_date?->toISOString(),
+                    'location' => $e->location,
+                    'category' => $e->category,
+                    'type' => $e->type ?? 'Événement',
+                    'max_attendees' => $e->max_attendees,
+                    'status' => $status,
+                    'logo' => $e->logo ? Storage::url($e->logo) : null,
+                    'registrations_count' => $registeredCount,
+                    'seats_left' => $seatsLeft,
+                    // not computing can_register here (list page usually doesn’t need it)
                 ];
             });
 
@@ -109,57 +159,45 @@ class EventController extends Controller
     /** Student-facing detail page */
     public function show(Event $event)
     {
-        // Seats = only "registered" rows
-        $registeredCount = \App\Models\EventRegistration::where('event_id', $event->id)
+        $registeredCount = EventRegistration::where('event_id', $event->id)
             ->where('status', 'registered')
             ->count();
 
-        // Current student (adjust guard if needed)
-        $me  = auth('web')->user();
-        $reg = null;
+        // student (adjust guard if needed)
+        $me = auth('web')->user();
 
+        $myStatus = null; // 'waitlist' | 'registered' | 'rejected' | 'cancelled' | null
         if ($me) {
-            $reg = \App\Models\EventRegistration::where('event_id', $event->id)
-                ->where('etudiant_id', $me->id)   // 👈 uses etudiant_id
-                ->latest()
-                ->first();
+            $myReg = EventRegistration::where('event_id', $event->id)
+                ->where('etudiant_id', $me->id)   // you asked to use etudiant_id
+                ->latest()->first();
+            $myStatus = $myReg?->status;
         }
 
-        // null | 'waitlist' | 'registered' | 'cancelled' | 'rejected'
-        $myStatus = $reg?->status;
-
-        // Can click "Participer"?
-        // - allowed if never registered OR previously cancelled by the student
-        // - NOT allowed if waitlist/registered/rejected
-        $canRegister = !$reg || $myStatus === 'cancelled';
+        $status    = $this->computeNormalizedStatus($event);
+        $seatsLeft = $this->seatsLeft($event, $registeredCount);
+        $canRegister = $this->canRegisterForEvent($status, $myStatus, $event, $registeredCount);
 
         $data = [
-            'id'                  => $event->id,
-            'title'               => $event->title,
-            'description'         => $event->description,
-            'start_date'          => $event->start_date?->toISOString(),
-            'end_date'            => $event->end_date?->toISOString(),
-            'location'            => $event->location,
-            'category'            => $event->category,
-            'type'                => $event->type ?? 'Événement',
-            'max_attendees'       => $event->max_attendees,
-            'status'              => method_exists($event, 'computedStatus')
-                                    ? $event->computedStatus()
-                                    : ($event->status ?? 'upcoming'),
-            'logo'                => $event->logo ? \Illuminate\Support\Facades\Storage::url($event->logo) : null,
-            'created_at'          => $event->created_at?->toISOString(),
-            'updated_at'          => $event->updated_at?->toISOString(),
-
-            // Seats info
+            'id' => $event->id,
+            'title' => $event->title,
+            'description' => $event->description,
+            'start_date' => $event->start_date?->toISOString(),
+            'end_date' => $event->end_date?->toISOString(),
+            'location' => $event->location,
+            'category' => $event->category,
+            'type' => $event->type ?? 'Événement',
+            'max_attendees' => $event->max_attendees,
+            'status' => $status,                         // <- always normalized
+            'logo' => $event->logo ? Storage::url($event->logo) : null,
+            'created_at' => $event->created_at?->toISOString(),
+            'updated_at' => $event->updated_at?->toISOString(),
             'registrations_count' => $registeredCount,
-            'seats_left'          => $event->max_attendees
-                                            ? max(0, $event->max_attendees - $registeredCount)
-                                            : null,
+            'seats_left' => $seatsLeft,
 
-            // 👇 Student’s registration context
-            'registration_status' => $myStatus,     // null|'waitlist'|'registered'|'cancelled'|'rejected'
-            'can_register'        => $canRegister,  // boolean hint for UI
-            'is_registered'       => $myStatus === 'registered', // (kept for backward-compat)
+            // NEW: student’s own status + can_apply flag
+            'registration_status' => $myStatus,          // null | 'waitlist' | 'registered' | 'rejected' | 'cancelled'
+            'can_register'        => $canRegister,       // boolean the UI will trust
         ];
 
         return inertia('etudiant/event-detail', ['event' => $data]);

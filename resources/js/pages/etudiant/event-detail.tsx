@@ -21,7 +21,6 @@ interface Event {
   location: string;
   category: string;
   type?: string;
-  type?: string;
   max_attendees: number;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' | string;
   logo?: string | null;
@@ -47,11 +46,10 @@ export default function EventDetail({ event }: Props) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Local optimistic status: start from server value
-  const [localStatus, setLocalStatus] = useState<RegStatus | null>(event.registration_status ?? null);
+  const [status, setStatus] = useState<RegStatus | null>(event.registration_status ?? null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Use local optimistic status if we have one, else fall back to server value
-  const status: RegStatus | null = localStatus ?? event.registration_status ?? null;
+  
 
   function fmt(d?: string | null){
     return d ? new Date(d).toLocaleDateString('fr-FR', { dateStyle: 'medium' }) : '';
@@ -64,51 +62,54 @@ export default function EventDetail({ event }: Props) {
     cancelled: 'bg-rose-100 text-rose-800',
   };
 
-  const canInteract =
-    event.status !== 'completed' &&
-    event.status !== 'cancelled';
+  
+
+  type RegStatus = 'waitlist' | 'registered' | 'rejected' | 'cancelled';
+  
+
+  const normEventStatus = String(event.status || '').toLowerCase();
+  const isClosed = normEventStatus === 'completed' || normEventStatus === 'cancelled';
+  const canRegister = (event as any).can_register ?? true; // backend flag if you send it
 
   const handleRegister = () => {
-    if (submitting) return;
+    if (submitting || isClosed || !canRegister) return; // hard stop if closed
     setSubmitting(true);
-    // optimistic: show "pending" right away
-    setLocalStatus('waitlist');
-
-    router.post(
-      `/events/${event.id}/register`,
-      {},
-      {
-        preserveScroll: true,
-        onFinish: () => setSubmitting(false),
-        onError: () => {
-          // rollback if request failed
-          setLocalStatus(event.registration_status ?? null);
-        },
-      }
-    );
+    setStatus('waitlist'); // optimistic
+    router.post(`/events/${event.id}/register`, {}, {
+      preserveScroll: true,
+      onFinish: () => setSubmitting(false),
+      onError: () => setStatus(event.registration_status ?? null),
+    });
   };
 
   const handleUnregister = () => {
     if (submitting) return;
     setSubmitting(true);
-
-    router.delete(
-      `/events/${event.id}/register`,
-      {
-        preserveScroll: true,
-        onFinish: () => setSubmitting(false),
-        // On success we mark it as cancelled so user can re-apply
-        onSuccess: () => setLocalStatus('cancelled'),
-      }
-    );
+    router.delete(`/events/${event.id}/register`, {
+      preserveScroll: true,
+      onFinish: () => setSubmitting(false),
+      onSuccess: () => setStatus(null),
+    });
   };
 
   const ActionArea = () => {
-    if (!canInteract) return null;
+    // 👉 Always show something when event is closed
+    if (isClosed) {
+      const label =
+        normEventStatus === 'completed'
+          ? "Événement terminé — inscriptions closes"
+          : "Événement annulé — inscriptions closes";
+      return (
+        <button
+          disabled
+          className="px-4 py-2 rounded-md bg-gray-300 text-gray-700 text-sm cursor-not-allowed"
+        >
+          {label}
+        </button>
+      );
+    }
 
-    // If backend provided, prefer that; otherwise allow re-apply by default.
-    const canRegister = event.can_register ?? true;
-
+    // Registered
     if (status === 'registered') {
       return (
         <div className="flex items-center gap-3">
@@ -126,6 +127,7 @@ export default function EventDetail({ event }: Props) {
       );
     }
 
+    // Pending
     if (status === 'waitlist') {
       return (
         <button
@@ -138,6 +140,7 @@ export default function EventDetail({ event }: Props) {
       );
     }
 
+    // Rejected (cannot reapply)
     if (status === 'rejected') {
       return (
         <div className="space-y-1">
@@ -154,6 +157,7 @@ export default function EventDetail({ event }: Props) {
       );
     }
 
+    // Cancelled by student (can re-apply if backend allows it)
     if (status === 'cancelled') {
       return (
         <div className="space-y-2">
@@ -172,13 +176,24 @@ export default function EventDetail({ event }: Props) {
     }
 
     // No registration yet
+    if (canRegister) {
+      return (
+        <button
+          onClick={handleRegister}
+          disabled={submitting}
+          className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          Participer à cet événement
+        </button>
+      );
+    }
+
     return (
       <button
-        onClick={handleRegister}
-        disabled={submitting || !canRegister}
-        className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        disabled
+        className="px-4 py-2 rounded-md bg-gray-300 text-gray-700 text-sm cursor-not-allowed"
       >
-        Participer à cet événement
+        Inscriptions fermées
       </button>
     );
   };
