@@ -60,20 +60,31 @@ class FormationController extends Controller
             abort(404);
         }
 
-        $etudiant = Auth::guard('web')->user(); // Use web guard for students
+        $etudiant = Auth::guard('web')->user();
         $isSignedUp = $etudiant
-            ? FormationRegistration::where('etudiant_id', $etudiant->id) // Changed from user_id
+            ? FormationRegistration::where('etudiant_id', $etudiant->id)
             ->where('formation_id', $formation->id)
             ->exists()
             : false;
 
-        // Load modules + files relation: Module::files()
+        // Load modules + files relation
         $formation->load(['modules.files']);
 
+        // ADD THIS: Get completed module IDs for this student
+        $completedModuleIds = [];
+        if ($etudiant && $isSignedUp) {
+            $completedModuleIds = \App\Models\ModuleCompletion::where('etudiant_id', $etudiant->id)
+                ->whereHas('module', function ($query) use ($formation) {
+                    $query->where('formation_id', $formation->id);
+                })
+                ->pluck('module_id')
+                ->toArray();
+        }
+
         $modules = $formation->modules
-            ->unique('id') // <-- This removes duplicates!
+            ->unique('id')
             ->values()
-            ->map(function ($m) use ($isSignedUp) {
+            ->map(function ($m) use ($isSignedUp, $completedModuleIds) { // ADD $completedModuleIds here
                 return [
                     'id'          => $m->id,
                     'titre'       => $m->title,
@@ -81,6 +92,8 @@ class FormationController extends Controller
                     'duration'    => $m->duration,
                     'order'       => $m->order ?? null,
                     'created_at'  => $m->created_at,
+                    // ADD THIS LINE: Set completion status from database
+                    'is_completed' => in_array($m->id, $completedModuleIds),
                     'assets'      => $m->files->map(function ($f) use ($isSignedUp) {
                         $mime = (string) ($f->mime_type ?? '');
                         $type = $f->type
@@ -92,8 +105,8 @@ class FormationController extends Controller
                             'name' => $f->original_name,
                             'type' => $type,
                             'url'  => $isSignedUp ? route('student.module_files.open', $f->id) : null,
-                            'downloadUrl' => $isSignedUp ? route('student.module_files.download', $f->id) : null, // ADD THIS
-                            'videoUrl' => $isSignedUp && $type === 'video' ? route('student.module_files.video', $f->id) : null, // ADD THIS
+                            'downloadUrl' => $isSignedUp ? route('student.module_files.download', $f->id) : null,
+                            'videoUrl' => $isSignedUp && $type === 'video' ? route('student.module_files.video', $f->id) : null,
                         ];
                     })->values(),
                 ];

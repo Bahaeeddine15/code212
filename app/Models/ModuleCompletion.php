@@ -21,7 +21,7 @@ class ModuleCompletion extends Model
 
     public function etudiant()
     {
-        return $this->belongsTo(User::class, 'etudiant_id');
+        return $this->belongsTo(Etudiant::class, 'etudiant_id');
     }
 
     public function module()

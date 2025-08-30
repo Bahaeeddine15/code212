@@ -35,12 +35,6 @@ class Etudiant extends Authenticatable
         return $this->hasMany(EventRegistration::class, 'user_id');
     }
 
-    // Remove this old simple relationship
-    // public function formations()
-    // {
-    //     return $this->belongsToMany(Formation::class);
-    // }
-
     // Registration records
     public function formationRegistrations()
     {
@@ -61,6 +55,26 @@ class Etudiant extends Authenticatable
         return $this->belongsToMany(Formation::class, 'formation_registrations', 'etudiant_id', 'formation_id')
             ->wherePivot('status', 'approved')
             ->withPivot('status', 'registered_at')
+            ->withTimestamps();
+    }
+
+    // ADD: Certificates relationship
+    public function certificates()
+    {
+        return $this->hasMany(\App\Models\Certificate::class, 'student_id', 'id');
+    }
+
+    // ADD: Module completions relationship
+    public function moduleCompletions()
+    {
+        return $this->hasMany(\App\Models\ModuleCompletion::class, 'etudiant_id', 'id');
+    }
+
+    // New: Formations relationship
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class, 'formation_registrations', 'etudiant_id', 'formation_id')
+            ->withPivot('registered_at', 'status')
             ->withTimestamps();
     }
 }

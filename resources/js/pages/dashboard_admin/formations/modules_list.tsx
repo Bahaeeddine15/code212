@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout-admin';
 import { Head, router, Link } from '@inertiajs/react';
 import { 
   Plus, FileText, Trash2, Edit3, GraduationCap, ArrowLeft, Download, PlayCircle,
-  Users, Search, Mail, Calendar, Eye, UserCheck, UserX, Award // ADD Award icon
+  Users, Search, Mail, Calendar, UserCheck, UserX, Award // REMOVED Eye
 } from 'lucide-react';
 import { ModernButton, PageHeader } from '@/components/ui/modern-components';
 import { BreadcrumbItem } from '@/types';
@@ -121,9 +121,36 @@ const StudentsTable = ({
 
   // ADD CERTIFICATE GENERATION HANDLER
   const handleGenerateCertificate = (student: Student) => {
-    console.log('Generating certificate for:', student.name);
-    // This will be implemented later
-    alert(`Génération du certificat pour ${student.name}...`);
+    if (!student.id) return;
+    
+    // Show loading state
+    const button = document.querySelector(`[data-student-id="${student.id}"]`);
+    if (button) {
+      button.textContent = 'Génération...';
+      (button as HTMLButtonElement).disabled = true;
+    }
+    
+    // Make API call to generate certificate
+    router.post(`/admin/certificates/generate-for-student`, {
+      student_id: student.id,
+      formation_id: formation.id
+    }, {
+      onSuccess: (page) => {
+        alert('✅ Certificat généré avec succès !');
+        // Refresh the page to update student status
+        window.location.reload();
+      },
+      onError: (errors) => {
+        console.error('Certificate generation failed:', errors);
+        alert('❌ Erreur lors de la génération du certificat.');
+        
+        // Reset button state
+        if (button) {
+          button.textContent = 'Générer';
+          (button as HTMLButtonElement).disabled = false;
+        }
+      }
+    });
   };
 
   return (
@@ -263,10 +290,11 @@ const StudentsTable = ({
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center justify-end gap-2">
-                          {/* REPLACED MAIL WITH CERTIFICATE BUTTON */}
+                          {/* CERTIFICATE BUTTON */}
                           <button
                             onClick={() => handleGenerateCertificate(student)}
-                            className={`p-1.5 rounded-lg transition-colors ${
+                            data-student-id={student.id}  // ADD THIS LINE
+                            className={`p-2 rounded-lg transition-colors ${
                               isCompleted 
                                 ? 'text-green-600 hover:bg-green-50' 
                                 : 'text-gray-400 cursor-not-allowed'
@@ -276,13 +304,7 @@ const StudentsTable = ({
                           >
                             <Award className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => {/* Add detailed progress view */}}
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="Voir le détail de progression"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
+                          {/* REMOVED EYE ICON */}
                         </div>
                       </td>
                     </tr>
@@ -347,7 +369,7 @@ const StudentsTable = ({
                   </div>
 
                   <div className="flex justify-end gap-2 mt-4">
-                    {/* REPLACED MAIL WITH CERTIFICATE BUTTON */}
+                    {/* CERTIFICATE BUTTON */}
                     <button
                       onClick={() => handleGenerateCertificate(student)}
                       className={`p-2 rounded-lg transition-colors ${
@@ -357,15 +379,9 @@ const StudentsTable = ({
                       }`}
                       title={isCompleted ? "Générer le certificat" : "Formation non terminée"}
                       disabled={!isCompleted}
+                      data-student-id={student.id}
                     >
                       <Award className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => {/* Add detailed progress view */}}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                      title="Voir le détail de progression"
-                    >
-                      <Eye className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

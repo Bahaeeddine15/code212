@@ -70,6 +70,7 @@ export default function Show({ formation }: ShowProps) {
   const toggleModuleCompletion = (moduleId: number) => {
     const isCurrentlyCompleted = completedModules.has(moduleId);
     
+    // Optimistically update UI
     setCompletedModules(prev => {
       const newSet = new Set(prev);
       if (isCurrentlyCompleted) {
@@ -82,7 +83,25 @@ export default function Show({ formation }: ShowProps) {
 
     router.post(`/modules/${moduleId}/toggle-completion`, {}, {
       preserveScroll: true,
-      onError: () => {
+      onSuccess: (page) => {
+        // Handle server response to ensure sync
+        const flashData = page.props?.flash as any;
+        if (flashData?.module_completion) {
+          const { module_id, completed } = flashData.module_completion;
+          setCompletedModules(prev => {
+            const newSet = new Set(prev);
+            if (completed) {
+              newSet.add(module_id);
+            } else {
+              newSet.delete(module_id);
+            }
+            return newSet;
+          });
+        }
+      },
+      onError: (errors) => {
+        console.error('Error toggling completion:', errors);
+        // Revert optimistic update on error
         setCompletedModules(prev => {
           const newSet = new Set(prev);
           if (isCurrentlyCompleted) {

@@ -14,7 +14,16 @@ class ModuleCompletionController extends Controller
         $user = Auth::guard('web')->user();
 
         if (!$user) {
-            return back()->with('error', 'Vous devez être connecté.');
+            return back()->withErrors(['error' => 'Vous devez être connecté.']);
+        }
+
+        // ADD: Check if user is registered for this formation
+        $isRegistered = \App\Models\FormationRegistration::where('formation_id', $module->formation_id)
+            ->where('etudiant_id', $user->id)
+            ->exists();
+
+        if (!$isRegistered) {
+            return back()->withErrors(['error' => 'Vous devez être inscrit à cette formation.']);
         }
 
         $completion = ModuleCompletion::where('etudiant_id', $user->id)
@@ -24,6 +33,7 @@ class ModuleCompletionController extends Controller
         if ($completion) {
             $completion->delete();
             $message = 'Module marqué comme non terminé';
+            $completed = false;
         } else {
             ModuleCompletion::create([
                 'etudiant_id' => $user->id,
@@ -31,8 +41,16 @@ class ModuleCompletionController extends Controller
                 'completed_at' => now(),
             ]);
             $message = 'Module marqué comme terminé';
+            $completed = true;
         }
 
-        return back()->with('success', $message);
+        // ADD: Return with completion status
+        return back()->with([
+            'success' => $message,
+            'module_completion' => [
+                'module_id' => $module->id,
+                'completed' => $completed
+            ]
+        ]);
     }
 }

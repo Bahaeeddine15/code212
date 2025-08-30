@@ -32,6 +32,10 @@ Route::get('module-files/{file}/quality/{quality}', [App\Http\Controllers\Module
     ->middleware('auth:admin,web')
     ->name('student.module_files.open_quality');
 
+// Public certificate verification route
+Route::get('certificates/verify/{code}', [App\Http\Controllers\CertificateController::class, 'verify'])
+    ->name('certificates.verify');
+
 require __DIR__ . '/admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
@@ -160,6 +164,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
         return response()->json(['success' => true]);
     })->name('reservations.dismissNotification');
+
+    Route::get('certificates/{certificate}/download', [App\Http\Controllers\CertificateController::class, 'download'])
+        ->name('certificates.download');
 });
 
 

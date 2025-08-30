@@ -88,4 +88,22 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     Route::resource('reservations', ReservationControllerAdmin::class);
     Route::patch('/reservations/{reservation}/approve', [ReservationControllerAdmin::class, 'approve'])->name('reservations.approve');
     Route::patch('/reservations/{reservation}/reject', [ReservationControllerAdmin::class, 'reject'])->name('reservations.reject');
+
+    // Certificate Management Routes
+    Route::get('certificates', [App\Http\Controllers\CertificateAdminController::class, 'index'])
+        ->name('certificates.index');
+    Route::post('certificates/{certificate}/generate', [App\Http\Controllers\CertificateAdminController::class, 'generate'])
+        ->name('certificates.generate');
+    Route::post('certificates/bulk-generate', [App\Http\Controllers\CertificateAdminController::class, 'bulkGenerate'])
+        ->name('certificates.bulk-generate');
+    Route::get('certificates/{certificate}/download', [App\Http\Controllers\CertificateAdminController::class, 'download'])
+        ->name('certificates.download');
+    Route::get('certificates/statistics', [App\Http\Controllers\CertificateAdminController::class, 'statistics'])
+        ->name('certificates.statistics');
+    Route::delete('certificates/{certificate}', [App\Http\Controllers\CertificateAdminController::class, 'destroy'])
+        ->name('certificates.destroy');
+
+    // Generate certificate for specific student from modules page
+    Route::post('certificates/generate-for-student', [App\Http\Controllers\CertificateAdminController::class, 'generateForStudent'])
+        ->name('certificates.generate-for-student');
 });
