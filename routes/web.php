@@ -22,6 +22,10 @@ Route::get('/contact', function () {
     return Inertia::render('contact');
 })->name('contact');
 
+Route::get('/our-programs', function () {
+    return Inertia::render('our-programs');
+})->name('our.programs');
+
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 
 Route::post('/club-adhesion', [App\Http\Controllers\ClubAdhesionController::class, 'store'])->name('club.adhesion.store');
