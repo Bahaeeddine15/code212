@@ -1,5 +1,5 @@
 import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import { MainFooter } from '@/components/main-footer';
 import { useState } from 'react';
 import {
@@ -23,8 +23,69 @@ import {
 import Footer from '@/components/layout/footer';
 
 export default function ClubsPartners() {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, flash } = usePage<SharedData>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    // Form pour l'adhésion aux clubs
+    const { data, setData, post, processing, reset, errors: clubErrors } = useForm({
+        prenom: '',
+        nom: '',
+        email: '',
+        telephone: '',
+        club_interesse: '',
+        niveau_etude: '',
+        motivation: '',
+    });
+
+    // Form pour le partenariat
+    const { 
+        data: partenaireData, 
+        setData: setPartenaireData, 
+        post: postPartenaire, 
+        processing: processingPartenaire, 
+        reset: resetPartenaire,
+        errors: partenaireErrors 
+    } = useForm({
+        nom_organisation: '',
+        contact_principal: '',
+        poste: '',
+        email_professionnel: '',
+        telephone: '',
+        type_partenariat: '',
+        secteur_activite: '',
+        description_projet: '',
+        site_web: '',
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        post('/club-adhesion', {
+            onSuccess: (response) => {
+                reset();
+            },
+            onError: (errors) => {
+                console.error('Erreurs de validation club:', errors);
+            },
+            onFinish: () => {
+            }
+        });
+    };
+
+    const handlePartenaireSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        postPartenaire('/partenaire', {
+            onSuccess: (response) => {
+                resetPartenaire();
+            },
+            onError: (errors) => {
+                console.error('Erreurs de validation partenaire:', errors);
+            },
+            onFinish: () => {
+            }
+        });
+    };
 
     return (
         <>
@@ -551,28 +612,79 @@ export default function ClubsPartners() {
                         <div className="grid md:grid-cols-2 gap-12">
                             {/* Club Membership Form */}
                             <div className="bg-gray-900 rounded-xl p-8 shadow-lg">
+                                {/* Messages Flash pour le formulaire d'adhésion */}
+                                {flash?.club_success && (
+                                    <div className="mb-6 p-4 bg-green-600 text-white rounded-lg shadow-lg">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0">
+                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div className="ml-3">
+                                                <p className="text-sm font-medium">{flash.club_success}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {((flash?.club_error) || (clubErrors && Object.keys(clubErrors).length > 0)) && (
+                                    <div className="mb-6 p-4 bg-red-600 text-white rounded-lg shadow-lg">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0">
+                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div className="ml-3">
+                                                {flash?.club_error && (
+                                                    <p className="text-sm font-medium">{flash.club_error}</p>
+                                                )}
+                                                {clubErrors && Object.keys(clubErrors).length > 0 && (
+                                                    <div>
+                                                        <p className="text-sm font-medium mb-2">Erreurs de validation :</p>
+                                                        <ul className="text-sm space-y-1">
+                                                            {Object.entries(clubErrors).map(([field, error]) => (
+                                                                <li key={field}>• {Array.isArray(error) ? error[0] : error}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="flex items-center mb-6">
                                     <Users className="w-8 h-8 text-pink-400 mr-4" />
                                     <h3 className="text-2xl font-bold text-white">Adhésion aux Clubs</h3>
                                 </div>
 
-                                <form className="space-y-6">
+                                <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-white font-medium mb-2">Prénom</label>
                                             <input
                                                 type="text"
+                                                value={data.prenom}
+                                                onChange={(e) => setData('prenom', e.target.value)}
                                                 className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
                                                 placeholder="Votre prénom"
+                                                required
                                             />
+                                            {clubErrors.prenom && <p className="text-red-400 text-sm mt-1">{clubErrors.prenom}</p>}
                                         </div>
                                         <div>
                                             <label className="block text-white font-medium mb-2">Nom</label>
                                             <input
                                                 type="text"
+                                                value={data.nom}
+                                                onChange={(e) => setData('nom', e.target.value)}
                                                 className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
                                                 placeholder="Votre nom"
+                                                required
                                             />
+                                            {clubErrors.nom && <p className="text-red-400 text-sm mt-1">{clubErrors.nom}</p>}
                                         </div>
                                     </div>
 
@@ -580,80 +692,152 @@ export default function ClubsPartners() {
                                         <label className="block text-white font-medium mb-2">Email</label>
                                         <input
                                             type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
                                             placeholder="votre.email@exemple.com"
+                                            required
                                         />
+                                        {clubErrors.email && <p className="text-red-400 text-sm mt-1">{clubErrors.email}</p>}
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Téléphone</label>
                                         <input
                                             type="tel"
+                                            value={data.telephone}
+                                            onChange={(e) => setData('telephone', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
                                             placeholder="+212 6XX XXX XXX"
+                                            required
                                         />
+                                        {clubErrors.telephone && <p className="text-red-400 text-sm mt-1">{clubErrors.telephone}</p>}
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Club d'intérêt</label>
-                                        <select className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none">
+                                        <select 
+                                            value={data.club_interesse}
+                                            onChange={(e) => setData('club_interesse', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            required
+                                        >
                                             <option value="">Sélectionnez un club</option>
-                                            <option value="ia">Club IA</option>
-                                            <option value="esport">Club E-Sport</option>
-                                            <option value="infographie">Club Infographie</option>
-                                            <option value="dev">Club Dev</option>
-                                            <option value="entrepreneur">Club Entrepreneur</option>
-                                            <option value="social">Club Social</option>
+                                            <option value="Club IA">Club IA - Intelligence Artificielle</option>
+                                            <option value="Club E-Sport">Club E-Sport - Gaming & Compétition</option>
+                                            <option value="Club Infographie">Club Infographie - Design & Créativité</option>
+                                            <option value="Club Dev">Club Dev - Développement Web & Mobile</option>
+                                            <option value="Club Entrepreneur">Club Entrepreneur - Business & Innovation</option>
+                                            <option value="Club Social">Club Social - Communauté & Solidarité</option>
                                         </select>
+                                        {clubErrors.club_interesse && <p className="text-red-400 text-sm mt-1">{clubErrors.club_interesse}</p>}
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Niveau d'étude</label>
-                                        <select className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none">
+                                        <select 
+                                            value={data.niveau_etude}
+                                            onChange={(e) => setData('niveau_etude', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            required
+                                        >
                                             <option value="">Sélectionnez votre niveau</option>
-                                            <option value="bac">Baccalauréat</option>
-                                            <option value="bac+1">Bac+1</option>
-                                            <option value="bac+2">Bac+2</option>
-                                            <option value="bac+3">Bac+3</option>
-                                            <option value="bac+4">Bac+4</option>
-                                            <option value="bac+5">Bac+5 et plus</option>
+                                            <option value="Baccalauréat">Baccalauréat</option>
+                                            <option value="Bac+1">Bac+1</option>
+                                            <option value="Bac+2">Bac+2</option>
+                                            <option value="Bac+3">Bac+3 (Licence)</option>
+                                            <option value="Bac+4">Bac+4 (Master 1)</option>
+                                            <option value="Bac+5 et plus">Bac+5 et plus (Master 2, Doctorat)</option>
                                         </select>
+                                        {clubErrors.niveau_etude && <p className="text-red-400 text-sm mt-1">{clubErrors.niveau_etude}</p>}
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Motivation</label>
                                         <textarea
+                                            value={data.motivation}
+                                            onChange={(e) => setData('motivation', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
                                             rows={4}
-                                            placeholder="Expliquez votre motivation à rejoindre ce club..."
-                                        ></textarea>
+                                            placeholder="Expliquez votre motivation à rejoindre ce club, vos objectifs, vos compétences ou expériences pertinentes..."
+                                            required
+                                        />
+                                        {clubErrors.motivation && <p className="text-red-400 text-sm mt-1">{clubErrors.motivation}</p>}
                                     </div>
 
                                     <button
                                         type="submit"
-                                        className="w-full bg-pink-600 text-white py-4 rounded-lg font-semibold hover:bg-pink-700 transition-colors flex items-center justify-center"
+                                        disabled={processing}
+                                        className="w-full bg-pink-600 text-white py-4 rounded-lg font-semibold hover:bg-pink-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <Send className="w-5 h-5 mr-2" />
-                                        Envoyer ma demande d'adhésion
+                                        {processing ? 'Envoi en cours...' : 'Envoyer ma demande d\'adhésion'}
                                     </button>
                                 </form>
                             </div>
 
                             {/* Partnership Form */}
                             <div className="bg-gray-900 rounded-xl p-8 shadow-lg">
+                                {/* Messages Flash pour le formulaire de partenariat */}
+                                {flash?.partenaire_success && (
+                                    <div className="mb-6 p-4 bg-green-600 text-white rounded-lg shadow-lg">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0">
+                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div className="ml-3">
+                                                <p className="text-sm font-medium">{flash.partenaire_success}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {((flash?.partenaire_error) || (partenaireErrors && Object.keys(partenaireErrors).length > 0)) && (
+                                    <div className="mb-6 p-4 bg-red-600 text-white rounded-lg shadow-lg">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0">
+                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div className="ml-3">
+                                                {flash?.partenaire_error && (
+                                                    <p className="text-sm font-medium">{flash.partenaire_error}</p>
+                                                )}
+                                                {partenaireErrors && Object.keys(partenaireErrors).length > 0 && (
+                                                    <div>
+                                                        <p className="text-sm font-medium mb-2">Erreurs de validation :</p>
+                                                        <ul className="text-sm space-y-1">
+                                                            {Object.entries(partenaireErrors).map(([field, error]) => (
+                                                                <li key={field}>• {Array.isArray(error) ? error[0] : error}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="flex items-center mb-6">
                                     <Building2 className="w-8 h-8 text-blue-400 mr-4" />
                                     <h3 className="text-2xl font-bold text-white">Formulaire de Partenariat</h3>
                                 </div>
 
-                                <form className="space-y-6">
+                                <form onSubmit={handlePartenaireSubmit} className="space-y-6">
                                     <div>
                                         <label className="block text-white font-medium mb-2">Nom de l'organisation</label>
                                         <input
                                             type="text"
+                                            value={partenaireData.nom_organisation}
+                                            onChange={(e) => setPartenaireData('nom_organisation', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
                                             placeholder="Nom de votre entreprise/institution"
+                                            required
                                         />
+                                        {partenaireErrors.nom_organisation && <p className="text-red-400 text-sm mt-1">{partenaireErrors.nom_organisation}</p>}
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-4">
@@ -661,17 +845,25 @@ export default function ClubsPartners() {
                                             <label className="block text-white font-medium mb-2">Contact principal</label>
                                             <input
                                                 type="text"
+                                                value={partenaireData.contact_principal}
+                                                onChange={(e) => setPartenaireData('contact_principal', e.target.value)}
                                                 className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
                                                 placeholder="Nom du responsable"
+                                                required
                                             />
+                                            {partenaireErrors.contact_principal && <p className="text-red-400 text-sm mt-1">{partenaireErrors.contact_principal}</p>}
                                         </div>
                                         <div>
                                             <label className="block text-white font-medium mb-2">Poste</label>
                                             <input
                                                 type="text"
+                                                value={partenaireData.poste}
+                                                onChange={(e) => setPartenaireData('poste', e.target.value)}
                                                 className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
-                                                placeholder="Fonction du contact"
+                                                placeholder="Fonction du contact (CEO, DRH, Directeur...)"
+                                                required
                                             />
+                                            {partenaireErrors.poste && <p className="text-red-400 text-sm mt-1">{partenaireErrors.poste}</p>}
                                         </div>
                                     </div>
 
@@ -680,67 +872,94 @@ export default function ClubsPartners() {
                                             <label className="block text-white font-medium mb-2">Email professionnel</label>
                                             <input
                                                 type="email"
+                                                value={partenaireData.email_professionnel}
+                                                onChange={(e) => setPartenaireData('email_professionnel', e.target.value)}
                                                 className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
                                                 placeholder="contact@entreprise.com"
+                                                required
                                             />
+                                            {partenaireErrors.email_professionnel && <p className="text-red-400 text-sm mt-1">{partenaireErrors.email_professionnel}</p>}
                                         </div>
                                         <div>
                                             <label className="block text-white font-medium mb-2">Téléphone</label>
                                             <input
                                                 type="tel"
+                                                value={partenaireData.telephone}
+                                                onChange={(e) => setPartenaireData('telephone', e.target.value)}
                                                 className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
                                                 placeholder="+212 5XX XXX XXX"
+                                                required
                                             />
+                                            {partenaireErrors.telephone && <p className="text-red-400 text-sm mt-1">{partenaireErrors.telephone}</p>}
                                         </div>
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Type de partenariat</label>
-                                        <select className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none">
+                                        <select 
+                                            value={partenaireData.type_partenariat}
+                                            onChange={(e) => setPartenaireData('type_partenariat', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
+                                            required
+                                        >
                                             <option value="">Sélectionnez le type</option>
-                                            <option value="academique">Partenariat Académique</option>
-                                            <option value="industriel">Partenariat Industriel</option>
-                                            <option value="stage">Offres de stage</option>
-                                            <option value="emploi">Recrutement</option>
-                                            <option value="sponsoring">Sponsoring d'événements</option>
-                                            <option value="formation">Formations spécialisées</option>
-                                            <option value="autre">Autre</option>
+                                            <option value="Partenariat Académique">Partenariat Académique</option>
+                                            <option value="Partenariat Industriel">Partenariat Industriel</option>
+                                            <option value="Offres de stage">Offres de stage</option>
+                                            <option value="Recrutement">Recrutement</option>
+                                            <option value="Sponsoring d'événements">Sponsoring d'événements</option>
+                                            <option value="Formations spécialisées">Formations spécialisées</option>
+                                            <option value="Innovation & R&D">Innovation & R&D</option>
+                                            <option value="Autre">Autre</option>
                                         </select>
+                                        {partenaireErrors.type_partenariat && <p className="text-red-400 text-sm mt-1">{partenaireErrors.type_partenariat}</p>}
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Secteur d'activité</label>
                                         <input
                                             type="text"
+                                            value={partenaireData.secteur_activite}
+                                            onChange={(e) => setPartenaireData('secteur_activite', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
-                                            placeholder="IT, Finance, Industrie, etc."
+                                            placeholder="IT, Finance, Industrie, Santé, E-commerce..."
+                                            required
                                         />
+                                        {partenaireErrors.secteur_activite && <p className="text-red-400 text-sm mt-1">{partenaireErrors.secteur_activite}</p>}
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Description du projet de partenariat</label>
                                         <textarea
+                                            value={partenaireData.description_projet}
+                                            onChange={(e) => setPartenaireData('description_projet', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
                                             rows={4}
-                                            placeholder="Décrivez votre projet de partenariat, vos objectifs et ce que vous proposez..."
-                                        ></textarea>
+                                            placeholder="Décrivez votre projet de partenariat, vos objectifs, ce que vous proposez et ce que vous attendez de la collaboration avec CODE212..."
+                                            required
+                                        />
+                                        {partenaireErrors.description_projet && <p className="text-red-400 text-sm mt-1">{partenaireErrors.description_projet}</p>}
                                     </div>
 
                                     <div>
                                         <label className="block text-white font-medium mb-2">Site web (optionnel)</label>
                                         <input
                                             type="url"
+                                            value={partenaireData.site_web}
+                                            onChange={(e) => setPartenaireData('site_web', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none"
                                             placeholder="https://www.votre-entreprise.com"
                                         />
+                                        {partenaireErrors.site_web && <p className="text-red-400 text-sm mt-1">{partenaireErrors.site_web}</p>}
                                     </div>
 
                                     <button
                                         type="submit"
-                                        className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
+                                        disabled={processingPartenaire}
+                                        className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <Send className="w-5 h-5 mr-2" />
-                                        Envoyer la demande de partenariat
+                                        {processingPartenaire ? 'Envoi en cours...' : 'Envoyer la demande de partenariat'}
                                     </button>
                                 </form>
                             </div>

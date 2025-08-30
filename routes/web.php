@@ -24,6 +24,10 @@ Route::get('/contact', function () {
 
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 
+Route::post('/club-adhesion', [App\Http\Controllers\ClubAdhesionController::class, 'store'])->name('club.adhesion.store');
+
+Route::post('/partenaire', [App\Http\Controllers\PartenaireController::class, 'store'])->name('partenaire.store');
+
 Route::get('module-files/{file}/quality/{quality}', [App\Http\Controllers\ModuleFileController::class, 'openQuality'])
     ->middleware('auth:admin,web')
     ->name('student.module_files.open_quality');
