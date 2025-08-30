@@ -21,6 +21,7 @@ interface Event {
   location: string;
   category: string;
   type?: string;
+  type?: string;
   max_attendees: number;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' | string;
   logo?: string | null;
