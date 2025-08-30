@@ -9,25 +9,36 @@ use Inertia\Inertia;
 
 class EventRegistrationAdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
+    // List registrations for a single event
     public function index(Event $event)
     {
-        $registrations = EventRegistration::with('user')
-            ->where('event_id', $event->id)
-            ->orderBy('created_at', 'desc')
+        $registrations = EventRegistration::where('event_id', $event->id)
+            ->with(['etudiant:id,name,email,telephone,ecole,ville'])
+            ->orderByDesc('created_at')
             ->get()
             ->map(function ($r) {
                 return [
-                    'id' => $r->id,
-                    'name' => $r->participant_name ?? optional($r->user)->name,
-                    'email' => $r->email ?? optional($r->user)->email,
-                    'ecole' => optional($r->user)->ecole,
-                    'status' => $r->status,
-                    'registered_at' => optional($r->registered_at)->toISOString(),
+                    'id'            => $r->id,
+                    'status'        => $r->status, // waitlist|registered|cancelled
+                    'registered_at' => $r->registered_at?->toDateTimeString(),
+                    'etudiant'      => [
+                        'id'         => $r->etudiant_id,
+                        'name'       => $r->etudiant?->name,
+                        'email'      => $r->etudiant?->email,
+                        'telephone'  => $r->etudiant?->telephone,
+                        'ecole'      => $r->etudiant?->ecole,
+                        'ville'      => $r->etudiant?->ville,
+                    ],
                 ];
             });
 
-        return Inertia::render('dashboard_admin/Evenements/evenement_registrations', [
-            'event' => [
+        return inertia('dashboard_admin/Evenements/evenement_registrations', [
+            'event'         => [
                 'id' => $event->id,
                 'title' => $event->title,
                 'start_date' => optional($event->start_date)->toISOString(),
@@ -38,21 +49,33 @@ class EventRegistrationAdminController extends Controller
         ]);
     }
 
-    public function approve(EventRegistration $registration)
+    public function approve(Event $event, EventRegistration $registration)
     {
+        abort_unless($registration->event_id === $event->id, 404);
+
         $registration->update([
-            'status' => 'approved',
-            // 'approved_by' => auth('admin')->id(), // Uncomment if you have this column
+            'status'        => EventRegistration::APPROVED,
+            'cancelled_at'  => null,
+            'registered_at' => now(),
         ]);
-        return back();
+        $registration->update([
+            'status' => 'registered',
+            'registered_at' => now(),
+        ]);
+
+        // (Optional later) notify student here
+        return back()->with('success', 'Participation approuvée.');
     }
 
-    public function reject(EventRegistration $registration)
+    public function reject(Event $event, EventRegistration $registration)
     {
+        abort_unless($registration->event_id === $event->id, 404);
+
         $registration->update([
             'status' => 'rejected',
-            // 'rejected_by' => auth('admin')->id(), // Uncomment if you have this column
         ]);
-        return back();
+
+        // (Optional later) notify student here
+        return back()->with('success', 'Participation refusée.');
     }
 }

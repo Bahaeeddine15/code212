@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class EventRegistration extends Model
 {
     use HasFactory;
+    
+    public const PENDING  = 'waitlist';
+    public const APPROVED = 'registered';
+    public const REJECTED = 'cancelled';
 
     protected $table = 'event_registrations';
-
+    
     protected $fillable = [
         'event_id',
-        'user_id',
+        'etudiant_id',
         'participant_name',
         'email',
         'phone',
@@ -32,8 +36,8 @@ class EventRegistration extends Model
         return $this->belongsTo(Event::class);
     }
 
-    public function user()
+    public function etudiant()
     {
-        return $this->belongsTo(Etudiant::class, 'user_id');
+        return $this->belongsTo(Etudiant::class, 'etudiant_id');
     }
 }

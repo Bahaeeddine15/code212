@@ -37,9 +37,14 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     // Events
     Route::resource('events', EventControllerAdmin::class);
     Route::patch('/events/{id}/status', [EventControllerAdmin::class, 'updateStatus'])->name('events.updateStatus');
-    Route::get('/events/{event}/registrations', [EventRegistrationAdminController::class, 'index'])->name('events.registrations');
-    Route::patch('/events/registrations/{registration}/approve', [EventRegistrationAdminController::class, 'approve'])->name('events.registrations.approve');
-    Route::patch('/events/registrations/{registration}/reject', [EventRegistrationAdminController::class, 'reject'])->name('events.registrations.reject');
+    Route::get('/events/{event}/registrations', [EventRegistrationAdminController::class, 'index'])
+        ->name('events.registrations.index');
+
+    Route::patch('/events/{event}/registrations/{registration}/approve', [EventRegistrationAdminController::class, 'approve'])
+        ->name('events.registrations.approve');
+
+    Route::patch('/events/{event}/registrations/{registration}/reject', [EventRegistrationAdminController::class, 'reject'])
+        ->name('events.registrations.reject');
 
     // Media
     Route::resource('media', MediaControllerAdmin::class)->parameters(['media' => 'media']);

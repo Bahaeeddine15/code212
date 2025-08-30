@@ -11,60 +11,46 @@ class EventRegistrationController extends Controller
 {
     public function store(Request $request, Event $event)
     {
-        $user = auth('web')->user();
+        $student = auth('web')->user(); // your student guard
+        abort_unless($student, 403);
 
-        // Prevent registration if event finished or cancelled/completed
-        $status = method_exists($event, 'computedStatus') ? $event->computedStatus() : ($event->status ?? 'upcoming');
-        if (in_array($status, ['completed', 'cancelled'])) {
-            return back()->withErrors(['registration' => "Les inscriptions ne sont pas ouvertes pour cet événement."]);
+        $reg = EventRegistration::firstOrNew([
+            'event_id'    => $event->id,
+            'etudiant_id' => $student->id,
+        ]);
+
+        if ($reg->exists && $reg->status === 'rejected') {
+            return back()->withErrors(['register' => 'Votre demande a été refusée. Vous ne pouvez pas vous réinscrire.']);
         }
 
-        // Check existing request (pending/approved)
-        $existing = EventRegistration::where('event_id', $event->id)
-            ->where('user_id', $user->id)
-            ->whereNotIn('status', ['cancelled', 'rejected'])
-            ->first();
-        if ($existing) {
-            return back()->withErrors(['registration' => 'Votre demande existe déjà (en attente ou approuvée).']);
-        }
+        $reg->fill([
+            'participant_name' => $student->name,
+            'email'            => $student->email,
+            'phone'            => $student->telephone,
+            'status'           => 'waitlist',
+            'registered_at'    => now(),
+            'cancelled_at'     => null,
+        ])->save();
 
-        // Check capacity
-        $confirmedCount = EventRegistration::where('event_id', $event->id)
-            ->where('status', 'approved')
-            ->count();
-        if ($event->max_attendees && $confirmedCount >= $event->max_attendees) {
-            return back()->withErrors(['registration' => "Le nombre maximum de places est atteint."]);
-        }
-
-        EventRegistration::updateOrCreate(
-            ['event_id' => $event->id, 'user_id' => $user->id],
-            [
-                'participant_name' => $user->name,
-                'email' => $user->email,
-                'status' => 'approved',
-                'registered_at' => now(),
-                'cancelled_at' => null,
-            ]
-        );
-
-        return back()->with('success', 'Inscription confirmée.');
+    
+        return back()->with('success', 'Demande envoyée. En attente de validation.');
     }
 
     public function destroy(Request $request, Event $event)
     {
-        $user = auth('web')->user();
-        $registration = EventRegistration::where('event_id', $event->id)
-            ->where('user_id', $user->id)
-            ->first();
-        if (!$registration) {
-            return back()->withErrors(['registration' => "Vous n'êtes pas inscrit à cet événement."]);
+        $student = auth('web')->user();
+        abort_unless($student, 403);
+
+        $reg = EventRegistration::where('event_id',$event->id)
+            ->where('etudiant_id',$student->id)->first();
+
+        if ($reg) {
+            $reg->update([
+                'status' => 'cancelled',
+                'cancelled_at' => now(),
+            ]);
         }
-
-        $registration->update([
-            'status' => 'cancelled',
-            'cancelled_at' => now(),
-        ]);
-
-        return back()->with('success', 'Votre participation a été annulée.');
+   
+        return back()->with('success', 'Votre demande a été annulée.');
     }
 }
