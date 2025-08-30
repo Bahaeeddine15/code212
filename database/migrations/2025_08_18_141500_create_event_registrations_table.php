@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             // Users are stored in 'etudiant' table
-            $table->foreignId('user_id')->constrained('etudiant')->onDelete('cascade');
+            $table->foreignId('etudiant_id')->constrained('etudiant')->onDelete('cascade');  // ✅ Changer en etudiant_id
             $table->string('participant_name')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
 
-            $table->unique(['event_id','user_id']);
+            $table->unique(['event_id','etudiant_id']);  // ✅ Changer la contrainte unique aussi
         });
     }
 

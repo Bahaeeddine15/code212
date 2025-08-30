@@ -169,7 +169,7 @@ class EventController extends Controller
         $myStatus = null; // 'waitlist' | 'registered' | 'rejected' | 'cancelled' | null
         if ($me) {
             $myReg = EventRegistration::where('event_id', $event->id)
-                ->where('etudiant_id', $me->id)   // you asked to use etudiant_id
+                ->where('etudiant_id', $me->id)   // ✅ Remettre etudiant_id
                 ->latest()->first();
             $myStatus = $myReg?->status;
         }

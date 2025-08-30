@@ -9,7 +9,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // MySQL enum alteration
+        // First, update incompatible values
+        DB::table('event_registrations')
+            ->where('status', 'approved')
+            ->update(['status' => 'registered']);
+            
+        DB::table('event_registrations')
+            ->where('status', 'pending')
+            ->update(['status' => 'waitlist']);
+
+        // Then modify the ENUM
         DB::statement(
             "ALTER TABLE event_registrations 
              MODIFY COLUMN status 

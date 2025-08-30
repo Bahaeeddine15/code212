@@ -16,14 +16,13 @@ class ArticleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get the first admin user or create one if none exists
-        $adminUser = User::where('role', 'admin')->first();
+        // Get the first user or create one if none exists
+        $adminUser = User::first();
         if (!$adminUser) {
             $adminUser = User::create([
                 'name' => 'Admin Code212',
                 'email' => 'admin@code212.ma',
                 'password' => bcrypt('password'),
-                'role' => 'admin',
                 'email_verified_at' => now(),
             ]);
         }

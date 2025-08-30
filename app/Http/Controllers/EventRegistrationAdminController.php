@@ -27,7 +27,7 @@ class EventRegistrationAdminController extends Controller
                     'status'        => $r->status, // waitlist|registered|cancelled
                     'registered_at' => $r->registered_at?->toDateTimeString(),
                     'etudiant'      => [
-                        'id'         => $r->etudiant_id,
+                        'id'         => $r->etudiant_id,  // ✅ Remettre etudiant_id
                         'name'       => $r->etudiant?->name,
                         'email'      => $r->etudiant?->email,
                         'telephone'  => $r->etudiant?->telephone,

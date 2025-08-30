@@ -17,7 +17,7 @@ class EventRegistration extends Model
     
     protected $fillable = [
         'event_id',
-        'etudiant_id',
+        'etudiant_id',  // ✅ Remettre etudiant_id
         'participant_name',
         'email',
         'phone',
@@ -38,6 +38,11 @@ class EventRegistration extends Model
 
     public function etudiant()
     {
-        return $this->belongsTo(Etudiant::class, 'etudiant_id');
+        return $this->belongsTo(Etudiant::class, 'etudiant_id');  // ✅ Remettre etudiant_id
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(Etudiant::class, 'etudiant_id');  // ✅ Alias pointant vers etudiant_id
     }
 }
