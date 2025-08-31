@@ -10,6 +10,18 @@ class EventControllerAdmin extends Controller
 {
     public function index()
     {
+        $today = now()->toDateString();
+
+        // Set to 'ongoing' if today is the start_date
+        Event::whereDate('start_date', $today)
+            ->whereNotIn('status', ['ongoing', 'completed', 'cancelled'])
+            ->update(['status' => 'ongoing']);
+
+        // Set to 'completed' if today is past the end_date
+        Event::whereDate('end_date', '<', $today)
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->update(['status' => 'completed']);
+
         $events = Event::withCount(['registrations' => function ($q) {
             $q->where('status', 'approved');
         }])

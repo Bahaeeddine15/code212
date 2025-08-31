@@ -14,6 +14,7 @@ use App\Http\Controllers\EventRegistrationAdminController;
 use App\Http\Controllers\CompetitionRegistrationControllerAdmin;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\ModuleFileController;
+use App\Http\Controllers\DashboardAdminController;
 
 // Admin authentication routes
 Route::prefix('admin')->group(function () {
@@ -26,11 +27,7 @@ Route::prefix('admin')->group(function () {
 
 // Protected admin routes
 Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard_admin/dashboard', [
-            'name' => Auth::user()->name,
-        ]);
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
 
     Route::resource('articles', ArticleControllerAdmin::class);
 

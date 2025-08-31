@@ -108,11 +108,41 @@ const DataCompartment = ({
     </div>
 );
 
-interface DashboardProps{
-    name : string;
+interface DashboardProps {
+    name: string;
+    stats: {
+        articles: number;
+        articles_published : number;
+        articles_archived : number;
+        articles_draft: number;
+        articles_views: number;
+        articles_this_month: number;
+        events: number;
+        events_finished: number;
+        events_ongoing: number;
+        events_upcoming: number;
+        events_participants: number;
+        media_images: number;
+        media_videos: number;
+        media_documents: number;
+        media_total_size: number;
+        formations: number;
+        formations_students: number;
+        formations_certifications: number;
+        formations_success_rate: number;
+        competitions_active: number;
+        competitions_participants: number;
+        competitions_finished: number;
+        competitions_prizes: number;
+        users_active: number;
+        users_logins_this_month: number;
+        users_new_this_month: number;
+        users_engagement: number;
+    };
+    adminEmail: string;
 }
 
-export default function Dashboard({name}: DashboardProps) {
+export default function Dashboard({ name, stats, adminEmail }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -149,7 +179,7 @@ export default function Dashboard({name}: DashboardProps) {
 
                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-1.5 sm:py-2 gap-1 sm:gap-0">
                                 <span className="text-xs sm:text-sm font-medium text-muted-foreground">Email</span>
-                                <span className="text-xs sm:text-sm text-foreground">admin@code212.ma</span>
+                                <span className="text-xs sm:text-sm text-foreground">{adminEmail}</span>
                             </div>
                         </div>
                     </div>
@@ -159,33 +189,28 @@ export default function Dashboard({name}: DashboardProps) {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 lg:mb-7">
                     <StatCard
                         title="Articles"
-                        value="24"
+                        value={stats.articles}
                         icon={FileText}
-                        theme="primary"
                     />
                     <StatCard
                         title="Événements terminés"
-                        value="8"
+                        value={stats.events}
                         icon={CalendarCheck}
-                        theme="success"
                     />
                     <StatCard
                         title="Images"
-                        value="156"
+                        value={stats.media_images}
                         icon={Images}
-                        theme="info"
                     />
                     <StatCard
                         title="Formations"
-                        value="12"
+                        value={stats.formations}
                         icon={GraduationCap}
-                        theme="secondary"
                     />
                     <StatCard
                         title="Compétitions"
-                        value="6"
+                        value={stats.competitions_active}
                         icon={Trophy}
-                        theme="warning"
                     />
                 </div>
 
@@ -196,12 +221,12 @@ export default function Dashboard({name}: DashboardProps) {
                         title="Gestion des Articles"
                         description="Aperçu des articles publiés"
                         icon={FileText}
-                        theme="primary"
                         data={[
-                            { label: "Articles publiés", value: "24" },
-                            { label: "Brouillons", value: "5" },
-                            { label: "Vues totales", value: "1,245" },
-                            { label: "Articles ce mois", value: "8" }
+                            { label: "Articles publiés", value: stats.articles_published },
+                            { label: "Brouillons", value: stats.articles_draft },
+                            { label: "Archivés", value: stats.articles_archived },
+                            { label: "Vues totales", value: stats.articles_views },
+                            { label: "Articles ce mois", value: stats.articles_this_month }
                         ]}
                         href="/admin/articles"
                     />
@@ -210,12 +235,11 @@ export default function Dashboard({name}: DashboardProps) {
                         title="Événements"
                         description="Gestion des événements"
                         icon={Calendar}
-                        theme="success"
                         data={[
-                            { label: "Événements terminés", value: "8" },
-                            { label: "Événements en cours", value: "3" },
-                            { label: "Événements à venir", value: "12" },
-                            { label: "Participants totaux", value: "456" }
+                            { label: "Événements terminés", value: stats.events_finished },
+                            { label: "Événements en cours", value: stats.events_ongoing },
+                            { label: "Événements à venir", value: stats.events_upcoming },
+                            { label: "Participants totaux", value: stats.events_participants }
                         ]}
                         href="/admin/events"
                     />
@@ -224,12 +248,11 @@ export default function Dashboard({name}: DashboardProps) {
                         title="Galerie Médias"
                         description="Gestion des fichiers médias"
                         icon={Images}
-                        theme="info"
                         data={[
-                            { label: "Images", value: "156" },
-                            { label: "Vidéos", value: "23" },
-                            { label: "Documents", value: "89" },
-                            { label: "Taille totale", value: "2.3 GB" }
+                            { label: "Images", value: stats.media_images },
+                            { label: "Vidéos", value: stats.media_videos },
+                            { label: "Documents", value: stats.media_documents },
+                            { label: "Taille totale", value: (stats.media_total_size / (1024 * 1024)).toFixed(2) + " MB" }
                         ]}
                         href="/admin/media"
                     />
@@ -238,12 +261,11 @@ export default function Dashboard({name}: DashboardProps) {
                         title="Formations"
                         description="Formations et certifications"
                         icon={GraduationCap}
-                        theme="secondary"
                         data={[
-                            { label: "Formations disponibles", value: "12" },
-                            { label: "Étudiants inscrits", value: "245" },
-                            { label: "Certifications délivrées", value: "89" },
-                            { label: "Taux de réussite", value: "92%" }
+                            { label: "Formations disponibles", value: stats.formations },
+                            { label: "Étudiants inscrits", value: stats.formations_students },
+                            { label: "Certifications délivrées", value: stats.formations_certifications },
+                            { label: "Taux de réussite", value: stats.formations_success_rate + "%" }
                         ]}
                         href="/admin/formations"
                     />
@@ -252,12 +274,11 @@ export default function Dashboard({name}: DashboardProps) {
                         title="Compétitions"
                         description="Gestion des compétitions"
                         icon={Trophy}
-                        theme="warning"
                         data={[
-                            { label: "Compétitions actives", value: "6" },
-                            { label: "Participants inscrits", value: "78" },
-                            { label: "Compétitions terminées", value: "15" },
-                            { label: "Prix distribués", value: "45" }
+                            { label: "Compétitions actives", value: stats.competitions_active },
+                            { label: "Participants inscrits", value: stats.competitions_participants },
+                            { label: "Compétitions terminées", value: stats.competitions_finished },
+                            { label: "Prix distribués", value: stats.competitions_prizes }
                         ]}
                         href="/admin/competitions"
                     />
@@ -266,12 +287,11 @@ export default function Dashboard({name}: DashboardProps) {
                         title="Statistiques Générales"
                         description="Vue d'ensemble du système"
                         icon={BarChart3}
-                        theme="danger"
                         data={[
-                            { label: "Utilisateurs actifs", value: "342" },
-                            { label: "Connexions ce mois", value: "1,567" },
-                            { label: "Nouvelles inscriptions", value: "23" },
-                            { label: "Taux d'engagement", value: "87%" }
+                            { label: "Utilisateurs actifs", value: stats.users_active },
+                            { label: "Connexions ce mois", value: stats.users_logins_this_month },
+                            { label: "Nouvelles inscriptions", value: stats.users_new_this_month },
+                            { label: "Taux d'engagement", value: stats.users_engagement + "%" }
                         ]}
                         href="/admin/dashboard"
                         showReadMore={false}
