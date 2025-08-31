@@ -26,16 +26,6 @@ export default function ClubsPartners() {
     const { auth, flash } = usePage<SharedData>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    // Form pour l'adhésion aux clubs
-    const { data, setData, post, processing, reset, errors: clubErrors } = useForm({
-        prenom: '',
-        nom: '',
-        email: '',
-        telephone: '',
-        club_interesse: '',
-        niveau_etude: '',
-        motivation: '',
-    });
 
     // Form pour le partenariat
     const { 
@@ -57,20 +47,6 @@ export default function ClubsPartners() {
         site_web: '',
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        post('/club-adhesion', {
-            onSuccess: (response) => {
-                reset();
-            },
-            onError: (errors) => {
-                console.error('Erreurs de validation club:', errors);
-            },
-            onFinish: () => {
-            }
-        });
-    };
 
     const handlePartenaireSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -84,6 +60,36 @@ export default function ClubsPartners() {
             },
             onFinish: () => {
             }
+        });
+    };
+
+    // Form pour l'adhésion au club
+    const {
+        data: clubData,
+        setData: setClubData,
+        post: postClub,
+        processing: processingClub,
+        reset: resetClub,
+        errors: clubErrors
+    } = useForm({
+        nom: '',
+        prenom: '',
+        email: '',
+        telephone: '',
+        club: '',
+        motivation: '',
+    });
+
+    const handleClubSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        postClub('/club-adhesion', {
+            onSuccess: () => {
+                resetClub();
+            },
+            onError: (errors) => {
+                console.error('Erreurs de validation club:', errors);
+            },
+            onFinish: () => {}
         });
     };
 
@@ -466,118 +472,37 @@ export default function ClubsPartners() {
                                 Partenaires Industriels
                             </h3>
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div className="bg-white rounded-lg p-6 hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="flex items-center mb-4">
-                                        <div className="w-12 h-12 bg-blue-500 rounded-lg mr-4 flex items-center justify-center shadow-md">
-                                            <Building2 className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-gray-900 font-bold">Microsoft</h4>
-                                            <p className="text-blue-500 text-sm font-medium">Technology Partner</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                                        Certifications Azure, licences Office 365 et accès aux technologies cloud
-                                    </p>
-                                    <div className="flex items-center">
-                                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                        <span className="text-gray-600 text-sm">Partenaire Premium</span>
-                                    </div>
+                                {/* Huawei */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/huawei-logo.png" alt="Huawei" className="w-32 h-32 object-contain mb-4 mx-auto" />
                                 </div>
-
-                                <div className="bg-white rounded-lg p-6 hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="flex items-center mb-4">
-                                        <div className="w-12 h-12 bg-orange-500 rounded-lg mr-4 flex items-center justify-center shadow-md">
-                                            <Building2 className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-gray-900 font-bold">Amazon Web Services</h4>
-                                            <p className="text-orange-500 text-sm font-medium">Cloud Partner</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                                        Crédits AWS, formations certifiantes et accès aux services cloud
-                                    </p>
-                                    <div className="flex items-center">
-                                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                        <span className="text-gray-600 text-sm">Partenaire Éducation</span>
-                                    </div>
+                                {/* Oracle */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/oracle-logo.png" alt="Oracle" className="w-32 h-32 object-contain mb-4 mx-auto" />
                                 </div>
-
-                                <div className="bg-white rounded-lg p-6 hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="flex items-center mb-4">
-                                        <div className="w-12 h-12 bg-purple-500 rounded-lg mr-4 flex items-center justify-center shadow-md">
-                                            <Building2 className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-gray-900 font-bold">Google for Education</h4>
-                                            <p className="text-purple-500 text-sm font-medium">Education Partner</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                                        Google Workspace, crédits Google Cloud et programmes de certification
-                                    </p>
-                                    <div className="flex items-center">
-                                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                        <span className="text-gray-600 text-sm">Partenaire Officiel</span>
-                                    </div>
+                                {/* Cisco */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/cisco-logo.png" alt="Cisco" className="w-32 h-32 object-contain mb-4 mx-auto" />
                                 </div>
-
-                                <div className="bg-white rounded-lg p-6 hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="flex items-center mb-4">
-                                        <div className="w-12 h-12 bg-red-500 rounded-lg mr-4 flex items-center justify-center shadow-md">
-                                            <Building2 className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-gray-900 font-bold">Oracle Academy</h4>
-                                            <p className="text-red-500 text-sm font-medium">Database Partner</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                                        Formations bases de données, certifications Oracle et licences gratuites
-                                    </p>
-                                    <div className="flex items-center">
-                                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                        <span className="text-gray-600 text-sm">Académie Certifiée</span>
-                                    </div>
+                                {/* Fortinet */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/fortinet-logo.png" alt="Fortinet" className="w-40 h-40 object-contain mb-4 mx-auto" />
                                 </div>
-
-                                <div className="bg-white rounded-lg p-6 hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="flex items-center mb-4">
-                                        <div className="w-12 h-12 bg-green-500 rounded-lg mr-4 flex items-center justify-center shadow-md">
-                                            <Building2 className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-gray-900 font-bold">NVIDIA</h4>
-                                            <p className="text-green-500 text-sm font-medium">AI Partner</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                                        Accès aux GPUs pour l'IA, formations deep learning et certifications
-                                    </p>
-                                    <div className="flex items-center">
-                                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                        <span className="text-gray-600 text-sm">Partenaire IA</span>
-                                    </div>
+                                {/* Leyton */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/leyton-logo.png" alt="Leyton" className="w-32 h-32 object-contain mb-4 mx-auto" />
                                 </div>
-
-                                <div className="bg-white rounded-lg p-6 hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="flex items-center mb-4">
-                                        <div className="w-12 h-12 bg-indigo-500 rounded-lg mr-4 flex items-center justify-center shadow-md">
-                                            <Building2 className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-gray-900 font-bold">GitHub</h4>
-                                            <p className="text-indigo-500 text-sm font-medium">Development Partner</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                                        GitHub Education Pack, comptes premium et outils de développement
-                                    </p>
-                                    <div className="flex items-center">
-                                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                        <span className="text-gray-600 text-sm">Campus Program</span>
-                                    </div>
+                                {/* DXC Technology */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/dxc-logo.png" alt="DXC Technology" className="w-40 h-40 object-contain mb-4 mx-auto" />
+                                </div>
+                                {/* CDG */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/cdg-logo.png" alt="CDG" className="w-32 h-32 object-contain mb-4 mx-auto" />
+                                </div>
+                                {/* NearSecure */}
+                                <div className="bg-white rounded-lg p-8 hover:bg-gray-50 transition-colors shadow-lg flex flex-col items-center justify-center">
+                                    <img src="/images/nearsecure-logo.png" alt="NearSecure" className="w-40 h-40 object-contain mb-4 mx-auto" />
                                 </div>
                             </div>
                         </div>
@@ -610,172 +535,6 @@ export default function ClubsPartners() {
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-12">
-                            {/* Club Membership Form */}
-                            <div className="bg-gray-900 rounded-xl p-8 shadow-lg">
-                                {/* Messages Flash pour le formulaire d'adhésion */}
-                                {flash?.club_success && (
-                                    <div className="mb-6 p-4 bg-green-600 text-white rounded-lg shadow-lg">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0">
-                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                            <div className="ml-3">
-                                                <p className="text-sm font-medium">{flash.club_success}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {((flash?.club_error) || (clubErrors && Object.keys(clubErrors).length > 0)) && (
-                                    <div className="mb-6 p-4 bg-red-600 text-white rounded-lg shadow-lg">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0">
-                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                            <div className="ml-3">
-                                                {flash?.club_error && (
-                                                    <p className="text-sm font-medium">{flash.club_error}</p>
-                                                )}
-                                                {clubErrors && Object.keys(clubErrors).length > 0 && (
-                                                    <div>
-                                                        <p className="text-sm font-medium mb-2">Erreurs de validation :</p>
-                                                        <ul className="text-sm space-y-1">
-                                                            {Object.entries(clubErrors).map(([field, error]) => (
-                                                                <li key={field}>• {Array.isArray(error) ? error[0] : error}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="flex items-center mb-6">
-                                    <Users className="w-8 h-8 text-pink-400 mr-4" />
-                                    <h3 className="text-2xl font-bold text-white">Adhésion aux Clubs</h3>
-                                </div>
-
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-white font-medium mb-2">Prénom</label>
-                                            <input
-                                                type="text"
-                                                value={data.prenom}
-                                                onChange={(e) => setData('prenom', e.target.value)}
-                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                                placeholder="Votre prénom"
-                                                required
-                                            />
-                                            {clubErrors.prenom && <p className="text-red-400 text-sm mt-1">{clubErrors.prenom}</p>}
-                                        </div>
-                                        <div>
-                                            <label className="block text-white font-medium mb-2">Nom</label>
-                                            <input
-                                                type="text"
-                                                value={data.nom}
-                                                onChange={(e) => setData('nom', e.target.value)}
-                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                                placeholder="Votre nom"
-                                                required
-                                            />
-                                            {clubErrors.nom && <p className="text-red-400 text-sm mt-1">{clubErrors.nom}</p>}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-white font-medium mb-2">Email</label>
-                                        <input
-                                            type="email"
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                            placeholder="votre.email@exemple.com"
-                                            required
-                                        />
-                                        {clubErrors.email && <p className="text-red-400 text-sm mt-1">{clubErrors.email}</p>}
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-white font-medium mb-2">Téléphone</label>
-                                        <input
-                                            type="tel"
-                                            value={data.telephone}
-                                            onChange={(e) => setData('telephone', e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                            placeholder="+212 6XX XXX XXX"
-                                            required
-                                        />
-                                        {clubErrors.telephone && <p className="text-red-400 text-sm mt-1">{clubErrors.telephone}</p>}
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-white font-medium mb-2">Club d'intérêt</label>
-                                        <select 
-                                            value={data.club_interesse}
-                                            onChange={(e) => setData('club_interesse', e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                            required
-                                        >
-                                            <option value="">Sélectionnez un club</option>
-                                            <option value="Club IA">Club IA - Intelligence Artificielle</option>
-                                            <option value="Club E-Sport">Club E-Sport - Gaming & Compétition</option>
-                                            <option value="Club Infographie">Club Infographie - Design & Créativité</option>
-                                            <option value="Club Dev">Club Dev - Développement Web & Mobile</option>
-                                            <option value="Club Entrepreneur">Club Entrepreneur - Business & Innovation</option>
-                                            <option value="Club Social">Club Social - Communauté & Solidarité</option>
-                                        </select>
-                                        {clubErrors.club_interesse && <p className="text-red-400 text-sm mt-1">{clubErrors.club_interesse}</p>}
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-white font-medium mb-2">Niveau d'étude</label>
-                                        <select 
-                                            value={data.niveau_etude}
-                                            onChange={(e) => setData('niveau_etude', e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                            required
-                                        >
-                                            <option value="">Sélectionnez votre niveau</option>
-                                            <option value="Baccalauréat">Baccalauréat</option>
-                                            <option value="Bac+1">Bac+1</option>
-                                            <option value="Bac+2">Bac+2</option>
-                                            <option value="Bac+3">Bac+3 (Licence)</option>
-                                            <option value="Bac+4">Bac+4 (Master 1)</option>
-                                            <option value="Bac+5 et plus">Bac+5 et plus (Master 2, Doctorat)</option>
-                                        </select>
-                                        {clubErrors.niveau_etude && <p className="text-red-400 text-sm mt-1">{clubErrors.niveau_etude}</p>}
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-white font-medium mb-2">Motivation</label>
-                                        <textarea
-                                            value={data.motivation}
-                                            onChange={(e) => setData('motivation', e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                            rows={4}
-                                            placeholder="Expliquez votre motivation à rejoindre ce club, vos objectifs, vos compétences ou expériences pertinentes..."
-                                            required
-                                        />
-                                        {clubErrors.motivation && <p className="text-red-400 text-sm mt-1">{clubErrors.motivation}</p>}
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full bg-pink-600 text-white py-4 rounded-lg font-semibold hover:bg-pink-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        <Send className="w-5 h-5 mr-2" />
-                                        {processing ? 'Envoi en cours...' : 'Envoyer ma demande d\'adhésion'}
-                                    </button>
-                                </form>
-                            </div>
-
                             {/* Partnership Form */}
                             <div className="bg-gray-900 rounded-xl p-8 shadow-lg">
                                 {/* Messages Flash pour le formulaire de partenariat */}
@@ -960,6 +719,149 @@ export default function ClubsPartners() {
                                     >
                                         <Send className="w-5 h-5 mr-2" />
                                         {processingPartenaire ? 'Envoi en cours...' : 'Envoyer la demande de partenariat'}
+                                    </button>
+                                </form>
+                            </div>
+                            {/* Club Membership Form */}
+                            <div className="bg-gray-900 rounded-xl p-8 shadow-lg">
+                                {/* Messages Flash pour le formulaire d'adhésion au club */}
+                                {flash?.club_success && (
+                                    <div className="mb-6 p-4 bg-green-600 text-white rounded-lg shadow-lg">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0">
+                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div className="ml-3">
+                                                <p className="text-sm font-medium">{flash.club_success}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {((flash?.club_error) || (clubErrors && Object.keys(clubErrors).length > 0)) && (
+                                    <div className="mb-6 p-4 bg-red-600 text-white rounded-lg shadow-lg">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0">
+                                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div className="ml-3">
+                                                {flash?.club_error && (
+                                                    <p className="text-sm font-medium">{flash.club_error}</p>
+                                                )}
+                                                {clubErrors && Object.keys(clubErrors).length > 0 && (
+                                                    <div>
+                                                        <p className="text-sm font-medium mb-2">Erreurs de validation :</p>
+                                                        <ul className="text-sm space-y-1">
+                                                            {Object.entries(clubErrors).map(([field, error]) => (
+                                                                <li key={field}>• {Array.isArray(error) ? error[0] : error}</li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="flex items-center mb-6">
+                                    <Users className="w-8 h-8 text-pink-400 mr-4" />
+                                    <h3 className="text-2xl font-bold text-white">Formulaire des Clubs</h3>
+                                </div>
+
+                                <form onSubmit={handleClubSubmit} className="space-y-6">
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-white font-medium mb-2">Nom</label>
+                                            <input
+                                                type="text"
+                                                value={clubData.nom}
+                                                onChange={(e) => setClubData('nom', e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                                placeholder="Votre nom"
+                                                required
+                                            />
+                                            {clubErrors.nom && <p className="text-red-400 text-sm mt-1">{clubErrors.nom}</p>}
+                                        </div>
+                                        <div>
+                                            <label className="block text-white font-medium mb-2">Prénom</label>
+                                            <input
+                                                type="text"
+                                                value={clubData.prenom}
+                                                onChange={(e) => setClubData('prenom', e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                                placeholder="Votre prénom"
+                                                required
+                                            />
+                                            {clubErrors.prenom && <p className="text-red-400 text-sm mt-1">{clubErrors.prenom}</p>}
+                                        </div>
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-white font-medium mb-2">Email</label>
+                                            <input
+                                                type="email"
+                                                value={clubData.email}
+                                                onChange={(e) => setClubData('email', e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                                placeholder="votre@email.com"
+                                                required
+                                            />
+                                            {clubErrors.email && <p className="text-red-400 text-sm mt-1">{clubErrors.email}</p>}
+                                        </div>
+                                        <div>
+                                            <label className="block text-white font-medium mb-2">Téléphone</label>
+                                            <input
+                                                type="tel"
+                                                value={clubData.telephone}
+                                                onChange={(e) => setClubData('telephone', e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                                placeholder="+212 6XX XXX XXX"
+                                                required
+                                            />
+                                            {clubErrors.telephone && <p className="text-red-400 text-sm mt-1">{clubErrors.telephone}</p>}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-white font-medium mb-2">Club</label>
+                                        <select
+                                            value={clubData.club}
+                                            onChange={(e) => setClubData('club', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            required
+                                        >
+                                            <option value="">Sélectionnez le club</option>
+                                            <option value="GameDev">GameDev</option>
+                                            <option value="Design">Design</option>
+                                            <option value="AI">AI</option>
+                                            <option value="Web">Web</option>
+                                            <option value="Cyber">Cyber</option>
+                                            <option value="Autre">Autre</option>
+                                        </select>
+                                        {clubErrors.club && <p className="text-red-400 text-sm mt-1">{clubErrors.club}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-white font-medium mb-2">Motivation</label>
+                                        <textarea
+                                            value={clubData.motivation}
+                                            onChange={(e) => setClubData('motivation', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            rows={4}
+                                            placeholder="Pourquoi souhaitez-vous rejoindre ce club ?"
+                                            required
+                                        />
+                                        {clubErrors.motivation && <p className="text-red-400 text-sm mt-1">{clubErrors.motivation}</p>}
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={processingClub}
+                                        className="w-full bg-pink-600 text-white py-4 rounded-lg font-semibold hover:bg-pink-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <Send className="w-5 h-5 mr-2" />
+                                        {processingClub ? 'Envoi en cours...' : "Envoyer la demande d'adhésion"}
                                     </button>
                                 </form>
                             </div>
