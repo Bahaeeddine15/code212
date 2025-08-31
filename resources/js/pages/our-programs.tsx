@@ -3,133 +3,40 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import {
     Code2,
-    Palette,
-    Brain,
-    Database,
-    Smartphone,
-    Globe,
-    Award,
-    Clock,
-    Users,
+    BookOpen,
     Star,
     ArrowRight,
     Menu,
     X,
-    BookOpen,
     Target,
-    Zap
+    Zap,
+    Clock,
+    Users
 } from 'lucide-react';
 import Footer from '@/components/layout/footer';
 
-export default function OurPrograms() {
-    const { auth } = usePage<SharedData>().props;
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+interface Formation {
+    id: number;
+    title: string;
+    description: string;
+    duration: number;
+    level: string;
+    thumbnail: string;
+    category: string;
+}
 
-    // Données des formations (exemple)
-    const formations = [
-        {
-            id: 1,
-            title: "Développement Web Full Stack",
-            description: "Maîtrisez les technologies front-end et back-end pour créer des applications web complètes et modernes.",
-            category: "Développement Web",
-            level: "Débutant à Avancé",
-            duration: "6 mois",
-            modules: 12,
-            students: 150,
-            rating: 4.8,
-            icon: Globe,
-            color: "blue",
-            skills: ["HTML/CSS", "JavaScript", "React", "Node.js", "MongoDB"],
-            image: "/formations/web-dev.jpg"
-        },
-        {
-            id: 2,
-            title: "Intelligence Artificielle & Machine Learning",
-            description: "Explorez l'IA, le machine learning et le deep learning avec des projets pratiques et des cas d'usage réels.",
-            category: "Intelligence Artificielle",
-            level: "Intermédiaire",
-            duration: "8 mois",
-            modules: 16,
-            students: 89,
-            rating: 4.9,
-            icon: Brain,
-            color: "purple",
-            skills: ["Python", "TensorFlow", "Scikit-learn", "Deep Learning", "Computer Vision"],
-            image: "/formations/ai-ml.jpg"
-        },
-        {
-            id: 3,
-            title: "Développement Mobile Native",
-            description: "Créez des applications mobiles performantes pour iOS et Android avec les dernières technologies natives.",
-            category: "Mobile",
-            level: "Intermédiaire",
-            duration: "5 mois",
-            modules: 10,
-            students: 76,
-            rating: 4.7,
-            icon: Smartphone,
-            color: "green",
-            skills: ["Swift", "Kotlin", "Flutter", "React Native", "Firebase"],
-            image: "/formations/mobile-dev.jpg"
-        },
-        {
-            id: 4,
-            title: "Data Science & Analytics",
-            description: "Analysez et visualisez les données pour prendre des décisions éclairées en entreprise.",
-            category: "Data Science",
-            level: "Débutant",
-            duration: "7 mois",
-            modules: 14,
-            students: 112,
-            rating: 4.6,
-            icon: Database,
-            color: "orange",
-            skills: ["Python", "R", "SQL", "Tableau", "Power BI"],
-            image: "/formations/data-science.jpg"
-        },
-        {
-            id: 5,
-            title: "Design UI/UX & Infographie",
-            description: "Concevez des interfaces utilisateur attractives et une expérience utilisateur optimale.",
-            category: "Design",
-            level: "Débutant",
-            duration: "4 mois",
-            modules: 8,
-            students: 95,
-            rating: 4.8,
-            icon: Palette,
-            color: "pink",
-            skills: ["Figma", "Adobe XD", "Photoshop", "Illustrator", "Prototyping"],
-            image: "/formations/ui-ux.jpg"
-        },
-        {
-            id: 6,
-            title: "Cybersécurité & Ethical Hacking",
-            description: "Protégez les systèmes informatiques et apprenez les techniques de sécurisation avancées.",
-            category: "Sécurité",
-            level: "Avancé",
-            duration: "6 mois",
-            modules: 12,
-            students: 67,
-            rating: 4.9,
-            icon: Code2,
-            color: "red",
-            skills: ["Kali Linux", "Penetration Testing", "Network Security", "Cryptography"],
-            image: "/formations/cybersecurity.jpg"
-        }
-    ];
-
-    const getColorClasses = (color: string) => {
-        const colors = {
-            blue: "from-blue-500 to-blue-600 text-blue-600 bg-blue-100 border-blue-200",
-            purple: "from-purple-500 to-purple-600 text-purple-600 bg-purple-100 border-purple-200",
-            green: "from-green-500 to-green-600 text-green-600 bg-green-100 border-green-200",
-            orange: "from-orange-500 to-orange-600 text-orange-600 bg-orange-100 border-orange-200",
-            pink: "from-pink-500 to-pink-600 text-pink-600 bg-pink-100 border-pink-200",
-            red: "from-red-500 to-red-600 text-red-600 bg-red-100 border-red-200"
-        };
-        return colors[color as keyof typeof colors] || colors.blue;
+interface Props extends SharedData {
+    formationsByCategory: Record<string, Formation[]>;
+    stats: {
+        total_formations: number;
+        total_categories: number;
+        total_levels: number;
     };
+}
+
+export default function OurPrograms() {
+    const { auth, formationsByCategory, stats } = usePage<Props>().props;
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <>
@@ -267,22 +174,18 @@ export default function OurPrograms() {
                         </p>
                         
                         {/* Quick Stats */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-16">
                             <div className="text-center bg-gray-800 rounded-xl p-6 hover:bg-gray-700 transition-all shadow-lg">
-                                <div className="text-3xl font-bold text-pink-400 mb-2">6</div>
+                                <div className="text-3xl font-bold text-pink-400 mb-2">{stats.total_formations}</div>
                                 <div className="text-gray-300 text-sm font-medium">Formations</div>
                             </div>
                             <div className="text-center bg-gray-800 rounded-xl p-6 hover:bg-gray-700 transition-all shadow-lg">
-                                <div className="text-3xl font-bold text-blue-400 mb-2">500+</div>
-                                <div className="text-gray-300 text-sm font-medium">Étudiants</div>
+                                <div className="text-3xl font-bold text-blue-400 mb-2">{stats.total_categories}</div>
+                                <div className="text-gray-300 text-sm font-medium">Domaines</div>
                             </div>
                             <div className="text-center bg-gray-800 rounded-xl p-6 hover:bg-gray-700 transition-all shadow-lg">
-                                <div className="text-3xl font-bold text-purple-400 mb-2">95%</div>
-                                <div className="text-gray-300 text-sm font-medium">Taux de Réussite</div>
-                            </div>
-                            <div className="text-center bg-gray-800 rounded-xl p-6 hover:bg-gray-700 transition-all shadow-lg">
-                                <div className="text-3xl font-bold text-green-400 mb-2">4.8</div>
-                                <div className="text-gray-300 text-sm font-medium">Note Moyenne</div>
+                                <div className="text-3xl font-bold text-purple-400 mb-2">{stats.total_levels}</div>
+                                <div className="text-gray-300 text-sm font-medium">Niveaux</div>
                             </div>
                         </div>
                     </div>
@@ -308,81 +211,63 @@ export default function OurPrograms() {
                             </p>
                         </div>
 
-                        <div className="grid lg:grid-cols-2 gap-8">
-                            {formations.map((formation) => {
-                                const IconComponent = formation.icon;
-                                const colorClasses = getColorClasses(formation.color);
+                        {Object.entries(formationsByCategory).map(([category, formations]) => (
+                            <div key={category} className="mb-16">
+                                {/* Category Header */}
+                                <div className="text-center mb-8">
+                                    <h3 className="text-3xl font-bold text-gray-900 mb-4">{category}</h3>
+                                    <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto"></div>
+                                </div>
                                 
-                                return (
-                                    <div key={formation.id} className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100 group">
-                                        {/* Header */}
-                                        <div className="flex items-start justify-between mb-6">
-                                            <div className="flex items-center">
-                                                <div className={`w-16 h-16 bg-gradient-to-r ${colorClasses.split(' ')[0]} ${colorClasses.split(' ')[1]} rounded-full flex items-center justify-center mr-4 shadow-lg`}>
-                                                    <IconComponent className="w-8 h-8 text-white" />
+                                {/* Formations Grid */}
+                                <div className="grid lg:grid-cols-2 gap-8">
+                                    {formations.map((formation) => (
+                                        <div key={formation.id} className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100 group">
+                                            {/* Header */}
+                                            <div className="flex items-start justify-between mb-6">
+                                                <div className="flex items-center">
+                                                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                                                        <Code2 className="w-8 h-8 text-white" />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-xl font-bold text-gray-900 mb-1">{formation.title}</h4>
+                                                        <span className="text-sm font-medium px-3 py-1 rounded-full text-blue-600 bg-blue-100 border border-blue-200">
+                                                            {formation.level}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <h3 className="text-xl font-bold text-gray-900 mb-1">{formation.title}</h3>
-                                                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${colorClasses.split('text-')[1]} ${colorClasses.split('bg-')[1]} ${colorClasses.split('border-')[1]} border`}>
-                                                        {formation.category}
-                                                    </span>
+                                            </div>
+
+                                            {/* Description */}
+                                            <p className="text-gray-600 mb-6 leading-relaxed line-clamp-3">
+                                                {formation.description}
+                                            </p>
+
+                                            {/* Info Grid */}
+                                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                                <div className="flex items-center text-sm text-gray-500">
+                                                    <Clock className="w-4 h-4 mr-2" />
+                                                    {formation.duration} heures
+                                                </div>
+                                                <div className="flex items-center text-sm text-gray-500">
+                                                    <Target className="w-4 h-4 mr-2" />
+                                                    {formation.level}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center">
-                                                <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-                                                <span className="text-sm font-medium text-gray-600">{formation.rating}</span>
-                                            </div>
+
+                                            {/* CTA Button */}
+                                            <Link
+                                                href="/login"
+                                                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center group-hover:transform group-hover:scale-105 font-medium"
+                                            >
+                                                Commencer cette formation
+                                                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                                            </Link>
                                         </div>
-
-                                        {/* Description */}
-                                        <p className="text-gray-600 mb-6 leading-relaxed">
-                                            {formation.description}
-                                        </p>
-
-                                        {/* Info Grid */}
-                                        <div className="grid grid-cols-2 gap-4 mb-6">
-                                            <div className="flex items-center text-sm text-gray-500">
-                                                <Clock className="w-4 h-4 mr-2" />
-                                                {formation.duration}
-                                            </div>
-                                            <div className="flex items-center text-sm text-gray-500">
-                                                <BookOpen className="w-4 h-4 mr-2" />
-                                                {formation.modules} modules
-                                            </div>
-                                            <div className="flex items-center text-sm text-gray-500">
-                                                <Users className="w-4 h-4 mr-2" />
-                                                {formation.students} étudiants
-                                            </div>
-                                            <div className="flex items-center text-sm text-gray-500">
-                                                <Target className="w-4 h-4 mr-2" />
-                                                {formation.level}
-                                            </div>
-                                        </div>
-
-                                        {/* Skills */}
-                                        <div className="mb-6">
-                                            <h4 className="text-sm font-medium text-gray-700 mb-3">Compétences acquises:</h4>
-                                            <div className="flex flex-wrap gap-2">
-                                                {formation.skills.map((skill, index) => (
-                                                    <span key={index} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                                                        {skill}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        {/* CTA Button */}
-                                        <Link
-                                            href="/login"
-                                            className={`w-full bg-gradient-to-r ${colorClasses.split(' ')[0]} ${colorClasses.split(' ')[1]} text-white py-3 px-6 rounded-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center group-hover:transform group-hover:scale-105 font-medium`}
-                                        >
-                                            Commencer cette formation
-                                            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                                        </Link>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
 
                         {/* Call to Action */}
                         <div className="text-center mt-20">

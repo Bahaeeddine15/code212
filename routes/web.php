@@ -22,9 +22,7 @@ Route::get('/contact', function () {
     return Inertia::render('contact');
 })->name('contact');
 
-Route::get('/our-programs', function () {
-    return Inertia::render('our-programs');
-})->name('our.programs');
+Route::get('/our-programs', [App\Http\Controllers\PublicFormationController::class, 'index'])->name('our.programs');
 
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 
