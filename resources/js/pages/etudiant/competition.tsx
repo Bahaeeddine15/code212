@@ -280,7 +280,8 @@ export default function CompetitionPage({ competitions, registrations, statistic
                                                             ? 'Inscription acceptée'
                                                             : 'Inscription refusée'}
                                                     </Badge>
-                                                    {competition.my_registration.status !== 'Confirmé' && (
+                                                    {/* Show "Modifier" button ONLY if status is "En attente" */}
+                                                    {competition.my_registration.status === 'En attente' && (
                                                         <Button variant="outline" size="sm" asChild>
                                                             <Link href={`/competition/${competition.id}/registration/${competition.my_registration.id}/edit`}>
                                                                 ✏️ Modifier

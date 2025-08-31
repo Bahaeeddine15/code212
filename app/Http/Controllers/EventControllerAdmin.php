@@ -60,6 +60,10 @@ class EventControllerAdmin extends Controller
         unset($validated['maxAttendees']);
         $validated['user_id'] = auth('admin')->id();
 
+        $today = now()->toDateString();
+        $eventStartDate = \Carbon\Carbon::parse($validated['start_date'])->toDateString();
+        $validated['status'] = ($eventStartDate === $today) ? 'ongoing' : 'upcoming';
+
         Event::create($validated);
 
         return redirect()->route('admin.events.index')->with('success', 'Événement créé avec succès!');

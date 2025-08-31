@@ -15,6 +15,7 @@ use App\Http\Controllers\CompetitionRegistrationControllerAdmin;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\ModuleFileController;
 use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\ClubControllerAdmin;
 
 // Admin authentication routes
 Route::prefix('admin')->group(function () {
@@ -103,4 +104,6 @@ Route::prefix('admin')->middleware(['auth:admin', 'verified'])->name('admin.')->
     // Generate certificate for specific student from modules page
     Route::post('certificates/generate-for-student', [App\Http\Controllers\CertificateAdminController::class, 'generateForStudent'])
         ->name('certificates.generate-for-student');
+    
+    Route::resource('clubs', ClubControllerAdmin::class);
 });

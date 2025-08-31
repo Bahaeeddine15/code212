@@ -20,8 +20,12 @@ interface ModuleFile {
     description?: string | null;
 }
 
-interface ModuleVideoAdminProps {
+interface Props {
     file: ModuleFile;
+    module: {
+        id: number;
+        title: string;
+    };
 }
 
 const breadcrumbs = [
@@ -30,7 +34,7 @@ const breadcrumbs = [
     { title: 'Vidéo du module', href: '#' },
 ];
 
-export default function ModuleVideoAdmin({ file }: ModuleVideoAdminProps) {
+export default function ModuleVideoAdmin({ file, module }: Props) {
     const qualities = file.qualities ? JSON.parse(file.qualities) : {};
     const [currentQuality, setCurrentQuality] = useState<QualityType>('original');
     const videoRef = useRef<HTMLVideoElement>(null);

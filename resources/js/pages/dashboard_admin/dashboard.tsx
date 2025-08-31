@@ -124,7 +124,6 @@ interface DashboardProps {
         events_participants: number;
         media_images: number;
         media_videos: number;
-        media_documents: number;
         media_total_size: number;
         formations: number;
         formations_students: number;
@@ -133,11 +132,14 @@ interface DashboardProps {
         competitions_active: number;
         competitions_participants: number;
         competitions_finished: number;
-        competitions_prizes: number;
         users_active: number;
         users_logins_this_month: number;
         users_new_this_month: number;
         users_engagement: number;
+        reservations_total: number;
+        reservations_pending: number;
+        reservations_approved: number;
+        reservations_rejected: number;
     };
     adminEmail: string;
 }
@@ -198,8 +200,8 @@ export default function Dashboard({ name, stats, adminEmail }: DashboardProps) {
                         icon={CalendarCheck}
                     />
                     <StatCard
-                        title="Images"
-                        value={stats.media_images}
+                        title="Médias"
+                        value={stats.media_images + stats.media_videos}
                         icon={Images}
                     />
                     <StatCard
@@ -251,7 +253,6 @@ export default function Dashboard({ name, stats, adminEmail }: DashboardProps) {
                         data={[
                             { label: "Images", value: stats.media_images },
                             { label: "Vidéos", value: stats.media_videos },
-                            { label: "Documents", value: stats.media_documents },
                             { label: "Taille totale", value: (stats.media_total_size / (1024 * 1024)).toFixed(2) + " MB" }
                         ]}
                         href="/admin/media"
@@ -264,8 +265,7 @@ export default function Dashboard({ name, stats, adminEmail }: DashboardProps) {
                         data={[
                             { label: "Formations disponibles", value: stats.formations },
                             { label: "Étudiants inscrits", value: stats.formations_students },
-                            { label: "Certifications délivrées", value: stats.formations_certifications },
-                            { label: "Taux de réussite", value: stats.formations_success_rate + "%" }
+                            { label: "Certifications délivrées", value: stats.formations_certifications }
                         ]}
                         href="/admin/formations"
                     />
@@ -278,9 +278,21 @@ export default function Dashboard({ name, stats, adminEmail }: DashboardProps) {
                             { label: "Compétitions actives", value: stats.competitions_active },
                             { label: "Participants inscrits", value: stats.competitions_participants },
                             { label: "Compétitions terminées", value: stats.competitions_finished },
-                            { label: "Prix distribués", value: stats.competitions_prizes }
                         ]}
                         href="/admin/competitions"
+                    />
+
+                    <DataCompartment
+                        title="Réservations"
+                        description="Gestion des réservations des étudiants"
+                        icon={Clock}
+                        data={[
+                            { label: "Total", value: stats.reservations_total },
+                            { label: "En attente", value: stats.reservations_pending },
+                            { label: "Approuvées", value: stats.reservations_approved },
+                            { label: "Rejetées", value: stats.reservations_rejected }
+                        ]}
+                        href="/admin/reservations"
                     />
 
                     <DataCompartment

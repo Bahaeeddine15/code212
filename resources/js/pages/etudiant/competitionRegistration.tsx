@@ -32,12 +32,12 @@ interface CompetitionRegistrationPageProps {
     competition: Competition;
 }
 
-export default function CompetitionRegistrationPage({ competition }: CompetitionRegistrationPageProps) {
+export default function CompetitionRegistrationPage({ competition, etudiant_email }: CompetitionRegistrationPageProps & { etudiant_email?: string }) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     
     const { data, setData, post, processing, errors } = useForm({
         participant_name: '',
-        email: '',
+        email: etudiant_email || '',
         phone: '',
         category: competition.category,
         notes: '',

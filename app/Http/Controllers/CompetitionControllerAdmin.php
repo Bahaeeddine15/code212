@@ -58,7 +58,6 @@ class CompetitionControllerAdmin extends Controller
                     'club' => $registration->club,
                     'registrationDate' => $registration->registered_at?->format('Y-m-d'),
                     'status' => $registration->status,
-                    'paymentStatus' => $registration->payment_status,
                     'notes' => $registration->notes,
                     'groupMembers' => $registration->group_members,
                 ];

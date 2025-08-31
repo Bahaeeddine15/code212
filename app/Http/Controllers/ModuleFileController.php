@@ -186,8 +186,14 @@ class ModuleFileController extends Controller
     {
         abort_unless(auth()->guard('admin')->check(), 403);
 
+        $module = $file->module; // Get the related module
+
         return inertia('dashboard_admin/formations/module_video_admin', [
             'file' => $file,
+            'module' => [
+                'id' => $module->id,
+                'title' => $module->title,
+            ],
         ]);
     }
 

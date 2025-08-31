@@ -121,8 +121,8 @@ class CompetitionController extends Controller
                 'registrations' => $competition->registrations->count(),
                 'status' => $competition->status,
                 'type' => $competition->type,
-                // ✅ Removed 'groupMembers' property that doesn't exist
-            ]
+            ],
+            'etudiant_email' => auth('web')->user()->email ?? '',
         ]);
     }
 
@@ -170,7 +170,7 @@ class CompetitionController extends Controller
 
         $rules = [
             'participant_name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@uca\.ac\.ma$/i'],
             'phone' => 'required|string|max:20',
             'category' => 'required|string|max:255',
             'notes' => 'nullable|string|max:1000',
@@ -423,6 +423,11 @@ class CompetitionController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
+        // Block access if status is not "En attente"
+        if ($registration->status !== 'En attente') {
+            abort(403, 'Vous ne pouvez plus modifier cette inscription.');
+        }
+
         return Inertia::render('etudiant/competitionRegistrationEdit', [
             'competition' => [
                 'id' => $competition->id,
@@ -466,7 +471,7 @@ class CompetitionController extends Controller
 
         $validated = $request->validate([
             'participant_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@uca\.ac\.ma$/i'],
             'phone' => 'required|string|max:20',
             'category' => 'required|string|max:255',
             'notes' => 'nullable|string|max:1000',

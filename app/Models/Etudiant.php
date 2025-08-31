@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class Etudiant extends Authenticatable
+class Etudiant extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -76,5 +77,15 @@ class Etudiant extends Authenticatable
         return $this->belongsToMany(Formation::class, 'formation_registrations', 'etudiant_id', 'formation_id')
             ->withPivot('registered_at', 'status')
             ->withTimestamps();
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\EtudiantResetPassword($token));
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\EtudiantVerifyEmail);
     }
 }

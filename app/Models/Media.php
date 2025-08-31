@@ -100,4 +100,23 @@ class Media extends Model
         $videoExtensions = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'webm'];
         return in_array(strtolower($this->file_extension), $videoExtensions);
     }
+
+    public static function imagesCount()
+    {
+        return static::whereRaw("LOWER(SUBSTRING_INDEX(file_path, '.', -1)) IN ('jpg','jpeg','png','gif','svg','webp')")->count();
+    }
+
+    public static function videosCount()
+    {
+        return static::whereRaw("LOWER(SUBSTRING_INDEX(file_path, '.', -1)) IN ('mp4','mov','avi','wmv','flv','webm')")->count();
+    }
+
+    public static function totalSize()
+    {
+        return static::all()->sum(function ($media) {
+            return $media->file_path && Storage::disk('public')->exists($media->file_path)
+                ? Storage::disk('public')->size($media->file_path)
+                : 0;
+        });
+    }
 }

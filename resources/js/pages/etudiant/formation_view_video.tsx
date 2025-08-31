@@ -195,7 +195,7 @@ export default function VideoPlayer({
                       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div className="min-w-0 flex-1">
                           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">
-                            {file.original_name}
+                            {module?.title || file.original_name}
                           </h1>
                           {module && (
                             <p className="text-gray-600 text-sm sm:text-base">

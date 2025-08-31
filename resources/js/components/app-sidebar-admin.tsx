@@ -13,7 +13,8 @@ import {
     Images,
     GraduationCap,
     Trophy,
-    Building2
+    Building2,
+    Club
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -52,6 +53,11 @@ const mainNavItems: NavItem[] = [
         title: 'Inscription compétitions',
         href: '/admin/competitions',
         icon: Trophy,
+    },
+    {
+        title: 'Gestion des clubs',
+        href: '/admin/clubs',
+        icon: Club,
     },
 ];
 

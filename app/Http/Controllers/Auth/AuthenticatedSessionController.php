@@ -36,6 +36,17 @@ class AuthenticatedSessionController extends Controller
 
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
+            // Update last_login_at for the logged-in student
+            Auth::user()->forceFill([
+                'last_login_at' => now(),
+            ])->save();
+
+            if (!Auth::user()->hasVerifiedEmail()) {
+                Auth::logout();
+                return redirect()->route('verification.notice')->withErrors([
+                    'email' => 'Vous devez vérifier votre adresse email avant de vous connecter.'
+                ]);
+            }
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
