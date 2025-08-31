@@ -20,20 +20,4 @@ class Formation extends Model
     {
         return $this->hasMany(Module::class);
     }
-
-
-    public function registrations()
-    {
-        return $this->hasMany(\App\Models\FormationRegistration::class, 'formation_id');
-    }
-
-    public function scopePublished($query)
-    {
-        return $query->where('status', 'published');
-    }
-
-    public function scopeDrafts($query)
-    {
-        return $query->where('status', 'draft');
-    }
 }
