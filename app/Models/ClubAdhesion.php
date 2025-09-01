@@ -10,14 +10,11 @@ class ClubAdhesion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'prenom',
-        'nom',
+        'nom_organisation',
+        'contact_principal',
         'email',
         'telephone',
-        'club_interesse',
-        'niveau_etude',
-        'motivation',
-        'status'
+        'description_projet',
     ];
 
     protected $casts = [

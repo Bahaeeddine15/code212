@@ -3,54 +3,56 @@
 
 @section('content')
     <div class="header">
-        <div class="logo">CODE212</div>
-        <div class="subtitle">Center of Digital Empowerment</div>
+        <div class="logo" style="color: #fff;">CODE212</div>
+        <div class="subtitle" style="color: #fff;">Center of Digital Empowerment</div>
     </div>
 
-    <h2 style="color: #1f2937; margin-bottom: 20px;">📩 Nouveau message de contact</h2>
+    <h2 style="color: pink; margin-bottom: 20px;">📩 Nouveau message de contact</h2>
 
-    <div class="content">
+    <div class="content" style="color: #fff;">
         <div class="field-group">
-            <span class="field-label">👤 Nom complet</span>
-            <div class="field-value">{{ $contactData['prenom'] }} {{ $contactData['nom'] }}</div>
+            <span class="field-label" style="color: #fff;">👤 Nom complet</span>
+            <div class="field-value" style="color: #fff;">{{ $contactData['prenom'] }} {{ $contactData['nom'] }}</div>
         </div>
 
         <div class="field-group">
-            <span class="field-label">📧 Email</span>
+            <span class="field-label" style="color: #fff;">📧 Email</span>
             <div class="field-value">
-                <a href="mailto:{{ $contactData['email'] }}" style="color: #2563eb; text-decoration: none;">
+                <a href="mailto:{{ $contactData['email'] }}" style="color: #e91e63; text-decoration: none;">
                     {{ $contactData['email'] }}
                 </a>
             </div>
         </div>
 
-        @if($contactData['telephone'])
-        <div class="field-group">
-            <span class="field-label">📱 Téléphone</span>
-            <div class="field-value">{{ $contactData['telephone'] }}</div>
-        </div>
+        @if ($contactData['telephone'])
+            <div class="field-group">
+                <span class="field-label" style="color: #fff;">📱 Téléphone</span>
+                <div class="field-value" style="color: #fff;">{{ $contactData['telephone'] }}</div>
+            </div>
         @endif
 
         <div class="field-group">
-            <span class="field-label">📋 Sujet</span>
-            <div class="field-value">{{ ucfirst($contactData['subject']) }}</div>
+            <span class="field-label" style="color: #fff;">📋 Sujet</span>
+            <div class="field-value" style="color: #fff;">{{ ucfirst($contactData['subject']) }}</div>
         </div>
 
         <div class="field-group">
-            <span class="field-label">💬 Message</span>
-            <div class="message-field">
+            <span class="field-label" style="color: #fff;">💬 Message</span>
+            <div class="message-field"
+                style="color: #fff; border-left: 3px solid #e91e63; padding-left: 12px; margin-top: 8px;">
                 {{ $contactData['message'] }}
             </div>
         </div>
     </div>
 
-    <div class="timestamp">
+    <div class="timestamp" style="color: #fff; margin-top: 20px;">
         ⏰ Message reçu le {{ now()->format('d/m/Y à H:i') }}
     </div>
 
-    <div class="footer">
-        <p><strong>CODE212 - Center of Digital Empowerment</strong></p>
+    <div class="footer" style="color: #bbb; margin-top: 30px;">
+        <p><strong style="color: #fff;">CODE212 - Center of Digital Empowerment</strong></p>
         <p>112 Bd Abdelkrim Al Khattabi, Marrakech 40000, Maroc</p>
-        <p>Email: code212@uca.ac.ma | Téléphone: +212 5XX XXX XXX</p>
+        <p>Email: <span style="color: #fff;">code212@uca.ac.ma</span> | Téléphone: <span style="color: #fff;">+212 5XX XXX
+                XXX</span></p>
     </div>
 @endsection

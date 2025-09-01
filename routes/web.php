@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use App\Models\Club;
 
 
 Route::get('/', function () {
@@ -15,7 +16,10 @@ Route::get('/about', function () {
 })->name('about');
 
 Route::get('/clubs-partners', function () {
-    return Inertia::render('clubs-partners');
+    $clubs = Club::all(['id', 'name', 'logo', 'school']);
+    return Inertia::render('clubs-partners', [
+        'clubs' => $clubs,
+    ]);
 })->name('clubs.partners');
 
 Route::get('/contact', function () {

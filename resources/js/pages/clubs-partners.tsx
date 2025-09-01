@@ -22,8 +22,16 @@ import {
 } from 'lucide-react';
 import Footer from '@/components/layout/footer';
 
+// Define Club type locally since it's not exported from @/types
+type Club = {
+    id: number;
+    name: string;
+    logo?: string;
+    school?: string;
+};
+
 export default function ClubsPartners() {
-    const { auth, flash } = usePage<SharedData>().props;
+    const { auth, flash, clubs } = usePage<SharedData & { clubs?: Club[] }>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 
@@ -63,7 +71,7 @@ export default function ClubsPartners() {
         });
     };
 
-    // Form pour l'adhésion au club
+    // Form pour l'adhésion au club (modifié pour partenariat officiel)
     const {
         data: clubData,
         setData: setClubData,
@@ -72,12 +80,11 @@ export default function ClubsPartners() {
         reset: resetClub,
         errors: clubErrors
     } = useForm({
-        nom: '',
-        prenom: '',
+        nom_organisation: '',
+        contact_principal: '',
         email: '',
         telephone: '',
-        club: '',
-        motivation: '',
+        description_projet: '',
     });
 
     const handleClubSubmit = (e: React.FormEvent) => {
@@ -251,161 +258,44 @@ export default function ClubsPartners() {
                 </section>
 
                 {/* Clubs Section */}
-                <section id="clubs" className="py-20 bg-gray-50 relative">
-                    {/* Background Pattern */}
-                    <div className="absolute inset-0 opacity-5">
-                        <div className="absolute inset-0" style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                        }}></div>
-                    </div>
-
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                        <div className="text-center mb-20">
-                            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full mb-6 shadow-lg">
-                                <Users className="w-8 h-8 text-white" />
-                            </div>
-                            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Nos Clubs Étudiants</h2>
-                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                                Des communautés dynamiques pour développer vos passions, compétences et créer des liens durables 
-                                avec des étudiants partageant les mêmes intérêts.
-                            </p>
+                {clubs && clubs.length > 0 && (
+                    <section id="clubs" className="py-20 bg-gray-50 relative">
+                        {/* Background Pattern */}
+                        <div className="absolute inset-0 opacity-5">
+                            <div className="absolute inset-0" style={{
+                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                            }}></div>
                         </div>
 
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {/* Club IA */}
-                            <div className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100">
-                                <div className="flex items-center mb-4">
-                                    <Brain className="w-12 h-12 text-purple-500 mr-4" />
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Club IA</h3>
-                                        <p className="text-purple-500 font-medium">Intelligence Artificielle</p>
-                                    </div>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                            <div className="text-center mb-20">
+                                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full mb-6 shadow-lg">
+                                    <Users className="w-8 h-8 text-white" />
                                 </div>
-                                <p className="text-gray-600 mb-6 leading-relaxed">
-                                    Explorez l'univers de l'intelligence artificielle, du machine learning et du deep learning. 
-                                    Participez à des projets innovants et des compétitions.
+                                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Nos Clubs Étudiants</h2>
+                                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                                    Découvrez les clubs étudiants partenaires de Code212.
                                 </p>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">45+ membres</span>
-                                    <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center shadow-md">
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Contact
-                                    </button>
-                                </div>
                             </div>
 
-                            {/* Club E-Sport */}
-                            <div className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100">
-                                <div className="flex items-center mb-4">
-                                    <Gamepad2 className="w-12 h-12 text-green-500 mr-4" />
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Club E-Sport</h3>
-                                        <p className="text-green-500 font-medium">Gaming & Compétition</p>
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {clubs.map((club) => (
+                                    <div key={club.id} className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 flex flex-col items-center">
+                                        {club.logo && (
+                                            <img
+                                                src={club.logo.startsWith('http') ? club.logo : `/storage/${club.logo}`}
+                                                alt={club.name}
+                                                className="w-24 h-24 object-contain mb-4 rounded-full bg-gray-100"
+                                            />
+                                        )}
+                                        <h3 className="text-xl font-bold text-gray-900 mb-2">{club.name}</h3>
+                                        <div className="text-gray-500 text-sm mb-2">{club.school}</div>
                                     </div>
-                                </div>
-                                <p className="text-gray-600 mb-6 leading-relaxed">
-                                    Rejoignez notre équipe e-sport et participez aux tournois nationaux et internationaux. 
-                                    Développement de jeux vidéo et streaming inclus.
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">60+ membres</span>
-                                    <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center shadow-md">
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Contact
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Club Infographie */}
-                            <div className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100">
-                                <div className="flex items-center mb-4">
-                                    <Palette className="w-12 h-12 text-pink-500 mr-4" />
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Club Infographie</h3>
-                                        <p className="text-pink-500 font-medium">Design & Créativité</p>
-                                    </div>
-                                </div>
-                                <p className="text-gray-600 mb-6 leading-relaxed">
-                                    Libérez votre créativité avec le design graphique, l'animation 3D, l'UI/UX design 
-                                    et la création de contenu visuel.
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">35+ membres</span>
-                                    <button className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition-colors flex items-center shadow-md">
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Contact
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Club Development */}
-                            <div className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100">
-                                <div className="flex items-center mb-4">
-                                    <Code2 className="w-12 h-12 text-blue-500 mr-4" />
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Club Dev</h3>
-                                        <p className="text-blue-500 font-medium">Développement Web & Mobile</p>
-                                    </div>
-                                </div>
-                                <p className="text-gray-600 mb-6 leading-relaxed">
-                                    Maîtrisez les dernières technologies de développement. Hackathons, projets open-source 
-                                    et workshops techniques au programme.
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">80+ membres</span>
-                                    <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center shadow-md">
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Contact
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Club Entrepreneuriat */}
-                            <div className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100">
-                                <div className="flex items-center mb-4">
-                                    <Briefcase className="w-12 h-12 text-yellow-500 mr-4" />
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Club Entrepreneur</h3>
-                                        <p className="text-yellow-500 font-medium">Business & Innovation</p>
-                                    </div>
-                                </div>
-                                <p className="text-gray-600 mb-6 leading-relaxed">
-                                    Développez votre esprit entrepreneurial. Création de startups, business plan, 
-                                    pitching et networking avec des professionnels.
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">25+ membres</span>
-                                    <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center shadow-md">
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Contact
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Club Social */}
-                            <div className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100">
-                                <div className="flex items-center mb-4">
-                                    <Heart className="w-12 h-12 text-red-500 mr-4" />
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900">Club Social</h3>
-                                        <p className="text-red-500 font-medium">Communauté & Solidarité</p>
-                                    </div>
-                                </div>
-                                <p className="text-gray-600 mb-6 leading-relaxed">
-                                    Actions solidaires, événements communautaires et initiatives sociales. 
-                                    Construisons ensemble un impact positif.
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">50+ membres</span>
-                                    <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center shadow-md">
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Contact
-                                    </button>
-                                </div>
+                                ))}
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                )}
 
                 {/* Partners Section */}
                 <section id="partners" className="py-20 bg-gray-900 relative">
@@ -426,45 +316,6 @@ export default function ClubsPartners() {
                                 et ouvrent des opportunités exceptionnelles pour votre avenir professionnel.
                             </p>
                         </div>
-
-                        {/* Academic Partners */}
-                        <div className="mb-16">
-                            <h3 className="text-2xl font-bold text-white mb-8 flex items-center">
-                                <GraduationCap className="w-8 h-8 text-blue-400 mr-3" />
-                                Partenaires Académiques
-                            </h3>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div className="bg-white rounded-lg p-6 text-center hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-md">
-                                        <GraduationCap className="w-8 h-8 text-white" />
-                                    </div>
-                                    <h4 className="text-gray-900 font-bold mb-2">Université Mohammed VI</h4>
-                                    <p className="text-gray-600 text-sm">Partenariat recherche et développement</p>
-                                </div>
-                                <div className="bg-white rounded-lg p-6 text-center hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="w-16 h-16 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-md">
-                                        <GraduationCap className="w-8 h-8 text-white" />
-                                    </div>
-                                    <h4 className="text-gray-900 font-bold mb-2">ENSAM Casablanca</h4>
-                                    <p className="text-gray-600 text-sm">Échanges étudiants et projets</p>
-                                </div>
-                                <div className="bg-white rounded-lg p-6 text-center hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="w-16 h-16 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-md">
-                                        <GraduationCap className="w-8 h-8 text-white" />
-                                    </div>
-                                    <h4 className="text-gray-900 font-bold mb-2">42 School</h4>
-                                    <p className="text-gray-600 text-sm">Méthodologie pédagogique innovante</p>
-                                </div>
-                                <div className="bg-white rounded-lg p-6 text-center hover:bg-gray-50 transition-colors shadow-lg">
-                                    <div className="w-16 h-16 bg-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-md">
-                                        <GraduationCap className="w-8 h-8 text-white" />
-                                    </div>
-                                    <h4 className="text-gray-900 font-bold mb-2">ISCAE</h4>
-                                    <p className="text-gray-600 text-sm">Formation en entrepreneuriat</p>
-                                </div>
-                            </div>
-                        </div>
-
                         {/* Industry Partners */}
                         <div>
                             <h3 className="text-2xl font-bold text-white mb-8 flex items-center">
@@ -722,9 +573,9 @@ export default function ClubsPartners() {
                                     </button>
                                 </form>
                             </div>
-                            {/* Club Membership Form */}
+                            {/* Club Membership Form (modifié pour partenariat officiel) */}
                             <div className="bg-gray-900 rounded-xl p-8 shadow-lg">
-                                {/* Messages Flash pour le formulaire d'adhésion au club */}
+                                {/* Messages Flash pour le formulaire club partenaire */}
                                 {flash?.club_success && (
                                     <div className="mb-6 p-4 bg-green-600 text-white rounded-lg shadow-lg">
                                         <div className="flex items-center">
@@ -769,91 +620,69 @@ export default function ClubsPartners() {
 
                                 <div className="flex items-center mb-6">
                                     <Users className="w-8 h-8 text-pink-400 mr-4" />
-                                    <h3 className="text-2xl font-bold text-white">Formulaire des Clubs</h3>
+                                    <h3 className="text-2xl font-bold text-white">Votre club souhaite devenir partenaire de Code212 ?</h3>
                                 </div>
 
                                 <form onSubmit={handleClubSubmit} className="space-y-6">
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-white font-medium mb-2">Nom</label>
-                                            <input
-                                                type="text"
-                                                value={clubData.nom}
-                                                onChange={(e) => setClubData('nom', e.target.value)}
-                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                                placeholder="Votre nom"
-                                                required
-                                            />
-                                            {clubErrors.nom && <p className="text-red-400 text-sm mt-1">{clubErrors.nom}</p>}
-                                        </div>
-                                        <div>
-                                            <label className="block text-white font-medium mb-2">Prénom</label>
-                                            <input
-                                                type="text"
-                                                value={clubData.prenom}
-                                                onChange={(e) => setClubData('prenom', e.target.value)}
-                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                                placeholder="Votre prénom"
-                                                required
-                                            />
-                                            {clubErrors.prenom && <p className="text-red-400 text-sm mt-1">{clubErrors.prenom}</p>}
-                                        </div>
-                                    </div>
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-white font-medium mb-2">Email</label>
-                                            <input
-                                                type="email"
-                                                value={clubData.email}
-                                                onChange={(e) => setClubData('email', e.target.value)}
-                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                                placeholder="votre@email.com"
-                                                required
-                                            />
-                                            {clubErrors.email && <p className="text-red-400 text-sm mt-1">{clubErrors.email}</p>}
-                                        </div>
-                                        <div>
-                                            <label className="block text-white font-medium mb-2">Téléphone</label>
-                                            <input
-                                                type="tel"
-                                                value={clubData.telephone}
-                                                onChange={(e) => setClubData('telephone', e.target.value)}
-                                                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                                placeholder="+212 6XX XXX XXX"
-                                                required
-                                            />
-                                            {clubErrors.telephone && <p className="text-red-400 text-sm mt-1">{clubErrors.telephone}</p>}
-                                        </div>
-                                    </div>
                                     <div>
-                                        <label className="block text-white font-medium mb-2">Club</label>
-                                        <select
-                                            value={clubData.club}
-                                            onChange={(e) => setClubData('club', e.target.value)}
+                                        <label className="block text-white font-medium mb-2">Nom du club</label>
+                                        <input
+                                            type="text"
+                                            value={clubData.nom_organisation}
+                                            onChange={(e) => setClubData('nom_organisation', e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                            required
-                                        >
-                                            <option value="">Sélectionnez le club</option>
-                                            <option value="GameDev">GameDev</option>
-                                            <option value="Design">Design</option>
-                                            <option value="AI">AI</option>
-                                            <option value="Web">Web</option>
-                                            <option value="Cyber">Cyber</option>
-                                            <option value="Autre">Autre</option>
-                                        </select>
-                                        {clubErrors.club && <p className="text-red-400 text-sm mt-1">{clubErrors.club}</p>}
-                                    </div>
-                                    <div>
-                                        <label className="block text-white font-medium mb-2">Motivation</label>
-                                        <textarea
-                                            value={clubData.motivation}
-                                            onChange={(e) => setClubData('motivation', e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
-                                            rows={4}
-                                            placeholder="Pourquoi souhaitez-vous rejoindre ce club ?"
+                                            placeholder="Nom de votre club"
                                             required
                                         />
-                                        {clubErrors.motivation && <p className="text-red-400 text-sm mt-1">{clubErrors.motivation}</p>}
+                                        {clubErrors.nom_organisation && <p className="text-red-400 text-sm mt-1">{clubErrors.nom_organisation}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-white font-medium mb-2">Nom du responsable</label>
+                                        <input
+                                            type="text"
+                                            value={clubData.contact_principal}
+                                            onChange={(e) => setClubData('contact_principal', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            placeholder="Nom du responsable du club"
+                                            required
+                                        />
+                                        {clubErrors.contact_principal && <p className="text-red-400 text-sm mt-1">{clubErrors.contact_principal}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-white font-medium mb-2">Email de contact</label>
+                                        <input
+                                            type="email"
+                                            value={clubData.email}
+                                            onChange={(e) => setClubData('email', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            placeholder="contact@club.com"
+                                            required
+                                        />
+                                        {clubErrors.email && <p className="text-red-400 text-sm mt-1">{clubErrors.email}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-white font-medium mb-2">Téléphone</label>
+                                        <input
+                                            type="tel"
+                                            value={clubData.telephone}
+                                            onChange={(e) => setClubData('telephone', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            placeholder="+212 6XX XXX XXX"
+                                            required
+                                        />
+                                        {clubErrors.telephone && <p className="text-red-400 text-sm mt-1">{clubErrors.telephone}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-white font-medium mb-2">Pourquoi souhaitez-vous devenir partenaire de Code212 ?</label>
+                                        <textarea
+                                            value={clubData.description_projet}
+                                            onChange={(e) => setClubData('description_projet', e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-400 focus:border-pink-400 focus:outline-none"
+                                            rows={4}
+                                            placeholder="Expliquez votre motivation, vos attentes et ce que votre club souhaite apporter à Code212."
+                                            required
+                                        />
+                                        {clubErrors.description_projet && <p className="text-red-400 text-sm mt-1">{clubErrors.description_projet}</p>}
                                     </div>
                                     <button
                                         type="submit"
@@ -861,7 +690,7 @@ export default function ClubsPartners() {
                                         className="w-full bg-pink-600 text-white py-4 rounded-lg font-semibold hover:bg-pink-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <Send className="w-5 h-5 mr-2" />
-                                        {processingClub ? 'Envoi en cours...' : "Envoyer la demande d'adhésion"}
+                                        {processingClub ? 'Envoi en cours...' : "Envoyer la demande club partenaire"}
                                     </button>
                                 </form>
                             </div>

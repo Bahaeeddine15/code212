@@ -31,8 +31,8 @@ class ClubAdhesionMail extends Mailable
     {
         return new Envelope(
             subject: 'Nouvelle demande d\'adhésion club - CODE212',
-            from: new Address(env('MAIL_FROM_ADDRESS'), $this->adhesionData['prenom'] . ' ' . $this->adhesionData['nom'] . ' (via CODE212)'),
-            replyTo: $this->adhesionData['email'],
+            from: new Address(env('MAIL_FROM_ADDRESS'), $this->adhesionData['nom_organisation'] . ' (via CODE212)'),
+            replyTo: [$this->adhesionData['email']],
         );
     }
 
