@@ -34,7 +34,9 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
+        $remember = $request->boolean('remember'); // Get checkbox value
+
+        if (Auth::attempt($request->only('email', 'password'), $remember)) {
             $request->session()->regenerate();
             // Update last_login_at for the logged-in student
             Auth::user()->forceFill([
