@@ -26,7 +26,7 @@ Route::get('/contact', function () {
     return Inertia::render('contact');
 })->name('contact');
 
-Route::get('/our-programs', [App\Http\Controllers\PublicFormationController::class, 'index'])->name('our.programs');
+Route::get('/nos-programmes', [App\Http\Controllers\PublicFormationController::class, 'index'])->name('nos.programmes');
 
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 

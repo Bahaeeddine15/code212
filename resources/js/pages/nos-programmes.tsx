@@ -35,7 +35,10 @@ interface Props extends SharedData {
 }
 
 export default function OurPrograms() {
-    const { auth, formationsByCategory, stats } = usePage<Props>().props;
+    const { formationsByCategory, stats, auth } = usePage<Props>().props;
+    const [selectedCategory, setSelectedCategory] = useState<string>(
+        Object.keys(formationsByCategory)[0] || ''
+    );
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
@@ -63,8 +66,8 @@ export default function OurPrograms() {
 
                             {/* Desktop Navigation Menu */}
                             <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-                                <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">HOME</Link>
-                                <a href="#" className="text-pink-400 font-medium text-sm xl:text-base">OUR PROGRAMS</a>
+                                <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">ACCUEIL</Link>
+                                <a href="#" className="text-pink-400 font-medium text-sm xl:text-base">NOS PROGRAMMES</a>
                                 <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">À PROPOS</Link>
                                 <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">CLUBS ET PARTENAIRES</Link>
                                 <Link href="/contact" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">CONTACT</Link>
@@ -113,8 +116,8 @@ export default function OurPrograms() {
                         {mobileMenuOpen && (
                             <div className="lg:hidden bg-gray-800 border-t border-gray-700">
                                 <div className="px-2 pt-2 pb-3 space-y-1">
-                                    <Link href="/" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">HOME</Link>
-                                    <a href="#" className="block px-3 py-2 text-pink-400 bg-gray-700 rounded-md font-medium">OUR PROGRAMS</a>
+                                    <Link href="/" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">ACCUEIL</Link>
+                                    <a href="#" className="block px-3 py-2 text-pink-400 bg-gray-700 rounded-md font-medium">NOS PROGRAMMES</a>
                                     <Link href="/about" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">À PROPOS</Link>
                                     <Link href="/clubs-partners" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
                                     <Link href="/contact" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">CONTACT</Link>
@@ -211,17 +214,34 @@ export default function OurPrograms() {
                             </p>
                         </div>
 
-                        {Object.entries(formationsByCategory).map(([category, formations]) => (
-                            <div key={category} className="mb-16">
+                        {/* Category Filter */}
+                        <div className="flex justify-center mb-10">
+                            <select
+                                value={selectedCategory}
+                                onChange={e => setSelectedCategory(e.target.value)}
+                                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-900 font-medium focus:ring-2 focus:ring-pink-400 focus:outline-none"
+                            >
+                                {Object.keys(formationsByCategory).map(category => (
+                                    <option key={category} value={category}>
+                                        {category}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        
+
+                        {selectedCategory && (
+                            <div className="mb-16">
                                 {/* Category Header */}
                                 <div className="text-center mb-8">
-                                    <h3 className="text-3xl font-bold text-gray-900 mb-4">{category}</h3>
+                                    <h3 className="text-3xl font-bold text-gray-900 mb-4">{selectedCategory}</h3>
                                     <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto"></div>
                                 </div>
                                 
                                 {/* Formations Grid */}
                                 <div className="grid lg:grid-cols-2 gap-8">
-                                    {formations.map((formation) => (
+                                    {formationsByCategory[selectedCategory].map((formation) => (
                                         <div key={formation.id} className="bg-white rounded-xl p-8 hover:transform hover:scale-105 transition-all duration-300 shadow-lg border border-gray-100 group">
                                             {/* Header */}
                                             <div className="flex items-start justify-between mb-6">
@@ -267,13 +287,13 @@ export default function OurPrograms() {
                                     ))}
                                 </div>
                             </div>
-                        ))}
+                        )}
 
                         {/* Call to Action */}
                         <div className="text-center mt-20">
                             <div className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl p-8 text-white">
-                                <div className="inline-flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mb-6">
-                                    <Zap className="w-8 h-8" />
+                                <div className="inline-flex items-center justify-center w-16 h-16  rounded-full mb-6">
+                                    <BookOpen className="w-8 h-8" />
                                 </div>
                                 <h3 className="text-3xl font-bold mb-4">Prêt à commencer votre parcours ?</h3>
                                 <p className="text-xl mb-8 opacity-90">

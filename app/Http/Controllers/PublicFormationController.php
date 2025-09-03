@@ -16,24 +16,27 @@ class PublicFormationController extends Controller
         $formations = Formation::select([
             'id',
             'title',
-            'description', 
+            'description',
             'level',
             'duration',
             'category',
             'thumbnail'
         ])
-        ->where('status', 'published')
-        ->get();
+            ->where('status', 'published')
+            ->get();
 
-        // Grouper les formations par catégorie
-        $formationsByCategory = $formations->groupBy('category');
-        
+        // Grouper les formations par catégorie et convertir en tableau simple
+        $formationsByCategory = [];
+        foreach ($formations->groupBy('category') as $category => $items) {
+            $formationsByCategory[$category] = $items->values()->toArray();
+        }
+
         // Statistiques
         $totalFormations = $formations->count();
-        $totalCategories = $formationsByCategory->count();
+        $totalCategories = count($formationsByCategory);
         $totalLevels = $formations->pluck('level')->unique()->count();
 
-        return Inertia::render('our-programs', [
+        return Inertia::render('nos-programmes', [
             'formationsByCategory' => $formationsByCategory,
             'stats' => [
                 'total_formations' => $totalFormations,

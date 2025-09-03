@@ -47,7 +47,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a href="#programs" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Our Programs
+                  Nos Programmes
                 </a>
               </li>
               <li>

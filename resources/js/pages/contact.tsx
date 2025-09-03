@@ -80,8 +80,8 @@ export default function Contact() {
 
                             {/* Desktop Navigation Menu */}
                             <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-                                <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">HOME</Link>
-                                <Link href="/our-programs" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">OUR PROGRAMS</Link>
+                                <Link href="/" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">ACCUEIL</Link>
+                                <Link href="/nos-programmes" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">NOS PROGRAMMES</Link>
                                 <Link href="/about" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">À PROPOS</Link>
                                 <Link href="/clubs-partners" className="text-white hover:text-pink-400 transition-colors font-medium text-sm xl:text-base">CLUBS ET PARTENAIRES</Link>
                                 <a href="#" className="text-pink-400 font-medium text-sm xl:text-base">CONTACT</a>
@@ -130,8 +130,8 @@ export default function Contact() {
                         {mobileMenuOpen && (
                             <div className="lg:hidden bg-gray-800 border-t border-gray-700">
                                 <div className="px-2 pt-2 pb-3 space-y-1">
-                                    <Link href="/" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">HOME</Link>
-                                    <Link href="/our-programs" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">OUR PROGRAMS</Link>
+                                    <Link href="/" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">ACCUEIL</Link>
+                                    <Link href="/nos-programmes" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">NOS PROGRAMMES</Link>
                                     <Link href="/about" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">À PROPOS</Link>
                                     <Link href="/clubs-partners" className="block px-3 py-2 text-white hover:text-pink-400 hover:bg-gray-700 rounded-md transition-colors font-medium">CLUBS ET PARTENAIRES</Link>
                                     <a href="#" className="block px-3 py-2 text-pink-400 bg-gray-700 rounded-md font-medium">CONTACT</a>
@@ -542,7 +542,7 @@ export default function Contact() {
                                     Appelez-nous
                                 </a>
                                 <a 
-                                    href="mailto:conseil@code212.ma" 
+                                    href="mailto:code212@uca.ac.ma" 
                                     className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-flex items-center justify-center"
                                 >
                                     <Mail className="w-4 h-4 mr-2" />
