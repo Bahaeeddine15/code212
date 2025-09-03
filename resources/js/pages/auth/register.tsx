@@ -63,6 +63,7 @@ export default function Register() {
               onChange={(e) => setData("name", e.target.value)}
               disabled={processing}
               placeholder="Votre nom complet"
+              className="text-white"
             />
             <InputError message={errors.name} className="mt-1" />
           </div>
@@ -79,6 +80,7 @@ export default function Register() {
               onChange={(e) => setData("email", e.target.value)}
               disabled={processing}
               placeholder="email@uca.ac.ma"
+              className="text-white"
             />
             <InputError message={errors.email} className="mt-1" />
             {data.email && !isUcaEmail(data.email) && (
@@ -141,7 +143,7 @@ export default function Register() {
                 onChange={(e) => setData("password", e.target.value)}
                 disabled={processing}
                 placeholder="Mot de passe"
-                className="pr-10"
+                className="pr-10 text-white"
               />
               <button
                 type="button"
@@ -175,7 +177,7 @@ export default function Register() {
                 onChange={(e) => setData("password_confirmation", e.target.value)}
                 disabled={processing}
                 placeholder="Confirmer le mot de passe"
-                className="pr-10"
+                className="pr-10 text-white"
               />
               <button
                 type="button"

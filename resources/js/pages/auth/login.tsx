@@ -82,7 +82,7 @@ export default function Register({ status, canResetPassword }: RegisterProps) {
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 placeholder="Password"
-                                className="pr-10"
+                                className="pr-10 text-white"
                             />
                             <button
                                 type="button"
