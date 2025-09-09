@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('module_completions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('etudiant_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('etudiant_id')->constrained('etudiant')->onDelete('cascade');
             $table->foreignId('module_id')->constrained('modules')->onDelete('cascade');
             $table->timestamp('completed_at');
             $table->timestamps();
